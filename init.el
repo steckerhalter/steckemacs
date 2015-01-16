@@ -221,8 +221,8 @@
 
 ;; don't ask to kill buffers
 (setq kill-buffer-query-functions
-  (remq 'process-kill-buffer-query-function
-         kill-buffer-query-functions))
+      (remq 'process-kill-buffer-query-function
+            kill-buffer-query-functions))
 
 ;; load my theme
 (quelpa '(grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
@@ -336,18 +336,18 @@ Call a second time to restore the original window configuration."
   "When called interactively with no active region, copy a single
 line instead."
   (interactive
-    (if mark-active (list (region-beginning) (region-end))
-      (message "Copied line")
-      (list (line-beginning-position)
-               (line-beginning-position 2)))))
+   (if mark-active (list (region-beginning) (region-end))
+     (message "Copied line")
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
 
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single
 line instead."
   (interactive
-    (if mark-active (list (region-beginning) (region-end))
-      (list (line-beginning-position)
-        (line-beginning-position 2)))))
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
 
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
   (let ((buffer-to-kill (ad-get-arg 0)))
@@ -721,8 +721,8 @@ line instead."
 ;; display the agenda first
 (setq org-agenda-custom-commands
       '(("n" "Agenda and all TODO's"
-        ((alltodo "")
-         (agenda "")))))
+         ((alltodo "")
+          (agenda "")))))
 
 (defun my-initial-buffer-choice ()
   (org-agenda nil "n")
@@ -880,11 +880,11 @@ Relies on functions of `php-mode'."
 (defun var_dump ()
   (interactive)
   (if (region-active-p)
-    (progn
-      (goto-char (region-end))
-      (insert ");")
-      (goto-char (region-beginning))
-      (insert "var_dump("))
+      (progn
+        (goto-char (region-end))
+        (insert ");")
+        (goto-char (region-beginning))
+        (insert "var_dump("))
     (insert "var_dump();")
     (backward-char 3)))
 
