@@ -1,24 +1,31 @@
+;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
+;; if `~/.emacs.d/elisp/' exists add it to the load path
 (let ((default-directory "~/.emacs.d/elisp/"))
   (unless (file-exists-p default-directory)
     (make-directory default-directory))
   (add-to-list 'load-path default-directory))
 
+;; disable the GNU ELPA
 (setq package-archives nil)
 
+;; load my package manager
 (if (require 'quelpa nil t)
     (quelpa '(quelpa :repo "quelpa/quelpa" :fetcher github) :upgrade t)
   (with-temp-buffer
     (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
     (eval-buffer)))
 
+;; define minor mode to override bindings
 (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
 
+;; key-chord mode
 (quelpa '(key-chord :fetcher wiki))
 (key-chord-mode 1)
 (setq key-chord-two-keys-delay 0.03)
 
+;; global keys
 (global-set-key (kbd "C-h x") (lambda () (interactive) (shell-command "pkill emacs")))
 (global-set-key (kbd "C-S-l") 'package-list-packages)
 (global-set-key (kbd "C-c n") 'my-show-file-name)
@@ -149,15 +156,19 @@
 (global-set-key (kbd "C-c v") 'var_dump-die)
 (global-set-key (kbd "C-c V") 'var_dump)
 
+;; use C-return to invoke `help-mini'
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 
+;; load custom use code
 (when (file-readable-p "~/.user.el") (load "~/.user.el"))
 
+;; encoding
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (set-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
 
+;; general settings
 (setq
  inhibit-startup-message t
  backup-directory-alist `((".*" . ,temporary-file-directory)) ;don't clutter my fs and put backups into tmp
@@ -205,15 +216,19 @@
 (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
 (scroll-bar-mode -1)         ;disable the sroll bar
 
+;; disable full `yes' or `no' answers
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+;; don't ask to kill buffers
 (setq kill-buffer-query-functions
   (remq 'process-kill-buffer-query-function
          kill-buffer-query-functions))
 
+;; load my theme
 (quelpa '(grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
 (load-theme 'grandshell t)
 
+;; use symbola font for emoticons
 (defun my-after-make-frame (frame)
   (when (find-font (font-spec :name "Symbola") frame)
     (dolist (range '((#x2600 . #x26ff)
@@ -223,11 +238,13 @@
       (set-fontset-font "fontset-default" range "Symbola"))))
 (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
+;; better frame title
 (setq frame-title-format
       '((:eval (if (buffer-file-name)
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
+;; `my' functions
 (defun my-indent-whole-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
@@ -285,34 +302,6 @@ Call a second time to restore the original window configuration."
   (when (active-minibuffer-window)
     (select-window (active-minibuffer-window))))
 
-(defun my-tks (ipos tables params)
-  "Formatting function for org `clocktable' that generates TKS compatible output.
-Usage example:
-#+BEGIN: clocktable :scope agenda :block today :formatter my-tks :properties (\"project\")
-#+END: clocktable
-"
-  (insert-before-markers (format-time-string "%d/%m/%Y\n\n"))
-  (let (tbl entry entries time)
-    (while (setq tbl (pop tables))
-      (setq entries (nth 2 tbl))
-      (while (setq entry (pop entries))
-        (when (string-match org-todo-regexp (nth 1 entry))
-          (let* ((level (car entry))
-                 (headline (replace-regexp-in-string (concat org-todo-regexp "\\( +\\|[ \t]*$\\)") "" (nth 1 entry)))
-                 (rest (mod (nth 3 entry) 60))
-                 (hours (/ (nth 3 entry) 60))
-                 (mins (cond
-                        ((= rest 0) 0)
-                        ((<= rest 15) 0.25)
-                        ((<= rest 30) 0.5)
-                        ((<= rest 45) 0.75)
-                        (t 1)))
-                 (project (cdr (assoc "project" (nth 4 entry))))
-                 )
-            (insert-before-markers
-             (format "%s %s %s\n" (if project project "?") (+ hours mins) headline ))
-            ))))))
-
 (defun my-toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -365,6 +354,9 @@ line instead."
     (if (equal buffer-to-kill "*scratch*")
         (bury-buffer)
       ad-do-it)))
+
+;; all the modes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py"))))
 (add-hook 'python-mode-hook 'anaconda-mode)
@@ -1068,6 +1060,7 @@ Relies on functions of `php-mode'."
 
 (quelpa 'zoom-frm)
 
+;; use this mode to override some key bindings
 (define-minor-mode my-keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
   t " K" 'my-keys-minor-mode-map)
