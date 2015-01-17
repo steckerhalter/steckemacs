@@ -28,7 +28,7 @@
 (setq key-chord-two-keys-delay 0.03)
 
 ;; ** global keys
-(global-set-key (kbd "C-h x") (lambda () (interactive) (shell-command "pkill emacs")))
+(global-set-key (kbd "C-h x") 'kill-emacs)
 (global-set-key (kbd "C-S-l") 'package-list-packages)
 (global-set-key (kbd "C-c n") 'my-show-file-name)
 (global-set-key (kbd "C-x a s") 'auto-save-buffers-enhanced-toggle-activity)
