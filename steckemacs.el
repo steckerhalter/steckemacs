@@ -1107,7 +1107,7 @@ Relies on functions of `php-mode'."
 (quelpa '(vlf :repo "m00natic/vlfi" :fetcher github :old-names (vlfi)))
 (setq vlf-application 'dont-ask)        ; just do it
 (setq vlf-batch-size 8192)              ; a bit more text per batch please
-(require 'vlf-integrate)                ; just do it for real
+(require 'vlf-setup)
 
 ;;;; web-mode
 (quelpa '(web-mode :repo "fxbois/web-mode" :fetcher github))
