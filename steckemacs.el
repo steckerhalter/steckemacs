@@ -29,28 +29,30 @@
 ;; Emacs 24.4
 
 ;;; general settings
-
-;; maximize emacs
+;;;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
+;;;; `elisp' load path
 ;; if `~/.emacs.d/elisp/' exists add it to the load path
 (let ((default-directory "~/.emacs.d/elisp/"))
   (unless (file-exists-p default-directory)
     (make-directory default-directory))
   (add-to-list 'load-path default-directory))
 
+;;;; quelpa
 ;; disable the GNU ELPA
 (setq package-archives nil)
-
-;; load my package manager
 (if (require 'quelpa nil t)
     (quelpa '(quelpa :repo "quelpa/quelpa" :fetcher github) :upgrade t)
   (with-temp-buffer
     (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
     (eval-buffer)))
 
-;;;; define minor mode to override bindings
+;;;; defvars
+;; define minor mode to override bindings
 (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
+;; set outline prefix
+(defvar outline-minor-mode-prefix "\M-#")
 
 ;;;; key-chord mode
 (quelpa '(key-chord :fetcher wiki))
@@ -881,7 +883,6 @@ Call a second time to restore the original window configuration."
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 ;;;; outshine
-(defvar outline-minor-mode-prefix "\M-#")
 (quelpa '(outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el")))
 (require 'outshine)
 (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
