@@ -449,6 +449,7 @@ line instead."
 (add-to-list 'company-backends 'company-dabbrev t)
 (add-to-list 'company-backends 'company-ispell t)
 (add-to-list 'company-backends 'company-files t)
+(add-to-list 'company-begin-commands 'outshine-self-insert-command)
 (setq company-backends (remove 'company-ropemacs company-backends))
 
 (defun my-pcomplete-capf ()
