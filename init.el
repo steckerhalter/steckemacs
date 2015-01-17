@@ -1,3 +1,5 @@
+;; * general settings
+
 ;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
@@ -17,15 +19,15 @@
     (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
     (eval-buffer)))
 
-;; define minor mode to override bindings
+;; ** define minor mode to override bindings
 (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
 
-;; key-chord mode
+;; ** key-chord mode
 (quelpa '(key-chord :fetcher wiki))
 (key-chord-mode 1)
 (setq key-chord-two-keys-delay 0.03)
 
-;; global keys
+;; ** global keys
 (global-set-key (kbd "C-h x") (lambda () (interactive) (shell-command "pkill emacs")))
 (global-set-key (kbd "C-S-l") 'package-list-packages)
 (global-set-key (kbd "C-c n") 'my-show-file-name)
@@ -156,19 +158,19 @@
 (global-set-key (kbd "C-c v") 'var_dump-die)
 (global-set-key (kbd "C-c V") 'var_dump)
 
-;; use C-return to invoke `help-mini'
+;; ** use C-return to invoke `help-mini'
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 
-;; load custom use code
+;; ** load custom use code
 (when (file-readable-p "~/.user.el") (load "~/.user.el"))
 
-;; encoding
+;; ** encoding
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (set-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
 
-;; general settings
+;; ** global flags
 (setq
  inhibit-startup-message t
  backup-directory-alist `((".*" . ,temporary-file-directory)) ;don't clutter my fs and put backups into tmp
@@ -199,8 +201,10 @@
  load-prefer-newer t                    ;prefer newer .el instead of the .elc
  )
 
+;; ** enable narrowing
 (put 'narrow-to-region 'disabled nil)   ;narrow to region should be enabled by default
 
+;; ** default flags
 (setq-default
  tab-width 4
  indent-tabs-mode nil                   ;use spaces instead of tabs
@@ -216,19 +220,19 @@
 (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
 (scroll-bar-mode -1)         ;disable the sroll bar
 
-;; disable full `yes' or `no' answers
+;; ** disable full `yes' or `no' answers
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; don't ask to kill buffers
+;; ** don't ask to kill buffers
 (setq kill-buffer-query-functions
       (remq 'process-kill-buffer-query-function
             kill-buffer-query-functions))
 
-;; load my theme
+;; ** load my theme
 (quelpa '(grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
 (load-theme 'grandshell t)
 
-;; use symbola font for emoticons
+;; ** use symbola font for emoticons
 (defun my-after-make-frame (frame)
   (when (find-font (font-spec :name "Symbola") frame)
     (dolist (range '((#x2600 . #x26ff)
@@ -238,31 +242,32 @@
       (set-fontset-font "fontset-default" range "Symbola"))))
 (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
-;; better frame title
+;; ** better frame title
 (setq frame-title-format
       '((:eval (if (buffer-file-name)
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;; `my' functions
+;; * `my' functions
+;; ** my-indent-whole-buffer
 (defun my-indent-whole-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
 
+;; ** my-isearch-goto-match-beginning
 (defun my-isearch-goto-match-beginning ()
   (when (and isearch-forward (not isearch-mode-end-hook-quit)) (goto-char isearch-other-end)))
 (add-hook 'isearch-mode-end-hook 'my-isearch-goto-match-beginning)
 
+;; ** my-show-file-name
 (defun my-show-file-name ()
   "Show the full path file name in the minibuffer."
   (interactive)
   (message (buffer-file-name))
   (kill-new (file-truename buffer-file-name)))
 
-(quelpa '(pos-tip
-          :repo "syohex/pos-tip"
-          :fetcher github
-          :files ("pos-tip.el")))
+;; ** my-show-help
+(quelpa '(pos-tip :repo "syohex/pos-tip" :fetcher github :files ("pos-tip.el")))
 (require 'pos-tip)
 (defun my-show-help ()
   "Show docs for symbol at point or at beginning of list if not on a symbol.
@@ -285,6 +290,7 @@ Pass symbol-name to the function DOC-FUNCTION."
     (interactive)
     (my-show-help)))
 
+;; ** my-split-window
 (defun my-split-window()
   "Split the window to see the most recent buffer in the other window.
 Call a second time to restore the original window configuration."
@@ -296,12 +302,14 @@ Call a second time to restore the original window configuration."
     (window-configuration-to-register :my-split-window)
     (switch-to-buffer-other-window nil)))
 
+;; ** my-switch-to-minibuffer-window
 (defun my-switch-to-minibuffer-window ()
   "Switch to minibuffer window (if active)."
   (interactive)
   (when (active-minibuffer-window)
     (select-window (active-minibuffer-window))))
 
+;; ** my-toggle-window-split
 (defun my-toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -327,37 +335,21 @@ Call a second time to restore the original window configuration."
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
+;; ** my-url-insert-file-contents
 (defun my-url-insert-file-contents (url)
   "Prompt for URL and insert file contents at point."
   (interactive "sURL: ")
   (url-insert-file-contents url))
 
-(defadvice kill-ring-save (before slick-copy activate compile)
-  "When called interactively with no active region, copy a single
-line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (message "Copied line")
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single
-line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
+;; ** don't really kill *scratch*
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
   (let ((buffer-to-kill (ad-get-arg 0)))
     (if (equal buffer-to-kill "*scratch*")
         (bury-buffer)
       ad-do-it)))
 
-;; all the modes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;; * modes
+;; ** anaconda-mode
 (quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py"))))
 (add-hook 'python-mode-hook 'anaconda-mode)
 (add-hook 'python-mode-hook 'eldoc-mode)
@@ -374,17 +366,22 @@ line instead."
                  (interactive)
                  (TeX-command-menu "LaTeX")))))
 
+;; ** ag
 (quelpa '(ag :repo "Wilfred/ag.el" :fetcher github))
 
+;; ** apache-mode
 (quelpa '(apache-mode :fetcher wiki))
 
+;; ** back-button
 (quelpa '(back-button :repo "rolandwalker/back-button" :fetcher github))
 (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
 (require 'back-button)
 (back-button-mode 1)
 
+;; ** buffer-move
 (quelpa '(buffer-move :fetcher wiki))
 
+;; ** cider
 ;; cider needs queue which is in the ELPA repo but I have disabled that
 (quelpa '(queue :url "http://www.dr-qubit.org/download.php?file=predictive/queue.el" :fetcher url :version original))
 (quelpa '(cider :fetcher github :repo "clojure-emacs/cider" :old-names (nrepl)))
@@ -393,6 +390,7 @@ line instead."
 (setq cider-repl-pop-to-buffer-on-connect t)
 (setq cider-repl-use-clojure-font-lock t)
 
+;; ** company
 (quelpa '(company :repo "company-mode/company-mode" :fetcher github))
 (require 'company)
 (setq company-idle-delay 0.3)
@@ -417,11 +415,11 @@ line instead."
 (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
   (add-hook hook 'my-company-elisp-setup))
 
-(add-to-list 'auto-mode-alist '("\\.tks\\'" . org-mode))
-
+;; ** dedicated
 (quelpa '(dedicated :fetcher github :repo "emacsmirror/dedicated"))
 (require 'dedicated)
 
+;; ** deft
 (quelpa '(deft :url "git://jblevins.org/git/deft.git" :fetcher git))
 (setq
  deft-extension "org"
@@ -431,9 +429,11 @@ line instead."
  deft-auto-save-interval 20
  )
 
+;; ** diff-hl
 (quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
 (global-diff-hl-mode)
 
+;; ** dired+
 (quelpa '(dired+ :fetcher wiki))
 (setq dired-auto-revert-buffer t)
 (setq dired-no-confirm '(byte-compile chgrp chmod chown copy delete load move symlink))
@@ -443,12 +443,15 @@ line instead."
 (setq diredp-hide-details-initially-flag nil)
 (setq diredp-hide-details-propagate-flag nil)
 
+;; ** discover-my-major
 (quelpa '(discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
 
+;; ** easy-kill
 (quelpa '(easy-kill :fetcher github :repo "leoliu/easy-kill"))
 (global-set-key [remap kill-ring-save] 'easy-kill)
 (global-set-key [remap mark-sexp] 'easy-mark)
 
+;; ** elisp-slime-nav
 (quelpa '(elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github))
 (require 'elisp-slime-nav)
 (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
@@ -456,6 +459,7 @@ line instead."
 (define-key elisp-slime-nav-mode-map (kbd "C-c C-d") 'my-show-help)
 (define-key elisp-slime-nav-mode-map (kbd "C-c d") 'elisp-slime-nav-describe-elisp-thing-at-point)
 
+;; ** eval-sexp-fu
 (quelpa '(eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el")))
 (require 'eval-sexp-fu)
 (setq eval-sexp-fu-flash-duration 0.4)
@@ -465,6 +469,7 @@ line instead."
 (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
 (define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
 
+;; ** erc
 (quelpa '(erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks"))
 (add-hook 'erc-mode-hook (lambda ()
                            (erc-truncate-mode t)
@@ -504,6 +509,7 @@ line instead."
       (erc-track-switch-buffer 1)
     (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
 
+;; ** eww
 (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
 (defun my-eww-browse-dwim ()
@@ -518,11 +524,14 @@ line instead."
               (current-kill 0 t))))
     (eww arg)))
 
+;; ** expand-region
 (quelpa '(expand-region :repo "magnars/expand-region.el" :fetcher github))
 
+;; ** fasd
 (quelpa '(fasd :repo "steckerhalter/emacs-fasd" :fetcher github))
 (global-fasd-mode 1)
 
+;; ** flycheck
 ;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
 (quelpa '(let-alist :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el" :fetcher url :version original))
 (quelpa '(flycheck :repo "flycheck/flycheck" :fetcher github))
@@ -536,19 +545,23 @@ line instead."
 (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
 (setq flycheck-indication-mode 'right-fringe)
 
+;; ** grizzl
 (quelpa '(grizzl :repo "d11wtq/grizzl" :fetcher github))
 (setq *grizzl-read-max-results* 30)
 
+;; ** google-translate
 (quelpa '(google-translate :fetcher github :repo "atykhonov/google-translate"))
 (setq google-translate-default-source-language "de")
 (setq google-translate-default-target-language "en")
 
+;; ** haskell-mode
 (quelpa '(haskell-mode :repo "haskell/haskell-mode" :fetcher github :files ("*.el" "haskell-mode.texi" "NEWS" "logo.svg")))
 (require 'haskell-mode)
 (setq haskell-indent-thenelse 3)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
+;; ** helm
 (quelpa '(helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh")))
 (quelpa '(helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github))
 (quelpa '(helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el")))
@@ -572,12 +585,15 @@ line instead."
 (quelpa '(helm-swoop :repo "ShingoFukuyama/helm-swoop" :fetcher github))
 (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 
+;; ** highlight-symbol
 (quelpa '(highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el"))
 (setq highlight-symbol-on-navigation-p t)
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 
+;; ** howdoi
 (quelpa '(howdoi :repo "atykhonov/emacs-howdoi" :fetcher github))
 
+;; ** ido
 (setq ido-enable-flex-matching t
       ido-auto-merge-work-directories-length -1
       ido-create-new-buffer 'always
@@ -591,29 +607,36 @@ line instead."
 (flx-ido-mode 1)
 (setq ido-use-faces nil)
 
+;; ** iedit
 (quelpa '(iedit :repo "victorhge/iedit" :fetcher github))
 (require 'iedit)
 (setq iedit-unmatched-lines-invisible-default t)
 
+;; ** ielm
 (eval-after-load 'ielm
   '(progn
      (add-hook 'inferior-emacs-lisp-mode-hook
                (lambda ()
                  (turn-on-eldoc-mode)))))
 
+;; ** ipretty
 (quelpa '(ipretty :fetcher github :repo "steckerhalter/ipretty"))
 (ipretty-mode t)
 
+;; ** js2-mode
 (quelpa '(js2-mode :repo "mooz/js2-mode" :fetcher github))
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-hook 'js2-mode-hook 'flycheck-mode)
 
+;; ** json-mode
 (quelpa '(json-mode :fetcher github :repo "joshwnj/json-mode"))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 
+;; ** livedown
 (quelpa '(livedown :fetcher github :repo "shime/emacs-livedown"))
 (require 'livedown)
 
+;; ** magit
 (quelpa '(magit :fetcher github
                 :repo "magit/magit"
                 :files ("magit.el" "magit-bisect.el" "magit-blame.el" "magit-key-mode.el" "magit-popup.el" "magit-wip.el" "magit.texi" "AUTHORS.md" "README.md")))
@@ -625,6 +648,7 @@ line instead."
 (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
 (setq magit-default-tracking-name-function 'magit-default-tracking-name-branch-only) ;don't track with origin-*
 
+;; ** markdown-mode
 (quelpa '(markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git))
 (require 'markdown-mode)
 (setq gfm-liquid-font-lock-keywords
@@ -642,9 +666,11 @@ line instead."
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-liquid-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-liquid-mode))
 
+;; ** move-text
 (quelpa '(move-text :fetcher wiki))
 (require 'move-text)
 
+;; ** mu4e
 (when (file-exists-p "/usr/local/share/emacs/site-lisp/mu4e")
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
   (autoload 'mu4e "mu4e" "Mail client based on mu (maildir-utils)." t)
@@ -678,12 +704,15 @@ line instead."
 
   (setq message-kill-buffer-on-exit t))
 
+;; ** multiple-cursors
 (quelpa '(multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el"))
 
+;; ** ob-php
 (quelpa '(ob-php :fetcher github :repo "steckerhalter/ob-php"))
 (add-to-list 'org-babel-load-languages '(php . t))
 (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 
+;; ** org
 ;; we get `org' with contrib, so if the included `htmlize' is not available we need to force an upgrade
 (let ((quelpa-upgrade-p (not (require 'htmlize nil t))))
   (quelpa '(org :url "git://orgmode.org/org-mode.git" :fetcher git
@@ -712,6 +741,7 @@ line instead."
 (defun my-org-insert-todo-heading () (interactive) (org-insert-todo-heading t))
 (define-key org-mode-map (kbd "<M-S-return>") 'my-org-insert-todo-heading)
 
+;; *** agenda
 ;; create the file for the agendas if it doesn't exist
 (let ((agendas "~/.agenda_files"))
   (unless (file-readable-p agendas)
@@ -758,6 +788,7 @@ line instead."
 ;; add state to the sorting strategy of todo
 (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
 
+;; *** templates
 (setq org-capture-templates
       '(
         ("t" "Task" entry (file "") "* TODO %?\n %a")
@@ -767,6 +798,7 @@ line instead."
 (add-to-list 'org-structure-template-alist '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
 
+;; *** todo
 (setq org-todo-keywords
       '((sequence
          "TODO(t)"
@@ -784,6 +816,7 @@ line instead."
         ))
 (setq org-log-into-drawer t) ; don't clutter files with state logs
 
+;; *** clocking
 (setq org-clock-idle-time 15)
 (setq org-clock-in-resume t)
 (setq org-clock-persist t)
@@ -795,16 +828,19 @@ line instead."
 (setq org-clock-frame-title-format (append '((t org-mode-line-string)) '(" ") frame-title-format))
 (setq org-clock-clocked-in-display 'both)
 
+;; *** org-journal
 (quelpa '(org-journal :repo "bastibe/org-journal" :fetcher github))
 (let ((dir "~/Dropbox/journal/"))
   (when (file-exists-p dir)
     (setq org-journal-dir dir)))
 
+;; *** org-mobile-sync
 (when (and (boundp 'org-mobile-directory) (version<= "24.3.50" emacs-version))
   (quelpa '(org-mobile-sync :repo "steckerhalter/org-mobile-sync" :fetcher github))
   (setq org-mobile-inbox-for-pull (concat org-directory "/notes.org"))
   (org-mobile-sync-mode 1))
 
+;; ** latex
 (require 'ox-latex)
 (add-to-list 'org-latex-packages-alist '("" "minted"))
 (setq org-latex-listings 'minted)
@@ -814,6 +850,13 @@ line instead."
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
+;; ** outshine
+(defvar outline-minor-mode-prefix "\M-#")
+(quelpa '(outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el")))
+(require 'outshine)
+(add-hook 'outline-minor-mode-hook 'outshine-hook-function)
+(add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
+;; ** php
 (quelpa '(geben :fetcher svn :url "http://geben-on-emacs.googlecode.com/svn/trunk/"))
 (quelpa '(php-align :fetcher github :repo "tetsujin/emacs-php-align"))
 (quelpa '(php-boris :repo "tomterl/php-boris" :fetcher github))
@@ -888,12 +931,15 @@ Relies on functions of `php-mode'."
     (insert "var_dump();")
     (backward-char 3)))
 
+;; ** prog
 (add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
 
+;; ** projectile
 (quelpa '(projectile :repo "bbatsov/projectile" :fetcher github :files ("projectile.el")))
 (require 'projectile nil t)
 (setq projectile-completion-system 'grizzl)
 
+;; ** rainbow-mode
 (quelpa '(rainbow-mode :fetcher url :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/rainbow-mode/rainbow-mode.el"))
 
 (dolist (hook '(css-mode-hook
@@ -905,33 +951,40 @@ Relies on functions of `php-mode'."
                 ))
   (add-hook hook 'rainbow-mode))
 
+;; ** recentf
 (setq recentf-save-file (expand-file-name "~/.recentf"))
 (recentf-mode 1)
 
+;; ** robe
 (quelpa '(robe :repo "dgutov/robe" :fetcher github :files ("robe*.el" "company-robe.el" "lib")))
 (push 'company-robe company-backends)
 (add-hook 'ruby-mode-hook 'robe-mode)
 
+;; ** saveplace
 (require 'saveplace)
 (setq-default save-place t)
 
 (setq savehist-additional-variables '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
 (savehist-mode 1)
 
+;; ** shell-switcher
 (quelpa '(shell-switcher :fetcher github :repo "DamienCassou/shell-switcher" :files ("rswitcher.el" "shell-switcher.el")))
 (setq shell-switcher-new-shell-function 'shell-switcher-make-ansi-term)
 (setq shell-switcher-mode t)
 (require 'shell-switcher)
 
+;; ** skewer-mode
 (quelpa '(skewer-mode :repo "skeeto/skewer-mode" :fetcher github :files ("*.html" "*.js" "*.el")))
 (skewer-setup)
 
+;; ** smart-mode-line
 (quelpa '(smart-mode-line :repo "Bruce-Connor/smart-mode-line" :fetcher github))
 (setq sml/vc-mode-show-backend t)
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 (sml/apply-theme 'respectful)
 
+;; ** smartparens
 (quelpa '(smartparens :fetcher github :repo "Fuco1/smartparens"))
 (require 'smartparens-config)
 (smartparens-global-mode t)
@@ -975,8 +1028,10 @@ Relies on functions of `php-mode'."
 
 (when (file-exists-p "~/quicklisp/slime-helper.el") (load "~/quicklisp/slime-helper.el"))
 
+;; ** stylus-mode
 (quelpa '(stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
 
+;; ** term
 (defun my-term-toggle-char-line-mode ()
   "Toggle between `term-char-mode' and `term-line-mode'."
   (interactive)
@@ -1005,22 +1060,27 @@ Relies on functions of `php-mode'."
   (define-key term-mode-map (kbd "C-7") 'my-term-toggle-char-line-mode))
 (add-hook 'term-mode-hook 'my-term-setup t)
 
+;; ** uniquify
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
 (setq uniquify-min-dir-content 2)
 
+;; ** yaml-mode
 (quelpa '(yaml-mode :repo "yoshiki/yaml-mode" :fetcher github))
 
+;; ** vlf
 (quelpa '(vlf :repo "m00natic/vlfi" :fetcher github :old-names (vlfi)))
 (setq vlf-application 'dont-ask)        ; just do it
 (setq vlf-batch-size 8192)              ; a bit more text per batch please
 (require 'vlf-integrate)                ; just do it for real
 
+;; ** web-mode
 (quelpa '(web-mode :repo "fxbois/web-mode" :fetcher github))
 (setq web-mode-markup-indent-offset 2)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
 
+;; ** w3m
 (when (require 'w3m nil t)
   (setq
    w3m-use-favicon nil
@@ -1058,9 +1118,10 @@ Relies on functions of `php-mode'."
                         )))
   )
 
+;; ** zoom-frm
 (quelpa 'zoom-frm)
 
-;; use this mode to override some key bindings
+;; ** my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
   t " K" 'my-keys-minor-mode-map)
