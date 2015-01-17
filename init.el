@@ -158,7 +158,7 @@
 (global-set-key (kbd "C-c v") 'var_dump-die)
 (global-set-key (kbd "C-c V") 'var_dump)
 
-;; ** use C-return to invoke `help-mini'
+;; ** use C-return to invoke `helm-mini'
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 
 ;; ** load custom use code
