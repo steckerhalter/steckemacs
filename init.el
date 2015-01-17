@@ -248,7 +248,7 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;; * `my' functions
+;; * `my' functions and advices
 ;; ** my-indent-whole-buffer
 (defun my-indent-whole-buffer ()
   (interactive)
