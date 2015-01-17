@@ -63,7 +63,6 @@
 (global-set-key (kbd "C-h x") 'kill-emacs)
 (global-set-key (kbd "C-S-l") 'package-list-packages)
 (global-set-key (kbd "C-c n") 'my-show-file-name)
-(global-set-key (kbd "C-x a s") 'auto-save-buffers-enhanced-toggle-activity)
 (global-set-key (kbd "C-c d") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c C-f") 'flyspell-mode)
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -77,9 +76,6 @@
 (global-set-key (kbd "C-h C-p") 'find-file)
 (key-chord-define-global "cg" 'customize-group)
 (global-set-key (kbd "C-c m") 'menu-bar-mode)
-(global-set-key (kbd "<C-mouse-5>") 'zoom-frm-out)
-(global-set-key (kbd "<C-mouse-4>") 'zoom-frm-in)
-(global-set-key (kbd "C-S-z") (lambda () (interactive) (zoom-in/out t)))
 (key-chord-define-global "ln" 'linum-mode)
 (global-set-key (kbd "C-x C-u") 'my-url-insert-file-contents)
 (global-set-key (kbd "C-c C-w") 'browse-url-at-point)
@@ -1151,13 +1147,5 @@ Relies on functions of `php-mode'."
                         )))
   )
 
-;;;; zoom-frm
-(quelpa 'zoom-frm)
-
-;;;; my-keys-minor-mode (must be last)
-(define-minor-mode my-keys-minor-mode
-  "A minor mode so that my key settings override annoying major modes."
-  t " K" 'my-keys-minor-mode-map)
-(my-keys-minor-mode 1)
 
 ;;; steckemacs.el ends here
