@@ -157,6 +157,7 @@
   `(,method (kbd ,key) ,(if (listp fn) `(lambda () (interactive) ,fn) `',fn))))
 
 ;;;; global keys
+;;;;; general
 (bind "C-h x" kill-emacs)
 (bind "C-S-l" package-list-packages)
 (bind "C-c n" my-show-file-name)
@@ -165,7 +166,6 @@
 (bind "M-x" helm-M-x)
 (bind "C-h C-h" helm-M-x)
 (bind "C-h h" helm-projectile)
-(bind "<C-S-iso-lefttab>" helm-for-files)
 (bind "C-h ," helm-apropos)
 (bind "C-h ." helm-info-emacs)
 (bind "C-h 4" helm-info-elisp)
@@ -176,6 +176,7 @@
 (bind "ln" linum-mode)
 (bind "C-x C-u" my-url-insert-file-contents)
 (bind "C-c C-w" browse-url-at-point)
+;;;;; editing
 (bind "C-z" undo-only)
 (bind "<M-f10>" move-text-up)
 (bind "<M-f9>" move-text-down)
@@ -194,19 +195,17 @@
 (bind "C-c w" whitespace-cleanup)
 (bind "C-h C-v" visual-line-mode)
 (bind "C-h TAB" my-indent-whole-buffer)
-(bind "M-5" helm-etags-select)
-(bind "M-6" find-tag-other-window)
+;;;;; source
 (bind "C-h C-0" edebug-defun)
 (bind "C-h C-b" eval-buffer)
 (bind "C-h C-e" toggle-debug-on-error)
 (bind "C-h C-j" ipretty-last-sexp)
 (bind "C-h C-k" ipretty-last-sexp-other-buffer)
 (bind "C-h N" diff-hl-revert-hunk)
-(bind "C-h C-d" dired-jump)
-(bind "sb" speedbar)
-(bind "C-c T" (my-open-terminal nil))
-(bind "C-c t" (my-open-terminal t))
-(bind "C-h C-/" fasd-find-file)
+;;;;; directories
+(bind "C-h C-u" dired-jump)
+(bind "C-h C-f" fasd-find-file)
+;;;;; buffers
 (bind "C-h C-s" save-buffer)
 (bind "C-c r" revert-buffer)
 (bind "C-x C-b" ido-switch-buffer)
@@ -217,10 +216,12 @@
 (bind "sv" save-buffer)
 (bind "sc" (switch-to-buffer "*scratch*"))
 (bind "<f9>" my-split-window)
+;;;;; history
 (bind "C-h C-SPC" helm-show-kill-ring)
 (bind "C-h SPC" helm-all-mark-rings)
 (bind "C-3" back-button-local-backward)
 (bind "C-4" back-button-local-forward)
+;;;;; occur
 (bind "M-2" highlight-symbol-occur)
 (bind "M-3" (highlight-symbol-jump -1))
 (bind "M-4" (highlight-symbol-jump 1))
@@ -228,6 +229,7 @@
 (bind "M-i" helm-swoop)
 (bind "M-I" helm-swoop-back-to-last-point)
 (bind "ok" projectile-multi-occur)
+;;;;; windows
 (bind "C-0" (select-window (previous-window)))
 (bind "C-9" (select-window (next-window)))
 (bind "<f2>" split-window-vertically)
@@ -241,8 +243,9 @@
 (bind "<M-left>" buf-move-left)
 (bind "<M-right>" buf-move-right)
 (bind "C-h C-8" dedicated-mode)
+;;;;; find/grep
 (bind "vg" vc-git-grep)
-(bind "C-h C-f" elisp-slime-nav-find-elisp-thing-at-point)
+(bind "C-h C-." elisp-slime-nav-find-elisp-thing-at-point)
 (bind "C-h g" grep-find)
 (bind "C-S-h C-S-g" find-grep-dired)
 (bind "C-h C-o" occur)
@@ -251,12 +254,11 @@
 (bind "C-h C-y" projectile-find-file)
 (bind "C-h G" projectile-grep)
 (bind "C-h z" projectile-ack)
+;;;;; version control
 (bind "C-c g" magit-status)
 (bind "C-c l" magit-log)
 (bind "bm" magit-blame-mode)
-(bind "C-c s" shell)
-(bind "C-c c" deft)
-(bind "nm" mu4e)
+;;;;; open/start stuff
 (bind "C-c e" my-erc-connect)
 (bind "C-h C-m" discover-my-major)
 (bind "C-h C-<return>" eww)
@@ -264,10 +266,10 @@
 (bind "C-h C--" helm-google)
 (bind "C-h r" google-translate-query-translate)
 (bind "C-h C-r" google-translate-query-translate-reverse)
-(bind "C-h n" howdoi-query)
 (bind "C-h C-c" helm-google-suggest)
 (bind "C-S-h C-c" helm-wikipedia-suggest)
 (bind "C-\"" shell-switcher-new-shell)
+;;;;; org
 (bind "C-h o" helm-info-org)
 (bind "C-h C-n" (org-agenda nil "n"))
 (bind "C-h t" (org-capture nil "s"))
@@ -277,9 +279,8 @@
 (bind "C-S-g" org-clock-goto)
 (bind "C-c C-9" org-insert-subheading)
 (bind "C-c C-0" org-insert-todo-subheading)
-(bind "C-h C-." (find-file "~/org/home.org"))
-(bind "C-h C-u" (find-file "~/org/work.org"))
 (bind "C-h C-w" org-cut-subtree)
+;;;;; php
 (bind "C-c v" var_dump-die)
 (bind "C-c V" var_dump)
 
@@ -467,16 +468,6 @@ line instead."
 (quelpa '(dedicated :fetcher github :repo "emacsmirror/dedicated"))
 (require 'dedicated)
 
-;;;; deft
-(quelpa '(deft :url "git://jblevins.org/git/deft.git" :fetcher git))
-(setq
- deft-extension "org"
- deft-directory "~/deft"
- deft-text-mode 'org-mode
- deft-use-filename-as-title t
- deft-auto-save-interval 20
- )
-
 ;;;; diff-hl
 (quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
 (global-diff-hl-mode)
@@ -637,9 +628,6 @@ line instead."
 (quelpa '(highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el"))
 (setq highlight-symbol-on-navigation-p t)
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
-
-;;;; howdoi
-(quelpa '(howdoi :repo "atykhonov/emacs-howdoi" :fetcher github))
 
 ;;;; ido
 (setq ido-enable-flex-matching t
