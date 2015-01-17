@@ -371,6 +371,15 @@ Call a second time to restore the original window configuration."
   (interactive "sURL: ")
   (url-insert-file-contents url))
 
+;;;; advice to kill single line if there is no region
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single
+line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (list (line-beginning-position)
+            (line-beginning-position 2)))))
+
 ;;;; don't really kill *scratch*
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
   (let ((buffer-to-kill (ad-get-arg 0)))
