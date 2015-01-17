@@ -193,7 +193,7 @@
 ;;;; use C-return to invoke `helm-mini'
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 
-;;;; load custom use code
+;;;; load custom user code
 (when (file-readable-p "~/.user.el") (load "~/.user.el"))
 
 ;;;; encoding
@@ -244,9 +244,11 @@
  c-hungry-delete-key t                  ;delete more than one space
  )
 
+;;;; enable global modes
 (global-auto-revert-mode 1)  ;auto revert buffers when changed on disk
 (show-paren-mode t)          ;visualize()
-(iswitchb-mode t)            ;use advanced tab switching
+
+;;;; disable global modes
 (blink-cursor-mode -1)       ;no cursor blinking
 (tool-bar-mode -1)           ;disable the awful toolbar
 (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
