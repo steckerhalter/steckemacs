@@ -17,16 +17,18 @@
 ;; GNU General Public License for more details.
 ;; <http://www.gnu.org/licenses/>.
 
-;;;; Commentary:
+;;; Commentary:
 
 ;; Emacs configuration that tries to fetch everything necessary from
 ;; MELPA on startup. Instead of splitting everything up I try to keep
 ;; everything in one file. My theme called `grandshell` is loaded from
 ;; MELPA too.
 
-;;;; Requirements:
+;;; Requirements:
 
 ;; Emacs 24.4
+
+;;; Code:
 
 ;;; general settings
 ;;;; maximize emacs
