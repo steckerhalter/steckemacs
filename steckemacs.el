@@ -154,11 +154,13 @@
 (setq key-chord-two-keys-delay 0.03)
 
 ;;;; `bind' macro to define keys
-(defmacro bind (key fn)
+(defmacro bind (key &rest fn)
   (let ((method (if (string-match "^[[:alnum:]]\\{2\\}$" (format "%s" key))
                           'key-chord-define-global
-                        'global-set-key)))
-  `(,method (kbd ,key) ,(if (listp fn) `(lambda () (interactive) ,fn) `',fn))))
+                  'global-set-key)))
+    `(,method (kbd ,key) ,(if (listp (car fn))
+                              `(lambda () (interactive) ,@fn)
+                            `',@fn))))
 
 ;;;; key definitions
 ;;;;; general
@@ -265,6 +267,9 @@
 (bind "C-c g" magit-status)
 (bind "C-c l" magit-log)
 (bind "bm" magit-blame-mode)
+(bind "C-t g" ;quick commit
+      (magit-stage-all)
+      (magit-commit))
 ;;;;; open/start stuff
 (bind "C-c e" my-erc-connect)
 (bind "C-h C-m" discover-my-major)
