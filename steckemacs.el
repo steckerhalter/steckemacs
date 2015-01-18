@@ -157,6 +157,8 @@
   `(,method (kbd ,key) ,(if (listp fn) `(lambda () (interactive) ,fn) `',fn))))
 
 ;;;; global keys
+;; unset C-t so we can use it
+(global-unset-key (kbd "C-t"))
 ;;;;; general
 (bind "C-h x" kill-emacs)
 (bind "C-S-l" package-list-packages)
@@ -195,6 +197,9 @@
 (bind "C-c w" whitespace-cleanup)
 (bind "C-h C-v" visual-line-mode)
 (bind "C-h TAB" my-indent-whole-buffer)
+;;;;; templates
+(bind "C-t q" liquid-quote)
+(bind "C-t l" liquid-tag)
 ;;;;; source
 (bind "C-h C-0" edebug-defun)
 (bind "C-h C-b" eval-buffer)
@@ -395,7 +400,6 @@ line instead."
     (if (equal buffer-to-kill "*scratch*")
         (bury-buffer)
       ad-do-it)))
-
 ;;; modes
 ;;;; anaconda-mode
 (quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py"))))
@@ -701,6 +705,20 @@ line instead."
        '(gfm-liquid-font-lock-keywords)))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-liquid-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-liquid-mode))
+
+;;;;; liquid-tag skeleton
+(define-skeleton liquid-tag
+  "Inserts a liquid tag"
+  "tag: "
+  "{% " str " " _ " %}" \n
+  "{% end" str " %}")
+
+;;;;; liquid-quote skeleton
+(define-skeleton liquid-quote
+  "Inserts a liquid tag"
+  "tag: "
+  "{% quote " _ " %}" \n
+  "{% endquote %}")
 
 ;;;; move-text
 (quelpa '(move-text :fetcher wiki))
