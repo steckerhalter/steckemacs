@@ -34,7 +34,7 @@
 ;;;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
-;;;; `elisp' load path
+;;;; add `elisp' load path
 ;; if `~/.emacs.d/elisp/' exists add it to the load path
 (let ((default-directory "~/.emacs.d/elisp/"))
   (unless (file-exists-p default-directory)
@@ -146,6 +146,8 @@
                  "%b"))))
 
 ;;; key bindings
+;;;; unset C-t
+(global-unset-key (kbd "C-t"))
 ;;;; key-chord mode
 (quelpa '(key-chord :fetcher wiki))
 (key-chord-mode 1)
@@ -158,9 +160,7 @@
                         'global-set-key)))
   `(,method (kbd ,key) ,(if (listp fn) `(lambda () (interactive) ,fn) `',fn))))
 
-;;;; global keys
-;; unset C-t so we can use it
-(global-unset-key (kbd "C-t"))
+;;;; key definitions
 ;;;;; general
 (bind "C-h x" kill-emacs)
 (bind "C-S-l" package-list-packages)
@@ -276,7 +276,7 @@
 (bind "C-h C-c" helm-google-suggest)
 (bind "C-S-h C-c" helm-wikipedia-suggest)
 (bind "C-\"" shell-switcher-new-shell)
-;;;;; org
+;;;;; org/outline
 (bind "C-h o" helm-info-org)
 (bind "C-h C-n" (org-agenda nil "n"))
 (bind "C-h t" (org-capture nil "s"))
@@ -287,6 +287,7 @@
 (bind "C-c C-9" org-insert-subheading)
 (bind "C-c C-0" org-insert-todo-subheading)
 (bind "C-h C-w" org-cut-subtree)
+(bind "M-# 3" outshine-insert-heading)
 ;;;;; php
 (bind "C-c v" var_dump-die)
 (bind "C-c V" var_dump)
@@ -408,6 +409,7 @@ line instead."
 (add-hook 'python-mode-hook 'anaconda-mode)
 (add-hook 'python-mode-hook 'eldoc-mode)
 
+;;;; auctex
 (setq TeX-PDF-mode t)
 (setq TeX-parse-self t)
 (setq TeX-auto-save t)
@@ -717,7 +719,7 @@ line instead."
 
 ;;;;; liquid-quote skeleton
 (define-skeleton liquid-quote
-  "Inserts a liquid tag"
+  "Inserts a liquid quote tag"
   "tag: "
   "{% quote " _ " %}" \n
   "{% endquote %}")
