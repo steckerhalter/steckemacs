@@ -41,8 +41,9 @@
 
 ;;;; quelpa
 ;; disable the GNU ELPA
-(package-initialize)
 (setq package-archives nil)
+;; initialize the package system
+(package-initialize)
 (if (require 'quelpa nil t)
     (quelpa '(quelpa :repo "quelpa/quelpa" :fetcher github) :upgrade t)
   (with-temp-buffer
