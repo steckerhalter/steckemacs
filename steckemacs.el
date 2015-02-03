@@ -19,10 +19,8 @@
 
 ;;; Commentary:
 
-;; Emacs configuration that tries to fetch everything necessary from
-;; MELPA on startup. Instead of splitting everything up I try to keep
-;; everything in one file. My theme called `grandshell` is loaded from
-;; MELPA too.
+;; Emacs configuration that tries to fetch everything necessary with my package manager `quelpa'
+;; To make it easier to navigate the init file, `outshine' is used for org-mode-like folding
 
 ;;; Requirements:
 
@@ -43,6 +41,7 @@
 
 ;;;; quelpa
 ;; disable the GNU ELPA
+(package-initialize)
 (setq package-archives nil)
 (if (require 'quelpa nil t)
     (quelpa '(quelpa :repo "quelpa/quelpa" :fetcher github) :upgrade t)
@@ -125,9 +124,9 @@
       (remq 'process-kill-buffer-query-function
             kill-buffer-query-functions))
 
-;;;; load my theme
-(quelpa '(grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
-(load-theme 'grandshell t)
+;;;; load the theme
+(quelpa '(twilight-bright-theme :repo "jimeh/twilight-bright-theme.el" :fetcher github))
+(load-theme 'twilight-bright t)
 
 ;;;; use symbola font for emoticons
 (defun my-after-make-frame (frame)
@@ -619,7 +618,6 @@ line instead."
 (quelpa '(helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el")))
 (quelpa '(helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el")))
 (require 'helm-config)
-(ad-unadvise 'package--compile) ; don't mess with emacs internals
 (setq helm-mode-handle-completion-in-region nil) ; don't use helm for `completion-at-point'
 (helm-mode 1)
 (helm-gtags-mode 1)
@@ -1052,7 +1050,12 @@ Relies on functions of `php-mode'."
 (require 'smartparens-config)
 (smartparens-global-mode t)
 ;; "fix"" highlight issue in scratch buffer
-(custom-set-faces '(sp-pair-overlay-face ((t ()))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(sp-pair-overlay-face ((t nil))))
 (define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
 (define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
 (define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
