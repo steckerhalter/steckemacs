@@ -619,6 +619,8 @@ line instead."
 (quelpa '(helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el")))
 (quelpa '(helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el")))
 (require 'helm-config)
+;; disable advice from async-bytecomp
+(ad-unadvise 'package--compile)
 (setq helm-mode-handle-completion-in-region nil) ; don't use helm for `completion-at-point'
 (helm-mode 1)
 (helm-gtags-mode 1)
