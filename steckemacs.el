@@ -184,8 +184,6 @@
 (bind "C-c C-w" browse-url-at-point)
 ;;;;; editing
 (bind "C-z" undo-only)
-(bind "<M-f10>" move-text-up)
-(bind "<M-f9>" move-text-down)
 (bind "C-S-c C-S-c" mc/edit-lines)
 (bind "C-<" mc/mark-previous-like-this)
 (bind "C->" mc/mark-next-like-this)
@@ -718,10 +716,6 @@ line instead."
   "tag: "
   "{% quote " _ " %}" \n
   "{% endquote %}")
-
-;;;; move-text
-(quelpa '(move-text :fetcher wiki))
-(require 'move-text)
 
 ;;;; mu4e
 (when (file-exists-p "/usr/local/share/emacs/site-lisp/mu4e")
