@@ -286,10 +286,6 @@
 (bind "C-c C-0" org-insert-todo-subheading)
 (bind "C-h C-w" org-cut-subtree)
 (bind "M-# 3" outshine-insert-heading)
-;;;;; php
-(bind "C-c v" var_dump-die)
-(bind "C-c V" var_dump)
-
 ;;;; use C-return to invoke `helm-mini'
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 
@@ -939,43 +935,6 @@ Relies on functions of `php-mode'."
   (set (make-local-variable 'electric-indent-mode) nil)
   (php-eldoc-enable))
 (add-hook 'php-mode-hook 'setup-php-mode)
-
-(defun var_dump-die ()
-  (interactive)
-  (let ((expression (if (region-active-p)
-                        (buffer-substring (region-beginning) (region-end))
-                      (sexp-at-point)))
-        (line (thing-at-point 'line))
-        (pre "die(var_dump(")
-        (post "));"))
-    (if expression
-        (progn
-          (beginning-of-line)
-          (if (string-match "return" line)
-              (progn
-                (newline)
-                (previous-line))
-            (next-line)
-            (newline)
-            (previous-line))
-          (insert pre)
-          (insert (format "%s" expression))
-          (insert post))
-      ()
-      (insert pre)
-      (insert post)
-      (backward-char (length post)))))
-
-(defun var_dump ()
-  (interactive)
-  (if (region-active-p)
-      (progn
-        (goto-char (region-end))
-        (insert ");")
-        (goto-char (region-beginning))
-        (insert "var_dump("))
-    (insert "var_dump();")
-    (backward-char 3)))
 
 ;;;; prog
 (add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
