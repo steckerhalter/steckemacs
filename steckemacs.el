@@ -247,10 +247,6 @@
 (bind "<f5>" delete-other-windows)
 (bind "<f7>" my-toggle-window-split)
 (bind "M-9" my-switch-to-minibuffer-window)
-(bind "<M-up>" buf-move-up)
-(bind "<M-down>" buf-move-down)
-(bind "<M-left>" buf-move-left)
-(bind "<M-right>" buf-move-right)
 (bind "C-h C-8" dedicated-mode)
 ;;;;; find/grep
 (bind "vg" vc-git-grep)
@@ -438,9 +434,6 @@ line instead."
 (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
 (require 'back-button)
 (back-button-mode 1)
-
-;;;; buffer-move
-(quelpa '(buffer-move :fetcher wiki))
 
 ;;;; cider
 ;; cider needs queue which is in the ELPA repo but I have disabled that
