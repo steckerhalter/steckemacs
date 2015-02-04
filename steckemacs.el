@@ -262,7 +262,8 @@
 (bind "bm" magit-blame-mode)
 (bind "C-t g" ;quick commit
       (magit-stage-all)
-      (magit-commit))
+      (magit-commit)
+      (magit-push))
 ;;;;; open/start stuff
 (bind "C-c e" my-erc-connect)
 (bind "C-h C-m" discover-my-major)
@@ -1089,44 +1090,6 @@ Relies on functions of `php-mode'."
 (setq web-mode-markup-indent-offset 2)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
-
-;;;; w3m
-(when (require 'w3m nil t)
-  (setq
-   w3m-use-favicon nil
-   w3m-default-display-inline-images t
-   w3m-search-word-at-point nil
-   w3m-use-cookies t
-   w3m-home-page "http://en.wikipedia.org/"
-   w3m-cookie-accept-bad-cookies t
-   w3m-session-crash-recovery nil)
-  (add-hook 'w3m-mode-hook
-            (function (lambda ()
-                        (set-face-foreground 'w3m-anchor-face "LightSalmon")
-                        (set-face-foreground 'w3m-arrived-anchor-face "LightGoldenrod")
-                        ;;(set-face-background 'w3m-image-anchor "black")
-                        (load "w3m-lnum")
-                        (defun w3m-go-to-linknum ()
-                          "Turn on link numbers and ask for one to go to."
-                          (interactive)
-                          (let ((active w3m-lnum-mode))
-                            (when (not active) (w3m-lnum-mode))
-                            (unwind-protect
-                                (w3m-move-numbered-anchor (read-number "Anchor number: "))
-                              (when (not active) (w3m-lnum-mode))))
-                          (w3m-view-this-url)
-                          )
-                        (define-key w3m-mode-map "f" 'w3m-go-to-linknum)
-                        (define-key w3m-mode-map "L" 'w3m-lnum-mode)
-                        (define-key w3m-mode-map "o" 'w3m-previous-anchor)
-                        (define-key w3m-mode-map "i" 'w3m-next-anchor)
-                        (define-key w3m-mode-map "w" 'w3m-search-new-session)
-                        (define-key w3m-mode-map "p" 'w3m-previous-buffer)
-                        (define-key w3m-mode-map "n" 'w3m-next-buffer)
-                        (define-key w3m-mode-map "z" 'w3m-delete-buffer)
-                        (define-key w3m-mode-map "O" 'w3m-goto-new-session-url)
-                        )))
-  )
 
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
