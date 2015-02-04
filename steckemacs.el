@@ -260,7 +260,7 @@
 (bind "C-c g" magit-status)
 (bind "C-c l" magit-log)
 (bind "bm" magit-blame-mode)
-(bind "C-t g" ;quick commit
+(bind "C-t g" ;quick commit and push
       (magit-stage-all)
       (magit-commit)
       (magit-push))
