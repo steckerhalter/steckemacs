@@ -247,7 +247,6 @@
 (bind "<f5>" delete-other-windows)
 (bind "<f7>" my-toggle-window-split)
 (bind "M-9" my-switch-to-minibuffer-window)
-(bind "C-h C-8" dedicated-mode)
 ;;;;; find/grep
 (bind "vg" vc-git-grep)
 (bind "C-h C-." elisp-slime-nav-find-elisp-thing-at-point)
@@ -469,10 +468,6 @@ line instead."
 
 (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
   (add-hook hook 'my-company-elisp-setup))
-
-;;;; dedicated
-(quelpa '(dedicated :fetcher github :repo "emacsmirror/dedicated"))
-(require 'dedicated)
 
 ;;;; diff-hl
 (quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
