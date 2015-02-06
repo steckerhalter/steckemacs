@@ -19,8 +19,8 @@
 
 ;;; Commentary:
 
-;; Emacs configuration that tries to fetch everything necessary with my package manager `quelpa'
-;; To make it easier to navigate the init file, `outshine' is used for org-mode-like folding
+;; Emacs configuration that tries to fetch and compile everything necessary with my package manager `quelpa' directly from the source repos
+;; To make it easier to navigate the init file, `outshine' is used for org-mode-like folding: use `C-M-i' to cycle
 
 ;;; Requirements:
 
@@ -146,14 +146,15 @@
                  "%b"))))
 
 ;;; key bindings
-;;;; unset C-t
+;;;; prepartion
+;;;;; unset C-t
 (global-unset-key (kbd "C-t"))
-;;;; key-chord mode
+;;;;; key-chord mode
 (quelpa '(key-chord :fetcher wiki))
 (key-chord-mode 1)
 (setq key-chord-two-keys-delay 0.03)
 
-;;;; `bind' macro to define keys
+;;;;; `bind' macro to define keys
 (defmacro bind (key &rest fn)
   (let ((method (if (string-match "^[[:alnum:]]\\{2\\}$" (format "%s" key))
                           'key-chord-define-global
@@ -182,6 +183,7 @@
 (bind "ln" linum-mode)
 (bind "C-x C-u" my-url-insert-file-contents)
 (bind "C-c C-w" browse-url-at-point)
+(define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 ;;;;; editing
 (bind "C-z" undo-only)
 (bind "C-S-c C-S-c" mc/edit-lines)
@@ -212,6 +214,7 @@
 ;;;;; directories
 (bind "C-h C-u" dired-jump)
 (bind "C-h C-f" fasd-find-file)
+(define-key dired-mode-map (kbd "`") 'dired-toggle-read-only)
 ;;;;; buffers
 (bind "C-h C-s" save-buffer)
 (bind "C-c r" revert-buffer)
@@ -287,9 +290,6 @@
 (bind "C-c C-0" org-insert-todo-subheading)
 (bind "C-h C-w" org-cut-subtree)
 (bind "M-# 3" outshine-insert-heading)
-;;;; use C-return to invoke `helm-mini'
-(define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
-
 ;;; `my' functions and advices
 ;;;; my-indent-whole-buffer
 (defun my-indent-whole-buffer ()
