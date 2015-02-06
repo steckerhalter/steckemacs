@@ -129,6 +129,9 @@
 (quelpa '(twilight-bright-theme :repo "jimeh/twilight-bright-theme.el" :fetcher github))
 (load-theme 'twilight-bright t)
 
+;;;; default font
+(set-face-attribute 'default nil :family "Bitstream Vera Sans Mono" :height 89)
+
 ;;;; use symbola font for emoticons
 (defun my-after-make-frame (frame)
   (when (find-font (font-spec :name "Symbola") frame)
@@ -214,7 +217,8 @@
 ;;;;; directories
 (bind "C-h C-u" dired-jump)
 (bind "C-h C-f" fasd-find-file)
-(define-key dired-mode-map (kbd "`") 'dired-toggle-read-only)
+(eval-after-load "dired"
+  '(define-key dired-mode-map (kbd "`") 'dired-toggle-read-only))
 ;;;;; buffers
 (bind "C-h C-s" save-buffer)
 (bind "C-c r" revert-buffer)
