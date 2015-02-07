@@ -475,6 +475,9 @@ line instead."
 (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
   (add-hook hook 'my-company-elisp-setup))
 
+;;;; company-quickhelp
+(quelpa '(company-quickhelp :fetcher github :repo "expez/company-quickhelp"))
+(company-quickhelp-mode 1)
 ;;;; diff-hl
 (quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
 (global-diff-hl-mode)
