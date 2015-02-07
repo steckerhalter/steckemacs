@@ -134,7 +134,7 @@
                     :family "Bitstream Vera Sans Mono"
                     :height (pcase (+ (x-display-pixel-width) ;use bigger font for small display
                                       (x-display-pixel-height))
-                              ((pred (> 2000)) 96)
+                              ((pred (> 2000)) 110)
                               (_ 89)))
 
 ;;;; use symbola font for emoticons
@@ -276,6 +276,8 @@
       (magit-stage-all)
       (magit-commit)
       (magit-push))
+(eval-after-load "dired"
+  '(define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 ;;;;; open/start stuff
 (bind "C-c e" my-erc-connect)
 (bind "C-h C-m" discover-my-major)
