@@ -202,7 +202,6 @@
 (bind "C-<" mc/mark-previous-like-this)
 (bind "C->" mc/mark-next-like-this)
 (bind "C-*" mc/mark-all-like-this)
-(bind "vr" vr/replace)
 (bind "i9" electric-indent-mode)
 (bind "ac" align-current)
 (bind "C-8" er/expand-region)
