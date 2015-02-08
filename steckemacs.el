@@ -213,6 +213,7 @@
 (bind "C-c w" whitespace-cleanup)
 (bind "C-h C-v" visual-line-mode)
 (bind "C-h TAB" my-indent-whole-buffer)
+(bind "M-z" zop-to-char)
 ;;;;; templates
 (bind "C-t q" liquid-quote)
 (bind "C-t l" liquid-tag)
@@ -1108,6 +1109,10 @@ Relies on functions of `php-mode'."
 (setq web-mode-markup-indent-offset 2)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
+
+;;;; zop-to-char
+(zop-to-char :fetcher github :repo "thierryvolpiatto/zop-to-char")
+(require 'zop-to-char)
 
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
