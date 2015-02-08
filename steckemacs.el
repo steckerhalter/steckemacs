@@ -97,6 +97,7 @@
  custom-unlispify-tag-names nil         ;M-x customize should not cripple tags
  show-paren-delay 0
  load-prefer-newer t                    ;prefer newer .el instead of the .elc
+ split-width-threshold 140              ;split horizontally only if less than 140 columns
  )
 
 ;;;; enable narrowing
