@@ -29,6 +29,8 @@
 ;;; Code:
 
 ;;; general settings
+;;;; debugging on by default
+(setq debug-on-error t)
 ;;;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
@@ -276,7 +278,7 @@
       (magit-stage-all)
       (magit-commit)
       (magit-push))
-(eval-after-load "dired"
+(eval-after-load "magit"
   '(define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 ;;;;; open/start stuff
 (bind "C-c e" my-erc-connect)
