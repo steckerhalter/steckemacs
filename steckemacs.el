@@ -1111,7 +1111,7 @@ Relies on functions of `php-mode'."
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
 
 ;;;; zop-to-char
-(zop-to-char :fetcher github :repo "thierryvolpiatto/zop-to-char")
+(quelpa '(zop-to-char :fetcher github :repo "thierryvolpiatto/zop-to-char"))
 (require 'zop-to-char)
 
 ;;;; my-keys-minor-mode (must be last)
