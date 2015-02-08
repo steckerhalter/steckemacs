@@ -31,6 +31,7 @@
 ;;; general settings
 ;;;; debugging on by default
 (setq debug-on-error t)
+
 ;;;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
