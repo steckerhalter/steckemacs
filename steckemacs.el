@@ -134,7 +134,7 @@
 (load-theme 'twilight-bright t)
 
 ;;;; default font
-(set-face-attribute 'default nil :family "Bitstream Vera Sans Mono" :height 89)
+(set-face-attribute 'default nil :family "Source Code Pro" :height 89)
 ;; (pcase (+ (x-display-pixel-width) ;use bigger font for small display
 ;;           (x-display-pixel-height))
 ;;   ((pred (> 2000)) 110)
