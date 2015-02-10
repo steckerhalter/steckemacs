@@ -134,11 +134,7 @@
 (load-theme 'twilight-bright t)
 
 ;;;; default font
-(set-face-attribute 'default nil :family "Source Code Pro" :height 89)
-;; (pcase (+ (x-display-pixel-width) ;use bigger font for small display
-;;           (x-display-pixel-height))
-;;   ((pred (> 2000)) 110)
-;;   (_ 89))
+(set-face-attribute 'default nil :family "Source Code Pro")
 
 ;;;; use symbola font for emoticons
 (defun my-after-make-frame (frame)
@@ -147,7 +143,13 @@
                      (#x1f300 . #x1f5ff)
                      (#x1f600 . #x1f640)
                      (#x1f680 . #x1f6ff)))
-      (set-fontset-font "fontset-default" range "Symbola"))))
+      (set-fontset-font "fontset-default" range "Symbola")))
+  (set-face-attribute 'default
+                      frame
+                      :height (pcase (+ (x-display-pixel-width)
+                                        (x-display-pixel-height))
+                                ((pred (> 2000)) 110)
+                                (_ 89))))
 (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
 ;;;; better frame title
