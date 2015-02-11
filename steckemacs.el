@@ -97,7 +97,7 @@
  custom-unlispify-tag-names nil         ;M-x customize should not cripple tags
  show-paren-delay 0
  load-prefer-newer t                    ;prefer newer .el instead of the .elc
- split-width-threshold 160              ;split horizontally only if less than 140 columns
+ split-width-threshold 160              ;split horizontally only if less than 160 columns
  )
 
 ;;;; enable narrowing
@@ -577,6 +577,9 @@ line instead."
               (url-get-url-at-point)
               (current-kill 0 t))))
     (eww arg)))
+
+;; use `eww' to browse urls
+(setq browse-url-browser-function 'eww-browse-url)
 
 ;;;; expand-region
 (quelpa '(expand-region :repo "magnars/expand-region.el" :fetcher github))
