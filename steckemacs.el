@@ -184,7 +184,6 @@
 (bind "C-c d" ispell-change-dictionary)
 (bind "C-c C-f" flyspell-mode)
 (bind "M-x" helm-M-x)
-(bind "C-h C-h" helm-M-x)
 (bind "C-h h" helm-projectile)
 (bind "C-h ," helm-apropos)
 (bind "C-h ." helm-info-emacs)
@@ -288,7 +287,7 @@
 (bind "C-h C-m" discover-my-major)
 (bind "C-h C-<return>" eww)
 (bind "C-h M-RET" my-eww-browse-dwim)
-(bind "C-h C--" helm-google)
+(bind "C-h C-h" helm-google)
 (bind "C-h r" google-translate-query-translate)
 (bind "C-h C-r" google-translate-query-translate-reverse)
 (bind "C-h C-c" helm-google-suggest)
@@ -1013,14 +1012,10 @@ Relies on functions of `php-mode'."
 ;;;; smartparens
 (quelpa '(smartparens :fetcher github :repo "Fuco1/smartparens"))
 (require 'smartparens-config)
+(setq sp-autoescape-string-quote nil)   ;don't annoy me with automatic quotes
 (smartparens-global-mode t)
 ;; "fix"" highlight issue in scratch buffer
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(sp-pair-overlay-face ((t nil))))
+(custom-set-faces '(sp-pair-overlay-face ((t nil))))
 (define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
 (define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
 (define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
