@@ -561,11 +561,6 @@ line instead."
     (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
 
 ;;;; eww
-;; get and install the latest `eww' plus libraries from git
-(quelpa '(dom :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/dom.el" :fetcher url) :upgrade t)
-(quelpa '(shr :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/net/shr.el" :fetcher url) :upgrade t)
-(quelpa '(eww :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/net/eww.el" :fetcher url) :upgrade t)
-
 (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
 (defun my-eww-browse-dwim ()
