@@ -97,7 +97,7 @@
  custom-unlispify-tag-names nil         ;M-x customize should not cripple tags
  show-paren-delay 0
  load-prefer-newer t                    ;prefer newer .el instead of the .elc
- split-width-threshold 140              ;split horizontally only if less than 140 columns
+ split-width-threshold 160              ;split horizontally only if less than 140 columns
  )
 
 ;;;; enable narrowing
@@ -932,7 +932,7 @@ line instead."
 (setq php-mode-coding-style "Symfony2")
 (setq php-template-compatibility nil)
 
-(let ((manual "/usr/share/doc/php-doc/html/"))
+(dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
   (when (file-readable-p manual)
     (setq php-manual-path manual)))
 
