@@ -795,7 +795,7 @@ line instead."
 (setq org-use-speed-commands t)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
 (setq org-refile-use-outline-path 'file)
-(setq org-default-notes-file (concat org-directory "/notes.org"))
+(setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-agenda-dim-blocked-tasks t)
 (add-to-list 'org-modules 'org-habit)
 (setq org-habit-graph-column 60)
@@ -891,16 +891,10 @@ line instead."
 (setq org-clock-frame-title-format (append '((t org-mode-line-string)) '(" ") frame-title-format))
 (setq org-clock-clocked-in-display 'both)
 
-;;;;; org-journal
-(quelpa '(org-journal :repo "bastibe/org-journal" :fetcher github))
-(let ((dir "~/Dropbox/journal/"))
-  (when (file-exists-p dir)
-    (setq org-journal-dir dir)))
-
 ;;;;; org-mobile-sync
 (when (and (boundp 'org-mobile-directory) (version<= "24.3.50" emacs-version))
   (quelpa '(org-mobile-sync :repo "steckerhalter/org-mobile-sync" :fetcher github))
-  (setq org-mobile-inbox-for-pull (concat org-directory "/notes.org"))
+  (setq org-mobile-inbox-for-pull (concat org-directory "/todo.org"))
   (org-mobile-sync-mode 1))
 
 ;;;; latex
