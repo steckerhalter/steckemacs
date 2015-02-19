@@ -985,6 +985,7 @@ Relies on functions of `php-mode'."
 (require 'saveplace)
 (setq-default save-place t)
 
+;;;; savehist
 (setq savehist-additional-variables '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
 (savehist-mode 1)
 
