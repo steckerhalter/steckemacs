@@ -951,7 +951,9 @@ Relies on functions of `php-mode'."
 (add-hook 'php-mode-hook 'setup-php-mode)
 
 ;;;; prog
-(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
+(defun my-prog-mode-hook ()
+  (setq show-trailing-whitespace 1))
+(add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
 ;;;; projectile
 (quelpa '(projectile :repo "bbatsov/projectile" :fetcher github :files ("projectile.el")))
