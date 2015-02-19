@@ -127,8 +127,8 @@
             kill-buffer-query-functions))
 
 ;;;; load the theme
-(quelpa '(twilight-bright-theme :repo "jimeh/twilight-bright-theme.el" :fetcher github))
-(load-theme 'twilight-bright t)
+(quelpa '(grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
+(load-theme 'grandshell t)
 
 ;;;; default font
 (set-face-attribute 'default nil :family "Source Code Pro")
