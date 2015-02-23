@@ -1044,6 +1044,9 @@ Relies on functions of `php-mode'."
 
 (when (file-exists-p "~/quicklisp/slime-helper.el") (load "~/quicklisp/slime-helper.el"))
 
+;;;; sqlformat
+(quelpa '(sqlformat :fetcher github :repo "steckerhalter/sqlformat.el"))
+
 ;;;; stylus-mode
 (quelpa '(stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
 
