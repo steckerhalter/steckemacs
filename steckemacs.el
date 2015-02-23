@@ -292,7 +292,6 @@
 (bind "C-\"" shell-switcher-new-shell)
 ;;;;; org/outline
 (bind "C-h o" helm-info-org)
-(bind "C-h C-n" (org-agenda nil "n"))
 (bind "C-h t" (org-capture nil "s"))
 (bind "C-h T" org-capture)
 (bind "C-c i" org-clock-in-last)
@@ -816,12 +815,6 @@ line instead."
       '(("n" "Agenda and all TODO's"
          ((alltodo "")
           (agenda "")))))
-
-(defun my-initial-buffer-choice ()
-  (org-agenda nil "n")
-  (delete-other-windows)
-  (current-buffer))
-(setq initial-buffer-choice #'my-initial-buffer-choice)
 
 (setq org-agenda-start-with-log-mode t)
 (setq org-agenda-todo-ignore-scheduled 'future) ; don't show future scheduled
