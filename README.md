@@ -1,5 +1,7 @@
 # steckemacs.el
 
+[![Build Status](https://travis-ci.org/steckerhalter/steckemacs.el.svg?branch=master)](https://travis-ci.org/steckerhalter/steckemacs.el)
+
 `steckemacs` Emacs configuration.
 
 What was once `steckemacs` with org-mode tangling is now just an Elisp file.
