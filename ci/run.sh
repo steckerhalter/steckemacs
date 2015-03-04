@@ -12,7 +12,9 @@ if ! test -e /usr/local/bin/emacs; then
     wget http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.gz
     tar -xzf emacs-24.4.tar.gz
     cd emacs-24.4
-    make && sudo make install
+    ./configure &&\
+        make &&\
+        sudo make install
     sudo apt-get install -qq git mercurial subversion bzr cvs
 fi
 
