@@ -488,7 +488,7 @@ line instead."
 (setq dired-auto-revert-buffer t)
 (setq dired-no-confirm '(byte-compile chgrp chmod chown copy delete load move symlink))
 (setq dired-deletion-confirmer (lambda (x) t))
-(setq wdired-allow-to-change-permissions t) ; allow changing of file permissions
+(setq wdired-allow-to-change-permissions t) ;allow changing of file permissions
 (toggle-diredp-find-file-reuse-dir 1)
 (setq diredp-hide-details-initially-flag nil)
 (setq diredp-hide-details-propagate-flag nil)
@@ -818,17 +818,17 @@ line instead."
           (agenda "")))))
 
 (setq org-agenda-start-with-log-mode t)
-(setq org-agenda-todo-ignore-scheduled 'future) ; don't show future scheduled
-(setq org-agenda-todo-ignore-deadlines 'far)    ; show only near deadlines
+(setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
+(setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
 
 (setq
  appt-message-warning-time 30
  appt-display-interval 15
- appt-display-mode-line t      ; show in the modeline
+ appt-display-mode-line t      ;show in the modeline
  appt-display-format 'window)
-(appt-activate 1)              ; activate appt (appointment notification)
+(appt-activate 1)              ;activate appt (appointment notification)
 
-(org-agenda-to-appt)           ; add appointments on startup
+(org-agenda-to-appt)           ;add appointments on startup
 
 ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
 (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
@@ -871,7 +871,7 @@ line instead."
         ("WAITING" . font-lock-doc-face)
         ("FUTURE" . "white")
         ))
-(setq org-log-into-drawer t) ; don't clutter files with state logs
+(setq org-log-into-drawer t) ;don't clutter files with state logs
 
 ;;;;; clocking
 (setq org-clock-idle-time 15)
@@ -1074,8 +1074,8 @@ Relies on functions of `php-mode'."
   (define-key term-raw-map (kbd "M-,") 'term-send-input)
   (define-key term-raw-map (kbd "C-c y") 'term-paste)
   (define-key term-raw-map (kbd "C-S-y") 'term-paste)
-  (define-key term-raw-map (kbd "C-h") nil) ; unbind C-h
-  (define-key term-raw-map (kbd "M-x") nil) ; unbind M-x
+  (define-key term-raw-map (kbd "C-h") nil) ;unbind C-h
+  (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
   (define-key term-raw-map (kbd "C-7") 'my-term-toggle-char-line-mode)
   (define-key term-mode-map (kbd "C-7") 'my-term-toggle-char-line-mode))
 (add-hook 'term-mode-hook 'my-term-setup t)
@@ -1090,8 +1090,8 @@ Relies on functions of `php-mode'."
 
 ;;;; vlf
 (quelpa '(vlf :repo "m00natic/vlfi" :fetcher github :old-names (vlfi)))
-(setq vlf-application 'dont-ask)        ; just do it
-(setq vlf-batch-size 8192)              ; a bit more text per batch please
+(setq vlf-application 'dont-ask)        ;just do it
+(setq vlf-batch-size 8192)              ;a bit more text per batch please
 (require 'vlf-setup)
 
 ;;;; web-mode
