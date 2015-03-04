@@ -6,6 +6,8 @@ export LC_ALL=en_US.UTF-8
 
 trap "rm -rf ~/.emacs.d/" EXIT
 
+pwd=`pwd`
+
 if ! test -e /usr/local/bin/emacs; then
     sudo apt-get install build-essential wget
     sudo apt-get build-dep emacs23
@@ -18,4 +20,4 @@ if ! test -e /usr/local/bin/emacs; then
     sudo apt-get install -qq git mercurial subversion bzr cvs
 fi
 
-/usr/local/bin/emacs --batch --load steckemacs.el
+/usr/local/bin/emacs --batch --load $pwd/steckemacs.el
