@@ -582,6 +582,7 @@ line instead."
 
 ;;;; fasd
 (quelpa '(fasd :repo "steckerhalter/emacs-fasd" :fetcher github))
+(setq fasd-completing-read-function 'helm--completing-read-default)
 (global-fasd-mode 1)
 
 ;;;; flycheck
