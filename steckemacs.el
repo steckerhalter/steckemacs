@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-;;; general settings
+;;; General settings
 ;;;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
@@ -155,7 +155,7 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;;; key bindings
+;;; Key bindings
 ;;;; prepartion
 ;;;;; unset C-t
 (global-unset-key (kbd "C-t"))
@@ -410,7 +410,7 @@ line instead."
         (bury-buffer)
       ad-do-it)))
 
-;;; modes
+;;; Modes
 ;;;; anaconda-mode
 (quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py"))))
 (add-hook 'python-mode-hook 'anaconda-mode)
