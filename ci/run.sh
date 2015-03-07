@@ -11,6 +11,7 @@ pwd=`pwd`
 if ! test -e /usr/local/bin/emacs; then
     {
         >&2 echo "--- installing deps ---"
+        sudo apt-get update
         sudo apt-get install build-essential wget
         sudo apt-get build-dep emacs23
         wget http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.gz
