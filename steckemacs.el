@@ -713,7 +713,7 @@ line instead."
          ("{{\s*\\(\\(?:\\w\\|\\.\\)+\\)" (1 font-lock-variable-name-face))
          ("\s+|\s+" . font-lock-comment-face))))
 (define-derived-mode gfm-liquid-mode gfm-mode
-  "Major mode for editing GitHub Flavored Markdown files with Liquid highlighting."
+  "GFM Liquid Mode."
   (set (make-local-variable 'font-lock-defaults)
        '(gfm-liquid-font-lock-keywords)))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-liquid-mode))
