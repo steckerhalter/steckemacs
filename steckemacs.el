@@ -95,6 +95,7 @@
  show-paren-delay 0
  load-prefer-newer t                    ;prefer newer .el instead of the .elc
  split-width-threshold 160              ;split horizontally only if less than 160 columns
+ safe-local-variable-values '((engine . django))
  )
 
 ;;;; enable narrowing
@@ -1098,6 +1099,7 @@ Relies on functions of `php-mode'."
 ;;;; web-mode
 (quelpa '(web-mode :repo "fxbois/web-mode" :fetcher github))
 (setq web-mode-markup-indent-offset 2)
+(setq web-mode-enable-engine-detection t)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
 
