@@ -180,7 +180,8 @@
 (bind "C-S-l" package-list-packages)
 (bind "C-c n" my-show-file-name)
 (bind "C-c d" ispell-change-dictionary)
-(bind "C-c C-f" flyspell-mode)
+(bind "C-t f" flyspell-buffer)
+(bind "C-t C-f" flyspell-mode)
 (bind "M-x" helm-M-x)
 (bind "C-h h" helm-projectile)
 (bind "C-h ," helm-apropos)
@@ -479,6 +480,7 @@ line instead."
 
 ;;;; company-quickhelp
 (quelpa '(company-quickhelp :fetcher github :repo "expez/company-quickhelp"))
+(setq company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 ;;;; diff-hl
 (quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
