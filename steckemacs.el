@@ -694,9 +694,8 @@ line instead."
 (require 'livedown)
 
 ;;;; magit
-(quelpa '(magit :fetcher github
-                :repo "magit/magit"
-                :files ("magit.el" "magit-bisect.el" "magit-blame.el" "magit-key-mode.el" "magit-popup.el" "magit-wip.el" "magit.texi" "AUTHORS.md" "README.md")))
+(let ((package-build-stable t))
+  (quelpa '(magit :fetcher github :repo "magit/magit")))
 (when (fboundp 'file-notify-add-watch)
   (quelpa '(magit-filenotify :fetcher github :repo "magit/magit-filenotify"))
   (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
