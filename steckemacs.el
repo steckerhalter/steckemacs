@@ -132,7 +132,7 @@
 (load-theme 'grandshell t)
 
 ;;;; default font
-(set-face-attribute 'default nil :family "Source Code Pro")
+(set-face-attribute 'default nil :family "Anonymous Pro")
 
 ;;;; use symbola font for emoticons
 (defun my-after-make-frame (frame)
