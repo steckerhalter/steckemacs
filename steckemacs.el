@@ -228,6 +228,7 @@
 (eval-after-load "dired"
   '(define-key dired-mode-map (kbd "`") 'dired-toggle-read-only))
 ;;;;; buffers
+(bind "C-x C-b" ibuffer)
 (bind "C-h C-s" save-buffer)
 (bind "C-c r" revert-buffer)
 (bind "C-x C-b" ido-switch-buffer)
