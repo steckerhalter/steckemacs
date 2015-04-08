@@ -695,7 +695,7 @@ line instead."
 (require 'livedown)
 
 ;;;; magit
-(quelpa '(magit :fetcher github :repo "magit/magit"))
+(quelpa '(magit :fetcher github :repo "magit/magit" :commit "2958790"))
 (when (fboundp 'file-notify-add-watch)
   (quelpa '(magit-filenotify :fetcher github :repo "magit/magit-filenotify"))
   (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
