@@ -695,7 +695,7 @@ line instead."
 (require 'livedown)
 
 ;;;; magit
-(quelpa '(magit :fetcher github :repo "magit/magit" :files ("*.el" (:exclude "magit-autoloads.el"))))
+(quelpa '(magit :fetcher github :repo "magit/magit"))
 (when (fboundp 'file-notify-add-watch)
   (quelpa '(magit-filenotify :fetcher github :repo "magit/magit-filenotify"))
   (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
