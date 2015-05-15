@@ -447,7 +447,7 @@ line instead."
 ;;;; cider
 ;; cider needs queue which is in the ELPA repo but I have disabled that
 (quelpa '(queue :url "http://www.dr-qubit.org/download.php?file=predictive/queue.el" :fetcher url :version original))
-(quelpa '(cider :fetcher github :repo "clojure-emacs/cider" :old-names (nrepl)))
+(quelpa '(cider :fetcher github :repo "clojure-emacs/cider" :files ("*.el" (:exclude ".dir-locals.el")) :old-names (nrepl)))
 (setq cider-popup-stacktraces nil)
 (setq cider-repl-popup-stacktraces nil)
 (setq cider-repl-pop-to-buffer-on-connect t)
@@ -479,6 +479,12 @@ line instead."
 (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
   (add-hook hook 'my-company-elisp-setup))
 
+;;;; company-web
+(quelpa '(company-web :repo "osv/company-web" :fetcher github))
+(defun my-company-web ()
+  (set (make-local-variable 'company-backends) '(company-web-html))
+  (company-mode t))
+(add-hook 'web-mode-hook 'my-company-web)
 ;;;; company-quickhelp
 (quelpa '(company-quickhelp :fetcher github :repo "expez/company-quickhelp"))
 (setq company-quickhelp-delay 1)
@@ -798,7 +804,7 @@ line instead."
 (setq org-use-speed-commands t)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
 (setq org-refile-use-outline-path 'file)
-(setq org-default-notes-file (concat org-directory "/todo.org"))
+;(setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-agenda-dim-blocked-tasks t)
 (add-to-list 'org-modules 'org-habit)
 (setq org-habit-graph-column 60)
@@ -1103,7 +1109,6 @@ Relies on functions of `php-mode'."
 (setq web-mode-enable-engine-detection t)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
-
 ;;;; zop-to-char
 (quelpa '(zop-to-char :fetcher github :repo "thierryvolpiatto/zop-to-char"))
 (require 'zop-to-char)
