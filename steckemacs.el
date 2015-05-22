@@ -112,6 +112,7 @@
 ;;;; enabled global modes
 (global-auto-revert-mode 1)  ;auto revert buffers when changed on disk
 (show-paren-mode t)          ;visualize()
+(electric-pair-mode 1)       ;auto pair brackets, parens etc.
 
 ;;;; disabled global modes
 (blink-cursor-mode -1)       ;no cursor blinking
@@ -211,7 +212,6 @@
 (bind "C-c w" whitespace-cleanup)
 (bind "C-h C-v" visual-line-mode)
 (bind "C-h TAB" my-indent-whole-buffer)
-(bind "M-z" zop-to-char)
 ;;;;; templates
 (bind "C-t q" liquid-quote)
 (bind "C-t l" liquid-tag)
@@ -276,10 +276,6 @@
 (bind "C-c g" magit-status)
 (bind "C-c l" magit-log)
 (bind "bm" magit-blame-mode)
-(bind "C-t g" ;quick commit and push
-      (magit-stage-all)
-      (magit-commit)
-      (magit-push))
 (eval-after-load "magit"
   '(define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 ;;;;; open/start stuff
@@ -609,21 +605,10 @@ line instead."
 (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
 (setq flycheck-indication-mode 'right-fringe)
 
-;;;; grizzl
-(quelpa '(grizzl :repo "d11wtq/grizzl" :fetcher github))
-(setq *grizzl-read-max-results* 30)
-
 ;;;; google-translate
 (quelpa '(google-translate :fetcher github :repo "atykhonov/google-translate"))
 (setq google-translate-default-source-language "de")
 (setq google-translate-default-target-language "en")
-
-;;;; haskell-mode
-(quelpa '(haskell-mode :repo "haskell/haskell-mode" :fetcher github :files ("*.el" "haskell-mode.texi" "NEWS" "logo.svg")))
-(require 'haskell-mode)
-(setq haskell-indent-thenelse 3)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
 ;;;; helm
 (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
@@ -695,10 +680,6 @@ line instead."
 ;;;; json-mode
 (quelpa '(json-mode :fetcher github :repo "joshwnj/json-mode"))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
-
-;;;; livedown
-(quelpa '(livedown :fetcher github :repo "shime/emacs-livedown"))
-(require 'livedown)
 
 ;;;; magit
 (quelpa '(magit :fetcher github :repo "magit/magit"))
@@ -1009,46 +990,7 @@ Relies on functions of `php-mode'."
 (sml/setup)
 (sml/apply-theme 'respectful)
 
-;;;; smartparens
-(quelpa '(smartparens :fetcher github :repo "Fuco1/smartparens"))
-(require 'smartparens-config)
-(setq sp-autoescape-string-quote nil)   ;don't annoy me with automatic quotes
-(smartparens-global-mode t)
-;; "fix"" highlight issue in scratch buffer
-(custom-set-faces '(sp-pair-overlay-face ((t nil))))
-(define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
-(define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
-(define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
-(define-key sp-keymap (kbd "C-,") 'sp-backward-down-sexp)
-(define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
-(define-key sp-keymap (kbd "C-S-e") 'sp-end-of-sexp)
-(define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
-(define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
-(define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
-(define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
-(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
-(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
-(define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
-(define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
-(define-key sp-keymap (kbd "C-)") 'sp-forward-slurp-sexp)
-(define-key sp-keymap (kbd "C-}") 'sp-forward-barf-sexp)
-(define-key sp-keymap (kbd "C-(") 'sp-backward-slurp-sexp)
-(define-key sp-keymap (kbd "C-{") 'sp-backward-barf-sexp)
-(define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
-(define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-forward)
-(define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
-(define-key sp-keymap (kbd "C-S-f") 'sp-select-next-thing)
-(define-key sp-keymap (kbd "C-S-b") 'sp-select-previous-thing)
-(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
-(define-key sp-keymap (kbd "C-\\") 'sp-select-previous-thing-exchange)
-(define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
-(define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
-(define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-(define-key sp-keymap (kbd "M-S") 'sp-split-sexp)
-(define-key sp-keymap (kbd "M-r") 'sp-splice-sexp-killing-around)
-(sp-with-modes sp--lisp-modes
-  (sp-local-pair "(" nil :wrap "C-M-9"))
-
+;;;; sgml
 (setq sgml-basic-offset 4)
 (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode)
 
@@ -1109,9 +1051,6 @@ Relies on functions of `php-mode'."
 (setq web-mode-enable-engine-detection t)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
-;;;; zop-to-char
-(quelpa '(zop-to-char :fetcher github :repo "thierryvolpiatto/zop-to-char"))
-(require 'zop-to-char)
 
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
