@@ -147,7 +147,7 @@
                       frame
                       :height (pcase (+ (x-display-pixel-width)
                                         (x-display-pixel-height))
-                                ((pred (> 2000)) 110)
+                                ((pred (> 2500)) 110)
                                 (_ 89))))
 (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
@@ -192,7 +192,6 @@
 (bind "C-h C-p" find-file)
 (bind "cg" customize-group)
 (bind "C-c m" menu-bar-mode)
-(bind "ln" linum-mode)
 (bind "C-x C-u" my-url-insert-file-contents)
 (bind "C-c C-w" browse-url-at-point)
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
@@ -260,7 +259,6 @@
 (bind "<f4>" delete-window)
 (bind "<f5>" delete-other-windows)
 (bind "<f7>" my-toggle-window-split)
-(bind "M-9" my-switch-to-minibuffer-window)
 ;;;;; find/grep
 (bind "vg" vc-git-grep)
 (bind "C-h C-." elisp-slime-nav-find-elisp-thing-at-point)
@@ -279,7 +277,6 @@
 (eval-after-load "magit"
   '(define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 ;;;;; open/start stuff
-(bind "C-c e" my-erc-connect)
 (bind "C-h C-m" discover-my-major)
 (bind "C-h C-<return>" eww)
 (bind "C-h M-RET" my-eww-browse-dwim)
@@ -305,11 +302,6 @@
 (defun my-indent-whole-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
-
-;;;; my-isearch-goto-match-beginning
-(defun my-isearch-goto-match-beginning ()
-  (when (and isearch-forward (not isearch-mode-end-hook-quit)) (goto-char isearch-other-end)))
-(add-hook 'isearch-mode-end-hook 'my-isearch-goto-match-beginning)
 
 ;;;; my-show-file-name
 (defun my-show-file-name ()
@@ -353,13 +345,6 @@ Call a second time to restore the original window configuration."
         (setq this-command 'my-unsplit-window))
     (window-configuration-to-register :my-split-window)
     (switch-to-buffer-other-window nil)))
-
-;;;; my-switch-to-minibuffer-window
-(defun my-switch-to-minibuffer-window ()
-  "Switch to minibuffer window (if active)."
-  (interactive)
-  (when (active-minibuffer-window)
-    (select-window (active-minibuffer-window))))
 
 ;;;; my-toggle-window-split
 (defun my-toggle-window-split ()
@@ -414,19 +399,6 @@ line instead."
 (quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py"))))
 (add-hook 'python-mode-hook 'anaconda-mode)
 (add-hook 'python-mode-hook 'eldoc-mode)
-
-;;;; auctex
-(setq TeX-PDF-mode t)
-(setq TeX-parse-self t)
-(setq TeX-auto-save t)
-(setq TeX-save-query nil)
-(add-hook 'doc-view-mode-hook 'auto-revert-mode)
-(add-hook 'TeX-mode-hook
-          '(lambda ()
-             (define-key TeX-mode-map (kbd "<C-f8>")
-               (lambda ()
-                 (interactive)
-                 (TeX-command-menu "LaTeX")))))
 
 ;;;; ag
 (quelpa '(ag :repo "Wilfred/ag.el" :fetcher github))
@@ -723,47 +695,8 @@ line instead."
   "{% quote " _ " %}" \n
   "{% endquote %}")
 
-;;;; mu4e
-(when (file-exists-p "/usr/local/share/emacs/site-lisp/mu4e")
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-  (autoload 'mu4e "mu4e" "Mail client based on mu (maildir-utils)." t)
-  (require 'org-mu4e)
-  ;; enable inline images
-  (setq mu4e-view-show-images t)
-  ;; use imagemagick, if available
-  (when (fboundp 'imagemagick-register-types)
-    (imagemagick-register-types))
-  (setq mu4e-html2text-command "html2text -utf8 -width 72")
-  (setq mu4e-update-interval 60)
-  (setq mu4e-auto-retrieve-keys t)
-  (setq mu4e-headers-leave-behavior 'apply)
-  (setq mu4e-headers-visible-lines 20)
-  (setq mu4e-hide-index-messages t)
-
-  (add-hook 'mu4e-headers-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
-  (add-hook 'mu4e-view-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
-
-  (defun mu4e-headers-mark-all-unread-read ()
-    (interactive)
-    (mu4e~headers-mark-for-each-if
-     (cons 'read nil)
-     (lambda (msg param)
-       (memq 'unread (mu4e-msg-field msg :flags)))))
-
-  (defun mu4e-flag-all-read ()
-    (interactive)
-    (mu4e-headers-mark-all-unread-read)
-    (mu4e-mark-execute-all t))
-
-  (setq message-kill-buffer-on-exit t))
-
 ;;;; multiple-cursors
 (quelpa '(multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el"))
-
-;;;; ob-php
-(quelpa '(ob-php :fetcher github :repo "steckerhalter/ob-php"))
-(add-to-list 'org-babel-load-languages '(php . t))
-(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 
 ;;;; org
 ;; we get `org' with contrib, so if the included `htmlize' is not available we need to force an upgrade
@@ -897,8 +830,6 @@ line instead."
 (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
 (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
 ;;;; php
-(quelpa '(geben :fetcher svn :url "http://geben-on-emacs.googlecode.com/svn/trunk/"))
-(quelpa '(php-align :fetcher github :repo "tetsujin/emacs-php-align"))
 (quelpa '(php-boris :repo "tomterl/php-boris" :fetcher github))
 (quelpa '(php-boris-minor-mode :fetcher github :repo "steckerhalter/php-boris-minor-mode"))
 (quelpa '(php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
@@ -929,7 +860,6 @@ Relies on functions of `php-mode'."
   (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
   (set (make-local-variable 'company-backends)
        '((company-capf :with company-dabbrev-code)))
-  (php-align-setup)
   (set (make-local-variable 'electric-indent-mode) nil)
   (php-eldoc-enable))
 (add-hook 'php-mode-hook 'setup-php-mode)
