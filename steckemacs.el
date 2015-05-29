@@ -564,6 +564,8 @@ line instead."
 (global-fasd-mode 1)
 
 ;;;; flycheck
+;; On-the-fly source code syntax checks
+;;
 ;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
 (quelpa '(let-alist :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el" :fetcher url :version original))
 (quelpa '(flycheck :repo "flycheck/flycheck" :fetcher github))
@@ -577,12 +579,18 @@ line instead."
 (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
 (setq flycheck-indication-mode 'right-fringe)
 
+;;;; git-modes
+;; Emacs major modes for various Git configuration files
+(quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
+
 ;;;; google-translate
+;; Emacs interface to Google's translation service
 (quelpa '(google-translate :fetcher github :repo "atykhonov/google-translate"))
 (setq google-translate-default-source-language "de")
 (setq google-translate-default-target-language "en")
 
 ;;;; helm
+;; Fancy candidate selection framework
 (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
 (quelpa '(helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh")))
 (quelpa '(helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github))
