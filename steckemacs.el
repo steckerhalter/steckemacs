@@ -479,6 +479,11 @@ line instead."
 (global-set-key [remap kill-ring-save] 'easy-kill)
 (global-set-key [remap mark-sexp] 'easy-mark)
 
+;;;; eldoc
+;; Display information about a function or variable in the the echo area
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+
 ;;;; elisp-slime-nav
 (quelpa '(elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github))
 (require 'elisp-slime-nav)
