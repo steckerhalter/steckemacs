@@ -588,6 +588,10 @@ line instead."
 ;; Emacs major modes for various Git configuration files
 (quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
 
+;;;; git-timemachine
+;; Step through historic versions of git controlled file
+(quelpa '(git-timemachine :fetcher github :repo "pidu/git-timemachine"))
+
 ;;;; google-translate
 ;; Emacs interface to Google's translation service
 (quelpa '(google-translate :fetcher github :repo "atykhonov/google-translate"))
