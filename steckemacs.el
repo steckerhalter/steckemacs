@@ -467,7 +467,7 @@ line instead."
 (setq dired-no-confirm '(byte-compile chgrp chmod chown copy delete load move symlink))
 (setq dired-deletion-confirmer (lambda (x) t))
 (setq wdired-allow-to-change-permissions t) ;allow changing of file permissions
-(toggle-diredp-find-file-reuse-dir 1)
+(diredp-toggle-find-file-reuse-dir 1)
 (setq diredp-hide-details-initially-flag nil)
 (setq diredp-hide-details-propagate-flag nil)
 
