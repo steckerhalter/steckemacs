@@ -203,7 +203,6 @@
 (bind "C-*" mc/mark-all-like-this)
 (bind "i9" electric-indent-mode)
 (bind "ac" align-current)
-(bind "C-8" er/expand-region)
 (bind "M-8" er/contract-region)
 (bind "M-W" delete-region)
 (bind "fc" flycheck-mode)
@@ -462,6 +461,7 @@ line instead."
 (global-diff-hl-mode)
 
 ;;;; dired+
+;; dired+ adds some features to standard dired (like reusing buffers)
 (quelpa '(dired+ :fetcher wiki))
 (setq dired-auto-revert-buffer t)
 (setq dired-no-confirm '(byte-compile chgrp chmod chown copy delete load move symlink))
@@ -472,19 +472,22 @@ line instead."
 (setq diredp-hide-details-propagate-flag nil)
 
 ;;;; discover-my-major
+;; discover key bindings and their meaning for the current Emacs major mode
 (quelpa '(discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
 
 ;;;; easy-kill
+;; make marking and killing easier
 (quelpa '(easy-kill :fetcher github :repo "leoliu/easy-kill"))
 (global-set-key [remap kill-ring-save] 'easy-kill)
 (global-set-key [remap mark-sexp] 'easy-mark)
 
 ;;;; eldoc
-;; Display information about a function or variable in the the echo area
+;; display information about a function or variable in the the echo area
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
 
 ;;;; elisp-slime-nav
+;; jump to elisp definition (function, symbol etc.) and back, show doc
 (quelpa '(elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github))
 (require 'elisp-slime-nav)
 (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
@@ -493,6 +496,7 @@ line instead."
 (define-key elisp-slime-nav-mode-map (kbd "C-c d") 'elisp-slime-nav-describe-elisp-thing-at-point)
 
 ;;;; eval-sexp-fu
+;; flash the region that is evaluated (visual feedback) in elisp
 (quelpa '(eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el")))
 (require 'eval-sexp-fu)
 (setq eval-sexp-fu-flash-duration 0.4)
@@ -503,6 +507,7 @@ line instead."
 (define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
 
 ;;;; erc
+;; Emacs ERC client settings
 (quelpa '(erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks"))
 (add-hook 'erc-mode-hook (lambda ()
                            (erc-truncate-mode t)
@@ -543,6 +548,7 @@ line instead."
     (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
 
 ;;;; eww
+;; Emacs Web Wowser (web browser) settings
 (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
 (defun my-eww-browse-dwim ()
@@ -560,17 +566,15 @@ line instead."
 ;; use `eww' to browse urls
 (setq browse-url-browser-function 'eww-browse-url)
 
-;;;; expand-region
-(quelpa '(expand-region :repo "magnars/expand-region.el" :fetcher github))
-
 ;;;; fasd
+;; find previous files/dirs quickly (uses `fasd' shell script)
 (quelpa '(fasd :repo "steckerhalter/emacs-fasd" :fetcher github))
 (setq fasd-completing-read-function 'helm--completing-read-default)
 (global-fasd-mode 1)
 
 ;;;; flycheck
-;; On-the-fly source code syntax checks
-;;
+;; on-the-fly source code syntax checks
+
 ;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
 (quelpa '(let-alist :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el" :fetcher url :version original))
 (quelpa '(flycheck :repo "flycheck/flycheck" :fetcher github))
@@ -589,7 +593,7 @@ line instead."
 (quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
 
 ;;;; git-timemachine
-;; Step through historic versions of git controlled file
+;; step through historic versions of git controlled file
 (quelpa '(git-timemachine :fetcher github :repo "pidu/git-timemachine"))
 
 ;;;; google-translate
@@ -599,7 +603,7 @@ line instead."
 (setq google-translate-default-target-language "en")
 
 ;;;; helm
-;; Fancy candidate selection framework
+;; fancy candidate selection framework
 (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
 (quelpa '(helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh")))
 (quelpa '(helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github))
@@ -632,6 +636,7 @@ line instead."
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 
 ;;;; ido
+;; selection framework (used for file opening `C-x C-f' by me)
 (setq ido-enable-flex-matching t
       ido-auto-merge-work-directories-length -1
       ido-create-new-buffer 'always
@@ -646,11 +651,13 @@ line instead."
 (setq ido-use-faces nil)
 
 ;;;; iedit
+;; change multiple occurences of word-at-point (compress display to show all of them)
 (quelpa '(iedit :repo "victorhge/iedit" :fetcher github))
 (require 'iedit)
 (setq iedit-unmatched-lines-invisible-default t)
 
 ;;;; ielm
+;; interactively evaluate Emacs Lisp expressions
 (eval-after-load 'ielm
   '(progn
      (add-hook 'inferior-emacs-lisp-mode-hook
@@ -658,19 +665,23 @@ line instead."
                  (turn-on-eldoc-mode)))))
 
 ;;;; ipretty
+;; pretty-print the result elisp expressions
 (quelpa '(ipretty :fetcher github :repo "steckerhalter/ipretty"))
 (ipretty-mode t)
 
 ;;;; js2-mode
+;; extended javascript mode
 (quelpa '(js2-mode :repo "mooz/js2-mode" :fetcher github))
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-hook 'js2-mode-hook 'flycheck-mode)
 
 ;;;; json-mode
+;; syntax highlighting for `json'
 (quelpa '(json-mode :fetcher github :repo "joshwnj/json-mode"))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 
 ;;;; magit
+;; Emacs interface to git
 (quelpa '(magit :fetcher github :repo "magit/magit"))
 (when (fboundp 'file-notify-add-watch)
   (quelpa '(magit-filenotify :fetcher github :repo "magit/magit-filenotify"))
@@ -713,6 +724,7 @@ line instead."
   "{% endquote %}")
 
 ;;;; multiple-cursors
+;; allow editing with multiple cursors
 (quelpa '(multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el"))
 
 ;;;; org
