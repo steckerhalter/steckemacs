@@ -938,10 +938,6 @@ Relies on functions of `php-mode'."
 (setq shell-switcher-mode t)
 (require 'shell-switcher)
 
-;;;; skewer-mode
-(quelpa '(skewer-mode :repo "skeeto/skewer-mode" :fetcher github :files ("*.html" "*.js" "*.el")))
-(skewer-setup)
-
 ;;;; smart-mode-line
 (quelpa '(smart-mode-line :repo "Bruce-Connor/smart-mode-line" :fetcher github))
 (setq sml/vc-mode-show-backend t)
