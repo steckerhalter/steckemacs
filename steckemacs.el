@@ -780,7 +780,8 @@ line instead."
  appt-display-format 'window)
 (appt-activate 1)              ;activate appt (appointment notification)
 
-(org-agenda-to-appt)           ;add appointments on startup
+(eval-after-load 'org
+  (org-agenda-to-appt))           ;add after the init file is loaded
 
 ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
 (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
