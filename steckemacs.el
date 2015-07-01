@@ -793,7 +793,8 @@ line instead."
 (setq appt-delete-window-function (lambda (&rest args)))
 
 ;; add state to the sorting strategy of todo
-(setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
+(eval-after-load 'org-agenda
+  '(setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep)))
 
 ;;;;; templates
 (setq org-capture-templates
