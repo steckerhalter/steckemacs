@@ -747,6 +747,7 @@ line instead."
 (setq org-use-speed-commands t)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
 (setq org-refile-use-outline-path 'file)
+(setq org-html-postamble nil)
 ;(setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-agenda-dim-blocked-tasks t)
 (add-to-list 'org-modules 'org-habit)
