@@ -446,6 +446,10 @@ line instead."
 (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
   (add-hook hook 'my-company-elisp-setup))
 
+;;;; company-anaconda
+(quelpa '(company-anaconda :fetcher github :repo "proofit404/company-anaconda"))
+(add-to-list 'company-backends 'company-anaconda)
+
 ;;;; company-web
 (quelpa '(company-web :repo "osv/company-web" :fetcher github))
 (defun my-company-web ()
