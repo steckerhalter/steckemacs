@@ -147,7 +147,7 @@
                       frame
                       :height (pcase (+ (x-display-pixel-width)
                                         (x-display-pixel-height))
-                                ((pred (< 2500)) 110)
+                                ((pred (> 2500)) 110)
                                 (_ 89))))
 (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
