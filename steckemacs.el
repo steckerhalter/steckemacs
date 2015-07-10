@@ -1010,6 +1010,9 @@ Relies on functions of `php-mode'."
 (setq web-mode-enable-engine-detection t)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
+(defun setup-web-mode ()
+  (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
+(add-hook 'web-mode-hook 'setup-web-mode)
 
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
