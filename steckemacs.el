@@ -779,7 +779,9 @@ line instead."
 ;;;; markdown-mode
 (use-package markdown-mode
   :quelpa (markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git)
-  :init
+  :mode
+  ("\\.markdown\\'" . gfm-liquid-mode)
+  ("\\.md\\'" . gfm-liquid-mode)
   :config
   (setq gfm-liquid-font-lock-keywords
         (append
@@ -789,12 +791,11 @@ line instead."
            ("{%\s*\\(?:quote\\|blockquote\\|codeblock\\|pullquote\\|img\\|link\\|rawblock\\)\s+\\(\\(?:\\w\\|\\.\\|_\\)+\\)" (1 font-lock-variable-name-face))
            ("{{\s*\\(\\(?:\\w\\|\\.\\)+\\)" (1 font-lock-variable-name-face))
            ("\s+|\s+" . font-lock-comment-face))))
+
   (define-derived-mode gfm-liquid-mode gfm-mode
     "GFM Liquid Mode."
     (set (make-local-variable 'font-lock-defaults)
          '(gfm-liquid-font-lock-keywords)))
-  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-liquid-mode))
-  (add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-liquid-mode)))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
@@ -822,6 +823,8 @@ line instead."
    ("C-c C-9" . org-insert-subheading)
    ("C-c C-0" . org-insert-todo-subheading)
    ("C-h C-w" . org-cut-subtree))
+
+  :mode ("\\.org\\'" . org-mode)
 
   :init
   (setq org-startup-folded t)
@@ -851,8 +854,6 @@ line instead."
           ("WAITING" . font-lock-doc-face)
           ("FUTURE" . "white")))
   (setq org-log-into-drawer t) ;don't clutter files with state logs
-
-  :mode ("\\.org\\'" . org-mode)
 
   :config
   (require 'ox-org)
@@ -956,9 +957,8 @@ line instead."
 ;;;; php
 (use-package php-mode
   :quelpa '(php-mode :repo "ejmr/php-mode" :fetcher github)
-
+  :mode "\\.module\\'"
   :init
-
   (setq php-mode-coding-style "Symfony2")
   (setq php-template-compatibility nil)
   (dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
@@ -966,9 +966,6 @@ line instead."
       (setq php-manual-path manual)))
 
   :config
-
-  (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
-
   (defun my-php-completion-at-point ()
     "Provide php completions for completion-at-point.
 Relies on functions of `php-mode'."
