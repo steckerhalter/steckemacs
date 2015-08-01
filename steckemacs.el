@@ -29,9 +29,6 @@
 ;;; Code:
 
 ;;; General settings
-;;;; maximize emacs
-(modify-all-frames-parameters '((fullscreen . maximized)))
-
 ;;;; quelpa
 ;; disable the GNU ELPA
 (setq package-archives nil)
@@ -84,8 +81,6 @@
  indicate-buffer-boundaries 'left       ;fringe markers
  split-height-threshold 110             ;more readily split horziontally
  enable-recursive-minibuffers t
- custom-unlispify-menu-entries nil      ;M-x customize should not cripple menu entries
- custom-unlispify-tag-names nil         ;M-x customize should not cripple tags
  show-paren-delay 0
  load-prefer-newer t                    ;prefer newer .el instead of the .elc
  split-width-threshold 160              ;split horizontally only if less than 160 columns
@@ -103,11 +98,6 @@
  c-hungry-delete-key t                  ;delete more than one space
  )
 
-;;;; enabled global modes
-(global-auto-revert-mode 1)  ;auto revert buffers when changed on disk
-(show-paren-mode t)          ;visualize()
-(electric-pair-mode 1)       ;auto pair brackets, parens etc.
-
 ;;;; disabled global modes
 (blink-cursor-mode -1)       ;no cursor blinking
 (tool-bar-mode -1)           ;disable the awful toolbar
@@ -122,36 +112,8 @@
       (remq 'process-kill-buffer-query-function
             kill-buffer-query-functions))
 
-;;;; load the theme
-(use-package grandshell-theme
-  :if (not (custom-theme-enabled-p 'lorisan))
-  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
-  :config (load-theme 'grandshell t))
-
 ;;;; default font
 (set-face-attribute 'default nil :family "Anonymous Pro")
-
-;;;; use symbola font for emoticons
-(defun my-after-make-frame (frame)
-  (when (find-font (font-spec :name "Symbola") frame)
-    (dolist (range '((#x2600 . #x26ff)
-                     (#x1f300 . #x1f5ff)
-                     (#x1f600 . #x1f640)
-                     (#x1f680 . #x1f6ff)))
-      (set-fontset-font "fontset-default" range "Symbola")))
-  (set-face-attribute 'default
-                      frame
-                      :height (pcase (+ (x-display-pixel-width)
-                                        (x-display-pixel-height))
-                                ((pred (< 2500)) 110)
-                                (_ 89))))
-(add-to-list 'after-make-frame-functions 'my-after-make-frame)
-
-;;;; better frame title
-(setq frame-title-format
-      '((:eval (if (buffer-file-name)
-                   (abbreviate-file-name (buffer-file-name))
-                 "%b"))))
 
 ;;; Key bindings
 ;;;; prepartion
@@ -180,7 +142,6 @@
 (bind "C-t f" flyspell-buffer)
 (bind "C-t C-f" flyspell-mode)
 (bind "C-h C-p" find-file)
-(bind "cg" customize-group)
 (bind "C-c m" menu-bar-mode)
 (bind "C-c C-w" browse-url-at-point)
 ;;;;; editing
@@ -353,6 +314,12 @@ line instead."
          appt-display-format 'window)
   :config (appt-activate 1))
 
+;;;; autorevert
+(use-package autorevert
+  :config
+  ;; auto revert buffers when changed on disk
+  (global-auto-revert-mode 1))
+
 ;;;; back-button
 (use-package back-button
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
@@ -434,6 +401,21 @@ line instead."
   :init (setq company-quickhelp-delay 1)
   :config (company-quickhelp-mode 1))
 
+;;;; custom
+(use-package custom
+  :init
+  (setq
+   custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
+   custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
+
+  :config
+  (bind "cg" customize-group)
+
+  (use-package grandshell-theme
+    :if (not (custom-theme-enabled-p 'lorisan))
+    :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
+    :config (load-theme 'grandshell t)))
+
 ;;;; diff-hl
 (use-package diff-hl
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
@@ -479,6 +461,12 @@ line instead."
   :init
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
+
+;;;; elec-pair
+(use-package elec-pair
+  :config
+  ;;auto pair brackets, parens etc.
+  (electric-pair-mode 1))
 
 ;;;; elisp-slime-nav
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
@@ -596,6 +584,35 @@ line instead."
   (add-hook 'lisp-interaction-mode-hook 'flycheck-mode)
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
   (setq flycheck-indication-mode 'right-fringe))
+
+;;;; frame
+(use-package frame
+  :config
+  ;; maximize emacs
+  (modify-all-frames-parameters '((fullscreen . maximized)))
+
+  (defun my-after-make-frame (frame)
+    ;; use symbola font for emoticons
+    (when (find-font (font-spec :name "Symbola") frame)
+      (dolist (range '((#x2600 . #x26ff)
+                       (#x1f300 . #x1f5ff)
+                       (#x1f600 . #x1f640)
+                       (#x1f680 . #x1f6ff)))
+        (set-fontset-font "fontset-default" range "Symbola")))
+    ;; different font-size for small and big displays
+    (set-face-attribute 'default
+                        frame
+                        :height (pcase (+ (x-display-pixel-width)
+                                          (x-display-pixel-height))
+                                  ((pred (< 2500)) 110)
+                                  (_ 89))))
+  (add-to-list 'after-make-frame-functions 'my-after-make-frame)
+
+  ;; better frame title
+  (setq frame-title-format
+        '((:eval (if (buffer-file-name)
+                     (abbreviate-file-name (buffer-file-name))
+                   "%b")))))
 
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
@@ -789,7 +806,7 @@ line instead."
   (define-derived-mode gfm-liquid-mode gfm-mode
     "GFM Liquid Mode."
     (set (make-local-variable 'font-lock-defaults)
-         '(gfm-liquid-font-lock-keywords)))
+         '(gfm-liquid-font-lock-keywords))))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
@@ -947,6 +964,12 @@ line instead."
   :init
   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode))
+
+;;;; paren
+(use-package paren
+  :config
+  ;;visualize ( and )
+  (show-paren-mode t))
 
 ;;;; php
 (use-package php-mode
