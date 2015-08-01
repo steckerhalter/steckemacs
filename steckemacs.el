@@ -490,10 +490,10 @@ line instead."
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
-  :bind ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
   :config
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
     (add-hook hook 'elisp-slime-nav-mode))
+  (define-key elisp-slime-nav-mode-map (kbd "C-h C-.") 'elisp-slime-nav-find-elisp-thing-at-point)
   (define-key elisp-slime-nav-mode-map (kbd "C-c C-d") 'my-show-help)
   (define-key elisp-slime-nav-mode-map (kbd "C-c d") 'elisp-slime-nav-describe-elisp-thing-at-point))
 
