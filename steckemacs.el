@@ -45,10 +45,14 @@
 ;; initialize the package system
 (package-initialize)
 (if (require 'quelpa nil t)
-    (quelpa '(quelpa :repo "quelpa/quelpa" :fetcher github) :upgrade t)
+    (quelpa-self-upgrade)
   (with-temp-buffer
     (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
     (eval-buffer)))
+;; install use-package and the quelpa handler
+(quelpa '(use-package :fetcher github :repo "jwiegley/use-package" :files ("use-package.el")))
+(quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
+(require 'quelpa-use-package)
 
 ;;;; defvars
 ;; define minor mode to override bindings
@@ -169,7 +173,7 @@
 ;;;;; `bind' macro to define keys
 (defmacro bind (key &rest fn)
   (let ((method (if (string-match "^[[:alnum:]]\\{2\\}$" (format "%s" key))
-                          'key-chord-define-global
+                    'key-chord-define-global
                   'global-set-key)))
     `(,method (kbd ,key) ,(if (listp (car fn))
                               `(lambda () (interactive) ,@fn)
@@ -197,10 +201,6 @@
 (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 ;;;;; editing
 (bind "C-z" undo-only)
-(bind "C-S-c C-S-c" mc/edit-lines)
-(bind "C-<" mc/mark-previous-like-this)
-(bind "C->" mc/mark-next-like-this)
-(bind "C-*" mc/mark-all-like-this)
 (bind "i9" electric-indent-mode)
 (bind "ac" align-current)
 (bind "M-8" er/contract-region)
@@ -217,8 +217,6 @@
 (bind "C-h C-0" edebug-defun)
 (bind "C-h C-b" eval-buffer)
 (bind "C-h C-e" toggle-debug-on-error)
-(bind "C-h C-j" ipretty-last-sexp)
-(bind "C-h C-k" ipretty-last-sexp-other-buffer)
 (bind "C-h N" diff-hl-revert-hunk)
 ;;;;; directories
 (bind "C-h C-u" dired-jump)
@@ -269,12 +267,6 @@
 (bind "C-h C-y" projectile-find-file)
 (bind "C-h G" projectile-grep)
 (bind "C-h z" projectile-ack)
-;;;;; version control
-(bind "C-c g" magit-status)
-(bind "C-c l" magit-log)
-(bind "bm" magit-blame-mode)
-(eval-after-load "magit"
-  '(define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 ;;;;; open/start stuff
 (bind "C-h C-m" discover-my-major)
 (bind "C-h C-<return>" eww)
@@ -382,9 +374,9 @@ Call a second time to restore the original window configuration."
   "When called interactively with no active region, kill a single
 line instead."
   (interactive
-    (if mark-active (list (region-beginning) (region-end))
-      (list (line-beginning-position)
-            (line-beginning-position 2)))))
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
 
 ;;;; don't really kill *scratch*
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
@@ -656,9 +648,9 @@ line instead."
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
-(quelpa '(iedit :repo "victorhge/iedit" :fetcher github))
-(require 'iedit)
-(setq iedit-unmatched-lines-invisible-default t)
+(use-package iedit
+  :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
+  :init (setq iedit-unmatched-lines-invisible-default t))
 
 ;;;; ielm
 ;; interactively evaluate Emacs Lisp expressions
@@ -670,30 +662,44 @@ line instead."
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
-(quelpa '(ipretty :fetcher github :repo "steckerhalter/ipretty"))
-(ipretty-mode t)
+(use-package ipretty
+  :quelpa (ipretty :fetcher github :repo "steckerhalter/ipretty")
+  :config (ipretty-mode t)
+  :bind (("C-h C-j" . ipretty-last-sexp)
+         ("C-h C-k" . ipretty-last-sexp-other-buffer)))
 
 ;;;; js2-mode
 ;; extended javascript mode
-(quelpa '(js2-mode :repo "mooz/js2-mode" :fetcher github))
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-hook 'js2-mode-hook 'flycheck-mode)
+(use-package js2-mode
+  :quelpa (js2-mode :repo "mooz/js2-mode" :fetcher github)
+  :mode "\\.js$"
+  :init (add-hook 'js2-mode-hook 'flycheck-mode))
 
 ;;;; json-mode
 ;; syntax highlighting for `json'
-(quelpa '(json-mode :fetcher github :repo "joshwnj/json-mode"))
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+(use-package json-mode
+  :quelpa (json-mode :fetcher github :repo "joshwnj/json-mode")
+  :mode "\\.json\\'")
 
 ;;;; magit
 ;; Emacs interface to git
-(quelpa '(magit :fetcher github :repo "magit/magit"))
-(when (fboundp 'file-notify-add-watch)
-  (quelpa '(magit-filenotify :fetcher github :repo "magit/magit-filenotify"))
-  (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
-(setq magit-save-some-buffers nil) ;don't ask to save buffers
-(setq magit-set-upstream-on-push t) ;ask to set upstream
-(setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
-(setq magit-default-tracking-name-function 'magit-default-tracking-name-branch-only) ;don't track with origin-*
+(use-package magit
+  :quelpa (magit :fetcher github :repo "magit/magit")
+  :bind (("C-c g" . magit-status)
+         ("C-c l" . magit-log)
+         ("bm" . magit-blame-mode))
+  :config (define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
+
+(use-package magit-filenotify
+  :requires filenotify
+  :quelpa (magit-filenotify :fetcher github :repo "magit/magit-filenotify")
+  :init
+  (setq magit-save-some-buffers nil) ;don't ask to save buffers
+  (setq magit-set-upstream-on-push t) ;ask to set upstream
+  (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
+  (setq magit-default-tracking-name-function
+        'magit-default-tracking-name-branch-only) ;don't track with origin-*
+  :config (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
 
 ;;;; markdown-mode
 (quelpa '(markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git))
@@ -729,7 +735,12 @@ line instead."
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
-(quelpa '(multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el"))
+(use-package multiple-cursors
+  :quelpa (multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el")
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C->" . mc/mark-next-like-this)
+         ("C-*" . mc/mark-all-like-this)))
 
 ;;;; org
 ;; we get `org' with contrib, so if the included `htmlize' is not available we need to force an upgrade
@@ -752,7 +763,7 @@ line instead."
 (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
 (setq org-refile-use-outline-path 'file)
 (setq org-html-postamble nil)
-;(setq org-default-notes-file (concat org-directory "/todo.org"))
+                                        ;(setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-agenda-dim-blocked-tasks t)
 (add-to-list 'org-modules 'org-habit)
 (setq org-habit-graph-column 60)
@@ -856,6 +867,11 @@ line instead."
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+;;;; open-junk-file
+(use-package open-junk-file
+  :quelpa (open-junk-file :fetcher wiki)
+  :bind ("C-h j" . open-junk-file))
 
 ;;;; outshine
 (quelpa '(outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el")))
