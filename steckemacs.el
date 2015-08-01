@@ -259,16 +259,6 @@
 (bind "C-h r" google-translate-query-translate)
 (bind "C-h C-r" google-translate-query-translate-reverse)
 (bind "C-\"" shell-switcher-new-shell)
-;;;;; org/outline
-(bind "C-h t" (org-capture nil "s"))
-(bind "C-h T" org-capture)
-(bind "C-c i" org-clock-in-last)
-(bind "C-c o" org-clock-out)
-(bind "C-S-g" org-clock-goto)
-(bind "C-c C-9" org-insert-subheading)
-(bind "C-c C-0" org-insert-todo-subheading)
-(bind "C-h C-w" org-cut-subtree)
-(bind "M-# 3" outshine-insert-heading)
 ;;; `my' functions and advices
 ;;;; my-indent-whole-buffer
 (defun my-indent-whole-buffer ()
@@ -383,6 +373,15 @@ line instead."
 ;;;; apache-mode
 (use-package apache-mode
   :quelpa (apache-mode :fetcher wiki))
+
+;;;; appt
+(use-package appt
+  :init (setq
+         appt-message-warning-time 30
+         appt-display-interval 15
+         appt-display-mode-line t             ;show in the modeline
+         appt-display-format 'window)
+  :config (appt-activate 1))
 
 ;;;; back-button
 (use-package back-button
@@ -509,12 +508,13 @@ line instead."
 
 ;;;; elisp-slime-nav
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
-(quelpa '(elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github))
-(require 'elisp-slime-nav)
-(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
-  (add-hook hook 'elisp-slime-nav-mode))
-(define-key elisp-slime-nav-mode-map (kbd "C-c C-d") 'my-show-help)
-(define-key elisp-slime-nav-mode-map (kbd "C-c d") 'elisp-slime-nav-describe-elisp-thing-at-point)
+(use-package elisp-slime-nav
+  :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
+  :config
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
+    (add-hook hook 'elisp-slime-nav-mode))
+  (define-key elisp-slime-nav-mode-map (kbd "C-c C-d") 'my-show-help)
+  (define-key elisp-slime-nav-mode-map (kbd "C-c d") 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
@@ -817,120 +817,127 @@ line instead."
          ("C-*" . mc/mark-all-like-this)))
 
 ;;;; org
-;; we get `org' with contrib, so if the included `htmlize' is not available we need to force an upgrade
-(let ((quelpa-upgrade-p (not (require 'htmlize nil t))))
-  (quelpa '(org :url "git://orgmode.org/org-mode.git" :fetcher git
-                :files ("lisp/*.el" "contrib/lisp/*.el" "doc/dir" "doc/*.texi"))))
-(require 'org)
-(require 'ox-org)
-(require 'ox-md)
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(setq org-startup-folded t)
-(setq org-startup-indented nil)
-(setq org-startup-with-inline-images t)
-(setq org-startup-truncated t)
-(setq org-src-fontify-natively t)
-(setq org-src-tab-acts-natively t)
-(setq org-edit-src-content-indentation 0)
-(setq org-confirm-babel-evaluate nil)
-(setq org-use-speed-commands t)
-(setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-(setq org-refile-use-outline-path 'file)
-(setq org-html-postamble nil)
-                                        ;(setq org-default-notes-file (concat org-directory "/todo.org"))
-(setq org-agenda-dim-blocked-tasks t)
-(add-to-list 'org-modules 'org-habit)
-(setq org-habit-graph-column 60)
+(use-package org
+  :when (progn
+          ;; we get `org' with contrib, so if the included `htmlize' is not available we need to force an upgrade
+          (let ((quelpa-upgrade-p (not (require 'htmlize nil t))))
+            (quelpa '(org :url "git://orgmode.org/org-mode.git" :fetcher git
+                          :files ("lisp/*.el" "contrib/lisp/*.el" "doc/dir" "doc/*.texi"))))
+          (featurep 'htmlize))
 
-;; Don't use the same TODO state as the current heading for new heading
-(defun my-org-insert-todo-heading () (interactive) (org-insert-todo-heading t))
-(define-key org-mode-map (kbd "<M-S-return>") 'my-org-insert-todo-heading)
+  :bind
+  (("C-h T" . org-capture)
+   ("C-c i" . org-clock-in-last)
+   ("C-c o" . org-clock-out)
+   ("C-S-g" . org-clock-goto)
+   ("C-c C-9" . org-insert-subheading)
+   ("C-c C-0" . org-insert-todo-subheading)
+   ("C-h C-w" . org-cut-subtree))
 
-;;;;; agenda
-;; create the file for the agendas if it doesn't exist
-(let ((agendas "~/.agenda_files"))
-  (unless (file-readable-p agendas)
-    (with-temp-file agendas nil))
-  (setq org-agenda-files agendas))
+  :init
+  (setq org-startup-folded t)
+  (setq org-startup-indented nil)
+  (setq org-startup-with-inline-images t)
+  (setq org-startup-truncated t)
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  (setq org-edit-src-content-indentation 0)
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-use-speed-commands t)
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-html-postamble nil)
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-habit-graph-column 60)
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"
+           "WAITING(w)"
+           "SCHEDULED(s)"
+           "FUTURE(f)"
+           "|"
+           "DONE(d)")))
+  (setq org-todo-keyword-faces
+        '(("SCHEDULED" . warning)
+          ("WAITING" . font-lock-doc-face)
+          ("FUTURE" . "white")))
+  (setq org-log-into-drawer t) ;don't clutter files with state logs
 
-;; display the agenda first
-(setq org-agenda-custom-commands
-      '(("n" "Agenda and all TODO's"
-         ((alltodo "")
-          (agenda "")))))
+  :mode ("\\.org\\'" . org-mode)
 
-(setq org-agenda-start-with-log-mode t)
-(setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
-(setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
+  :config
+  (require 'ox-org)
+  (require 'ox-md)
+  (add-to-list 'org-modules 'org-habit)
+  (add-to-list 'org-structure-template-alist
+               '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
+  (add-to-list 'org-structure-template-alist
+               '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
 
-(setq
- appt-message-warning-time 30
- appt-display-interval 15
- appt-display-mode-line t      ;show in the modeline
- appt-display-format 'window)
-(appt-activate 1)              ;activate appt (appointment notification)
+  ;; Don't use the same TODO state as the current heading for new heading
+  (defun my-org-insert-todo-heading ()
+    (interactive)
+    (org-insert-todo-heading t))
+  (define-key org-mode-map (kbd "<M-S-return>") 'my-org-insert-todo-heading)
 
-;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
-(defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
-(defun my-org-mode-hook ()
-  (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
-(add-hook 'org-mode-hook 'my-org-mode-hook)
+;;;;; org-agenda
+  (use-package org-agenda
+    :init
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
+    (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
 
-(require 'notifications)
-(defun my-appt-disp-window-function (min-to-app new-time msg)
-  (notifications-notify :title (format "Appointment in %s min" min-to-app) :body msg))
-(setq appt-disp-window-function 'my-appt-disp-window-function)
-(setq appt-delete-window-function (lambda (&rest args)))
+    :config
+    ;; add state to the sorting strategy of todo
+    (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
 
-;; add state to the sorting strategy of todo
-(eval-after-load 'org-agenda
-  '(setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep)))
+    ;; create the file for the agendas if it doesn't exist
+    (let ((agendas "~/.agenda_files"))
+      (unless (file-readable-p agendas)
+        (with-temp-file agendas nil))
+      (setq org-agenda-files agendas))
 
-;;;;; templates
-(setq org-capture-templates
-      '(
-        ("t" "Task" entry (file "") "* TODO %?\n %a")
-        ("s" "Simple Task" entry (file "") "* TODO %?\n")
-        ))
+    ;; display the agenda first
+    (setq org-agenda-custom-commands
+          '(("n" "Agenda and all TODO's"
+             ((alltodo "")
+              (agenda "")))))
 
-(add-to-list 'org-structure-template-alist '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
-(add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
+    ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
+    (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
+    (defun my-org-mode-hook ()
+      (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
+    (add-hook 'org-mode-hook 'my-org-mode-hook))
 
-;;;;; todo
-(setq org-todo-keywords
-      '((sequence
-         "TODO(t)"
-         "WAITING(w)"
-         "SCHEDULED(s)"
-         "FUTURE(f)"
-         "|"
-         "DONE(d)"
-         )))
-(setq org-todo-keyword-faces
-      '(
-        ("SCHEDULED" . warning)
-        ("WAITING" . font-lock-doc-face)
-        ("FUTURE" . "white")
-        ))
-(setq org-log-into-drawer t) ;don't clutter files with state logs
+  (use-package notifications
+    :config
+    (defun my-appt-disp-window-function (min-to-app new-time msg)
+      (notifications-notify :title (format "Appointment in %s min" min-to-app) :body msg))
+    (setq appt-disp-window-function 'my-appt-disp-window-function)
+    (setq appt-delete-window-function (lambda (&rest args))))
+
+;;;;; org-capture
+  (use-package org-capture
+    :init
+    (setq org-capture-templates
+          '(("t" "Task" entry (file "") "* TODO %?\n %a")
+            ("s" "Simple Task" entry (file "") "* TODO %?\n"))))
 
 ;;;;; clocking
-(setq org-clock-idle-time 15)
-(setq org-clock-in-resume t)
-(setq org-clock-persist t)
-(setq org-clock-persist-query-resume nil)
-(when (executable-find "xprintidle")
-  (setq org-x11idle-exists-p t)
-  (setq org-clock-x11idle-program-name "xprintidle"))
-(org-clock-persistence-insinuate)
-(setq org-clock-frame-title-format (append '((t org-mode-line-string)) '(" ") frame-title-format))
-(setq org-clock-clocked-in-display 'both)
+  (use-package org-clock
+    :init
+    (setq org-clock-idle-time 15)
+    (setq org-clock-in-resume t)
+    (setq org-clock-persist t)
+    (setq org-clock-persist-query-resume nil)
+    (setq org-clock-clocked-in-display 'both)
+    (setq org-clock-frame-title-format
+          (append '((t org-mode-line-string)) '(" ") frame-title-format))
+    (when (executable-find "xprintidle")
+      (setq org-x11idle-exists-p t)
+      (setq org-clock-x11idle-program-name "xprintidle"))
 
-;;;;; org-mobile-sync
-(when (and (boundp 'org-mobile-directory) (version<= "24.3.50" emacs-version))
-  (quelpa '(org-mobile-sync :repo "steckerhalter/org-mobile-sync" :fetcher github))
-  (setq org-mobile-inbox-for-pull (concat org-directory "/todo.org"))
-  (org-mobile-sync-mode 1))
+    :config (org-clock-persistence-insinuate)))
 
 ;;;; latex
 (require 'ox-latex)
@@ -948,10 +955,12 @@ line instead."
   :bind ("C-h j" . open-junk-file))
 
 ;;;; outshine
-(quelpa '(outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el")))
-(require 'outshine)
-(add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-(add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
+(use-package outshine
+  :quelpa (outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el"))
+  :bind ("M-# 3" . outshine-insert-heading)
+  :config
+  (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
+  (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode))
 ;;;; php
 (quelpa '(php-boris :repo "tomterl/php-boris" :fetcher github))
 (quelpa '(php-boris-minor-mode :fetcher github :repo "steckerhalter/php-boris-minor-mode"))
