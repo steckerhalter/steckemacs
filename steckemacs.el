@@ -772,6 +772,8 @@ line instead."
   :bind (("C-c g" . magit-status)
          ("C-c l" . magit-log)
          ("C-h B" . magit-blame))
+  :init (setq magit-push-always-verify nil
+              git-commit-finish-query-functions nil)
   :config (define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 
 (use-package magit-filenotify
