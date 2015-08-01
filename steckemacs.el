@@ -32,13 +32,6 @@
 ;;;; maximize emacs
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
-;;;; add `elisp' load path
-;; if `~/.emacs.d/elisp/' exists add it to the load path
-(let ((default-directory "~/.emacs.d/elisp/"))
-  (unless (file-exists-p default-directory)
-    (make-directory default-directory))
-  (add-to-list 'load-path default-directory))
-
 ;;;; quelpa
 ;; disable the GNU ELPA
 (setq package-archives nil)
@@ -53,14 +46,12 @@
 (quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
 (require 'quelpa-use-package)
 
-;;;; defvars
-;; define minor mode to override bindings
+;;;; minor mode to override bindings
 (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
-;; set outline prefix
-(defvar outline-minor-mode-prefix "\M-#")
 
 ;;;; load custom user code
-(when (file-readable-p "~/.user.el") (load "~/.user.el"))
+(when (file-readable-p "~/.user.el")
+  (load "~/.user.el"))
 
 ;;;; encoding
 (set-terminal-coding-system 'utf-8)
