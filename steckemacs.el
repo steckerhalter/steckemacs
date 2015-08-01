@@ -937,17 +937,18 @@ line instead."
       (setq org-x11idle-exists-p t)
       (setq org-clock-x11idle-program-name "xprintidle"))
 
-    :config (org-clock-persistence-insinuate)))
+    :config (org-clock-persistence-insinuate))
 
 ;;;; latex
-(require 'ox-latex)
-(add-to-list 'org-latex-packages-alist '("" "minted"))
-(setq org-latex-listings 'minted)
+  (use-package ox-latex
+    :config
+    (setq org-latex-listings 'minted)
+    (setq org-latex-pdf-process
+          '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+    (add-to-list 'org-latex-packages-alist '("" "minted"))))
 
-(setq org-latex-pdf-process
-      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 ;;;; open-junk-file
 (use-package open-junk-file
@@ -961,40 +962,45 @@ line instead."
   :config
   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode))
+
 ;;;; php
-(quelpa '(php-boris :repo "tomterl/php-boris" :fetcher github))
-(quelpa '(php-boris-minor-mode :fetcher github :repo "steckerhalter/php-boris-minor-mode"))
-(quelpa '(php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
-(quelpa '(php-mode :repo "ejmr/php-mode" :fetcher github))
+(use-package php-mode
+  :quelpa '(php-mode :repo "ejmr/php-mode" :fetcher github)
 
-(require 'php-mode)
-(add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
-(setq php-mode-coding-style "Symfony2")
-(setq php-template-compatibility nil)
+  :init
 
-(dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
-  (when (file-readable-p manual)
-    (setq php-manual-path manual)))
+  (setq php-mode-coding-style "Symfony2")
+  (setq php-template-compatibility nil)
+  (dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
+    (when (file-readable-p manual)
+      (setq php-manual-path manual)))
 
-(defun my-php-completion-at-point ()
-  "Provide php completions for completion-at-point.
+  :config
+
+  (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
+
+  (defun my-php-completion-at-point ()
+    "Provide php completions for completion-at-point.
 Relies on functions of `php-mode'."
-  (let ((pattern (php-get-pattern)))
-    (when pattern
-      (list (- (point) (length pattern))
-            (point)
-            (or php-completion-table
-                (php-completion-table))
-            :exclusive 'no))))
+    (let ((pattern (php-get-pattern)))
+      (when pattern
+        (list (- (point) (length pattern))
+              (point)
+              (or php-completion-table
+                  (php-completion-table))
+              :exclusive 'no))))
 
-(defun setup-php-mode ()
-  (require 'php-align nil t)
-  (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
-  (set (make-local-variable 'company-backends)
-       '((company-capf :with company-dabbrev-code)))
-  (set (make-local-variable 'electric-indent-mode) nil)
-  (php-eldoc-enable))
-(add-hook 'php-mode-hook 'setup-php-mode)
+  (use-package php-eldoc
+    :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
+
+  (defun setup-php-mode ()
+    (require 'php-align nil t)
+    (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
+    (set (make-local-variable 'company-backends)
+         '((company-capf :with company-dabbrev-code)))
+    (set (make-local-variable 'electric-indent-mode) nil)
+    (php-eldoc-enable))
+  (add-hook 'php-mode-hook 'setup-php-mode))
 
 ;;;; prog
 (defun my-prog-mode-hook ()
