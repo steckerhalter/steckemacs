@@ -191,50 +191,27 @@
 (bind "C-h C-p" find-file)
 (bind "cg" customize-group)
 (bind "C-c m" menu-bar-mode)
-(bind "C-x C-u" my-url-insert-file-contents)
 (bind "C-c C-w" browse-url-at-point)
 ;;;;; editing
 (bind "C-z" undo-only)
-(bind "i9" electric-indent-mode)
-(bind "ac" align-current)
-(bind "M-8" er/contract-region)
 (bind "M-W" delete-region)
-(bind "fc" flycheck-mode)
 (bind "C-c q" auto-fill-mode)
 (bind "C-c w" whitespace-cleanup)
 (bind "C-h C-v" visual-line-mode)
-(bind "C-h TAB" my-indent-whole-buffer)
-;;;;; templates
-(bind "C-t q" liquid-quote)
-(bind "C-t l" liquid-tag)
 ;;;;; source
 (bind "C-h C-0" edebug-defun)
 (bind "C-h C-b" eval-buffer)
 (bind "C-h C-e" toggle-debug-on-error)
-(bind "C-h N" diff-hl-revert-hunk)
-;;;;; directories
-(bind "C-h C-u" dired-jump)
-(bind "C-h C-f" fasd-find-file)
-(eval-after-load "dired"
-  '(define-key dired-mode-map (kbd "`") 'dired-toggle-read-only))
 ;;;;; buffers
 (bind "C-x C-b" ibuffer)
 (bind "C-h C-s" save-buffer)
 (bind "C-c r" revert-buffer)
-(bind "C-x C-b" ido-switch-buffer)
 (bind "<f6>" (kill-buffer (buffer-name)))
 (bind "<f8>" (switch-to-buffer nil))
 (bind "jn" (switch-to-buffer nil))
 (bind "fv" (kill-buffer (buffer-name)))
 (bind "sv" save-buffer)
 (bind "sc" (switch-to-buffer "*scratch*"))
-(bind "<f9>" my-split-window)
-;;;;; history
-;;;;; occur
-(bind "M-2" highlight-symbol-occur)
-(bind "M-3" (highlight-symbol-jump -1))
-(bind "M-4" (highlight-symbol-jump 1))
-(bind "ok" projectile-multi-occur)
 ;;;;; windows
 (bind "C-0" (select-window (previous-window)))
 (bind "C-9" (select-window (next-window)))
@@ -242,28 +219,21 @@
 (bind "<f3>" split-window-horizontally)
 (bind "<f4>" delete-window)
 (bind "<f5>" delete-other-windows)
-(bind "<f7>" my-toggle-window-split)
 ;;;;; find/grep
 (bind "vg" vc-git-grep)
-(bind "C-h C-." elisp-slime-nav-find-elisp-thing-at-point)
 (bind "C-h g" grep-find)
 (bind "C-S-h C-S-g" find-grep-dired)
 (bind "C-h C-o" occur)
-(bind "C-h C-g" ag-project)
-(bind "C-h C-y" projectile-find-file)
-(bind "C-h G" projectile-grep)
-(bind "C-h z" projectile-ack)
 ;;;;; open/start stuff
 (bind "C-h C-<return>" eww)
 (bind "C-h M-RET" my-eww-browse-dwim)
-(bind "C-h r" google-translate-query-translate)
-(bind "C-h C-r" google-translate-query-translate-reverse)
-(bind "C-\"" shell-switcher-new-shell)
 ;;; `my' functions and advices
 ;;;; my-indent-whole-buffer
 (defun my-indent-whole-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
+
+(bind "C-h TAB" my-indent-whole-buffer)
 
 ;;;; my-show-file-name
 (defun my-show-file-name ()
@@ -310,6 +280,8 @@ Call a second time to restore the original window configuration."
     (window-configuration-to-register :my-split-window)
     (switch-to-buffer-other-window nil)))
 
+(bind "<f9>" my-split-window)
+
 ;;;; my-toggle-window-split
 (defun my-toggle-window-split ()
   (interactive)
@@ -336,11 +308,14 @@ Call a second time to restore the original window configuration."
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
+(bind "<f7>" my-toggle-window-split)
+
 ;;;; my-url-insert-file-contents
 (defun my-url-insert-file-contents (url)
   "Prompt for URL and insert file contents at point."
   (interactive "sURL: ")
   (url-insert-file-contents url))
+(bind "C-x C-u" my-url-insert-file-contents)
 
 ;;;; advice to kill single line if there is no region
 (defadvice kill-region (before slick-cut activate compile)
@@ -368,7 +343,8 @@ line instead."
 
 ;;;; ag
 (use-package ag
-  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github))
+  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github)
+  :bind ("C-h C-g" . ag-project))
 
 ;;;; apache-mode
 (use-package apache-mode
@@ -467,13 +443,15 @@ line instead."
 ;;;; diff-hl
 (use-package diff-hl
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
-  :config (global-diff-hl-mode))
+  :bind ("C-h N" . diff-hl-revert-hunk)
+  :demand
+  :config (global-diff-hl-mode 1))
 
 ;;;; dired+
 ;; dired+ adds some features to standard dired (like reusing buffers)
 (use-package dired+
   :quelpa (dired+ :fetcher wiki)
-
+  :bind ("C-h C-u" . dired-jump)
   :init
   (setq dired-auto-revert-buffer t)
   (setq dired-no-confirm
@@ -483,7 +461,9 @@ line instead."
   (setq diredp-hide-details-initially-flag nil)
   (setq diredp-hide-details-propagate-flag nil)
 
-  :config (diredp-toggle-find-file-reuse-dir 1))
+  :config
+  (diredp-toggle-find-file-reuse-dir 1)
+  (define-key dired-mode-map (kbd "`") 'dired-toggle-read-only))
 
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
@@ -510,6 +490,7 @@ line instead."
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
+  :bind ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
   :config
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
     (add-hook hook 'elisp-slime-nav-mode))
@@ -595,6 +576,7 @@ line instead."
 ;; find previous files/dirs quickly (uses `fasd' shell script)
 (use-package fasd
   :quelpa (fasd :repo "steckerhalter/emacs-fasd" :fetcher github)
+  :bind ("C-h C-f" . fasd-find-file)
   :config
   (setq fasd-completing-read-function 'helm--completing-read-default)
   (global-fasd-mode 1))
@@ -636,6 +618,8 @@ line instead."
 ;; Emacs interface to Google's translation service
 (use-package google-translate
   :quelpa (google-translate :fetcher github :repo "atykhonov/google-translate")
+  :bind (("C-h r" . google-translate-query-translate)
+         ("C-h C-r" . google-translate-query-translate-reverse))
   :init
   (setq google-translate-default-source-language "de")
   (setq google-translate-default-target-language "en"))
@@ -706,6 +690,9 @@ line instead."
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
   :init
+  (bind "M-2" highlight-symbol-occur)
+  (bind "M-3" (highlight-symbol-jump -1))
+  (bind "M-4" (highlight-symbol-jump 1))
   (setq highlight-symbol-on-navigation-p t)
   (add-hook 'prog-mode-hook 'highlight-symbol-mode))
 
@@ -721,6 +708,8 @@ line instead."
         ido-max-prospects 32
         ido-use-filename-at-point 'guess
         ido-use-faces nil)
+
+  :bind ("C-x C-b" . ido-switch-buffer)
 
   :config
   (ido-mode 1)
@@ -959,7 +948,8 @@ line instead."
 (use-package outshine
   :quelpa (outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el"))
   :bind ("M-# 3" . outshine-insert-heading)
-  :config
+  :commands outshine-hook-function
+  :init
   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode))
 
@@ -1012,9 +1002,14 @@ Relies on functions of `php-mode'."
 ;;;; projectile
 (use-package projectile
   :quelpa (quelpa '(projectile
-            :repo "bbatsov/projectile"
-            :fetcher github
-            :files ("projectile.el")))
+                    :repo "bbatsov/projectile"
+                    :fetcher github
+                    :files ("projectile.el")))
+  :bind
+  (("C-h C-y" . projectile-find-file)
+   ("C-h G" . projectile-grep)
+   ("C-h z" . projectile-ack))
+
   :init (setq projectile-completion-system 'grizzl))
 
 ;;;; rainbow-mode
@@ -1065,6 +1060,7 @@ Relies on functions of `php-mode'."
            :fetcher github
            :repo "DamienCassou/shell-switcher"
            :files ("rswitcher.el" "shell-switcher.el"))
+  :bind ("C-\"" . shell-switcher-new-shell)
   :init
   (setq shell-switcher-new-shell-function 'shell-switcher-make-ansi-term)
   (setq shell-switcher-mode t))
@@ -1089,6 +1085,8 @@ Relies on functions of `php-mode'."
 
 ;;;; skeleton
 (use-package skeleton
+  :bind (("C-t q" . liquid-quote)
+         ("C-t l" . liquid-tag))
   :config
   (define-skeleton liquid-tag
     "Inserts a liquid tag"
