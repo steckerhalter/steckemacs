@@ -923,7 +923,7 @@ line instead."
           '(("t" "Task" entry (file "") "* TODO %?\n %a")
             ("s" "Simple Task" entry (file "") "* TODO %?\n"))))
 
-;;;;; clocking
+;;;;; org-clock
   (use-package org-clock
     :init
     (setq org-clock-idle-time 15)
@@ -939,7 +939,7 @@ line instead."
 
     :config (org-clock-persistence-insinuate))
 
-;;;; latex
+;;;;; ox-latex
   (use-package ox-latex
     :config
     (setq org-latex-listings 'minted)
