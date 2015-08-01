@@ -336,7 +336,10 @@ line instead."
 ;;; Modes
 ;;;; anaconda-mode
 (use-package anaconda-mode
-  :quelpa (anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py")))
+  :quelpa (anaconda-mode
+           :fetcher github
+           :repo "proofit404/anaconda-mode"
+           :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py")))
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'eldoc-mode))
