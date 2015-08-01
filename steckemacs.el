@@ -268,7 +268,6 @@
 (bind "C-h G" projectile-grep)
 (bind "C-h z" projectile-ack)
 ;;;;; open/start stuff
-(bind "C-h C-m" discover-my-major)
 (bind "C-h C-<return>" eww)
 (bind "C-h M-RET" my-eww-browse-dwim)
 (bind "C-h C-h" helm-google)
@@ -302,28 +301,30 @@
   (kill-new (file-truename buffer-file-name)))
 
 ;;;; my-show-help
-(quelpa '(pos-tip :repo "syohex/pos-tip" :fetcher github :files ("pos-tip.el")))
-(require 'pos-tip)
-(defun my-show-help ()
-  "Show docs for symbol at point or at beginning of list if not on a symbol.
+(use-package pos-tip
+  :quelpa (pos-tip :repo "syohex/pos-tip" :fetcher github :files ("pos-tip.el"))
+  :config
+  (defun my-show-help ()
+    "Show docs for symbol at point or at beginning of list if not on a symbol.
 Pass symbol-name to the function DOC-FUNCTION."
-  (interactive)
-  (let* ((symbol (save-excursion
-                   (or (symbol-at-point)
-                       (progn (backward-up-list)
-                              (forward-char)
-                              (symbol-at-point)))))
-         (doc-string (if (fboundp symbol)
-                         (documentation symbol t)
-                       (documentation-property
-                        symbol 'variable-documentation t))))
-    (if doc-string
-        (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
-      (message "No documentation for %s" symbol))))
-(define-key lisp-mode-shared-map (kbd "C-c C-d")
-  (lambda ()
     (interactive)
-    (my-show-help)))
+    (let* ((symbol (save-excursion
+                     (or (symbol-at-point)
+                         (progn (backward-up-list)
+                                (forward-char)
+                                (symbol-at-point)))))
+           (doc-string (if (fboundp symbol)
+                           (documentation symbol t)
+                         (documentation-property
+                          symbol 'variable-documentation t))))
+      (if doc-string
+          (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
+        (message "No documentation for %s" symbol))))
+  ;; define key to show help in lisp-modes
+  (define-key lisp-mode-shared-map (kbd "C-c C-d")
+    (lambda ()
+      (interactive)
+      (my-show-help))))
 
 ;;;; my-split-window
 (defun my-split-window()
@@ -469,7 +470,9 @@ line instead."
 
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
-(quelpa '(discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
+(use-package discover-my-major
+  :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major")
+  :bind ("C-h C-m" . discover-my-major))
 
 ;;;; easy-kill
 ;; make marking and killing easier
