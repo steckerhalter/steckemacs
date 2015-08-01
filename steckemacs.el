@@ -44,13 +44,12 @@
 (setq package-archives nil)
 ;; initialize the package system
 (package-initialize)
-(if (require 'quelpa nil t)
-    (quelpa-self-upgrade)
+(setq quelpa-update-melpa-p nil)
+(unless (require 'quelpa nil t)
   (with-temp-buffer
     (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
     (eval-buffer)))
 ;; install use-package and the quelpa handler
-(quelpa '(use-package :fetcher github :repo "jwiegley/use-package" :files ("use-package.el")))
 (quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
 (require 'quelpa-use-package)
 
@@ -238,8 +237,6 @@
 ;;;;; history
 (bind "C-h C-SPC" helm-show-kill-ring)
 (bind "C-h SPC" helm-all-mark-rings)
-(bind "C-3" back-button-local-backward)
-(bind "C-4" back-button-local-forward)
 ;;;;; occur
 (bind "M-2" highlight-symbol-occur)
 (bind "M-3" (highlight-symbol-jump -1))
@@ -388,85 +385,121 @@ line instead."
 
 ;;; Modes
 ;;;; anaconda-mode
-(quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py"))))
-(add-hook 'python-mode-hook 'anaconda-mode)
-(add-hook 'python-mode-hook 'eldoc-mode)
+(use-package anaconda-mode
+  :quelpa (anaconda-mode :fetcher github :repo "proofit404/anaconda-mode" :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py")))
+  :config
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (add-hook 'python-mode-hook 'eldoc-mode))
 
 ;;;; ag
-(quelpa '(ag :repo "Wilfred/ag.el" :fetcher github))
+(use-package ag
+  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github))
 
 ;;;; apache-mode
-(quelpa '(apache-mode :fetcher wiki))
+(use-package apache-mode
+  :quelpa (apache-mode :fetcher wiki))
 
 ;;;; back-button
-(quelpa '(back-button :repo "rolandwalker/back-button" :fetcher github))
-(setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
-(require 'back-button)
-(back-button-mode 1)
+(use-package back-button
+  :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
+  :bind (("C-3" . back-button-local-backward)
+         ("C-4" . back-button-local-forward))
+  :config
+  (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
+  (back-button-mode 1))
 
 ;;;; cider
-;; cider needs queue which is in the ELPA repo but I have disabled that
-(quelpa '(queue :url "http://www.dr-qubit.org/download.php?file=predictive/queue.el" :fetcher url :version original))
-(quelpa '(cider :fetcher github :repo "clojure-emacs/cider" :files ("*.el" (:exclude ".dir-locals.el")) :old-names (nrepl)))
-(setq cider-popup-stacktraces nil)
-(setq cider-repl-popup-stacktraces nil)
-(setq cider-repl-pop-to-buffer-on-connect t)
-(setq cider-repl-use-clojure-font-lock t)
+(use-package cider
+  :when ;; cider needs queue which is in the ELPA repo but I have disabled that
+  (progn (use-package queue
+           :quelpa (queue
+                    :url "http://www.dr-qubit.org/predictive/queue.el"
+                    :fetcher url
+                    :version original))
+         (featurep 'queue))
+  :quelpa (cider
+           :fetcher github
+           :repo "clojure-emacs/cider"
+           :files ("*.el" (:exclude ".dir-locals.el"))
+           :old-names (nrepl))
+  :init
+  (setq cider-popup-stacktraces nil)
+  (setq cider-repl-popup-stacktraces nil)
+  (setq cider-repl-pop-to-buffer-on-connect t)
+  (setq cider-repl-use-clojure-font-lock t))
 
 ;;;; company
-(quelpa '(company :repo "company-mode/company-mode" :fetcher github))
-(require 'company)
-(setq company-idle-delay 0.3)
-(setq company-tooltip-limit 20)
-(setq company-minimum-prefix-length 2)
-(setq company-echo-delay 0)
-(setq company-auto-complete nil)
-(global-company-mode 1)
-(add-to-list 'company-backends 'company-dabbrev t)
-(add-to-list 'company-backends 'company-ispell t)
-(add-to-list 'company-backends 'company-files t)
-(add-to-list 'company-begin-commands 'outshine-self-insert-command)
-(setq company-backends (remove 'company-ropemacs company-backends))
+(use-package company
+  :quelpa (company :repo "company-mode/company-mode" :fetcher github)
 
-(defun my-pcomplete-capf ()
-  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
-(add-hook 'org-mode-hook #'my-pcomplete-capf)
+  :init
+  (setq company-idle-delay 0.3)
+  (setq company-tooltip-limit 20)
+  (setq company-minimum-prefix-length 2)
+  (setq company-echo-delay 0)
+  (setq company-auto-complete nil)
 
-(defun my-company-elisp-setup ()
-  (set (make-local-variable 'company-backends)
-       '((company-capf :with company-dabbrev-code))))
+  :config
+  (global-company-mode 1)
+  (add-to-list 'company-backends 'company-dabbrev t)
+  (add-to-list 'company-backends 'company-ispell t)
+  (add-to-list 'company-backends 'company-files t)
+  (add-to-list 'company-begin-commands 'outshine-self-insert-command)
+  (setq company-backends (remove 'company-ropemacs company-backends))
 
-(dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
-  (add-hook hook 'my-company-elisp-setup))
+  (defun my-pcomplete-capf ()
+    (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+  (add-hook 'org-mode-hook #'my-pcomplete-capf)
+
+  (defun my-company-elisp-setup ()
+    (set (make-local-variable 'company-backends)
+         '((company-capf :with company-dabbrev-code))))
+
+  (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
+    (add-hook hook 'my-company-elisp-setup)))
 
 ;;;; company-anaconda
-(quelpa '(company-anaconda :fetcher github :repo "proofit404/company-anaconda"))
-(add-to-list 'company-backends 'company-anaconda)
+(use-package company-anaconda
+  :quelpa (company-anaconda
+           :fetcher github
+           :repo "proofit404/company-anaconda")
+  :config (add-to-list 'company-backends 'company-anaconda))
 
 ;;;; company-web
-(quelpa '(company-web :repo "osv/company-web" :fetcher github))
-(defun my-company-web ()
-  (set (make-local-variable 'company-backends) '(company-web-html))
-  (company-mode t))
-(add-hook 'web-mode-hook 'my-company-web)
+(use-package company-web
+  :quelpa (company-web :repo "osv/company-web" :fetcher github)
+  :config
+  (defun my-company-web ()
+    (set (make-local-variable 'company-backends) '(company-web-html))
+    (company-mode t))
+  (add-hook 'web-mode-hook 'my-company-web))
+
 ;;;; company-quickhelp
-(quelpa '(company-quickhelp :fetcher github :repo "expez/company-quickhelp"))
-(setq company-quickhelp-delay 1)
-(company-quickhelp-mode 1)
+(use-package company-quickhelp
+  :quelpa (company-quickhelp :fetcher github :repo "expez/company-quickhelp")
+  :init (setq company-quickhelp-delay 1)
+  :config (company-quickhelp-mode 1))
+
 ;;;; diff-hl
-(quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
-(global-diff-hl-mode)
+(use-package diff-hl
+  :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
+  :config (global-diff-hl-mode))
 
 ;;;; dired+
 ;; dired+ adds some features to standard dired (like reusing buffers)
-(quelpa '(dired+ :fetcher wiki))
-(setq dired-auto-revert-buffer t)
-(setq dired-no-confirm '(byte-compile chgrp chmod chown copy delete load move symlink))
-(setq dired-deletion-confirmer (lambda (x) t))
-(setq wdired-allow-to-change-permissions t) ;allow changing of file permissions
-(diredp-toggle-find-file-reuse-dir 1)
-(setq diredp-hide-details-initially-flag nil)
-(setq diredp-hide-details-propagate-flag nil)
+(use-package dired+
+  :quelpa (dired+ :fetcher wiki)
+
+  :init
+  (setq dired-auto-revert-buffer t)
+  (setq dired-no-confirm
+        '(byte-compile chgrp chmod chown copy delete load move symlink))
+  (setq dired-deletion-confirmer (lambda (x) t))
+  (setq wdired-allow-to-change-permissions t) ;allow changing of file permissions
+  (setq diredp-hide-details-initially-flag nil)
+  (setq diredp-hide-details-propagate-flag nil)
+
+  :config (diredp-toggle-find-file-reuse-dir 1))
 
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
@@ -476,14 +509,18 @@ line instead."
 
 ;;;; easy-kill
 ;; make marking and killing easier
-(quelpa '(easy-kill :fetcher github :repo "leoliu/easy-kill"))
-(global-set-key [remap kill-ring-save] 'easy-kill)
-(global-set-key [remap mark-sexp] 'easy-mark)
+(use-package easy-kill
+  :quelpa (easy-kill :fetcher github :repo "leoliu/easy-kill")
+  :init
+  (global-set-key [remap kill-ring-save] 'easy-kill)
+  (global-set-key [remap mark-sexp] 'easy-mark))
 
 ;;;; eldoc
 ;; display information about a function or variable in the the echo area
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+(use-package eldoc
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
 
 ;;;; elisp-slime-nav
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
@@ -507,147 +544,186 @@ line instead."
 
 ;;;; erc
 ;; Emacs ERC client settings
-(quelpa '(erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks"))
-(add-hook 'erc-mode-hook (lambda ()
-                           (erc-truncate-mode t)
-                           (erc-fill-disable)
-                           (set (make-local-variable 'scroll-conservatively) 1000)
-                           (visual-line-mode)))
-(setq erc-timestamp-format "%H:%M "
-      erc-fill-prefix "      "
-      erc-insert-timestamp-function 'erc-insert-timestamp-left)
-(setq erc-interpret-mirc-color t)
-(setq erc-kill-buffer-on-part t)
-(setq erc-kill-server-buffer-on-quit t)
-(setq erc-kill-queries-on-quit t)
-(setq erc-kill-server-buffer-on-quit t)
-(setq erc-server-send-ping-interval 45)
-(setq erc-server-send-ping-timeout 180)
-(setq erc-server-reconnect-timeout 60)
-(erc-track-mode t)
-(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                "324" "329" "332" "333" "353" "477"))
-(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+(use-package erc
+  :quelpa (erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks")
+  :config
+  (add-hook 'erc-mode-hook (lambda ()
+                             (erc-truncate-mode t)
+                             (erc-fill-disable)
+                             (set (make-local-variable 'scroll-conservatively) 1000)
+                             (visual-line-mode)))
+  (setq erc-timestamp-format "%H:%M "
+        erc-fill-prefix "      "
+        erc-insert-timestamp-function 'erc-insert-timestamp-left)
+  (setq erc-interpret-mirc-color t)
+  (setq erc-kill-buffer-on-part t)
+  (setq erc-kill-server-buffer-on-quit t)
+  (setq erc-kill-queries-on-quit t)
+  (setq erc-kill-server-buffer-on-quit t)
+  (setq erc-server-send-ping-interval 45)
+  (setq erc-server-send-ping-timeout 180)
+  (setq erc-server-reconnect-timeout 60)
+  (erc-track-mode t)
+  (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                  "324" "329" "332" "333" "353" "477"))
+  (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 
-;; ------ template for .user.el
-;; (setq erc-prompt-for-nickserv-password nil)
-;; (setq erc-server "hostname"
-;;       erc-port 7000
-;;       erc-nick "user"
-;;       erc-user-full-name "user"
-;;       erc-email-userid "user"
-;;       erc-password "user:pw"
-;;       )
+  ;; ------ template for .user.el
+  ;; (setq erc-prompt-for-nickserv-password nil)
+  ;; (setq erc-server "hostname"
+  ;;       erc-port 7000
+  ;;       erc-nick "user"
+  ;;       erc-user-full-name "user"
+  ;;       erc-email-userid "user"
+  ;;       erc-password "user:pw"
+  ;;       )
 
-(defun my-erc-connect ()
-  "Connect with ERC or open the last active buffer."
-  (interactive)
-  (if (erc-buffer-list)
-      (erc-track-switch-buffer 1)
-    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
+  (defun my-erc-connect ()
+    "Connect with ERC or open the last active buffer."
+    (interactive)
+    (if (erc-buffer-list)
+        (erc-track-switch-buffer 1)
+      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
 
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
-(setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
+(use-package eww
+  :config
+  (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
-(defun my-eww-browse-dwim ()
-  "`eww' browse \"do what I mean\".
+  (defun my-eww-browse-dwim ()
+    "`eww' browse \"do what I mean\".
  Browse the url at point if there is one. Otherwise use the last
  kill-ring item and provide that to `eww'. If it is an url `eww'
  will browse it, if not `eww' will search for it using a search
  engine."
-  (interactive)
-  (let ((arg (or
-              (url-get-url-at-point)
-              (current-kill 0 t))))
-    (eww arg)))
+    (interactive)
+    (let ((arg (or
+                (url-get-url-at-point)
+                (current-kill 0 t))))
+      (eww arg)))
 
-;; use `eww' to browse urls
-(setq browse-url-browser-function 'eww-browse-url)
+  ;; use `eww' to browse urls
+  (setq browse-url-browser-function 'eww-browse-url))
 
 ;;;; fasd
 ;; find previous files/dirs quickly (uses `fasd' shell script)
-(quelpa '(fasd :repo "steckerhalter/emacs-fasd" :fetcher github))
-(setq fasd-completing-read-function 'helm--completing-read-default)
-(global-fasd-mode 1)
+(use-package fasd
+  :quelpa (fasd :repo "steckerhalter/emacs-fasd" :fetcher github)
+  :config
+  (setq fasd-completing-read-function 'helm--completing-read-default)
+  (global-fasd-mode 1))
 
 ;;;; flycheck
 ;; on-the-fly source code syntax checks
-
-;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
-(quelpa '(let-alist :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el" :fetcher url :version original))
-(quelpa '(flycheck :repo "flycheck/flycheck" :fetcher github))
-(add-hook 'php-mode-hook 'flycheck-mode)
-(add-hook 'sh-mode-hook 'flycheck-mode)
-(add-hook 'json-mode-hook 'flycheck-mode)
-(add-hook 'nxml-mode-hook 'flycheck-mode)
-(add-hook 'python-mode-hook 'flycheck-mode)
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
-(add-hook 'lisp-interaction-mode-hook 'flycheck-mode)
-(setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
-(setq flycheck-indication-mode 'right-fringe)
+(use-package flycheck
+  :when (progn
+          ;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
+          (quelpa '(let-alist
+                      :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
+                      :fetcher url
+                      :version original))
+          (featurep 'let-alist))
+  :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
+  :config
+  (add-hook 'php-mode-hook 'flycheck-mode)
+  (add-hook 'sh-mode-hook 'flycheck-mode)
+  (add-hook 'json-mode-hook 'flycheck-mode)
+  (add-hook 'nxml-mode-hook 'flycheck-mode)
+  (add-hook 'python-mode-hook 'flycheck-mode)
+  (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+  (add-hook 'lisp-interaction-mode-hook 'flycheck-mode)
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
+  (setq flycheck-indication-mode 'right-fringe))
 
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
-(quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
+(use-package git-modes
+  :quelpa (git-modes :fetcher github :repo "magit/git-modes")
+  :no-require t)
 
 ;;;; git-timemachine
 ;; step through historic versions of git controlled file
-(quelpa '(git-timemachine :fetcher github :repo "pidu/git-timemachine"))
+(use-package git-timemachine
+  :quelpa (git-timemachine :fetcher github :repo "pidu/git-timemachine"))
 
 ;;;; google-translate
 ;; Emacs interface to Google's translation service
-(quelpa '(google-translate :fetcher github :repo "atykhonov/google-translate"))
-(setq google-translate-default-source-language "de")
-(setq google-translate-default-target-language "en")
+(use-package google-translate
+  :quelpa (google-translate :fetcher github :repo "atykhonov/google-translate")
+  :init
+  (setq google-translate-default-source-language "de")
+  (setq google-translate-default-target-language "en"))
 
 ;;;; helm
 ;; fancy candidate selection framework
-(setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
-(quelpa '(helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh")))
-(quelpa '(helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github))
-(quelpa '(helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el")))
-(quelpa '(helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el")))
-(require 'helm-config)
-;; disable advice from async-bytecomp
-(ad-unadvise 'package--compile)
-(setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
-(helm-mode 1)
-(helm-gtags-mode 1)
-(helm-descbinds-mode)
-(setq helm-idle-delay 0.1)
-(setq helm-input-idle-delay 0.1)
-(setq helm-buffer-max-length 50)
-(setq helm-M-x-always-save-history t)
-(setq helm-buffer-details-flag nil)
-(add-to-list 'helm-completing-read-handlers-alist '(org-refile)) ;helm-mode does not do org-refile well
-(add-to-list 'helm-completing-read-handlers-alist '(org-agenda-refile)) ;same goes for org-agenda-refile
 
-(quelpa '(helm-google :fetcher github :repo "steckerhalter/helm-google"))
-(setq helm-google-use-regexp-parsing t)
+(use-package helm
+  :unless (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
+  :quelpa (helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh"))
 
-(quelpa '(helm-swoop :repo "ShingoFukuyama/helm-swoop" :fetcher github))
-(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+  :init
+  (setq helm-idle-delay 0.1)
+  (setq helm-input-idle-delay 0.1)
+  (setq helm-buffer-max-length 50)
+  (setq helm-M-x-always-save-history t)
+  (setq helm-buffer-details-flag nil)
+  (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
+  (add-to-list 'helm-completing-read-handlers-alist '(org-refile)) ;helm-mode does not do org-refile well
+  (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-refile)) ;same goes for org-agenda-refile
+
+  :config
+  (require 'helm-config)
+  ;; disable advice from async-bytecomp
+  (ad-unadvise 'package--compile)
+  (helm-mode 1)
+
+  (use-package helm-descbinds
+    :quelpa (helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github)
+    :config (helm-descbinds-mode))
+
+  (use-package helm-gtags
+    :quelpa (helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el"))
+    :config (helm-gtags-mode 1))
+
+  (use-package helm-projectile
+    :quelpa (helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el")))
+
+  (use-package helm-google
+    :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
+    :init (setq helm-google-use-regexp-parsing t))
+
+  (use-package helm-swoop
+    :quelpa (helm-swoop :repo "ShingoFukuyama/helm-swoop" :fetcher github)
+    :config (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)))
 
 ;;;; highlight-symbol
-(quelpa '(highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el"))
-(setq highlight-symbol-on-navigation-p t)
-(add-hook 'prog-mode-hook 'highlight-symbol-mode)
+(use-package highlight-symbol
+  :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
+  :init
+  (setq highlight-symbol-on-navigation-p t)
+  (add-hook 'prog-mode-hook 'highlight-symbol-mode))
 
 ;;;; ido
 ;; selection framework (used for file opening `C-x C-f' by me)
-(setq ido-enable-flex-matching t
-      ido-auto-merge-work-directories-length -1
-      ido-create-new-buffer 'always
-      ido-everywhere t
-      ido-default-buffer-method 'selected-window
-      ido-max-prospects 32
-      ido-use-filename-at-point 'guess
-      )
-(ido-mode 1)
-(quelpa '(flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el")))
-(flx-ido-mode 1)
-(setq ido-use-faces nil)
+(use-package ido
+  :init
+  (setq ido-enable-flex-matching t
+        ido-auto-merge-work-directories-length -1
+        ido-create-new-buffer 'always
+        ido-everywhere t
+        ido-default-buffer-method 'selected-window
+        ido-max-prospects 32
+        ido-use-filename-at-point 'guess
+        ido-use-faces nil)
+
+  :config
+  (ido-mode 1)
+
+  (use-package flx-ido
+    :quelpa '(flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el"))
+    :config
+    (flx-ido-mode 1)))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
@@ -657,11 +733,11 @@ line instead."
 
 ;;;; ielm
 ;; interactively evaluate Emacs Lisp expressions
-(eval-after-load 'ielm
-  '(progn
-     (add-hook 'inferior-emacs-lisp-mode-hook
-               (lambda ()
-                 (turn-on-eldoc-mode)))))
+(use-package ielm
+  :config
+  (add-hook 'inferior-emacs-lisp-mode-hook
+            (lambda ()
+              (turn-on-eldoc-mode))))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
@@ -690,7 +766,7 @@ line instead."
   :quelpa (magit :fetcher github :repo "magit/magit")
   :bind (("C-c g" . magit-status)
          ("C-c l" . magit-log)
-         ("bm" . magit-blame-mode))
+         ("C-h B" . magit-blame))
   :config (define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 
 (use-package magit-filenotify
@@ -705,36 +781,24 @@ line instead."
   :config (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
 
 ;;;; markdown-mode
-(quelpa '(markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git))
-(require 'markdown-mode)
-(setq gfm-liquid-font-lock-keywords
-      (append
-       gfm-font-lock-keywords
-       '(("{%\\|%}\\|{{\\|}}" . font-lock-comment-face)
-         ("{%\s*\\(quote\\|endquote\\|blockquote\\|endblockquote\\|codeblock\\|endcodeblock\\|pullquote\\|endpullquote\\|img\\|link\\|rawblock\\|endrawblock\\)" (1 font-lock-keyword-face))
-         ("{%\s*\\(?:quote\\|blockquote\\|codeblock\\|pullquote\\|img\\|link\\|rawblock\\)\s+\\(\\(?:\\w\\|\\.\\|_\\)+\\)" (1 font-lock-variable-name-face))
-         ("{{\s*\\(\\(?:\\w\\|\\.\\)+\\)" (1 font-lock-variable-name-face))
-         ("\s+|\s+" . font-lock-comment-face))))
-(define-derived-mode gfm-liquid-mode gfm-mode
-  "GFM Liquid Mode."
-  (set (make-local-variable 'font-lock-defaults)
-       '(gfm-liquid-font-lock-keywords)))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-liquid-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-liquid-mode))
-
-;;;;; liquid-tag skeleton
-(define-skeleton liquid-tag
-  "Inserts a liquid tag"
-  "tag: "
-  "{% " str " " _ " %}" \n
-  "{% end" str " %}")
-
-;;;;; liquid-quote skeleton
-(define-skeleton liquid-quote
-  "Inserts a liquid quote tag"
-  "tag: "
-  "{% quote " _ " %}" \n
-  "{% endquote %}")
+(use-package markdown-mode
+  :quelpa (markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git)
+  :init
+  (setq gfm-liquid-font-lock-keywords
+        (append
+         gfm-font-lock-keywords
+         '(("{%\\|%}\\|{{\\|}}" . font-lock-comment-face)
+           ("{%\s*\\(quote\\|endquote\\|blockquote\\|endblockquote\\|codeblock\\|endcodeblock\\|pullquote\\|endpullquote\\|img\\|link\\|rawblock\\|endrawblock\\)" (1 font-lock-keyword-face))
+           ("{%\s*\\(?:quote\\|blockquote\\|codeblock\\|pullquote\\|img\\|link\\|rawblock\\)\s+\\(\\(?:\\w\\|\\.\\|_\\)+\\)" (1 font-lock-variable-name-face))
+           ("{{\s*\\(\\(?:\\w\\|\\.\\)+\\)" (1 font-lock-variable-name-face))
+           ("\s+|\s+" . font-lock-comment-face))))
+  :config
+  (define-derived-mode gfm-liquid-mode gfm-mode
+    "GFM Liquid Mode."
+    (set (make-local-variable 'font-lock-defaults)
+         '(gfm-liquid-font-lock-keywords)))
+  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-liquid-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-liquid-mode)))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
@@ -973,6 +1037,20 @@ Relies on functions of `php-mode'."
 (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode)
 
 (when (file-exists-p "~/quicklisp/slime-helper.el") (load "~/quicklisp/slime-helper.el"))
+
+;;;; skeleton
+(use-package skeleton
+  :config
+  (define-skeleton liquid-tag
+    "Inserts a liquid tag"
+    "tag: "
+    "{% " str " " _ " %}" \n
+    "{% end" str " %}")
+  (define-skeleton liquid-quote
+    "Inserts a liquid quote tag"
+    "tag: "
+    "{% quote " _ " %}" \n
+    "{% endquote %}"))
 
 ;;;; sqlformat
 (quelpa '(sqlformat :fetcher github :repo "steckerhalter/sqlformat.el"))
