@@ -132,8 +132,10 @@
             kill-buffer-query-functions))
 
 ;;;; load the theme
-(quelpa '(grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
-(load-theme 'grandshell t)
+(use-package grandshell-theme
+  :if (not (custom-theme-enabled-p 'lorisan))
+  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
+  :config (load-theme 'grandshell t))
 
 ;;;; default font
 (set-face-attribute 'default nil :family "Anonymous Pro")
@@ -186,18 +188,11 @@
 (bind "C-c d" ispell-change-dictionary)
 (bind "C-t f" flyspell-buffer)
 (bind "C-t C-f" flyspell-mode)
-(bind "M-x" helm-M-x)
-(bind "C-h h" helm-projectile)
-(bind "C-h ," helm-apropos)
-(bind "C-h ." helm-info-emacs)
-(bind "C-h 4" helm-info-elisp)
-(bind "C-h 3" helm-locate-library)
 (bind "C-h C-p" find-file)
 (bind "cg" customize-group)
 (bind "C-c m" menu-bar-mode)
 (bind "C-x C-u" my-url-insert-file-contents)
 (bind "C-c C-w" browse-url-at-point)
-(define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 ;;;;; editing
 (bind "C-z" undo-only)
 (bind "i9" electric-indent-mode)
@@ -235,15 +230,10 @@
 (bind "sc" (switch-to-buffer "*scratch*"))
 (bind "<f9>" my-split-window)
 ;;;;; history
-(bind "C-h C-SPC" helm-show-kill-ring)
-(bind "C-h SPC" helm-all-mark-rings)
 ;;;;; occur
 (bind "M-2" highlight-symbol-occur)
 (bind "M-3" (highlight-symbol-jump -1))
 (bind "M-4" (highlight-symbol-jump 1))
-(bind "34" helm-imenu)
-(bind "M-i" helm-swoop)
-(bind "M-I" helm-swoop-back-to-last-point)
 (bind "ok" projectile-multi-occur)
 ;;;;; windows
 (bind "C-0" (select-window (previous-window)))
@@ -260,21 +250,16 @@
 (bind "C-S-h C-S-g" find-grep-dired)
 (bind "C-h C-o" occur)
 (bind "C-h C-g" ag-project)
-(bind "C-h C-l" helm-locate)
 (bind "C-h C-y" projectile-find-file)
 (bind "C-h G" projectile-grep)
 (bind "C-h z" projectile-ack)
 ;;;;; open/start stuff
 (bind "C-h C-<return>" eww)
 (bind "C-h M-RET" my-eww-browse-dwim)
-(bind "C-h C-h" helm-google)
 (bind "C-h r" google-translate-query-translate)
 (bind "C-h C-r" google-translate-query-translate-reverse)
-(bind "C-h C-c" helm-google-suggest)
-(bind "C-S-h C-c" helm-wikipedia-suggest)
 (bind "C-\"" shell-switcher-new-shell)
 ;;;;; org/outline
-(bind "C-h o" helm-info-org)
 (bind "C-h t" (org-capture nil "s"))
 (bind "C-h T" org-capture)
 (bind "C-c i" org-clock-in-last)
@@ -620,9 +605,9 @@ line instead."
   :when (progn
           ;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
           (quelpa '(let-alist
-                      :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
-                      :fetcher url
-                      :version original))
+                       :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
+                       :fetcher url
+                       :version original))
           (featurep 'let-alist))
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :config
@@ -639,8 +624,8 @@ line instead."
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
 (use-package git-modes
-  :quelpa (git-modes :fetcher github :repo "magit/git-modes")
-  :no-require t)
+  :defer t
+  :quelpa (git-modes :fetcher github :repo "magit/git-modes"))
 
 ;;;; git-timemachine
 ;; step through historic versions of git controlled file
@@ -661,6 +646,7 @@ line instead."
 (use-package helm
   :unless (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
   :quelpa (helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh"))
+  :commands helm-mini
 
   :init
   (setq helm-idle-delay 0.1)
@@ -669,14 +655,28 @@ line instead."
   (setq helm-M-x-always-save-history t)
   (setq helm-buffer-details-flag nil)
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
-  (add-to-list 'helm-completing-read-handlers-alist '(org-refile)) ;helm-mode does not do org-refile well
-  (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-refile)) ;same goes for org-agenda-refile
+  (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
+
+  :bind
+  (("M-x" . helm-M-x)
+   ("C-h ," . helm-apropos)
+   ("C-h ." . helm-info-emacs)
+   ("C-h 4" . helm-info-elisp)
+   ("C-h 3" . helm-locate-library)
+   ("C-h C-SPC" . helm-show-kill-ring)
+   ("C-h SPC" . helm-all-mark-rings)
+   ("C-h C-l" . helm-locate)
+   ("C-S-h C-c" . helm-wikipedia-suggest)
+   ("C-h o" . helm-info-org))
 
   :config
   (require 'helm-config)
+  (bind "34" helm-imenu)
   ;; disable advice from async-bytecomp
   (ad-unadvise 'package--compile)
   (helm-mode 1)
+  (add-to-list 'helm-completing-read-handlers-alist '(org-refile)) ;helm-mode does not do org-refile well
+  (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-refile)) ;same goes for org-agenda-refile
 
   (use-package helm-descbinds
     :quelpa (helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github)
@@ -687,14 +687,19 @@ line instead."
     :config (helm-gtags-mode 1))
 
   (use-package helm-projectile
-    :quelpa (helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el")))
+    :quelpa (helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el"))
+    :bind ("C-h h" . helm-projectile))
 
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
+    :bind (("C-h C-h" . helm-google)
+           ("C-h C-c" . helm-google-suggest))
     :init (setq helm-google-use-regexp-parsing t))
 
   (use-package helm-swoop
     :quelpa (helm-swoop :repo "ShingoFukuyama/helm-swoop" :fetcher github)
+    :bind (("M-i" . helm-swoop)
+           ("M-I" . helm-swoop-back-to-last-point))
     :config (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)))
 
 ;;;; highlight-symbol
@@ -784,6 +789,7 @@ line instead."
 (use-package markdown-mode
   :quelpa (markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git)
   :init
+  :config
   (setq gfm-liquid-font-lock-keywords
         (append
          gfm-font-lock-keywords
@@ -792,7 +798,6 @@ line instead."
            ("{%\s*\\(?:quote\\|blockquote\\|codeblock\\|pullquote\\|img\\|link\\|rawblock\\)\s+\\(\\(?:\\w\\|\\.\\|_\\)+\\)" (1 font-lock-variable-name-face))
            ("{{\s*\\(\\(?:\\w\\|\\.\\)+\\)" (1 font-lock-variable-name-face))
            ("\s+|\s+" . font-lock-comment-face))))
-  :config
   (define-derived-mode gfm-liquid-mode gfm-mode
     "GFM Liquid Mode."
     (set (make-local-variable 'font-lock-defaults)
