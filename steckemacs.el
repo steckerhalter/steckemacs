@@ -1002,63 +1002,90 @@ Relies on functions of `php-mode'."
     (php-eldoc-enable))
   (add-hook 'php-mode-hook 'setup-php-mode))
 
-;;;; prog
-(defun my-prog-mode-hook ()
-  (setq show-trailing-whitespace 1))
-(add-hook 'prog-mode-hook 'my-prog-mode-hook)
+;;;; prog-mode
+(use-package prog-mode
+  :config
+  (defun my-prog-mode-hook ()
+    (setq show-trailing-whitespace 1))
+  (add-hook 'prog-mode-hook 'my-prog-mode-hook))
 
 ;;;; projectile
-(quelpa '(projectile :repo "bbatsov/projectile" :fetcher github :files ("projectile.el")))
-(require 'projectile nil t)
-(setq projectile-completion-system 'grizzl)
+(use-package projectile
+  :quelpa (quelpa '(projectile
+            :repo "bbatsov/projectile"
+            :fetcher github
+            :files ("projectile.el")))
+  :init (setq projectile-completion-system 'grizzl))
 
 ;;;; rainbow-mode
-(quelpa '(rainbow-mode :fetcher url :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/rainbow-mode/rainbow-mode.el"))
-
-(dolist (hook '(css-mode-hook
-                html-mode-hook
-                js-mode-hook
-                emacs-lisp-mode-hook
-                org-mode-hook
-                text-mode-hook
-                ))
-  (add-hook hook 'rainbow-mode))
+(use-package rainbow-mode
+  :quelpa (rainbow-mode
+           :fetcher url
+           :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/rainbow-mode/rainbow-mode.el")
+  :config
+  (dolist (hook '(css-mode-hook
+                  html-mode-hook
+                  js-mode-hook
+                  emacs-lisp-mode-hook
+                  org-mode-hook
+                  text-mode-hook
+                  ))
+    (add-hook hook 'rainbow-mode)))
 
 ;;;; recentf
-(setq recentf-save-file (expand-file-name "~/.recentf"))
-(recentf-mode 1)
+(use-package recentf
+  :config
+  (setq recentf-save-file (expand-file-name "~/.recentf"))
+  (recentf-mode 1))
 
 ;;;; robe
-(quelpa '(robe :repo "dgutov/robe" :fetcher github :files ("robe*.el" "company-robe.el" "lib")))
-(push 'company-robe company-backends)
-(add-hook 'ruby-mode-hook 'robe-mode)
+(use-package robe
+  :quelpa (robe
+           :repo "dgutov/robe"
+           :fetcher github
+           :files ("robe*.el" "company-robe.el" "lib"))
+  :config
+  (push 'company-robe company-backends)
+  (add-hook 'ruby-mode-hook 'robe-mode))
 
 ;;;; saveplace
-(require 'saveplace)
-(setq-default save-place t)
+(use-package saveplace
+  :config (setq-default save-place t))
 
 ;;;; savehist
-(setq savehist-additional-variables '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
-(savehist-mode 1)
+(use-package savehist
+  :config
+  (setq savehist-additional-variables
+        '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
+  (savehist-mode 1))
 
 ;;;; shell-switcher
-(quelpa '(shell-switcher :fetcher github :repo "DamienCassou/shell-switcher" :files ("rswitcher.el" "shell-switcher.el")))
-(setq shell-switcher-new-shell-function 'shell-switcher-make-ansi-term)
-(setq shell-switcher-mode t)
-(require 'shell-switcher)
+(use-package shell-switcher
+  :quelpa (shell-switcher
+           :fetcher github
+           :repo "DamienCassou/shell-switcher"
+           :files ("rswitcher.el" "shell-switcher.el"))
+  :init
+  (setq shell-switcher-new-shell-function 'shell-switcher-make-ansi-term)
+  (setq shell-switcher-mode t))
 
 ;;;; smart-mode-line
-(quelpa '(smart-mode-line :repo "Bruce-Connor/smart-mode-line" :fetcher github))
-(setq sml/vc-mode-show-backend t)
-(setq sml/no-confirm-load-theme t)
-(sml/setup)
-(sml/apply-theme 'respectful)
+(use-package smart-mode-line
+  :quelpa (smart-mode-line :repo "Bruce-Connor/smart-mode-line" :fetcher github)
+
+  :init
+  (setq sml/vc-mode-show-backend t)
+  (setq sml/no-confirm-load-theme t)
+
+  :config
+  (sml/setup)
+  (sml/apply-theme 'respectful))
 
 ;;;; sgml
-(setq sgml-basic-offset 4)
-(add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode)
-
-(when (file-exists-p "~/quicklisp/slime-helper.el") (load "~/quicklisp/slime-helper.el"))
+(use-package sgml-mode
+  :config
+  (setq sgml-basic-offset 4)
+  (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode))
 
 ;;;; skeleton
 (use-package skeleton
@@ -1075,63 +1102,72 @@ Relies on functions of `php-mode'."
     "{% endquote %}"))
 
 ;;;; sqlformat
-(quelpa '(sqlformat :fetcher github :repo "steckerhalter/sqlformat.el"))
+(use-package sqlformat
+  :quelpa (sqlformat :fetcher github :repo "steckerhalter/sqlformat.el"))
 
 ;;;; stylus-mode
-(quelpa '(stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
+(use-package stylus-mode
+  :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
 
 ;;;; term
-(defun my-term-toggle-char-line-mode ()
-  "Toggle between `term-char-mode' and `term-line-mode'."
-  (interactive)
-  (when (equal major-mode 'term-mode)
-    (if (term-in-line-mode)
-        (term-char-mode)
-      (term-line-mode))))
+(use-package term
+  :config
+  (defun my-term-toggle-char-line-mode ()
+    "Toggle between `term-char-mode' and `term-line-mode'."
+    (interactive)
+    (when (equal major-mode 'term-mode)
+      (if (term-in-line-mode)
+          (term-char-mode)
+        (term-line-mode))))
 
-(defun my-term-setup ()
-  (interactive)
-  (define-key term-raw-map (kbd "C-y") 'term-send-raw)
-  (define-key term-raw-map (kbd "C-p") 'term-send-raw)
-  (define-key term-raw-map (kbd "C-n") 'term-send-raw)
-  (define-key term-raw-map (kbd "C-s") 'term-send-raw)
-  (define-key term-raw-map (kbd "C-r") 'term-send-raw)
-  (define-key term-raw-map (kbd "M-d") (lambda () (interactive) (term-send-raw-string "\ed")))
-  (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
-  (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
-  (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
-  (define-key term-raw-map (kbd "M-,") 'term-send-input)
-  (define-key term-raw-map (kbd "C-c y") 'term-paste)
-  (define-key term-raw-map (kbd "C-S-y") 'term-paste)
-  (define-key term-raw-map (kbd "C-h") nil) ;unbind C-h
-  (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
-  (define-key term-raw-map (kbd "C-7") 'my-term-toggle-char-line-mode)
-  (define-key term-mode-map (kbd "C-7") 'my-term-toggle-char-line-mode))
-(add-hook 'term-mode-hook 'my-term-setup t)
+  (defun my-term-setup ()
+    (interactive)
+    (define-key term-raw-map (kbd "C-y") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-p") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-n") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-s") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-r") 'term-send-raw)
+    (define-key term-raw-map (kbd "M-d") (lambda () (interactive) (term-send-raw-string "\ed")))
+    (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
+    (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
+    (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
+    (define-key term-raw-map (kbd "M-,") 'term-send-input)
+    (define-key term-raw-map (kbd "C-c y") 'term-paste)
+    (define-key term-raw-map (kbd "C-S-y") 'term-paste)
+    (define-key term-raw-map (kbd "C-h") nil) ;unbind C-h
+    (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
+    (define-key term-raw-map (kbd "C-7") 'my-term-toggle-char-line-mode)
+    (define-key term-mode-map (kbd "C-7") 'my-term-toggle-char-line-mode))
+  (add-hook 'term-mode-hook 'my-term-setup t))
 
 ;;;; uniquify
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-(setq uniquify-min-dir-content 2)
+(use-package uniquify
+  :config
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-min-dir-content 2))
 
 ;;;; yaml-mode
-(quelpa '(yaml-mode :repo "yoshiki/yaml-mode" :fetcher github))
+(use-package yaml-mode
+  :quelpa (yaml-mode :repo "yoshiki/yaml-mode" :fetcher github))
 
 ;;;; vlf
-(quelpa '(vlf :repo "m00natic/vlfi" :fetcher github :old-names (vlfi)))
-(setq vlf-application 'dont-ask)        ;just do it
-(setq vlf-batch-size 8192)              ;a bit more text per batch please
-(require 'vlf-setup)
+(use-package vlf
+  :quelpa (vlf :repo "m00natic/vlfi" :fetcher github :old-names (vlfi))
+  :init
+  (setq vlf-application 'dont-ask)   ;just do it
+  (setq vlf-batch-size 8192))        ;a bit more text per batch please
 
 ;;;; web-mode
-(quelpa '(web-mode :repo "fxbois/web-mode" :fetcher github))
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-enable-engine-detection t)
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
-(defun setup-web-mode ()
-  (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
-(add-hook 'web-mode-hook 'setup-web-mode)
+(use-package web-mode
+  :quelpa (web-mode :repo "fxbois/web-mode" :fetcher github)
+  :mode ("\\.html?\\'"
+         "\\.ejs?\\'")
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-enable-engine-detection t)
+  (defun setup-web-mode ()
+    (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
+  (add-hook 'web-mode-hook 'setup-web-mode))
 
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
