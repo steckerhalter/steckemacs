@@ -159,77 +159,81 @@ Call a second time to restore the original window configuration."
    ("C-h C-o" . occur)
    ("C-h C-<return>" . eww)))
 
-;;;; minor mode to override bindings
-(defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
+(use-package steckemacs-settings
+  :init
+  ;;global flags
+  (setq
+   inhibit-startup-message t
+   backup-directory-alist `((".*" . ,temporary-file-directory)) ;don't clutter my fs and put backups into tmp
+   auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+   require-final-newline t                ;auto add newline at the end of file
+   column-number-mode t                   ;show the column number
+   default-major-mode 'text-mode          ;use text mode per default
+   mouse-yank-at-point t                  ;middle click with the mouse yanks at point
+   history-length 250                     ;default is 30
+   locale-coding-system 'utf-8            ;utf-8 is default
+   tab-always-indent 'complete            ;try to complete before identing
+   confirm-nonexistent-file-or-buffer nil ;don't ask to create a buffer
+   vc-follow-symlinks t                   ;follow symlinks automatically
+   recentf-max-saved-items 5000           ;same up to 5000 recent files
+   eval-expression-print-length nil       ;do not truncate printed expressions
+   eval-expression-print-level nil        ;print nested expressions
+   send-mail-function 'sendmail-send-it
+   kill-ring-max 5000                     ;truncate kill ring after 5000 entries
+   mark-ring-max 5000                     ;truncate mark ring after 5000 entries
+   mouse-autoselect-window -.1            ;window focus follows the mouse pointer
+   mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
+   indicate-buffer-boundaries 'left       ;fringe markers
+   split-height-threshold 110             ;more readily split horziontally
+   enable-recursive-minibuffers t
+   show-paren-delay 0
+   load-prefer-newer t                    ;prefer newer .el instead of the .elc
+   split-width-threshold 160              ;split horizontally only if less than 160 columns
+   safe-local-variable-values '((engine . django)))
 
-;;;; load custom user code
-(when (file-readable-p "~/.user.el")
-  (load "~/.user.el"))
+  ;; default flags
+  (setq-default
+   tab-width 4
+   indent-tabs-mode nil                   ;use spaces instead of tabs
+   c-basic-offset 4                       ;"tab" with in c-related modes
+   c-hungry-delete-key t)                 ;delete more than one space
 
-;;;; encoding
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-language-environment "UTF-8")
-(prefer-coding-system 'utf-8)
+  ;; disable full `yes' or `no' answers
+  (defalias 'yes-or-no-p 'y-or-n-p)
 
-;;;; global flags
-(setq
- inhibit-startup-message t
- backup-directory-alist `((".*" . ,temporary-file-directory)) ;don't clutter my fs and put backups into tmp
- auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
- require-final-newline t                ;auto add newline at the end of file
- column-number-mode t                   ;show the column number
- default-major-mode 'text-mode          ;use text mode per default
- mouse-yank-at-point t                  ;middle click with the mouse yanks at point
- history-length 250                     ;default is 30
- locale-coding-system 'utf-8            ;utf-8 is default
- tab-always-indent 'complete            ;try to complete before identing
- confirm-nonexistent-file-or-buffer nil ;don't ask to create a buffer
- vc-follow-symlinks t                   ;follow symlinks automatically
- recentf-max-saved-items 5000           ;same up to 5000 recent files
- eval-expression-print-length nil       ;do not truncate printed expressions
- eval-expression-print-level nil        ;print nested expressions
- send-mail-function 'sendmail-send-it
- kill-ring-max 5000                     ;truncate kill ring after 5000 entries
- mark-ring-max 5000                     ;truncate mark ring after 5000 entries
- mouse-autoselect-window -.1            ;window focus follows the mouse pointer
- mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
- indicate-buffer-boundaries 'left       ;fringe markers
- split-height-threshold 110             ;more readily split horziontally
- enable-recursive-minibuffers t
- show-paren-delay 0
- load-prefer-newer t                    ;prefer newer .el instead of the .elc
- split-width-threshold 160              ;split horizontally only if less than 160 columns
- safe-local-variable-values '((engine . django))
- )
+  ;; minor mode to override bindings
+  (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
 
-;;;; enable narrowing
-(put 'narrow-to-region 'disabled nil)   ;narrow to region should be enabled by default
+  (provide 'steckemacs-settings)
 
-;;;; default flags
-(setq-default
- tab-width 4
- indent-tabs-mode nil                   ;use spaces instead of tabs
- c-basic-offset 4                       ;"tab" with in c-related modes
- c-hungry-delete-key t                  ;delete more than one space
- )
+  :config
 
-;;;; disabled global modes
-(blink-cursor-mode -1)       ;no cursor blinking
-(tool-bar-mode -1)           ;disable the awful toolbar
-(menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
-(scroll-bar-mode -1)         ;disable the sroll bar
+  ;; load custom user code
+  (when (file-readable-p "~/.user.el")
+    (load "~/.user.el"))
 
-;;;; disable full `yes' or `no' answers
-(defalias 'yes-or-no-p 'y-or-n-p)
+  ;; encoding
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
+  (prefer-coding-system 'utf-8)
 
-;;;; don't ask to kill buffers
-(setq kill-buffer-query-functions
-      (remq 'process-kill-buffer-query-function
-            kill-buffer-query-functions))
+  ;; disable some global modes
+  (blink-cursor-mode -1)       ;no cursor blinking
+  (tool-bar-mode -1)           ;disable the awful toolbar
+  (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
+  (scroll-bar-mode -1)         ;disable the sroll bar
 
-;;;; default font
-(set-face-attribute 'default nil :family "Anonymous Pro")
+  ;;narrow to region should be enabled by default
+  (put 'narrow-to-region 'disabled nil)
+
+  ;; don't ask to kill buffers
+  (setq kill-buffer-query-functions
+        (remq 'process-kill-buffer-query-function
+              kill-buffer-query-functions))
+
+  ;; default font
+  (set-face-attribute 'default nil :family "Anonymous Pro"))
 
 ;;; Modes
 ;;;; advice
@@ -295,15 +299,12 @@ line instead."
 
 ;;;; cider
 (use-package cider
-  :preface (defun my-install-queue ()
-             "Install `queue' which is needed by `cider'."
-             (use-package queue
-               :quelpa (queue
-                        :url "http://www.dr-qubit.org/predictive/queue.el"
-                        :fetcher url
-                        :version original)
-               :config (featurep 'queue)))
-  :when (my-install-queue)
+  :when (use-package queue
+          :quelpa (queue
+                   :url "http://www.dr-qubit.org/predictive/queue.el"
+                   :fetcher url
+                   :version original)
+          :config (featurep 'queue))
   :quelpa (cider
            :fetcher github
            :repo "clojure-emacs/cider"
@@ -530,13 +531,13 @@ line instead."
 ;;;; flycheck
 ;; on-the-fly source code syntax checks
 (use-package flycheck
-  :when (progn
-          ;; let-alist would be in GNU ELPA but I have disabled that, so I need to fetch it before flycheck (which demands that):
-          (quelpa '(let-alist
-                       :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
-                       :fetcher url
-                       :version original))
-          (featurep 'let-alist))
+  :requires let-alist
+  :when (use-package let-alist
+          :quelpa (let-alist
+                      :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
+                      :fetcher url
+                      :version original)
+          :config (featurep 'let-alist))
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :config
   (add-hook 'php-mode-hook 'flycheck-mode)
@@ -690,7 +691,7 @@ line instead."
   (ido-mode 1)
 
   (use-package flx-ido
-    :quelpa '(flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el"))
+    :quelpa (flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el"))
     :config
     (flx-ido-mode 1)))
 
@@ -936,7 +937,7 @@ line instead."
 
 ;;;; php
 (use-package php-mode
-  :quelpa '(php-mode :repo "ejmr/php-mode" :fetcher github)
+  :quelpa (php-mode :repo "ejmr/php-mode" :fetcher github)
   :mode "\\.module\\'"
   :init
   (setq php-mode-coding-style "Symfony2")
