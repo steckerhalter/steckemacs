@@ -43,6 +43,63 @@
 (quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
 (require 'quelpa-use-package)
 
+;;;; bind-key
+(use-package bind-key
+  ;; provided by `use-package'
+  :init
+  (setq bind-key-describe-special-forms t)
+  (global-unset-key (kbd "C-t"))
+
+  (defun my-switch-to-scratch () (interactive)
+         (switch-to-buffer "*scratch*"))
+  (defun my-kill-buffer () (interactive)
+         (kill-buffer (buffer-name)))
+  (defun my-switch-to-other-buffer () (interactive)
+         (switch-to-buffer nil))
+  (defun my-select-prev-window () (interactive)
+         (select-window (previous-window)))
+  (defun my-select-next-window () (interactive)
+         (select-window (next-window)))
+
+  :bind
+  (;; general
+   ("C-h x" . kill-emacs)
+   ("C-S-l" . package-list-packages)
+   ("C-c d" . ispell-change-dictionary)
+   ("C-t f" . flyspell-buffer)
+   ("C-t C-f" . flyspell-mode)
+   ("C-h C-p" . find-file)
+   ("C-c m" . menu-bar-mode)
+   ;; editing
+   ("C-z" . undo-only)
+   ("M-W" . delete-region)
+   ("C-c q" . auto-fill-mode)
+   ("C-c w" . whitespace-cleanup)
+   ("C-h C-v" . visual-line-mode)
+   ;; source
+   ("C-h C-0" . edebug-defun)
+   ("C-h C-b" . eval-buffer)
+   ("C-h C-e" . toggle-debug-on-error)
+   ;; buffers
+   ("C-x C-b" . ibuffer)
+   ("C-h C-s" . save-buffer)
+   ("C-c r" . revert-buffer)
+   ("<f6>" . my-kill-buffer)
+   ("<f8>" . my-switch-to-other-buffer)
+   ("C-." . my-switch-to-scratch)
+   ;; windows
+   ("C-0" . my-select-prev-window)
+   ("C-9" . my-select-next-window)
+   ("<f2>" . split-window-vertically)
+   ("<f3>" . split-window-horizontally)
+   ("<f4>" . delete-window)
+   ("<f5>" . delete-other-windows)
+   ;; find/grep
+   ("C-h g" . grep-find)
+   ("C-S-h C-S-g" . find-grep-dired)
+   ("C-h C-o" . occur)
+   ("C-h C-<return>" . eww)))
+
 ;;;; minor mode to override bindings
 (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
 
@@ -115,77 +172,13 @@
 ;;;; default font
 (set-face-attribute 'default nil :family "Anonymous Pro")
 
-;;; Key bindings
-;;;; prepartion
-;;;;; unset C-t
-(global-unset-key (kbd "C-t"))
-;;;;; key-chord mode
-(quelpa '(key-chord :fetcher wiki))
-(key-chord-mode 1)
-(setq key-chord-two-keys-delay 0.03)
-
-;;;;; `bind' macro to define keys
-(defmacro bind (key &rest fn)
-  (let ((method (if (string-match "^[[:alnum:]]\\{2\\}$" (format "%s" key))
-                    'key-chord-define-global
-                  'global-set-key)))
-    `(,method (kbd ,key) ,(if (listp (car fn))
-                              `(lambda () (interactive) ,@fn)
-                            `',@fn))))
-
-;;;; key definitions
-;;;;; general
-(bind "C-h x" kill-emacs)
-(bind "C-S-l" package-list-packages)
-(bind "C-c n" my-show-file-name)
-(bind "C-c d" ispell-change-dictionary)
-(bind "C-t f" flyspell-buffer)
-(bind "C-t C-f" flyspell-mode)
-(bind "C-h C-p" find-file)
-(bind "C-c m" menu-bar-mode)
-(bind "C-c C-w" browse-url-at-point)
-;;;;; editing
-(bind "C-z" undo-only)
-(bind "M-W" delete-region)
-(bind "C-c q" auto-fill-mode)
-(bind "C-c w" whitespace-cleanup)
-(bind "C-h C-v" visual-line-mode)
-;;;;; source
-(bind "C-h C-0" edebug-defun)
-(bind "C-h C-b" eval-buffer)
-(bind "C-h C-e" toggle-debug-on-error)
-;;;;; buffers
-(bind "C-x C-b" ibuffer)
-(bind "C-h C-s" save-buffer)
-(bind "C-c r" revert-buffer)
-(bind "<f6>" (kill-buffer (buffer-name)))
-(bind "<f8>" (switch-to-buffer nil))
-(bind "jn" (switch-to-buffer nil))
-(bind "fv" (kill-buffer (buffer-name)))
-(bind "sv" save-buffer)
-(bind "sc" (switch-to-buffer "*scratch*"))
-;;;;; windows
-(bind "C-0" (select-window (previous-window)))
-(bind "C-9" (select-window (next-window)))
-(bind "<f2>" split-window-vertically)
-(bind "<f3>" split-window-horizontally)
-(bind "<f4>" delete-window)
-(bind "<f5>" delete-other-windows)
-;;;;; find/grep
-(bind "vg" vc-git-grep)
-(bind "C-h g" grep-find)
-(bind "C-S-h C-S-g" find-grep-dired)
-(bind "C-h C-o" occur)
-;;;;; open/start stuff
-(bind "C-h C-<return>" eww)
-(bind "C-h M-RET" my-eww-browse-dwim)
 ;;; `my' functions and advices
 ;;;; my-indent-whole-buffer
 (defun my-indent-whole-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
 
-(bind "C-h TAB" my-indent-whole-buffer)
+(bind-key"C-h TAB" my-indent-whole-buffer)
 
 ;;;; my-show-file-name
 (defun my-show-file-name ()
@@ -193,6 +186,8 @@
   (interactive)
   (message (buffer-file-name))
   (kill-new (file-truename buffer-file-name)))
+
+(bind-key "C-c n" my-show-file-name)
 
 ;;;; my-show-help
 (use-package pos-tip
@@ -232,7 +227,7 @@ Call a second time to restore the original window configuration."
     (window-configuration-to-register :my-split-window)
     (switch-to-buffer-other-window nil)))
 
-(bind "<f9>" my-split-window)
+(bind-key "<f9>" my-split-window)
 
 ;;;; my-toggle-window-split
 (defun my-toggle-window-split ()
@@ -260,14 +255,14 @@ Call a second time to restore the original window configuration."
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-(bind "<f7>" my-toggle-window-split)
+(bind-key "<f7>" my-toggle-window-split)
 
 ;;;; my-url-insert-file-contents
 (defun my-url-insert-file-contents (url)
   "Prompt for URL and insert file contents at point."
   (interactive "sURL: ")
   (url-insert-file-contents url))
-(bind "C-x C-u" my-url-insert-file-contents)
+(bind-key "C-x C-u" my-url-insert-file-contents)
 
 ;;;; advice to kill single line if there is no region
 (defadvice kill-region (before slick-cut activate compile)
@@ -407,10 +402,8 @@ line instead."
   (setq
    custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
-
+  :bind ("C-S-g")
   :config
-  (bind "cg" customize-group)
-
   (use-package grandshell-theme
     :if (not (custom-theme-enabled-p 'lorisan))
     :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
@@ -662,11 +655,11 @@ line instead."
    ("C-h SPC" . helm-all-mark-rings)
    ("C-h C-l" . helm-locate)
    ("C-S-h C-c" . helm-wikipedia-suggest)
-   ("C-h o" . helm-info-org))
+   ("C-h o" . helm-info-org)
+   ("C-h i" . helm-imenu))
 
   :config
   (require 'helm-config)
-  (bind "34" helm-imenu)
   ;; disable advice from async-bytecomp
   (ad-unadvise 'package--compile)
   (helm-mode 1)
@@ -700,10 +693,10 @@ line instead."
 ;;;; highlight-symbol
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
+  :bind (("M-2" . highlight-symbol-occur)
+         ("M-3" . highlight-symbol-prev)
+         ("M-4" . highlight-symbol-next))
   :init
-  (bind "M-2" highlight-symbol-occur)
-  (bind "M-3" (highlight-symbol-jump -1))
-  (bind "M-4" (highlight-symbol-jump 1))
   (setq highlight-symbol-on-navigation-p t)
   (add-hook 'prog-mode-hook 'highlight-symbol-mode))
 
@@ -830,7 +823,6 @@ line instead."
   (("C-h T" . org-capture)
    ("C-c i" . org-clock-in-last)
    ("C-c o" . org-clock-out)
-   ("C-S-g" . org-clock-goto)
    ("C-c C-9" . org-insert-subheading)
    ("C-c C-0" . org-insert-todo-subheading)
    ("C-h C-w" . org-cut-subtree))
@@ -1074,7 +1066,6 @@ Relies on functions of `php-mode'."
            :fetcher github
            :repo "DamienCassou/shell-switcher"
            :files ("rswitcher.el" "shell-switcher.el"))
-  :bind ("C-\"" . shell-switcher-new-shell)
   :init
   (setq shell-switcher-new-shell-function 'shell-switcher-make-ansi-term)
   (setq shell-switcher-mode t))
