@@ -231,24 +231,25 @@ Call a second time to restore the original window configuration."
 ;;;; default font
 (set-face-attribute 'default nil :family "Anonymous Pro")
 
-;;;  advices
-;;;; advice to kill single line if there is no region
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single
-line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-;;;; don't really kill *scratch*
-(defadvice kill-buffer (around kill-buffer-around-advice activate)
-  (let ((buffer-to-kill (ad-get-arg 0)))
-    (if (equal buffer-to-kill "*scratch*")
-        (bury-buffer)
-      ad-do-it)))
-
 ;;; Modes
+;;;; advice
+(use-package advice
+  :config
+  (defadvice kill-region (before slick-cut activate compile)
+    "When called interactively with no active region, kill a single
+line instead."
+    (interactive
+     (if mark-active (list (region-beginning) (region-end))
+       (list (line-beginning-position)
+             (line-beginning-position 2)))))
+
+  (defadvice kill-buffer (around kill-buffer-around-advice activate)
+    "Don't really kill *scratch* but only bury it."
+    (let ((buffer-to-kill (ad-get-arg 0)))
+      (if (equal buffer-to-kill "*scratch*")
+          (bury-buffer)
+        ad-do-it))))
+
 ;;;; anaconda-mode
 (use-package anaconda-mode
   :quelpa (anaconda-mode
