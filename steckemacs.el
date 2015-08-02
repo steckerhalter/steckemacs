@@ -295,13 +295,15 @@ line instead."
 
 ;;;; cider
 (use-package cider
-  :when ;; cider needs queue which is in the ELPA repo but I have disabled that
-  (progn (use-package queue
-           :quelpa (queue
-                    :url "http://www.dr-qubit.org/predictive/queue.el"
-                    :fetcher url
-                    :version original))
-         (featurep 'queue))
+  :preface (defun my-install-queue ()
+             "Install `queue' which is needed by `cider'."
+             (use-package queue
+               :quelpa (queue
+                        :url "http://www.dr-qubit.org/predictive/queue.el"
+                        :fetcher url
+                        :version original)
+               :config (featurep 'queue)))
+  :when (my-install-queue)
   :quelpa (cider
            :fetcher github
            :repo "clojure-emacs/cider"
