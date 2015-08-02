@@ -52,14 +52,68 @@
 
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
+
   (defun my-kill-buffer () (interactive)
          (kill-buffer (buffer-name)))
+
   (defun my-switch-to-other-buffer () (interactive)
          (switch-to-buffer nil))
+
   (defun my-select-prev-window () (interactive)
          (select-window (previous-window)))
+
   (defun my-select-next-window () (interactive)
          (select-window (next-window)))
+
+  (defun my-indent-whole-buffer () (interactive)
+         (indent-region (point-min) (point-max)))
+
+  (defun my-split-window()
+    "Split the window to see the most recent buffer in the other window.
+Call a second time to restore the original window configuration."
+    (interactive)
+    (if (eq last-command 'my-split-window)
+        (progn
+          (jump-to-register :my-split-window)
+          (setq this-command 'my-unsplit-window))
+      (window-configuration-to-register :my-split-window)
+      (switch-to-buffer-other-window nil)))
+
+  (defun my-show-file-name ()
+    "Show the full path file name in the minibuffer."
+    (interactive)
+    (message (buffer-file-name))
+    (kill-new (file-truename buffer-file-name)))
+
+  (defun my-toggle-window-split ()
+    (interactive)
+    (if (= (count-windows) 2)
+        (let* ((this-win-buffer (window-buffer))
+               (next-win-buffer (window-buffer (next-window)))
+               (this-win-edges (window-edges (selected-window)))
+               (next-win-edges (window-edges (next-window)))
+               (this-win-2nd (not (and (<= (car this-win-edges)
+                                           (car next-win-edges))
+                                       (<= (cadr this-win-edges)
+                                           (cadr next-win-edges)))))
+               (splitter
+                (if (= (car this-win-edges)
+                       (car (window-edges (next-window))))
+                    'split-window-horizontally
+                  'split-window-vertically)))
+          (delete-other-windows)
+          (let ((first-win (selected-window)))
+            (funcall splitter)
+            (if this-win-2nd (other-window 1))
+            (set-window-buffer (selected-window) this-win-buffer)
+            (set-window-buffer (next-window) next-win-buffer)
+            (select-window first-win)
+            (if this-win-2nd (other-window 1))))))
+
+  (defun my-url-insert-file-contents (url)
+    "Prompt for URL and insert file contents at point."
+    (interactive "sURL: ")
+    (url-insert-file-contents url))
 
   :bind
   (;; general
@@ -70,6 +124,7 @@
    ("C-t C-f" . flyspell-mode)
    ("C-h C-p" . find-file)
    ("C-c m" . menu-bar-mode)
+   ("C-x C-u" . my-url-insert-file-contents)
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -87,9 +142,13 @@
    ("<f6>" . my-kill-buffer)
    ("<f8>" . my-switch-to-other-buffer)
    ("C-." . my-switch-to-scratch)
+   ("C-h TAB" . my-indent-whole-buffer)
+   ("C-c n" . my-show-file-name)
    ;; windows
    ("C-0" . my-select-prev-window)
    ("C-9" . my-select-next-window)
+   ("<f7>" . my-toggle-window-split)
+   ("<f9>" . my-split-window)
    ("<f2>" . split-window-vertically)
    ("<f3>" . split-window-horizontally)
    ("<f4>" . delete-window)
@@ -172,98 +231,7 @@
 ;;;; default font
 (set-face-attribute 'default nil :family "Anonymous Pro")
 
-;;; `my' functions and advices
-;;;; my-indent-whole-buffer
-(defun my-indent-whole-buffer ()
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-(bind-key"C-h TAB" my-indent-whole-buffer)
-
-;;;; my-show-file-name
-(defun my-show-file-name ()
-  "Show the full path file name in the minibuffer."
-  (interactive)
-  (message (buffer-file-name))
-  (kill-new (file-truename buffer-file-name)))
-
-(bind-key "C-c n" my-show-file-name)
-
-;;;; my-show-help
-(use-package pos-tip
-  :quelpa (pos-tip :repo "syohex/pos-tip" :fetcher github :files ("pos-tip.el"))
-  :config
-  (defun my-show-help ()
-    "Show docs for symbol at point or at beginning of list if not on a symbol.
-Pass symbol-name to the function DOC-FUNCTION."
-    (interactive)
-    (let* ((symbol (save-excursion
-                     (or (symbol-at-point)
-                         (progn (backward-up-list)
-                                (forward-char)
-                                (symbol-at-point)))))
-           (doc-string (if (fboundp symbol)
-                           (documentation symbol t)
-                         (documentation-property
-                          symbol 'variable-documentation t))))
-      (if doc-string
-          (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
-        (message "No documentation for %s" symbol))))
-  ;; define key to show help in lisp-modes
-  (define-key lisp-mode-shared-map (kbd "C-c C-d")
-    (lambda ()
-      (interactive)
-      (my-show-help))))
-
-;;;; my-split-window
-(defun my-split-window()
-  "Split the window to see the most recent buffer in the other window.
-Call a second time to restore the original window configuration."
-  (interactive)
-  (if (eq last-command 'my-split-window)
-      (progn
-        (jump-to-register :my-split-window)
-        (setq this-command 'my-unsplit-window))
-    (window-configuration-to-register :my-split-window)
-    (switch-to-buffer-other-window nil)))
-
-(bind-key "<f9>" my-split-window)
-
-;;;; my-toggle-window-split
-(defun my-toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
-
-(bind-key "<f7>" my-toggle-window-split)
-
-;;;; my-url-insert-file-contents
-(defun my-url-insert-file-contents (url)
-  "Prompt for URL and insert file contents at point."
-  (interactive "sURL: ")
-  (url-insert-file-contents url))
-(bind-key "C-x C-u" my-url-insert-file-contents)
-
+;;;  advices
 ;;;; advice to kill single line if there is no region
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single
@@ -997,6 +965,32 @@ Relies on functions of `php-mode'."
     (set (make-local-variable 'electric-indent-mode) nil)
     (php-eldoc-enable))
   (add-hook 'php-mode-hook 'setup-php-mode))
+
+;;;; pos-tip
+(use-package pos-tip
+  :quelpa (pos-tip :repo "syohex/pos-tip" :fetcher github :files ("pos-tip.el"))
+  :config
+  (defun my-show-help ()
+    "Show docs for symbol at point or at beginning of list if not on a symbol.
+Pass symbol-name to the function DOC-FUNCTION."
+    (interactive)
+    (let* ((symbol (save-excursion
+                     (or (symbol-at-point)
+                         (progn (backward-up-list)
+                                (forward-char)
+                                (symbol-at-point)))))
+           (doc-string (if (fboundp symbol)
+                           (documentation symbol t)
+                         (documentation-property
+                          symbol 'variable-documentation t))))
+      (if doc-string
+          (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
+        (message "No documentation for %s" symbol))))
+  ;; define key to show help in lisp-modes
+  (define-key lisp-mode-shared-map (kbd "C-c C-d")
+    (lambda ()
+      (interactive)
+      (my-show-help))))
 
 ;;;; prog-mode
 (use-package prog-mode
