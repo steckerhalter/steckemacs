@@ -28,8 +28,7 @@
 
 ;;; Code:
 
-;;; General settings
-;;;; quelpa
+;;; initialization
 ;; disable the GNU ELPA
 (setq package-archives nil)
 ;; initialize the package system
@@ -43,13 +42,14 @@
 (quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
 (require 'quelpa-use-package)
 
-;;;; bind-key
+;;; key bindings
 (use-package bind-key
   ;; provided by `use-package'
   :init
   (setq bind-key-describe-special-forms t)
   (global-unset-key (kbd "C-t"))
 
+;;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
 
@@ -115,6 +115,7 @@ Call a second time to restore the original window configuration."
     (interactive "sURL: ")
     (url-insert-file-contents url))
 
+;;;;; global key bindings
   :bind
   (;; general
    ("C-h x" . kill-emacs)
@@ -159,6 +160,7 @@ Call a second time to restore the original window configuration."
    ("C-h C-o" . occur)
    ("C-h C-<return>" . eww)))
 
+;;; settings
 (use-package steckemacs-settings
   :init
   ;;global flags
@@ -235,7 +237,7 @@ Call a second time to restore the original window configuration."
   ;; default font
   (set-face-attribute 'default nil :family "Anonymous Pro"))
 
-;;; Modes
+;;; modes (alphabetically)
 ;;;; advice
 (use-package advice
   :config
