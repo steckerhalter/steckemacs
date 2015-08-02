@@ -49,7 +49,7 @@
   (setq bind-key-describe-special-forms t)
   (global-unset-key (kbd "C-t"))
 
-;;;;; personal functions
+;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
 
@@ -115,7 +115,7 @@ Call a second time to restore the original window configuration."
     (interactive "sURL: ")
     (url-insert-file-contents url))
 
-;;;;; global key bindings
+;;;; global key bindings
   :bind
   (;; general
    ("C-h x" . kill-emacs)
@@ -929,7 +929,10 @@ line instead."
   :commands outshine-hook-function
   :init
   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-  (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode))
+  (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
+  :config
+  (use-package navi-mode
+    :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
 
 ;;;; paren
 (use-package paren
