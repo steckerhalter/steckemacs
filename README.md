@@ -2,9 +2,15 @@
 
 [![Build Status](https://travis-ci.org/steckerhalter/steckemacs.el.svg?branch=master)](https://travis-ci.org/steckerhalter/steckemacs.el)
 
-`steckemacs` Emacs configuration.
+**steckEmacs** is an init file for Emacs.
 
-What was once `steckemacs` with org-mode tangling is now just an Elisp file.
+![screenshot](https://raw.github.com/steckerhalter/steckemacs.el/master/screenshot.png "screen shot")
+
+it uses:
+
+- [use-package](https://github.com/jwiegley/use-package)  to structure the code into logical units
+- [quelpa](https://github.com/quelpa/quelpa) to install and compile all packages from source code
+- [outshine](https://github.com/tj64/outshine) for `org-mode`-like document folding: use `C-M-i' to cycle
 
 ## Setup
 
@@ -16,9 +22,11 @@ What was once `steckemacs` with org-mode tangling is now just an Elisp file.
 
 ## Usage
 
-[outshine](https://github.com/tj64/outshine) is used to navigate and structure the document (see there for more infos).
+After having symlinked the init file you can fire up Emacs.
 
-I usually run Emacs as a daemon so on startup I run with a script:
+It takes quite a while to install all the packages the first time it is run, so you might drink a beer in the meantime.
+
+I usually run Emacs as a daemon:
 
     emacs --daemon
 
@@ -35,4 +43,4 @@ This also makes sure to start the Emacs daemon if it's not running already, beca
                         mode and try connecting again
 ```
 
-Beware that on the first start it can take a long time since all the packages are fetched and installed from the internet (**you need the internets!**) with [quelpa](https://github.com/quelpa/quelpa).
+Enjoy!
