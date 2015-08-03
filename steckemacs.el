@@ -126,6 +126,7 @@ Call a second time to restore the original window configuration."
    ("C-h C-p" . find-file)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
+   ("C-h C-<return>" . eww)
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -157,8 +158,7 @@ Call a second time to restore the original window configuration."
    ;; find/grep
    ("C-h g" . grep-find)
    ("C-S-h C-S-g" . find-grep-dired)
-   ("C-h C-o" . occur)
-   ("C-h C-<return>" . eww)))
+   ("C-h C-o" . occur)))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -376,7 +376,7 @@ line instead."
   (setq
    custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
-  :bind ("C-S-g")
+  :bind ("C-S-g" . customize-group)
   :config
   (use-package grandshell-theme
     :if (not (custom-theme-enabled-p 'lorisan))
@@ -385,9 +385,9 @@ line instead."
 
 ;;;; diff-hl
 (use-package diff-hl
+  :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
   :bind ("C-h N" . diff-hl-revert-hunk)
-  :demand
   :config (global-diff-hl-mode 1))
 
 ;;;; dired+
