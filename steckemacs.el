@@ -395,6 +395,7 @@ line instead."
 (use-package dired+
   :quelpa (dired+ :fetcher wiki)
   :bind ("C-h C-u" . dired-jump)
+  :defer 1
   :init
   (setq dired-auto-revert-buffer t)
   (setq dired-no-confirm
