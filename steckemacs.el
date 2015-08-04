@@ -774,7 +774,7 @@ line instead."
 ;;;; magit
 ;; Emacs interface to git
 (use-package magit
-  :quelpa (magit :fetcher github :repo "magit/magit")
+  :quelpa
   :bind (("C-c g" . magit-status)
          ("C-c l" . magit-log)
          ("C-h B" . magit-blame))
