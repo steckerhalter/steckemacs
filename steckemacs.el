@@ -246,7 +246,7 @@ Call a second time to restore the original window configuration."
               kill-buffer-query-functions))
 
   ;; default font
-  (set-face-attribute 'default nil :family "Anonymous Pro"))
+  (set-face-attribute 'default nil :family "Anonymous Pro" :height 89))
 
 ;;; modes (alphabetically)
 ;;;; advice
@@ -591,14 +591,7 @@ line instead."
                        (#x1f300 . #x1f5ff)
                        (#x1f600 . #x1f640)
                        (#x1f680 . #x1f6ff)))
-        (set-fontset-font "fontset-default" range "Symbola")))
-    ;; different font-size for small and big displays
-    (set-face-attribute 'default
-                        frame
-                        :height (pcase (+ (x-display-pixel-width)
-                                          (x-display-pixel-height))
-                                  ((pred (> 2500)) 110)
-                                  (_ 89))))
+        (set-fontset-font "fontset-default" range "Symbola"))))
   (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
   ;; better frame title
