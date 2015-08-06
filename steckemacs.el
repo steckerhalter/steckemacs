@@ -1006,13 +1006,14 @@ Relies on functions of `php-mode'."
     :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
 
   (defun setup-php-mode ()
-    (require 'php-align nil t)
     (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
     (set (make-local-variable 'company-backends)
          '((company-capf :with company-dabbrev-code)))
     (set (make-local-variable 'electric-indent-mode) nil)
     (php-eldoc-enable))
   (add-hook 'php-mode-hook 'setup-php-mode))
+
+(message "php-mode installed")
 
 ;;;; pos-tip
 ;; Show tooltip at point
