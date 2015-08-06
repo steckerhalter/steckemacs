@@ -980,39 +980,41 @@ line instead."
 
 ;;;; php
 ;; Major mode for editing PHP code
-(quelpa '(php-mode :repo "ejmr/php-mode" :fetcher github))
-;; (use-package php-mode
-;;   :quelpa (php-mode :repo "ejmr/php-mode" :fetcher github))
-;;   :mode "\\.module\\'"
-;;   :init
-;;   (setq php-mode-coding-style "Symfony2")
-;;   (setq php-template-compatibility nil)
-;;   (dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
-;;     (when (file-readable-p manual)
-;;       (setq php-manual-path manual)))
+(use-package php-mode
+  :quelpa (php-mode
+           :repo "ejmr/php-mode"
+           :fetcher github
+           :files ("php-mode.el" "skeleton/*.el"))
+  :mode "\\.module\\'"
+  :init
+  (setq php-mode-coding-style "Symfony2")
+  (setq php-template-compatibility nil)
+  (dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
+    (when (file-readable-p manual)
+      (setq php-manual-path manual)))
 
-;;   :config
-;;   (defun my-php-completion-at-point ()
-;;     "Provide php completions for completion-at-point.
-;; Relies on functions of `php-mode'."
-;;     (let ((pattern (php-get-pattern)))
-;;       (when pattern
-;;         (list (- (point) (length pattern))
-;;               (point)
-;;               (or php-completion-table
-;;                   (php-completion-table))
-;;               :exclusive 'no))))
+  :config
+  (defun my-php-completion-at-point ()
+    "Provide php completions for completion-at-point.
+Relies on functions of `php-mode'."
+    (let ((pattern (php-get-pattern)))
+      (when pattern
+        (list (- (point) (length pattern))
+              (point)
+              (or php-completion-table
+                  (php-completion-table))
+              :exclusive 'no))))
 
-;;   (use-package php-eldoc
-;;     :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
+  (use-package php-eldoc
+    :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
 
-;;   (defun setup-php-mode ()
-;;     (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
-;;     (set (make-local-variable 'company-backends)
-;;          '((company-capf :with company-dabbrev-code)))
-;;     (set (make-local-variable 'electric-indent-mode) nil)
-;;     (php-eldoc-enable))
-;;   (add-hook 'php-mode-hook 'setup-php-mode))
+  (defun setup-php-mode ()
+    (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
+    (set (make-local-variable 'company-backends)
+         '((company-capf :with company-dabbrev-code)))
+    (set (make-local-variable 'electric-indent-mode) nil)
+    (php-eldoc-enable))
+  (add-hook 'php-mode-hook 'setup-php-mode))
 
 ;;;; pos-tip
 ;; Show tooltip at point
