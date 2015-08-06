@@ -980,8 +980,9 @@ line instead."
 
 ;;;; php
 ;; Major mode for editing PHP code
-(use-package php-mode
-  :quelpa (php-mode :repo "ejmr/php-mode" :fetcher github))
+(quelpa '(php-mode :repo "ejmr/php-mode" :fetcher github))
+;; (use-package php-mode
+;;   :quelpa (php-mode :repo "ejmr/php-mode" :fetcher github))
 ;;   :mode "\\.module\\'"
 ;;   :init
 ;;   (setq php-mode-coding-style "Symfony2")
