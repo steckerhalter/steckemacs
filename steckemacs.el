@@ -894,10 +894,10 @@ line instead."
 
 ;;;; grandshell-theme
 ;; Grand Shell color theme for Emacs > 24
-  (use-package grandshell-theme
-    :if (not (custom-theme-enabled-p 'lorisan))
-    :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
-    :config (load-theme 'grandshell t)))
+(use-package grandshell-theme
+  :if (not (custom-theme-enabled-p 'lorisan))
+  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
+  :config (load-theme 'grandshell t))
 
 ;;;; guide-key
 ;; Guide the following key bindings automatically and dynamically
