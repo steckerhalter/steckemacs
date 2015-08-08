@@ -331,6 +331,7 @@ line instead."
   (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
 
 ;;;; elec-pair
+;; Automatic parenthesis pairing
 (use-package elec-pair
   :config
   ;;auto pair brackets, parens etc.
@@ -358,6 +359,7 @@ line instead."
   (setq browse-url-browser-function 'eww-browse-url))
 
 ;;;; frame
+;; multi-frame management independent of window systems
 (use-package frame
   :config
   ;; maximize emacs
