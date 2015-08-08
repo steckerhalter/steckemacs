@@ -680,13 +680,6 @@ line instead."
     (define-key term-mode-map (kbd "C-7") 'my-term-toggle-char-line-mode))
   (add-hook 'term-mode-hook 'my-term-setup t))
 
-;;;; uniquify
-;; unique buffer names dependent on file name
-(use-package uniquify
-  :config
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-min-dir-content 2))
-
 ;;; external packages
 ;;;; anaconda-mode
 ;; Code navigation, documentation lookup and completion for Python
