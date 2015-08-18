@@ -285,6 +285,15 @@ line instead."
   ;; auto revert buffers when changed on disk
   (global-auto-revert-mode 1))
 
+;;;; browse-url
+(use-package browse-url
+  :preface
+  (defun my-browse-url-file (&optional file)
+    (interactive)
+    (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
+      (browse-url-of-file file)))
+  :bind ("C-t C-b" . my-browse-url-file))
+
 ;;;; custom
 ;; tools for declaring and initializing options
 (use-package custom
