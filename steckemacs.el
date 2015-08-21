@@ -725,12 +725,15 @@ line instead."
 ;;;; cider
 ;; Clojure Interactive Development Environment that Rocks
 (use-package cider
-  :when (use-package queue
-          :quelpa (queue
-                   :url "http://www.dr-qubit.org/predictive/queue.el"
-                   :fetcher url
-                   :version original)
-          :config (featurep 'queue))
+  :when (and (use-package queue
+               :quelpa (queue
+                        :url "http://www.dr-qubit.org/predictive/queue.el"
+                        :fetcher url
+                        :version original)
+               :config (featurep 'queue))
+             (use-package spinner
+               :quelpa (spinner :repo "Malabarba/spinner.el" :fetcher github)
+               :config (featurep 'spinner)))
   :quelpa (cider
            :fetcher github
            :repo "clojure-emacs/cider"
@@ -857,9 +860,9 @@ line instead."
   :requires let-alist
   :when (use-package let-alist
           :quelpa (let-alist
-                      :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
-                      :fetcher url
-                      :version original)
+                   :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
+                   :fetcher url
+                   :version original)
           :config (featurep 'let-alist))
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :config
