@@ -466,6 +466,15 @@ line instead."
             (lambda ()
               (turn-on-eldoc-mode))))
 
+;;;; nadvice
+(use-package nadvice
+  :init   (defun ido-find-file-advice ()
+            "Open file with sudo if we have no permissions to write."
+            (unless (and buffer-file-name
+                         (file-writable-p buffer-file-name))
+              (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+  :config (advice-add 'ido-find-file :after 'ido-find-file-advice))
+
 ;;;; org
 ;; Outline-based notes management and organizer
 (use-package org
