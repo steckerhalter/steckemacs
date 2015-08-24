@@ -349,6 +349,7 @@ line instead."
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
 (use-package eww
+  :bind ("C-t C-u" . my-eww-browse-dwim)
   :config
   (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
