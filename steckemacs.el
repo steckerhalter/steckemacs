@@ -1103,6 +1103,11 @@ line instead."
     ;; major-mode for easy buffer-navigation
     :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
 
+;;;; paredit
+(use-package paredit
+  :quelpa (paredit :url "http://mumble.net/~campbell/git/paredit.git/" :fetcher git)
+  :config (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode))
+
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
