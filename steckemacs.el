@@ -149,7 +149,6 @@ Call a second time to restore the original window configuration."
    ("C-h C-e" . toggle-debug-on-error)
    ("C-t C-s" . my-insert-package-desc-summary)
    ;; buffers
-   ("C-x C-b" . ibuffer)
    ("C-h C-s" . save-buffer)
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
@@ -433,6 +432,11 @@ line instead."
     (if (erc-buffer-list)
         (erc-track-switch-buffer 1)
       (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
+
+;;;; ibuffer
+(use-package ibuffer
+  :init (setq ibuffer-default-display-maybe-show-predicates t)
+  :bind  ("C-x C-b" . ibuffer))
 
 ;;;; ido
 ;; selection framework (used for file opening `C-x C-f' by me)
