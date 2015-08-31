@@ -1036,21 +1036,20 @@ line instead."
   :bind (("C-c g" . magit-status)
          ("C-c l" . magit-log)
          ("C-h B" . magit-blame))
-  :init (setq magit-push-always-verify nil
-              git-commit-finish-query-functions nil)
-  :config (define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
+  :init
+  (setq magit-push-always-verify nil)
+  (setq git-commit-finish-query-functions nil)
+  (setq magit-save-some-buffers nil) ;don't ask to save buffers
+  (setq magit-set-upstream-on-push t) ;ask to set upstream
+  (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
+  (setq magit-default-tracking-name-function
+        'magit-default-tracking-name-branch-only)) ;don't track with origin-*
 
 (use-package magit-filenotify
   ;; Refresh status buffer when git tree changes
   :requires filenotify
   :quelpa (magit-filenotify :fetcher github :repo "magit/magit-filenotify")
-  :init
-  (setq magit-save-some-buffers nil) ;don't ask to save buffers
-  (setq magit-set-upstream-on-push t) ;ask to set upstream
-  (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
-  (setq magit-default-tracking-name-function
-        'magit-default-tracking-name-branch-only) ;don't track with origin-*
-  :config (add-hook 'magit-status-mode-hook 'magit-filenotify-mode))
+  :config (define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
 
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
