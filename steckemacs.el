@@ -956,8 +956,6 @@ line instead."
 
   :config
   (require 'helm-config)
-  ;; disable advice from async-bytecomp
-  (ad-unadvise 'package--compile)
   (helm-mode 1)
   (add-to-list 'helm-completing-read-handlers-alist '(org-refile)) ;helm-mode does not do org-refile well
   (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-refile)) ;same goes for org-agenda-refile
@@ -1028,6 +1026,15 @@ line instead."
 (use-package json-mode
   :quelpa (json-mode :fetcher github :repo "joshwnj/json-mode")
   :mode "\\.json\\'")
+
+;;;; kurecolor
+(use-package kurecolor
+  :bind (("<C-right>" . kurecolor-increase-brightness-by-step)
+         ("<C-left>" . kurecolor-decrease-brightness-by-step)
+         ("<M-right>" . kurecolor-increase-saturation-by-step)
+         ("<M-left>" . kurecolor-decrease-saturation-by-step)
+         ("<M-S-right>" . kurecolor-increase-hue-by-step)
+         ("<M-S-left>" . kurecolor-decrease-hue-by-step)))
 
 ;;;; magit
 ;; Emacs interface to git
