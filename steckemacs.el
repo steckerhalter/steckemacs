@@ -701,7 +701,7 @@ line instead."
 ;;;; ace-window
 (use-package ace-window
   :quelpa (ace-window :repo "abo-abo/ace-window" :fetcher github)
-  :bind ("M-p" . ace-window)
+  :bind ("C-9" . ace-window)
   :init (setq aw-dispatch-always nil)
   :config (ace-window-display-mode 1))
 
