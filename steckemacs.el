@@ -59,12 +59,6 @@
   (defun my-switch-to-other-buffer () (interactive)
          (switch-to-buffer nil))
 
-  (defun my-select-prev-window () (interactive)
-         (select-window (previous-window)))
-
-  (defun my-select-next-window () (interactive)
-         (select-window (next-window)))
-
   (defun my-indent-whole-buffer () (interactive)
          (indent-region (point-min) (point-max)))
 
@@ -157,8 +151,6 @@ Call a second time to restore the original window configuration."
    ("C-h TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
    ;; windows
-   ("C-0" . my-select-prev-window)
-   ("C-9" . my-select-next-window)
    ("<f7>" . my-toggle-window-split)
    ("<f9>" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -705,6 +697,13 @@ line instead."
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'eldoc-mode))
+
+;;;; ace-window
+(use-package ace-window
+  :quelpa (ace-window :repo "abo-abo/ace-window" :fetcher github)
+  :bind ("M-p" . ace-window)
+  :init (setq aw-dispatch-always nil)
+  :config (ace-window-display-mode 1))
 
 ;;;; ag
 ;; A front-end for ag ('the silver searcher'), the C ack replacement.
