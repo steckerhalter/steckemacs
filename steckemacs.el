@@ -863,10 +863,9 @@ line instead."
 (use-package flycheck
   :requires let-alist
   :when (use-package let-alist
-          :quelpa (let-alist
-                   :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
-                   :fetcher url
-                   :version original)
+          :quelpa (let-alist :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el"
+                             :fetcher url
+                             :version original)
           :config (featurep 'let-alist))
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :config
