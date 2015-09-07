@@ -193,7 +193,8 @@ Call a second time to restore the original window configuration."
    show-paren-delay 0
    load-prefer-newer t                    ;prefer newer .el instead of the .elc
    split-width-threshold 160              ;split horizontally only if less than 160 columns
-   safe-local-variable-values '((engine . django)))
+   safe-local-variable-values '((engine . django))
+   switch-to-buffer-preserve-window-point t)
 
   ;; default flags
   (setq-default
@@ -994,6 +995,14 @@ line instead."
 (use-package iedit
   :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
   :init (setq iedit-unmatched-lines-invisible-default t))
+
+;;;; iflipb
+;; interactively flip between recently visited buffers
+(use-package iflipb
+  :quelpa (iflipb :repo "jrosdahl/iflipb" :fetcher github)
+  :init (setq iflipb-wrap-around t)
+  :bind (("C-0" . iflipb-next-buffer)
+         ("C-M-0" . iflipb-previous-buffer)))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
