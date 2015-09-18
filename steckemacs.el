@@ -56,9 +56,6 @@
   (defun my-kill-buffer () (interactive)
          (kill-buffer (buffer-name)))
 
-  (defun my-switch-to-other-buffer () (interactive)
-         (switch-to-buffer nil))
-
   (defun my-indent-whole-buffer () (interactive)
          (indent-region (point-min) (point-max)))
 
@@ -146,7 +143,6 @@ Call a second time to restore the original window configuration."
    ("C-h C-s" . save-buffer)
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
-   ("<f8>" . my-switch-to-other-buffer)
    ("C-." . my-switch-to-scratch)
    ("C-h TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
@@ -1000,9 +996,13 @@ line instead."
 ;; interactively flip between recently visited buffers
 (use-package iflipb
   :quelpa (iflipb :repo "jrosdahl/iflipb" :fetcher github)
-  :init (setq iflipb-wrap-around t)
+
+  :init
+  (setq iflipb-wrap-around t)
+  (setq iflipb-permissive-flip-back t)
+
   :bind (("C-0" . iflipb-next-buffer)
-         ("C-M-0" . iflipb-previous-buffer)))
+         ("C-8" . iflipb-previous-buffer)))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
