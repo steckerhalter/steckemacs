@@ -311,7 +311,7 @@ line instead."
   (use-package dired+
     ;; dired+ adds some features to standard dired (like reusing buffers)
     :quelpa (dired+ :fetcher wiki)
-    :bind ("C-h C-u" . dired-jump)
+    :bind ("C-]" . dired-jump)
     :defer 1
     :init
     (setq diredp-hide-details-initially-flag nil)
