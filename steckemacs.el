@@ -156,7 +156,7 @@ Call a second time to restore the original window configuration."
    ("C-0" . my-select-prev-window)
    ("C-9" . my-select-next-window)
    ("<f7>" . my-toggle-window-split)
-   ("<f9>" . my-split-window)
+   ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
    ("<f3>" . split-window-horizontally)
    ("<f4>" . delete-window)
@@ -1000,10 +1000,9 @@ line instead."
 
   :init
   (setq iflipb-wrap-around t)
-  (setq iflipb-permissive-flip-back t)
 
-  :bind (("C-0" . iflipb-next-buffer)
-         ("C-8" . iflipb-previous-buffer)))
+  :bind (("<f8>" . iflipb-next-buffer)
+         ("<f9>" . iflipb-previous-buffer)))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
