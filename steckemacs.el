@@ -1193,7 +1193,8 @@ Pass symbol-name to the function DOC-FUNCTION."
            :fetcher github
            :files ("projectile.el"))
   :bind
-  (("C-h C-y" . projectile-find-file)
+  (("C-h C-u" . projectile-find-file)
+   ("C-h C-y" . projectile-find-dir)
    ("C-h G" . projectile-grep)
    ("C-h z" . projectile-ack)
    ("C-h C-p" . projectile-switch-project))
