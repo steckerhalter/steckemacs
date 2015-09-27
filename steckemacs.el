@@ -1211,7 +1211,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   (setq projectile-switch-project-action 'projectile-dired)
   (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
-  (setq projectile-mode-line '(:eval (format " P[%s]" (projectile-project-name))))
+  (setq projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
   :config
   (projectile-global-mode 1))
