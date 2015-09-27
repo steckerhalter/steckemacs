@@ -709,6 +709,18 @@ line instead."
 
   (use-package pyenv-mode
     :quelpa (pyenv-mode :fetcher github :repo "proofit404/pyenv-mode")
+    :init
+
+    (defun projectile-pyenv-mode-set ()
+      "Set pyenv version matching project name.
+       Version must be already installed."
+      (let ((name (projectile-project-name)))
+        (if (member name (pyenv-mode-versions))
+            (pyenv-mode-set name)
+          (pyenv-mode-set "system"))))
+
+    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
+
     :config (pyenv-mode 1)))
 
 ;;;; ag
@@ -975,14 +987,7 @@ line instead."
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
     :bind (("C-h C-h" . helm-google)
            ("C-h C-c" . helm-google-suggest))
-    :init (setq helm-google-use-regexp-parsing t))
-
-  (use-package helm-swoop
-    ;; Efficiently hopping squeezed lines powered by helm interface
-    :quelpa (helm-swoop :repo "ShingoFukuyama/helm-swoop" :fetcher github)
-    :bind (("M-i" . helm-swoop)
-           ("M-I" . helm-swoop-back-to-last-point))
-    :config (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)))
+    :init (setq helm-google-use-regexp-parsing t)))
 
 ;;;; highlight-symbol
 ;; automatic and manual symbol highlighting
@@ -1190,9 +1195,16 @@ Pass symbol-name to the function DOC-FUNCTION."
   :bind
   (("C-h C-y" . projectile-find-file)
    ("C-h G" . projectile-grep)
-   ("C-h z" . projectile-ack))
+   ("C-h z" . projectile-ack)
+   ("C-h C-p" . projectile-switch-project))
 
-  :init (setq projectile-completion-system 'grizzl))
+  :init
+  (setq projectile-switch-project-action 'projectile-dired)
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-enable-caching t)
+
+  :config
+  (projectile-global-mode 1))
 
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
@@ -1254,6 +1266,14 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing .jade files
 (use-package stylus-mode
   :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
+
+(use-package swiper
+  ;; Isearch with an overview. Oh, man!
+  :quelpa (swiper :repo "abo-abo/swiper" :fetcher github :files ("swiper.el" "ivy.el" "colir.el" "ivy-hydra.el"))
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)
+         ("M-i" . ivy-resume))
+  :config (define-key isearch-mode-map (kbd "M-i") 'swiper-from-isearch))
 
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
