@@ -1309,7 +1309,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
-  t " K" 'my-keys-minor-mode-map)
+  t nil 'my-keys-minor-mode-map)
 (my-keys-minor-mode 1)
 
 ;;; steckemacs.el ends here
