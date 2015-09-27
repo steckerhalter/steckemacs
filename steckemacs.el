@@ -701,7 +701,15 @@ line instead."
            :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py")))
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook 'eldoc-mode))
+  (add-hook 'python-mode-hook 'eldoc-mode)
+
+  (use-package pip-requirements
+    ;; A major mode for editing pip requirements files
+    :quelpa (pip-requirements :repo "Wilfred/pip-requirements.el" :fetcher github))
+
+  (use-package pyenv-mode
+    :quelpa (pyenv-mode :fetcher github :repo "proofit404/pyenv-mode")
+    :config (pyenv-mode 1)))
 
 ;;;; ag
 ;; A front-end for ag ('the silver searcher'), the C ack replacement.
@@ -1175,10 +1183,10 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; projectile
 ;; Manage and navigate projects in Emacs easily
 (use-package projectile
-  :quelpa (quelpa '(projectile
-                    :repo "bbatsov/projectile"
-                    :fetcher github
-                    :files ("projectile.el")))
+  :quelpa (projectile
+           :repo "bbatsov/projectile"
+           :fetcher github
+           :files ("projectile.el"))
   :bind
   (("C-h C-y" . projectile-find-file)
    ("C-h G" . projectile-grep)
