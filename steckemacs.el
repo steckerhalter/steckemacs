@@ -438,6 +438,7 @@ line instead."
 ;;;; ido
 ;; selection framework (used for file opening `C-x C-f' by me)
 (use-package ido
+  :demand
   :init
   (setq ido-enable-flex-matching t
         ido-auto-merge-work-directories-length -1
