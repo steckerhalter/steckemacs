@@ -772,6 +772,7 @@ line instead."
 ;; Modular text completion framework
 (use-package company
   :quelpa (company :repo "company-mode/company-mode" :fetcher github)
+  :diminish company-mode
 
   :init
   (setq company-idle-delay 0.3)
@@ -850,6 +851,7 @@ line instead."
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
+  :diminish elisp-slime-nav-mode
   :config
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
     (add-hook hook 'elisp-slime-nav-mode))
@@ -930,6 +932,7 @@ line instead."
 ;; Guide the following key bindings automatically and dynamically
 (use-package guide-key
   :quelpa (guide-key :repo "kai2nenobu/guide-key" :fetcher github)
+  :diminish guide-key-mode
   :init (setq guide-key/guide-key-sequence t)
   :config (guide-key-mode 1))
 
@@ -938,6 +941,7 @@ line instead."
 (use-package helm
   :unless (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
   :quelpa (helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh"))
+  :diminish helm-mode
   :commands helm-mini
 
   :init
@@ -976,6 +980,7 @@ line instead."
   (use-package helm-gtags
     ;; GNU GLOBAL helm interface
     :quelpa (helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el"))
+    :diminish helm-gtags-mode
     :config (helm-gtags-mode 1))
 
   (use-package helm-projectile
@@ -994,6 +999,7 @@ line instead."
 ;; automatic and manual symbol highlighting
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
+  :diminish highlight-symbol-mode
   :bind (("M-2" . highlight-symbol-occur)
          ("M-3" . highlight-symbol-prev)
          ("M-4" . highlight-symbol-next))
@@ -1112,6 +1118,7 @@ line instead."
 (use-package outshine
   :quelpa (outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el"))
   :bind ("M-# 3" . outshine-insert-heading)
+  :diminish outline-minor-mode
   :commands outshine-hook-function
   :init
   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
@@ -1204,6 +1211,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   (setq projectile-switch-project-action 'projectile-dired)
   (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
+  (setq projectile-mode-line '(:eval (format " P[%s]" (projectile-project-name))))
 
   :config
   (projectile-global-mode 1))
@@ -1214,6 +1222,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   :quelpa (rainbow-mode
            :fetcher url
            :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/rainbow-mode/rainbow-mode.el")
+  :diminish rainbow-mode
   :config
   (dolist (hook '(css-mode-hook
                   html-mode-hook
