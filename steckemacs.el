@@ -1234,17 +1234,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   (push 'company-robe company-backends)
   (add-hook 'ruby-mode-hook 'robe-mode))
 
-;;;; shell-switcher
-;; Provide fast switching between shell buffers
-(use-package shell-switcher
-  :quelpa (shell-switcher
-           :fetcher github
-           :repo "DamienCassou/shell-switcher"
-           :files ("rswitcher.el" "shell-switcher.el"))
-  :init
-  (setq shell-switcher-new-shell-function 'shell-switcher-make-ansi-term)
-  (setq shell-switcher-mode t))
-
 ;;;; smart-mode-line
 ;; A color coded smart mode-line.
 (use-package smart-mode-line
@@ -1275,6 +1264,11 @@ Pass symbol-name to the function DOC-FUNCTION."
          ("C-r" . swiper)
          ("M-i" . ivy-resume))
   :config (define-key isearch-mode-map (kbd "M-i") 'swiper-from-isearch))
+
+;;;; term+
+(use-package term+mux
+  :quelpa (term+mux :repo "tarao/term-plus-mux-el" :fetcher github)
+  :bind ("C-'" . term+mux-new))
 
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
