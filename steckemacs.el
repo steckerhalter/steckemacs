@@ -1278,7 +1278,11 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; term+
 (use-package term+mux
   :quelpa (term+mux :repo "tarao/term-plus-mux-el" :fetcher github)
-  :bind ("C-'" . term+mux-new))
+  :bind ("C-'" . term+mux-other-window)
+  :config
+  (define-key term-raw-map (kbd "M-8") 'term+mux-new)
+  (define-key term-raw-map (kbd "M-9") 'tab-group:next)
+  (define-key term-raw-map (kbd "M-0") 'tab-group:prev))
 
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
