@@ -1022,7 +1022,9 @@ line instead."
   ;; wrap around list
   (setq iflipb-wrap-around t)
   ;; don't ignore buffers starting with * (like magit etc.)
-  (setq iflipb-ignore-buffers '("*helm mini*"))
+  (setq iflipb-ignore-buffers '("*helm mini*"
+                                "*magit-diff: .*"
+                                "*Quail Completions*"))
 
   :bind (("<f8>" . iflipb-next-buffer)
          ("<f9>" . iflipb-previous-buffer)))
