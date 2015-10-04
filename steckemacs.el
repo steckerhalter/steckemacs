@@ -1024,7 +1024,9 @@ line instead."
   ;; don't ignore buffers starting with * (like magit etc.)
   (setq iflipb-ignore-buffers '("*helm.**"
                                 "*magit-diff: .*"
-                                "*Quail Completions*"))
+                                "*Quail Completions*"
+                                "*Completions*"
+                                "*anaconda-mode*"))
 
   :bind (("<f8>" . iflipb-next-buffer)
          ("<f9>" . iflipb-previous-buffer)))
