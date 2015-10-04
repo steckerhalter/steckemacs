@@ -550,7 +550,7 @@ line instead."
       (setq org-agenda-files agendas))
 
     ;; display the agenda first
-    (setq org-agenda-custom-commands
+v    (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
              ((alltodo "")
               (agenda "")))))
@@ -664,14 +664,6 @@ line instead."
 ;; general command interpreter in a window stuff
 (use-package term
   :config
-  (defun my-term-toggle-char-line-mode ()
-    "Toggle between `term-char-mode' and `term-line-mode'."
-    (interactive)
-    (when (equal major-mode 'term-mode)
-      (if (term-in-line-mode)
-          (term-char-mode)
-        (term-line-mode))))
-
   (defun my-term-setup ()
     (interactive)
     (define-key term-raw-map (kbd "C-y") 'term-send-raw)
@@ -687,9 +679,7 @@ line instead."
     (define-key term-raw-map (kbd "C-c y") 'term-paste)
     (define-key term-raw-map (kbd "C-S-y") 'term-paste)
     (define-key term-raw-map (kbd "C-h") nil) ;unbind C-h
-    (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
-    (define-key term-raw-map (kbd "C-7") 'my-term-toggle-char-line-mode)
-    (define-key term-mode-map (kbd "C-7") 'my-term-toggle-char-line-mode))
+    (define-key term-raw-map (kbd "M-x") nil)) ;unbind M-x
   (add-hook 'term-mode-hook 'my-term-setup t))
 
 ;;; external packages
