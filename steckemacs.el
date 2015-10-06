@@ -550,7 +550,7 @@ line instead."
       (setq org-agenda-files agendas))
 
     ;; display the agenda first
-v    (setq org-agenda-custom-commands
+    (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
              ((alltodo "")
               (agenda "")))))
