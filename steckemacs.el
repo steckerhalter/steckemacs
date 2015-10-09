@@ -1065,7 +1065,16 @@ line instead."
   (setq magit-set-upstream-on-push t) ;ask to set upstream
   (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
   (setq magit-default-tracking-name-function
-        'magit-default-tracking-name-branch-only)) ;don't track with origin-*
+        'magit-default-tracking-name-branch-only) ;don't track with origin-*
+
+  :config (use-package git-auto-commit-mode
+            :quelpa (git-auto-commit-mode :fetcher github
+                                          :repo "ryuslash/git-auto-commit-mode")
+            :commands gac-commit
+            :config
+            (defun gac ()
+              (interactive)
+              (gac-commit))))
 
 (use-package magit-filenotify
   ;; Refresh status buffer when git tree changes
