@@ -965,6 +965,7 @@ line instead."
   (helm-mode 1)
   (add-to-list 'helm-completing-read-handlers-alist '(org-refile)) ;helm-mode does not do org-refile well
   (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-refile)) ;same goes for org-agenda-refile
+  (add-to-list 'helm-completing-read-handlers-alist '(dired-create-directory))
 
   (use-package helm-descbinds
     ;; Yet Another `describe-bindings' with `helm'.
