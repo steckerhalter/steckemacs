@@ -310,6 +310,10 @@ line instead."
 
   :config
   (define-key dired-mode-map (kbd "`") 'dired-toggle-read-only)
+  ;; make rename use ido and not helm
+  (put 'dired-do-rename 'ido 'find-file)
+  ;; make copy use ido and not helm
+  (put 'dired-do-copy 'ido 'find-file)
 
   (use-package wdired
     :init
