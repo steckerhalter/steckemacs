@@ -683,7 +683,8 @@ line instead."
     (define-key term-raw-map (kbd "C-c y") 'term-paste)
     (define-key term-raw-map (kbd "C-S-y") 'term-paste)
     (define-key term-raw-map (kbd "C-h") nil) ;unbind C-h
-    (define-key term-raw-map (kbd "M-x") nil)) ;unbind M-x
+    (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
+    (define-key term-raw-map (kbd "C-]") nil))
   (add-hook 'term-mode-hook 'my-term-setup t))
 
 ;;; external packages
