@@ -1282,9 +1282,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package swiper
   ;; Isearch with an overview. Oh, man!
   :quelpa (swiper :repo "abo-abo/swiper" :fetcher github :files ("swiper.el" "ivy.el" "colir.el" "ivy-hydra.el"))
-  :bind (("C-s" . swiper)
-         ("C-r" . swiper)
-         ("M-i" . ivy-resume))
   :config (define-key isearch-mode-map (kbd "M-i") 'swiper-from-isearch))
 
 ;;;; term+
