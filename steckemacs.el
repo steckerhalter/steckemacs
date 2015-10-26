@@ -1076,7 +1076,7 @@ line instead."
   :config (use-package git-auto-commit-mode
             :quelpa (git-auto-commit-mode :fetcher github
                                           :repo "ryuslash/git-auto-commit-mode")
-            :commands gac-commit
+            :commands (gac-commit gac)
             :config
             (defun gac ()
               (interactive)
