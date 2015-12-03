@@ -986,6 +986,19 @@ line instead."
            ("C-h C-c" . helm-google-suggest))
     :init (setq helm-google-use-regexp-parsing t)))
 
+;;;; highlight-parentheses
+(use-package highlight-parentheses
+  :quelpa (highlight-parentheses :repo "nschum/highlight-parentheses.el"
+                                 :fetcher github)
+  :init
+  (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
+  (setq hl-paren-delay 0.2)
+  (setq hl-paren-colors '("Springgreen3"
+                          "IndianRed1"
+                          "IndianRed3"
+                          "IndianRed4"))
+  :config
+  (set-face-attribute 'hl-paren-face nil :weight 'ultra-bold))
 ;;;; highlight-symbol
 ;; automatic and manual symbol highlighting
 (use-package highlight-symbol
