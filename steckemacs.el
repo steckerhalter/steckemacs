@@ -475,13 +475,8 @@ line instead."
 ;;;; org
 ;; Outline-based notes management and organizer
 (use-package org
-  :when (progn
-          ;; we get `org' with contrib, so if the included `htmlize' is not available we need to force an upgrade
-          (let ((quelpa-upgrade-p (not (require 'htmlize nil t))))
-            (quelpa '(org :url "git://orgmode.org/org-mode.git" :fetcher git
-                          :files ("lisp/*.el" "contrib/lisp/*.el" "doc/dir" "doc/*.texi"))))
-          (featurep 'htmlize))
-
+  :quelpa (org :url "git://orgmode.org/org-mode.git" :fetcher git
+               :files ("lisp/*.el" "contrib/lisp/*.el" "doc/dir" "doc/*.texi"))
   :bind
   (("C-h T" . org-capture)
    ("C-c i" . org-clock-in-last)
