@@ -788,7 +788,12 @@ line instead."
          '((company-capf :with company-dabbrev-code))))
 
   (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook 'my-company-elisp-setup)))
+    (add-hook hook 'my-company-elisp-setup))
+
+  (use-package company-statistics
+    ;; Usage based completion sorting
+    :quelpa (company-statistics :repo "company-mode/company-statistics" :fetcher github)
+    :config (company-statistics-mode)))
 
 ;;;; company-anaconda
 ;; Anaconda backend for company-mode
