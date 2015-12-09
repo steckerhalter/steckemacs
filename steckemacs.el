@@ -197,6 +197,7 @@ Call a second time to restore the original window configuration."
    show-paren-delay 0
    load-prefer-newer t                    ;prefer newer .el instead of the .elc
    split-width-threshold 160              ;split horizontally only if less than 160 columns
+   gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t)
 
