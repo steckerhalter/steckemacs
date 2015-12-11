@@ -1301,7 +1301,8 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; term+
 (use-package term+mux
   :quelpa (term+mux :repo "tarao/term-plus-mux-el" :fetcher github)
-  :bind ("C-'" . term+mux-other-window)
+  :bind (("C-'" . term+mux-other-window)
+         ("C-\"" . term+mux-new))
   :config
   (define-key term-raw-map (kbd "M-8") 'term+mux-new)
   (define-key term-raw-map (kbd "M-9") 'tab-group:next)
