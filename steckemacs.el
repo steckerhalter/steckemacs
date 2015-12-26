@@ -726,6 +726,20 @@ line instead."
 (use-package apache-mode
   :quelpa (apache-mode :fetcher wiki))
 
+;;;; auctex
+;; enhanced LaTeX mode
+(setq TeX-PDF-mode t)
+(setq TeX-parse-self t)
+(setq TeX-auto-save t)
+(setq TeX-save-query nil)
+(add-hook 'doc-view-mode-hook 'auto-revert-mode)
+(add-hook 'TeX-mode-hook
+          '(lambda ()
+             (define-key TeX-mode-map (kbd "<C-f8>")
+               (lambda ()
+                 (interactive)
+                 (TeX-command-menu "LaTeX")))))
+
 ;;;; back-button
 ;; Visual navigation through mark rings
 (use-package back-button
@@ -745,6 +759,11 @@ line instead."
                         :fetcher url
                         :version original)
                :config (featurep 'queue))
+             (use-package seq
+               :quelpa (seq
+                        :repo "NicolasPetton/seq.el"
+                        :fetcher github)
+               :config (featurep 'seq))
              (use-package spinner
                :quelpa (spinner :repo "Malabarba/spinner.el" :fetcher github)
                :config (featurep 'spinner)))
