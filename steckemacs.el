@@ -939,9 +939,7 @@ line instead."
 ;;;; grandshell-theme
 ;; Grand Shell color theme for Emacs > 24
 (use-package grandshell-theme
-  :if (not (custom-theme-enabled-p 'lorisan))
-  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
-  :config (load-theme 'grandshell t))
+  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
 
 ;;;; guide-key
 ;; Guide the following key bindings automatically and dynamically
@@ -1089,6 +1087,11 @@ line instead."
          ("<M-left>" . kurecolor-decrease-saturation-by-step)
          ("<M-S-right>" . kurecolor-increase-hue-by-step)
          ("<M-S-left>" . kurecolor-decrease-hue-by-step)))
+
+;;;; lorisan-theme
+(use-package lorisan-theme
+  :quelpa (lorisan-theme :repo "hubisan/lorisan-theme" :fetcher github)
+  :config (load-theme 'lorisan t))
 
 ;;;; magit
 ;; Emacs interface to git
