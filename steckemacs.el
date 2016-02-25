@@ -1131,6 +1131,7 @@ line instead."
   :mode
   ("\\.markdown\\'" . gfm-liquid-mode)
   ("\\.md\\'" . gfm-liquid-mode)
+  ("\\.lr\\'" . gfm-mode)
   :config
   (setq gfm-liquid-font-lock-keywords
         (append
