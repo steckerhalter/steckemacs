@@ -1007,7 +1007,15 @@ line instead."
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
     :bind (("C-h C-h" . helm-google)
            ("C-h C-c" . helm-google-suggest))
-    :init (setq helm-google-use-regexp-parsing t)))
+    :init (setq helm-google-use-regexp-parsing t))
+  (use-package helm-swoop
+    ;; Efficiently hopping squeezed lines powered by helm interface
+    :quelpa
+    :bind (("M-i" . helm-swoop)
+           ("M-I" . helm-multi-swoop))
+    :config
+    (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+    (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)))
 
 ;;;; highlight-parentheses
 (use-package highlight-parentheses
@@ -1315,11 +1323,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing .jade files
 (use-package stylus-mode
   :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
-
-(use-package swiper
-  ;; Isearch with an overview. Oh, man!
-  :quelpa (swiper :repo "abo-abo/swiper" :fetcher github :files ("swiper.el" "ivy.el" "colir.el" "ivy-hydra.el"))
-  :config (define-key isearch-mode-map (kbd "M-i") 'swiper-from-isearch))
 
 ;;;; term+
 (use-package term+mux
