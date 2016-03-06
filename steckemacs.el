@@ -1134,25 +1134,16 @@ line instead."
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
 (use-package markdown-mode
-  :quelpa (markdown-mode :url "git://jblevins.org/git/markdown-mode.git" :fetcher git)
+  :quelpa (markdown-preview-mode :fetcher github
+                                 :repo "ancane/markdown-preview-mode"
+                                 :files (:defaults "preview.html"))
   :mode
-  ("\\.markdown\\'" . gfm-liquid-mode)
-  ("\\.md\\'" . gfm-liquid-mode)
+  ("\\.markdown\\'" . gfm-mode)
+  ("\\.md\\'" . gfm-mode)
   ("\\.lr\\'" . gfm-mode)
   :config
-  (setq gfm-liquid-font-lock-keywords
-        (append
-         gfm-font-lock-keywords
-         '(("{%\\|%}\\|{{\\|}}" . font-lock-comment-face)
-           ("{%\s*\\(quote\\|endquote\\|blockquote\\|endblockquote\\|codeblock\\|endcodeblock\\|pullquote\\|endpullquote\\|img\\|link\\|rawblock\\|endrawblock\\)" (1 font-lock-keyword-face))
-           ("{%\s*\\(?:quote\\|blockquote\\|codeblock\\|pullquote\\|img\\|link\\|rawblock\\)\s+\\(\\(?:\\w\\|\\.\\|_\\)+\\)" (1 font-lock-variable-name-face))
-           ("{{\s*\\(\\(?:\\w\\|\\.\\)+\\)" (1 font-lock-variable-name-face))
-           ("\s+|\s+" . font-lock-comment-face))))
-
-  (define-derived-mode gfm-liquid-mode gfm-mode
-    "GFM Liquid Mode."
-    (set (make-local-variable 'font-lock-defaults)
-         '(gfm-liquid-font-lock-keywords))))
+  ;; use tufte-css for preview
+  (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css"))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
