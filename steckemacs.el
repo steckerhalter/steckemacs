@@ -1112,6 +1112,7 @@ line instead."
   (setq magit-save-some-buffers nil) ;don't ask to save buffers
   (setq magit-set-upstream-on-push t) ;ask to set upstream
   (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
+  (setq auto-revert-check-vc-info t)
   (setq magit-default-tracking-name-function
         'magit-default-tracking-name-branch-only) ;don't track with origin-*
 
