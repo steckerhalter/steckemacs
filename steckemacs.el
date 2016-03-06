@@ -1125,12 +1125,6 @@ line instead."
               (interactive)
               (gac-commit))))
 
-(use-package magit-filenotify
-  ;; Refresh status buffer when git tree changes
-  :requires filenotify
-  :quelpa (magit-filenotify :fetcher github :repo "magit/magit-filenotify")
-  :config (define-key magit-status-mode-map (kbd "`") 'magit-filenotify-mode))
-
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
 (use-package markdown-mode
