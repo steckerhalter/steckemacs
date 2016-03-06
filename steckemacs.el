@@ -243,7 +243,8 @@ Call a second time to restore the original window configuration."
               kill-buffer-query-functions))
 
   ;; default font
-  (set-face-attribute 'default nil :family "Anonymous Pro" :height 89))
+  (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 89))
+  (apply 'set-face-attribute  my-font-attributes))
 
 ;;; core packages
 ;;;; advice
@@ -364,10 +365,7 @@ line instead."
     (let ((arg (or
                 (url-get-url-at-point)
                 (current-kill 0 t))))
-      (eww arg)))
-
-  ;; use `eww' to browse urls
-  (setq browse-url-browser-function 'eww-browse-url))
+      (eww arg))))
 
 ;;;; frame
 ;; multi-frame management independent of window systems
