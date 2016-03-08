@@ -1250,7 +1250,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
-  (setq projectile-completion-system 'ivy)
+  (setq projectile-completion-system 'helm)
   (setq projectile-enable-caching t)
   (setq projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
