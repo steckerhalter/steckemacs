@@ -9,16 +9,20 @@ trap "rm -rf ~/.emacs.d/" EXIT
 pwd=`pwd`
 
 if ! test -e /usr/local/bin/emacs; then
-    sudo apt-get update
-    sudo apt-get install build-essential wget
-    sudo apt-get build-dep emacs23
-    wget http://ftp.gnu.org/gnu/emacs/emacs-24.5.tar.gz
-    tar -xzf emacs-24.5.tar.gz
-    >&2 echo "--- building emacs ---"
-    ./configure &&\
-        make &&\
-        sudo make install
-    sudo apt-get install -qq git mercurial subversion bzr cvs
+    {
+        >&2 echo "--- installing deps ---"
+        sudo apt-get update
+        sudo apt-get -y install build-essential wget
+        sudo apt-get -y build-dep emacs23
+        wget http://ftp.gnu.org/gnu/emacs/emacs-24.5.tar.gz
+        tar -xzf emacs-24.5.tar.gz
+        cd emacs-24.5
+        >&2 echo "--- building emacs ---"
+        ./configure &&\
+            make &&\
+            sudo make install
+        sudo apt-get install -y -qq git mercurial subversion bzr cvs
+    } > /dev/null
 fi
 
 echo "--- running tests ---"
