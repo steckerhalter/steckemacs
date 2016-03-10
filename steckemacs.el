@@ -997,7 +997,7 @@ line instead."
 
   (use-package helm-projectile
     ;; Helm integration for Projectile
-    :quelpa (helm-projectile :repo "bbatsov/projectile" :fetcher github :files ("helm-projectile.el"))
+    :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github)
     :bind ("C-h h" . helm-projectile))
 
   (use-package helm-google
