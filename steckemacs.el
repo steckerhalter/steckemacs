@@ -538,6 +538,8 @@ line instead."
     (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
 
     :config
+    ;; remove C-' binding from org-mode (used to open shell)
+    (define-key org-mode-map [(control ?\')] nil)
     ;; add state to the sorting strategy of todo
     (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
 
