@@ -501,6 +501,8 @@ line instead."
   (setq org-html-postamble nil)
   (setq org-agenda-dim-blocked-tasks t)
   (setq org-habit-graph-column 60)
+  (setq org-enforce-todo-checkbox-dependencies t)
+  (setq org-enforce-todo-dependencies t)
   (setq org-todo-keywords
         '((sequence
            "TODO(t)"
@@ -530,12 +532,45 @@ line instead."
     (org-insert-todo-heading t))
   (define-key org-mode-map (kbd "<M-S-return>") 'my-org-insert-todo-heading)
 
+  ;; set parent todo autmatically to done
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+;;;;; org-list
+  (use-package org-list
+    ;; automatically set parent todos for checkboxes
+    ;; see http://thread.gmane.org/gmane.emacs.orgmode/42715
+    :init
+    (defun my-checkbox-list-complete ()
+      (save-excursion
+        (org-back-to-heading t)
+        (let ((beg (point)) end)
+          (end-of-line)
+          (setq end (point))
+          (goto-char beg)
+          (if (re-search-forward "\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]" end t)
+              (if (match-end 1)
+                  (if (equal (match-string 1) "100%")
+                      ;; all done - do the state change
+                      (org-todo 'done)
+                    (org-todo 'todo))
+                (if (and (> (match-end 2) (match-beginning 2))
+                         (equal (match-string 2) (match-string 3)))
+                    (org-todo 'done)
+                  (org-todo 'todo)))))))
+    :config
+    (add-hook 'org-checkbox-statistics-hook (function my-checkbox-list-complete)))
+
 ;;;;; org-agenda
   (use-package org-agenda
     :init
     (setq org-agenda-start-with-log-mode t)
     (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
     (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
+    (setq org-agenda-dim-blocked-tasks t)
 
     :config
     ;; remove C-' binding from org-mode (used to open shell)
