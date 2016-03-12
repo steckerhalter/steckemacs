@@ -889,7 +889,10 @@ line instead."
   :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
   :bind ("C-h N" . diff-hl-revert-hunk)
-  :config (global-diff-hl-mode 1))
+  :config
+  (global-diff-hl-mode 1)
+  (eval-after-load 'magit
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
@@ -1170,14 +1173,15 @@ line instead."
   (setq magit-default-tracking-name-function
         'magit-default-tracking-name-branch-only) ;don't track with origin-*
 
-  :config (use-package git-auto-commit-mode
-            :quelpa (git-auto-commit-mode :fetcher github
-                                          :repo "ryuslash/git-auto-commit-mode")
-            :commands (gac-commit gac)
-            :config
-            (defun gac ()
-              (interactive)
-              (gac-commit))))
+  :config
+  (use-package git-auto-commit-mode
+    :quelpa (git-auto-commit-mode :fetcher github
+                                  :repo "ryuslash/git-auto-commit-mode")
+    :commands (gac-commit gac)
+    :config
+    (defun gac ()
+      (interactive)
+      (gac-commit))))
 
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
