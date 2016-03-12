@@ -309,9 +309,8 @@ line instead."
   (setq dired-no-confirm
         '(byte-compile chgrp chmod chown copy delete load move symlink))
   (setq dired-deletion-confirmer (lambda (x) t))
-
+  :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
   :config
-  (define-key dired-mode-map (kbd "`") 'dired-toggle-read-only)
   ;; make rename use ido and not helm
   (put 'dired-do-rename 'ido 'find-file)
   ;; make copy use ido and not helm
@@ -518,6 +517,8 @@ line instead."
   (setq org-log-into-drawer t) ;don't clutter files with state logs
 
   :config
+  ;; remove C-' binding from org-mode (used to open shell)
+  (define-key org-mode-map (kbd "C-'") nil)
   (require 'ox-org)
   (require 'ox-md)
   (add-to-list 'org-modules 'org-habit)
@@ -573,8 +574,6 @@ line instead."
     (setq org-agenda-dim-blocked-tasks t)
 
     :config
-    ;; remove C-' binding from org-mode (used to open shell)
-    (define-key org-mode-map [(control ?\')] nil)
     ;; add state to the sorting strategy of todo
     (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
 
@@ -858,6 +857,18 @@ line instead."
            :repo "proofit404/company-anaconda")
   :config (add-to-list 'company-backends 'company-anaconda))
 
+;;;; company-dict
+(use-package company-dict
+  :quelpa (company-dict :repo "hlissner/emacs-company-dict" :fetcher github)
+  :config (add-to-list 'company-backends 'company-dict))
+
+;;;; company-quickhelp
+;; Popup documentation for completion candidates
+(use-package company-quickhelp
+  :quelpa (company-quickhelp :fetcher github :repo "expez/company-quickhelp")
+  :init (setq company-quickhelp-delay 1)
+  :config (company-quickhelp-mode 1))
+
 ;;;; company-web
 ;; Company version of ac-html, complete for web,html,emmet,jade,slim modes
 (use-package company-web
@@ -867,13 +878,6 @@ line instead."
     (set (make-local-variable 'company-backends) '(company-web-html))
     (company-mode t))
   (add-hook 'web-mode-hook 'my-company-web))
-
-;;;; company-quickhelp
-;; Popup documentation for completion candidates
-(use-package company-quickhelp
-  :quelpa (company-quickhelp :fetcher github :repo "expez/company-quickhelp")
-  :init (setq company-quickhelp-delay 1)
-  :config (company-quickhelp-mode 1))
 
 ;;;; diff-hl
 ;; Highlight uncommitted changes
@@ -901,24 +905,34 @@ line instead."
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
+  :bind
+  (:map elisp-slime-nav-mode-map
+        ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
+        ("C-c C-d" . my-show-help)
+        ("C-c d" . elisp-slime-nav-describe-elisp-thing-at-point))
+
   :diminish elisp-slime-nav-mode
   :config
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook 'elisp-slime-nav-mode))
-  (define-key elisp-slime-nav-mode-map (kbd "C-h C-.") 'elisp-slime-nav-find-elisp-thing-at-point)
-  (define-key elisp-slime-nav-mode-map (kbd "C-c C-d") 'my-show-help)
-  (define-key elisp-slime-nav-mode-map (kbd "C-c d") 'elisp-slime-nav-describe-elisp-thing-at-point))
+    (add-hook hook 'elisp-slime-nav-mode)))
 
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
-(quelpa '(eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el")))
-(require 'eval-sexp-fu)
-(setq eval-sexp-fu-flash-duration 0.4)
-(turn-on-eval-sexp-fu-flash-mode)
-(define-key lisp-interaction-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
-(define-key lisp-interaction-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
-(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
-(define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
+(use-package eval-sexp-fu
+  :quelpa (quelpa '(eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el")))
+  :bind
+  (:map
+   lisp-interaction-mode-map
+   ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
+   ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp)
+   :map
+   emacs-lisp-mode-map
+   ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
+   ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp))
+  :init
+  (setq eval-sexp-fu-flash-duration 0.4)
+  :config
+  (turn-on-eval-sexp-fu-flash-mode))
 
 ;;;; fasd
 ;; find previous files/dirs quickly (uses `fasd' shell script)
@@ -999,7 +1013,6 @@ line instead."
   (setq helm-M-x-always-save-history t)
   (setq helm-buffer-details-flag nil)
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
-  (define-key my-keys-minor-mode-map (kbd "<C-return>") 'helm-mini)
 
   :bind
   (("M-x" . helm-M-x)
@@ -1012,7 +1025,8 @@ line instead."
    ("C-h C-l" . helm-locate)
    ("C-S-h C-c" . helm-wikipedia-suggest)
    ("C-h o" . helm-info-org)
-   ("C-h i" . helm-imenu))
+   ("C-h i" . helm-imenu)
+   :map my-keys-minor-mode-map ("<C-return>" . helm-mini))
 
   :config
   (require 'helm-config)
@@ -1047,10 +1061,9 @@ line instead."
     ;; Efficiently hopping squeezed lines powered by helm interface
     :quelpa
     :bind (("M-i" . helm-swoop)
-           ("M-I" . helm-multi-swoop))
-    :config
-    (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
-    (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)))
+           ("M-I" . helm-multi-swoop)
+           :map isearch-mode-map ("M-i" . helm-swoop-from-isearch)
+           :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))))
 
 ;;;; highlight-parentheses
 (use-package highlight-parentheses
@@ -1166,8 +1179,10 @@ line instead."
 ;; Emacs Major mode for Markdown-formatted text files
 (use-package markdown-mode
   :quelpa (markdown-preview-mode :fetcher github
-                                 :repo "ancane/markdown-preview-mode"
-                                 :files (:defaults "preview.html"))
+                                 :repo "ancane/markdown-preview-mode")
+  :bind (:map markdown-mode-map
+              ("C-c P" . markdown-preview-open-browser)
+              ("C-c p" . markdown-preview-mode))
   :mode
   ("\\.markdown\\'" . gfm-mode)
   ("\\.md\\'" . gfm-mode)
