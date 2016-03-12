@@ -569,10 +569,13 @@ line instead."
 ;;;;; org-agenda
   (use-package org-agenda
     :init
+    (defun my-org-agenda () (interactive) (org-agenda nil "n"))
     (setq org-agenda-start-with-log-mode t)
     (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
     (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
     (setq org-agenda-dim-blocked-tasks t)
+
+    :bind ("C-h C-n" . my-org-agenda)
 
     :config
     ;; add state to the sorting strategy of todo
