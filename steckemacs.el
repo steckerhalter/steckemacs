@@ -911,6 +911,7 @@ line instead."
 ;;;; elisp-slime-nav
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
+  :demand
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
   :bind
   (:map elisp-slime-nav-mode-map
@@ -1195,9 +1196,12 @@ line instead."
   ("\\.markdown\\'" . gfm-mode)
   ("\\.md\\'" . gfm-mode)
   ("\\.lr\\'" . gfm-mode)
-  :config
+  :init
   ;; use tufte-css for preview
-  (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css"))
+  (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
+  ;; use github markup for rendering
+  ;; script: `https://github.com/steckerhalter/stecktc/blob/master/bin/gfm'
+  (setq markdown-command "gfm"))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
