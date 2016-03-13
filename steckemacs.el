@@ -122,6 +122,18 @@ Call a second time to restore the original window configuration."
     (interactive "sURL: ")
     (url-insert-file-contents url))
 
+  (defun my-sudo-edit (&optional arg)
+    "Edit currently visited file as root.
+
+With a prefix ARG prompt for a file to visit.
+Will also prompt for a file to visit if current
+buffer is not visiting a file."
+    (interactive "P")
+    (if (or arg (not buffer-file-name))
+        (find-file (concat "/sudo:root@localhost:"
+                           (ido-read-file-name "Find file(as root): ")))
+      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
 ;;;; global key bindings
   :bind
   (;; general
@@ -131,6 +143,7 @@ Call a second time to restore the original window configuration."
    ("C-t f" . flyspell-buffer)
    ("C-t C-f" . flyspell-mode)
    ("C-h C-p" . find-file)
+   ("C-x C-r" . my-sudo-edit)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
    ("C-h C-<return>" . eww)
@@ -1170,7 +1183,6 @@ line instead."
   (setq magit-save-some-buffers nil) ;don't ask to save buffers
   (setq magit-set-upstream-on-push t) ;ask to set upstream
   (setq magit-diff-refine-hunk t) ;show word-based diff for current hunk
-  (setq auto-revert-check-vc-info t)
   (setq magit-default-tracking-name-function
         'magit-default-tracking-name-branch-only) ;don't track with origin-*
 
