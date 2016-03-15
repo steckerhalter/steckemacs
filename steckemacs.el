@@ -1228,7 +1228,8 @@ line instead."
 ;; Open a junk (memo) file to try-and-error
 (use-package open-junk-file
   :quelpa (open-junk-file :fetcher wiki)
-  :bind ("C-h j" . open-junk-file))
+  :bind ("C-h j" . open-junk-file)
+  :init (setq open-junk-file-format "~/var/junk/%Y/%m/%d-%H%M%S."))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
