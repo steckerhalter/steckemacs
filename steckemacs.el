@@ -913,6 +913,10 @@ line instead."
   :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major")
   :bind ("C-h C-m" . discover-my-major))
 
+;;;; dokuwiki-mode
+(use-package dokuwiki-mode
+  :quelpa (dokuwiki-mode :fetcher github :repo "kai2nenobu/emacs-dokuwiki-mode")
+  :mode "\\.dokuwiki$")
 ;;;; easy-kill
 ;; make marking and killing easier
 (use-package easy-kill
