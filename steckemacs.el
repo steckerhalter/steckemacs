@@ -554,6 +554,10 @@ line instead."
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
   (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
+;;;;; org-bullets
+  (use-package org-bullets
+    :config (add-hook 'org-mode-hook 'org-bullets-mode))
+
 ;;;;; org-list
   (use-package org-list
     ;; automatically set parent todos for checkboxes
@@ -917,6 +921,7 @@ line instead."
 (use-package dokuwiki-mode
   :quelpa (dokuwiki-mode :fetcher github :repo "kai2nenobu/emacs-dokuwiki-mode")
   :mode "\\.dokuwiki$")
+
 ;;;; easy-kill
 ;; make marking and killing easier
 (use-package easy-kill
