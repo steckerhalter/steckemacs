@@ -1243,7 +1243,7 @@ line instead."
 ;;;; outshine
 ;; outline with outshine outshines outline
 (use-package outshine
-  :quelpa (outshine :fetcher github :repo "tj64/outshine" :files ("outshine.el"))
+  :quelpa (outshine :fetcher github :repo "tj64/outshine")
   :bind ("M-# 3" . outshine-insert-heading)
   :diminish outline-minor-mode
   :commands outshine-hook-function
