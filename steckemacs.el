@@ -1382,7 +1382,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 
   :config
   (sml/setup)
-  (sml/apply-theme 'respectful))
+  (sml/apply-theme 'automatic))
 
 ;;;; sqlformat
 ;; Use sqlformat to make SQL readable in Emacs
