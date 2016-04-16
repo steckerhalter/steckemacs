@@ -781,6 +781,11 @@ line instead."
 (use-package apache-mode
   :quelpa (apache-mode :fetcher wiki))
 
+;;;; ansible-doc
+(use-package ansible-doc
+  :quelpa (ansible-doc :repo "lunaryorn/ansible-doc.el" :fetcher github)
+  :config (add-hook 'yaml-mode-hook #'ansible-doc-mode))
+
 ;;;; auctex
 ;; enhanced LaTeX mode
 (setq TeX-PDF-mode t)
@@ -877,6 +882,11 @@ line instead."
            :fetcher github
            :repo "proofit404/company-anaconda")
   :config (add-to-list 'company-backends 'company-anaconda))
+
+;;;; company-ansible
+(use-package company-ansible
+  :quelpa (company-ansible :repo "krzysztof-magosa/company-ansible" :fetcher github)
+  :config (add-to-list 'company-backends 'company-ansible))
 
 ;;;; company-dict
 (use-package company-dict
