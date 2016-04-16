@@ -1030,14 +1030,6 @@ line instead."
 (use-package grandshell-theme
   :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
 
-;;;; guide-key
-;; Guide the following key bindings automatically and dynamically
-(use-package guide-key
-  :quelpa (guide-key :repo "kai2nenobu/guide-key" :fetcher github)
-  :diminish guide-key-mode
-  :init (setq guide-key/guide-key-sequence t)
-  :config (guide-key-mode 1))
-
 ;;;; helm
 ;; fancy candidate selection framework
 (use-package helm
