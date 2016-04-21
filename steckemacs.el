@@ -893,6 +893,11 @@ line instead."
   :quelpa (company-dict :repo "hlissner/emacs-company-dict" :fetcher github)
   :config (add-to-list 'company-backends 'company-dict))
 
+;;;; company-flx
+(use-package company-flx
+  :quelpa (company-flx :repo "PythonNut/company-flx" :fetcher github)
+  :config (company-flx-mode +1))
+
 ;;;; company-quickhelp
 ;; Popup documentation for completion candidates
 (use-package company-quickhelp
