@@ -159,7 +159,7 @@ buffer is not visiting a file."
    ("C-h C-e" . toggle-debug-on-error)
    ("C-t C-s" . my-insert-package-desc-summary)
    ;; buffers
-   ("C-h C-s" . save-buffer)
+   ("C-h C-h" . save-buffer)
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
    ("C-." . my-switch-to-scratch)
@@ -1091,7 +1091,7 @@ line instead."
   (use-package helm-google
     ;; Emacs Helm Interface for quick Google searches
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :bind (("C-h C-h" . helm-google)
+    :bind (("C-h C-o" . helm-google)
            ("C-h C-c" . helm-google-suggest))
     :init (setq helm-google-use-regexp-parsing t))
   (use-package helm-swoop
