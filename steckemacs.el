@@ -212,7 +212,9 @@ buffer is not visiting a file."
    split-width-threshold 160              ;split horizontally only if less than 160 columns
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
-   switch-to-buffer-preserve-window-point t)
+   switch-to-buffer-preserve-window-point t
+   custom-file "/tmp/custom-file.el") ;don't pollute the init file and don't `load' the customs
+                                      ;but keep them for reference...
 
   ;; default flags
   (setq-default
@@ -1033,7 +1035,8 @@ line instead."
 ;;;; grandshell-theme
 ;; Grand Shell color theme for Emacs > 24
 (use-package grandshell-theme
-  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github))
+  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
+  :config (load-theme 'grandshell t))
 
 ;;;; helm
 ;; fancy candidate selection framework
@@ -1183,8 +1186,7 @@ line instead."
 
 ;;;; lorisan-theme
 (use-package lorisan-theme
-  :quelpa (lorisan-theme :repo "hubisan/lorisan-theme" :fetcher github)
-  :config (load-theme 'lorisan t))
+  :quelpa (lorisan-theme :repo "hubisan/lorisan-theme" :fetcher github))
 
 ;;;; magit
 ;; Emacs interface to git
