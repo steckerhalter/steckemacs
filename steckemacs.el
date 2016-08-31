@@ -1184,10 +1184,6 @@ line instead."
          ("<M-S-right>" . kurecolor-increase-hue-by-step)
          ("<M-S-left>" . kurecolor-decrease-hue-by-step)))
 
-;;;; lorisan-theme
-(use-package lorisan-theme
-  :quelpa (lorisan-theme :repo "hubisan/lorisan-theme" :fetcher github))
-
 ;;;; magit
 ;; Emacs interface to git
 (use-package magit
