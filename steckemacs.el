@@ -1409,6 +1409,11 @@ Pass symbol-name to the function DOC-FUNCTION."
   (define-key term-raw-map (kbd "M-9") 'tab-group:next)
   (define-key term-raw-map (kbd "M-0") 'tab-group:prev))
 
+;;;; toml-mode
+;; Major mode for editing toml files
+(use-package toml-mode
+  :quelpa (toml-mode :fetcher github :repo "dryman/toml-mode.el"))
+
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
 (use-package yaml-mode
