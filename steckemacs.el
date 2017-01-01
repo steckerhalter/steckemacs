@@ -922,7 +922,7 @@ line instead."
 (use-package diff-hl
   :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
-  :bind ("C-h N" . diff-hl-revert-hunk)
+  :bind ("C-h n" . diff-hl-revert-hunk)
   :config
   (global-diff-hl-mode 1)
   (eval-after-load 'magit
