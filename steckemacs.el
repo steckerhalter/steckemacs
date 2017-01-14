@@ -214,7 +214,7 @@ buffer is not visiting a file."
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t
    custom-file "/tmp/custom-file.el") ;don't pollute the init file and don't `load' the customs
-                                      ;but keep them for reference...
+                                        ;but keep them for reference...
 
   ;; default flags
   (setq-default
@@ -1021,6 +1021,9 @@ line instead."
 ;; step through historic versions of git controlled file
 (use-package git-timemachine
   :quelpa (git-timemachine :fetcher github :repo "pidu/git-timemachine"))
+;;;; go-mode
+(use-package git-timemachine
+  :quelpa (go-mode :repo "dominikh/go-mode.el" :fetcher github :files ("go-mode.el")))
 
 ;;;; google-translate
 ;; Emacs interface to Google's translation service
@@ -1271,30 +1274,20 @@ line instead."
   :init
   (setq php-mode-coding-style "Symfony2")
   (setq php-template-compatibility nil)
-  (dolist (manual '("/usr/share/doc/php-doc/html/" "/usr/share/doc/php-manual/en/html/"))
-    (when (file-readable-p manual)
-      (setq php-manual-path manual)))
 
   :config
-  (defun my-php-completion-at-point ()
-    "Provide php completions for completion-at-point.
-Relies on functions of `php-mode'."
-    (let ((pattern (php-get-pattern)))
-      (when pattern
-        (list (- (point) (length pattern))
-              (point)
-              (or php-completion-table
-                  (php-completion-table))
-              :exclusive 'no))))
+  (use-package company-php
+    :quelpa (company-php :repo "xcwen/ac-php" :fetcher github :files ("company-php.el"))
+    :config (add-to-list 'company-backends 'company-ac-php-backend)
+    :bind (:map php-mode-map
+                ("M-." . ac-php-find-symbol-at-point)
+                ("M-," . ac-php-location-stack-back)
+                ("M-S-," . ac-php-location-stack-forward)))
 
   (use-package php-eldoc
     :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
 
   (defun setup-php-mode ()
-    (add-hook 'completion-at-point-functions 'my-php-completion-at-point nil t)
-    (set (make-local-variable 'company-backends)
-         '((company-capf :with company-dabbrev-code)))
-    (set (make-local-variable 'electric-indent-mode) nil)
     (php-eldoc-enable))
   (add-hook 'php-mode-hook 'setup-php-mode))
 
