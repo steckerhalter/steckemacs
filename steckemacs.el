@@ -385,7 +385,7 @@ line instead."
 ;;;; flyspell
 ;;On-the-fly spell checker
 (use-package flyspell
-  :init (setq flyspell-auto-correct-binding nil))
+  :init (setq flyspell-auto-correct-binding [nil]))
 
 ;;;; frame
 ;; multi-frame management independent of window systems
@@ -1156,7 +1156,7 @@ line instead."
   :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
   :init
   (setq iedit-unmatched-lines-invisible-default t)
-  (setq iedit-toggle-key-default "C--"))
+  (setq iedit-toggle-key-default nil))
 
 ;;;; iflipb
 ;; interactively flip between recently visited buffers
