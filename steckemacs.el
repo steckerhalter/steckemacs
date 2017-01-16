@@ -382,6 +382,11 @@ line instead."
                 (current-kill 0 t))))
       (eww arg))))
 
+;;;; flyspell
+;;On-the-fly spell checker
+(use-package flyspell
+  :init (setq flyspell-auto-correct-binding nil))
+
 ;;;; frame
 ;; multi-frame management independent of window systems
 (use-package frame
@@ -917,6 +922,18 @@ line instead."
     (company-mode t))
   (add-hook 'web-mode-hook 'my-company-web))
 
+;;;; deft
+;; quickly browse, filter, and edit plain text notes
+(use-package deft
+  :quelpa (deft :url "git://jblevins.org/git/deft.git" :fetcher git)
+  :bind ("C-;" . deft)
+  :commands (deft)
+  :config
+  (setq deft-directory "~/ownCloud/Notes")
+  (setq deft-use-filename-as-title t)
+  (setq deft-extensions '("md"))
+  (setq deft-auto-save-interval 0))
+
 ;;;; diff-hl
 ;; Highlight uncommitted changes
 (use-package diff-hl
@@ -1137,7 +1154,9 @@ line instead."
 ;; change multiple occurences of word-at-point (compress display to show all of them)
 (use-package iedit
   :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
-  :init (setq iedit-unmatched-lines-invisible-default t))
+  :init
+  (setq iedit-unmatched-lines-invisible-default t)
+  (setq iedit-toggle-key-default "C--"))
 
 ;;;; iflipb
 ;; interactively flip between recently visited buffers
@@ -1226,11 +1245,16 @@ line instead."
   ("\\.md\\'" . gfm-mode)
   ("\\.lr\\'" . gfm-mode)
   :init
+  (setq markdown-asymmetric-header t)
+  (setq markdown-enable-wiki-links t)
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
   ;; use github markup for rendering
   ;; script: `https://github.com/steckerhalter/stecktc/blob/master/bin/gfm'
-  (setq markdown-command "gfm"))
+  (setq markdown-command "gfm")
+  :config
+  (add-hook 'markdown-mode-hook 'flyspell-mode)
+  (add-hook 'markdown-mode-hook 'visual-line-mode))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
