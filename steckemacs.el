@@ -134,6 +134,13 @@ buffer is not visiting a file."
                            (ido-read-file-name "Find file(as root): ")))
       (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
+  (defun my-timestamp ()
+    (interactive)
+    (let ((timestring (if current-prefix-arg
+			  "%H:%M"
+			"%d.%m.%Y %H:%M")))
+      (insert (format-time-string "%d.%m.%Y %H:%M"))))
+
 ;;;; global key bindings
   :bind
   (;; general
@@ -153,6 +160,7 @@ buffer is not visiting a file."
    ("C-c q" . auto-fill-mode)
    ("C-c w" . whitespace-cleanup)
    ("C-h C-v" . visual-line-mode)
+   ("C-h t" . my-timestamp)
    ;; source
    ("C-h C-0" . edebug-defun)
    ("C-h C-b" . eval-buffer)
