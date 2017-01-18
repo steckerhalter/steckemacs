@@ -1247,19 +1247,41 @@ line instead."
                                  :repo "ancane/markdown-preview-mode")
   :bind (:map markdown-mode-map
               ("C-c P" . markdown-preview-open-browser)
-              ("C-c p" . markdown-preview-mode))
+              ("C-c p" . markdown-preview-mode)
+              ("RET" . my-markdown-ret))
   :mode
   ("\\.markdown\\'" . gfm-mode)
   ("\\.md\\'" . gfm-mode)
   ("\\.lr\\'" . gfm-mode)
+
   :init
+  (defun my-markdown-ret ()
+    "Preserve list indentation after RET in markdown-mode."
+    ;; improved version of http://emacs.stackexchange.com/a/14642
+    (interactive)
+    (if-let ((bounds (markdown-cur-list-item-bounds))
+             (beg (car bounds))
+             (end (cadr bounds))
+             (indent (cadddr bounds))
+             (text (buffer-substring beg end)))
+        (if (= (- end beg)
+               indent)
+            (progn
+              (kill-region beg end)
+              (markdown-enter-key))
+          (call-interactively #'markdown-insert-list-item))
+      (markdown-enter-key)))
+
   (setq markdown-asymmetric-header t)
   (setq markdown-enable-wiki-links t)
+
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
+
   ;; use github markup for rendering
   ;; script: `https://github.com/steckerhalter/stecktc/blob/master/bin/gfm'
   (setq markdown-command "gfm")
+
   :config
   (add-hook 'markdown-mode-hook 'flyspell-mode)
   (add-hook 'markdown-mode-hook 'visual-line-mode))
@@ -1288,6 +1310,7 @@ line instead."
   :diminish outline-minor-mode
   :commands outshine-hook-function
   :init
+  (setq outshine-imenu-show-headlines-p nil)
   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
   :config
