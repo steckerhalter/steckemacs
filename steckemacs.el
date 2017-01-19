@@ -1248,6 +1248,10 @@ line instead."
   :bind (:map markdown-mode-map
               ("C-c P" . markdown-preview-open-browser)
               ("C-c p" . markdown-preview-mode)
+              ("C-M-i" . markdown-shifttab)
+              ("<backtab>" . markdown-promote)
+              ("<S-iso-lefttab>" . markdown-promote)
+              ("<S-tab>" . markdown-promote)
               ("RET" . my-markdown-ret))
   :mode
   ("\\.markdown\\'" . gfm-mode)
