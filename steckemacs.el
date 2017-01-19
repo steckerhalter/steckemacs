@@ -1274,6 +1274,7 @@ line instead."
 
   (setq markdown-asymmetric-header t)
   (setq markdown-enable-wiki-links t)
+  (setq markdown-list-indent-width 2)
 
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
