@@ -1179,7 +1179,8 @@ line instead."
                                 "*magit-diff: .*"
                                 "*Quail Completions*"
                                 "*Completions*"
-                                "*anaconda-mode*"))
+                                "*anaconda-mode*"
+                                "*Deft*"))
 
   :bind (("<f8>" . iflipb-next-buffer)
          ("<f9>" . iflipb-previous-buffer)))
@@ -1252,6 +1253,7 @@ line instead."
               ("<backtab>" . markdown-promote)
               ("<S-iso-lefttab>" . markdown-promote)
               ("<S-tab>" . markdown-promote)
+              ("<C-tab>" . markdown-demote)
               ("RET" . my-markdown-ret))
   :mode
   ("\\.markdown\\'" . gfm-mode)
