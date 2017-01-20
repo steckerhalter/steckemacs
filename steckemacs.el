@@ -939,6 +939,7 @@ line instead."
   :config
   (setq deft-directory "~/ownCloud/Notes")
   (setq deft-use-filename-as-title t)
+  (setq deft-extension "md")
   (setq deft-extensions '("md"))
   (setq deft-auto-save-interval 0))
 
