@@ -1255,7 +1255,8 @@ line instead."
               ("<S-iso-lefttab>" . markdown-promote)
               ("<S-tab>" . markdown-promote)
               ("<C-tab>" . markdown-demote)
-              ("RET" . my-markdown-ret))
+              ("RET" . my-markdown-ret)
+              ("<M-S-return>" . my-markdown-checkbox))
   :mode
   ("\\.markdown\\'" . gfm-mode)
   ("\\.md\\'" . gfm-mode)
@@ -1278,6 +1279,11 @@ line instead."
               (markdown-enter-key))
           (call-interactively #'markdown-insert-list-item))
       (markdown-enter-key)))
+
+  (defun my-markdown-checkbox ()
+    (interactive)
+    (call-interactively 'markdown-insert-list-item)
+    (insert "[ ] "))
 
   (setq markdown-asymmetric-header t)
   (setq markdown-enable-wiki-links t)
