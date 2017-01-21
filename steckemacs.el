@@ -934,7 +934,8 @@ line instead."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "git://jblevins.org/git/deft.git" :fetcher git)
-  :bind ("C-;" . deft)
+  :bind (("C-;" . deft)
+         :map deft-mode-map ("C-g" . quit-window))
   :commands (deft)
   :config
   (setq deft-directory "~/ownCloud/Notes")
