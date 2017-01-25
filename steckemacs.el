@@ -944,7 +944,8 @@ line instead."
     "Create a new file named from filter."
     (interactive)
     (when deft-filter-regexp
-      (let ((file (deft-absolute-filename (mapconcat 'identity deft-filter-regexp " "))))
+      (let* ((name (deft-whole-filter-regexp))
+             (file (deft-absolute-filename name)))
         (if (file-exists-p file)
             (message "Aborting, file already exists: %s" file)
           (deft-auto-populate-title-maybe file)
@@ -952,7 +953,9 @@ line instead."
           (deft-refresh-filter)
           (deft-open-file file)
           (with-current-buffer (get-file-buffer file)
-            (goto-char (point-max)))))))
+            (goto-char (point-max))
+            (insert "# " name)
+            (newline 2))))))
   :config
   (setq deft-directory "~/ownCloud/Notes")
   (setq deft-use-filename-as-title t)
