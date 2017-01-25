@@ -935,12 +935,28 @@ line instead."
 (use-package deft
   :quelpa (deft :url "git://jblevins.org/git/deft.git" :fetcher git)
   :bind (("C-;" . deft)
-         :map deft-mode-map ("C-g" . quit-window))
+         :map deft-mode-map
+         ("C-g" . quit-window)
+         ("<M-return>" . my-deft-new-file))
   :commands (deft)
+  :init
+  (defun my-deft-new-file ()
+    "Create a new file named from filter."
+    (interactive)
+    (when deft-filter-regexp
+      (let ((file (deft-absolute-filename (car deft-filter-regexp))))
+        (if (file-exists-p file)
+            (message "Aborting, file already exists: %s" file)
+          (deft-auto-populate-title-maybe file)
+          (deft-cache-update-file file)
+          (deft-refresh-filter)
+          (deft-open-file file)
+          (with-current-buffer (get-file-buffer file)
+            (goto-char (point-max)))))))
   :config
   (setq deft-directory "~/ownCloud/Notes")
   (setq deft-use-filename-as-title t)
-  (setq deft-extension "md")
+  (setq deft-default-extension "md")
   (setq deft-extensions '("md"))
   (setq deft-auto-save-interval 0))
 
