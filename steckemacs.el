@@ -944,7 +944,7 @@ line instead."
     "Create a new file named from filter."
     (interactive)
     (when deft-filter-regexp
-      (let ((file (deft-absolute-filename (car deft-filter-regexp))))
+      (let ((file (deft-absolute-filename (mapconcat 'identity deft-filter-regexp " "))))
         (if (file-exists-p file)
             (message "Aborting, file already exists: %s" file)
           (deft-auto-populate-title-maybe file)
