@@ -1274,7 +1274,7 @@ line instead."
               ("<backtab>" . markdown-promote)
               ("<S-iso-lefttab>" . markdown-promote)
               ("<S-tab>" . markdown-promote)
-              ("<C-tab>" . markdown-demote)
+              ("<C-tab>" . markdown-shifttab)
               ("RET" . my-markdown-ret)
               ("<M-S-return>" . my-markdown-checkbox))
   :mode
