@@ -1308,6 +1308,7 @@ line instead."
   (setq markdown-asymmetric-header t)
   (setq markdown-enable-wiki-links t)
   (setq markdown-list-indent-width 2)
+  (setq markdown-enable-wiki-links t)
 
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
@@ -1317,7 +1318,6 @@ line instead."
   (setq markdown-command "gfm")
 
   :config
-  (add-hook 'markdown-mode-hook 'flyspell-mode)
   (add-hook 'markdown-mode-hook 'visual-line-mode))
 
 ;;;; multiple-cursors
@@ -1480,6 +1480,10 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing .jade files
 (use-package stylus-mode
   :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
+
+;;;; systemd
+(use-package systemd
+  :quelpa (systemd :fetcher github :repo "holomorph/systemd-mode" :files (:defaults "*.txt")))
 
 ;;;; term+
 (use-package term+mux
