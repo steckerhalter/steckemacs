@@ -1311,6 +1311,7 @@ line instead."
   (setq markdown-list-indent-width 2)
   (setq markdown-enable-wiki-links t)
   (setq markdown-link-space-sub-char " ")
+  (setq markdown-wiki-link-fontify-missing t)
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
 
