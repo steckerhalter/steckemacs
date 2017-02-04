@@ -185,7 +185,8 @@ buffer is not visiting a file."
    ;; find/grep
    ("C-h g" . grep-find)
    ("C-S-h C-S-g" . find-grep-dired)
-   ("C-h C-o" . occur)))
+   ("C-h o" . helm-projectile-grep)
+   ("C-h O" . occur)))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -464,7 +465,7 @@ line instead."
 ;;;; ibuffer
 (use-package ibuffer
   :init (setq ibuffer-default-display-maybe-show-predicates t)
-  :bind  ("C-x C-b" . ibuffer))
+  :bind  ("C-x b" . ibuffer))
 
 ;;;; ido
 ;; selection framework (used for file opening `C-x C-f' by me)
@@ -1309,7 +1310,7 @@ line instead."
   (setq markdown-enable-wiki-links t)
   (setq markdown-list-indent-width 2)
   (setq markdown-enable-wiki-links t)
-
+  (setq markdown-link-space-sub-char " ")
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
 
@@ -1351,6 +1352,13 @@ line instead."
   (use-package navi-mode
     ;; major-mode for easy buffer-navigation
     :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
+
+;;;; pandoc
+(use-package pandoc-mode
+  :quelpa (pandoc-mode :fetcher github :repo "joostkremers/pandoc-mode")
+  :config
+  (add-hook 'markdown-mode-hook 'pandoc-mode)
+  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings))
 
 ;;;; php
 ;; Major mode for editing PHP code
