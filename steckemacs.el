@@ -183,9 +183,10 @@ buffer is not visiting a file."
    ("<f4>" . delete-window)
    ("<f5>" . delete-other-windows)
    ;; find/grep
-   ("C-h g" . grep-find)
+   ("C-h G" . grep-find)
    ("C-S-h C-S-g" . find-grep-dired)
    ("C-h o" . helm-projectile-grep)
+   ("C-h g" . helm-do-grep-ag)
    ("C-h O" . occur)))
 
 ;;; settings
@@ -1373,6 +1374,17 @@ line instead."
   (setq php-mode-coding-style "Symfony2")
   (setq php-template-compatibility nil)
 
+  (defun my-var_dump-die (start end)
+    "Die me some var_dump quickly."
+    (interactive "r")
+    (if mark-active
+        (progn
+          (goto-char end)
+          (insert "));")
+          (goto-char start)
+          (insert "die(var_dump("))
+      (insert "die(var_dump());")))
+
   :config
   (use-package company-php
     :quelpa (company-php :repo "xcwen/ac-php" :fetcher github :files ("company-php.el"))
@@ -1380,7 +1392,8 @@ line instead."
     :bind (:map php-mode-map
                 ("M-." . ac-php-find-symbol-at-point)
                 ("M-," . ac-php-location-stack-back)
-                ("M-S-," . ac-php-location-stack-forward)))
+                ("M-S-," . ac-php-location-stack-forward)
+                ("C-h d" . my-var_dump-die)))
 
   (use-package php-eldoc
     :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
