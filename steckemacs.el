@@ -1303,15 +1303,21 @@ line instead."
       (markdown-enter-key)))
 
   (defun my-markdown-checkbox ()
+    "Shortcut for list item with checkbox."
     (interactive)
     (call-interactively 'markdown-insert-list-item)
     (insert "[ ] "))
+
+  (defun my-markdown-convert-wiki-link (func name)
+    "Fix naming of files for wiki links."
+    (let ((markdown-link-space-sub-char " ")
+          (major-mode 'markdown-mode))
+      (funcall func name)))
 
   (setq markdown-asymmetric-header t)
   (setq markdown-enable-wiki-links t)
   (setq markdown-list-indent-width 2)
   (setq markdown-enable-wiki-links t)
-  (setq markdown-link-space-sub-char " ")
   (setq markdown-wiki-link-fontify-missing t)
   ;; use tufte-css for preview
   (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
@@ -1321,6 +1327,8 @@ line instead."
   (setq markdown-command "gfm")
 
   :config
+  (advice-add 'markdown-convert-wiki-link-to-filename
+              :around 'my-markdown-convert-wiki-link)
   (add-hook 'markdown-mode-hook 'visual-line-mode))
 
 ;;;; multiple-cursors
