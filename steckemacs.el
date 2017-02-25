@@ -231,7 +231,7 @@ buffer is not visiting a file."
    split-width-threshold 160              ;split horizontally only if less than 160 columns
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
-   switch-to-buffer-preserve-window-point t
+   switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
    custom-file "/tmp/custom-file.el") ;don't pollute the init file and don't `load' the customs
                                         ;but keep them for reference...
 
@@ -1023,7 +1023,7 @@ line instead."
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
-  :quelpa (quelpa '(eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el")))
+  :quelpa (eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el"))
   :bind
   (:map
    lisp-interaction-mode-map
