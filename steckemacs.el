@@ -141,6 +141,13 @@ buffer is not visiting a file."
                         "%d.%m.%y")))
       (insert (format-time-string timestring))))
 
+(defun my-xdg-open-dir ()
+  "Open directory in default external program."
+  (interactive)
+  (shell-command
+   (concat "xdg-open " (shell-quote-argument
+                        (expand-file-name default-directory)))))
+
 ;;;; global key bindings
   :bind
   (;; general
@@ -154,6 +161,7 @@ buffer is not visiting a file."
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
    ("C-h C-<return>" . eww)
+   ("M-1" . my-xdg-open-dir)
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -173,6 +181,7 @@ buffer is not visiting a file."
    ("C-." . my-switch-to-scratch)
    ("C-h TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
+   ("C-h 0" . text-scale-adjust)
    ;; windows
    ("C-0" . my-select-prev-window)
    ("C-9" . my-select-next-window)
