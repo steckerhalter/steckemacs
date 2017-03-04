@@ -1124,7 +1124,6 @@ line instead."
    ("C-h SPC" . helm-all-mark-rings)
    ("C-h C-l" . helm-locate)
    ("C-S-h C-c" . helm-wikipedia-suggest)
-   ("C-h o" . helm-info-org)
    ("C-h i" . helm-imenu)
    :map my-keys-minor-mode-map ("<C-return>" . helm-mini))
 
