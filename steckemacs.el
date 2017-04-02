@@ -974,6 +974,10 @@ line instead."
   (setq deft-extensions '("md"))
   (setq deft-auto-save-interval 0))
 
+;;;; diatheke
+(use-package diatheke
+  :quelpa (diatheke :fetcher github :repo "steckerhalter/diatheke.el"))
+
 ;;;; diff-hl
 ;; Highlight uncommitted changes
 (use-package diff-hl
