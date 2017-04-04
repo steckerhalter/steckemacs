@@ -976,7 +976,8 @@ line instead."
 
 ;;;; diatheke
 (use-package diatheke
-  :quelpa (diatheke :fetcher github :repo "steckerhalter/diatheke.el"))
+  :quelpa (diatheke :fetcher github :repo "steckerhalter/diatheke.el")
+  :init (add-hook 'text-mode-hook 'diatheke-mode))
 
 ;;;; diff-hl
 ;; Highlight uncommitted changes
