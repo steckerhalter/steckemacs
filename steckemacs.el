@@ -1377,13 +1377,6 @@ line instead."
     ;; major-mode for easy buffer-navigation
     :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
 
-;;;; pandoc
-(use-package pandoc-mode
-  :quelpa (pandoc-mode :fetcher github :repo "joostkremers/pandoc-mode")
-  :config
-  (add-hook 'markdown-mode-hook 'pandoc-mode)
-  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings))
-
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
