@@ -1359,7 +1359,7 @@ line instead."
 (use-package open-junk-file
   :quelpa (open-junk-file :fetcher wiki)
   :bind ("C-h j" . open-junk-file)
-  :init (setq open-junk-file-format "~/var/junk/%Y/%m/%d-%H%M%S."))
+  :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
