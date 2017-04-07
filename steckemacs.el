@@ -977,7 +977,10 @@ line instead."
 ;;;; diatheke
 (use-package diatheke
   :quelpa ((diatheke :fetcher github :repo "steckerhalter/diatheke.el") :upgrade t)
-  :init (add-hook 'text-mode-hook 'diatheke-mode))
+  :init
+  (setq diatheke-bible "GerLut1912")
+  (setq diatheke-locale "de")
+  (add-hook 'text-mode-hook 'diatheke-mode))
 
 ;;;; diff-hl
 ;; Highlight uncommitted changes
