@@ -137,7 +137,7 @@ buffer is not visiting a file."
   (defun my-timestamp ()
     (interactive)
     (let ((timestring (if current-prefix-arg
-                          "%d.%m.%Y %H:%M"
+                          "%H:%M"
                         "%d.%m.%y")))
       (insert (format-time-string timestring))))
 
