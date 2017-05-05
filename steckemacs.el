@@ -969,6 +969,9 @@ line instead."
             (newline 2))))))
   :config
   (setq deft-directory "~/ownCloud/Notes")
+  (setq deft-new-file-format "%y/%m/%d-%H:%M")
+  (setq deft-file-naming-rules nil)
+  (setq deft-recursive t)
   (setq deft-use-filename-as-title t)
   (setq deft-default-extension "md")
   (setq deft-extensions '("md"))
@@ -1283,11 +1286,8 @@ line instead."
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
 (use-package markdown-mode
-  :quelpa (markdown-preview-mode :fetcher github
-                                 :repo "ancane/markdown-preview-mode")
+  :quelpa (markdown-mode :fetcher github :repo "jrblevin/markdown-mode")
   :bind (:map markdown-mode-map
-              ("C-c P" . markdown-preview-open-browser)
-              ("C-c p" . markdown-preview-mode)
               ("C-M-i" . markdown-shifttab)
               ("<backtab>" . markdown-promote)
               ("<S-iso-lefttab>" . markdown-promote)
