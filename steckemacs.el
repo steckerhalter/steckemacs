@@ -1336,12 +1336,6 @@ line instead."
   (setq markdown-enable-wiki-links t)
   (setq markdown-wiki-link-fontify-missing t)
   (setq markdown-wiki-link-alias-first nil)
-  ;; use tufte-css for preview
-  (setq markdown-preview-style "https://edwardtufte.github.io/tufte-css/tufte.css")
-
-  ;; use github markup for rendering
-  ;; script: `https://github.com/steckerhalter/stecktc/blob/master/bin/gfm'
-  (setq markdown-command "gfm")
 
   :config
   (advice-add 'markdown-convert-wiki-link-to-filename

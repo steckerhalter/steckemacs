@@ -21,7 +21,7 @@ if ! test -e /usr/local/bin/emacs; then
         ./configure &&\
             make &&\
             sudo make install
-        sudo apt-get install -y -qq git mercurial subversion bzr cvs
+        sudo apt-get install -y -qq git
     } > /dev/null
 fi
 
