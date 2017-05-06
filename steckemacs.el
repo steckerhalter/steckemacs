@@ -277,8 +277,8 @@ buffer is not visiting a file."
               kill-buffer-query-functions))
 
   ;; default font
-  (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 89))
-  ;; source code pro: '(default nil :family "Source Code Pro" :height 95)
+  (defvar my-font-attributes '(default nil :family "DejaVu Sans Mono" :height 90))
+  ;; (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 89))
   (apply 'set-face-attribute  my-font-attributes))
 
 ;;; core packages
