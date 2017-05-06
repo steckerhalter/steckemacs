@@ -957,6 +957,7 @@ line instead."
                 "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
                 "\\|^# .*$" ;; md titles
                 "\\)"))
+  (setq deft-separator " ")
   (setq deft-directory "~/ownCloud/Notes")
   (setq deft-new-file-format "%y/%m/%d-%H:%M")
   (setq deft-file-naming-rules nil)
