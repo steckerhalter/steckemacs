@@ -948,31 +948,19 @@ line instead."
   :bind (("C-;" . deft)
          :map deft-mode-map
          ("C-g" . quit-window)
-         ("<M-return>" . my-deft-new-file))
+         ("<M-return>" . deft-new-file))
   :commands (deft)
-  :init
-  (defun my-deft-new-file ()
-    "Create a new file named from filter."
-    (interactive)
-    (when deft-filter-regexp
-      (let* ((name (deft-whole-filter-regexp))
-             (file (deft-absolute-filename name)))
-        (if (file-exists-p file)
-            (message "Aborting, file already exists: %s" file)
-          (deft-auto-populate-title-maybe file)
-          (deft-cache-update-file file)
-          (deft-refresh-filter)
-          (deft-open-file file)
-          (with-current-buffer (get-file-buffer file)
-            (goto-char (point-max))
-            (insert "# " name)
-            (newline 2))))))
   :config
+  (setq deft-strip-summary-regexp
+        (concat "\\("
+                "[\n\t]" ;; blank
+                "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
+                "\\|^# .*$" ;; md titles
+                "\\)"))
   (setq deft-directory "~/ownCloud/Notes")
   (setq deft-new-file-format "%y/%m/%d-%H:%M")
   (setq deft-file-naming-rules nil)
   (setq deft-recursive t)
-  (setq deft-use-filename-as-title t)
   (setq deft-default-extension "md")
   (setq deft-extensions '("md"))
   (setq deft-auto-save-interval 0))
