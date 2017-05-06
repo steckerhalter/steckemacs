@@ -141,12 +141,12 @@ buffer is not visiting a file."
                         "%d.%m.%y")))
       (insert (format-time-string timestring))))
 
-(defun my-xdg-open-dir ()
-  "Open directory in default external program."
-  (interactive)
-  (shell-command
-   (concat "xdg-open " (shell-quote-argument
-                        (expand-file-name default-directory)))))
+  (defun my-xdg-open-dir ()
+    "Open directory in default external program."
+    (interactive)
+    (shell-command
+     (concat "xdg-open " (shell-quote-argument
+                          (expand-file-name default-directory)))))
 
 ;;;; global key bindings
   :bind
@@ -951,6 +951,14 @@ line instead."
          ("<M-return>" . deft-new-file))
   :commands (deft)
   :config
+  ;; display filter in mode-line instead of header
+  (defun deft-print-header () (deft-set-mode-name))
+  (defun deft-set-mode-name ()
+    "Set the mode line text based on search mode and add the filter."
+    (let* ((name (if deft-incremental-search "Deft" "Deft/R"))
+           (filter (deft-whole-filter-regexp))
+           (sep (unless (string= "" filter) "/")))
+      (setq mode-name (concat name sep filter))))
   (setq deft-strip-summary-regexp
         (concat "\\("
                 "[\n\t]" ;; blank
