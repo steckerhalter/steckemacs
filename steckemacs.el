@@ -947,7 +947,9 @@ line instead."
   :quelpa (deft :url "git://jblevins.org/git/deft.git" :fetcher git)
   :bind (("C-;" . deft)
          :map deft-mode-map
-         ("C-g" . quit-window)
+         ("<f7>" . quit-window)
+         ("<f8>" . deft-filter-clear)
+         ("<f9>" . deft-refresh)
          ("<M-return>" . deft-new-file))
   :commands (deft)
   :config
@@ -1328,6 +1330,7 @@ line instead."
       (funcall func name)))
 
   (setq markdown-asymmetric-header t)
+  (setq markdown-header-scaling t)
   (setq markdown-enable-wiki-links t)
   (setq markdown-list-indent-width 2)
   (setq markdown-enable-wiki-links t)
