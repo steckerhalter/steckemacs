@@ -974,6 +974,7 @@ line instead."
   (setq deft-recursive t)
   (setq deft-default-extension "md")
   (setq deft-extensions '("md"))
+  (setq deft-markdown-mode-title-level 1)
   (setq deft-auto-save-interval 0))
 
 ;;;; diatheke
@@ -1334,6 +1335,7 @@ line instead."
   (setq markdown-enable-wiki-links t)
   (setq markdown-list-indent-width 2)
   (setq markdown-enable-wiki-links t)
+  (setq markdown-footnote-location 'immediately)
   (setq markdown-wiki-link-fontify-missing t)
   (setq markdown-wiki-link-alias-first nil)
   (setq markdown-command "pandoc -c http://benjam.info/panam/styling.css --from markdown_github -t html5 --mathjax --highlight-style pygments --standalone")
