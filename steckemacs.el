@@ -1165,8 +1165,8 @@ line instead."
     ;; Emacs Helm Interface for quick Google searches
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
     :bind (("C-h C-o" . helm-google)
-           ("C-h C-c" . helm-google-suggest))
-    :init (setq helm-google-use-regexp-parsing t))
+           ("C-h C-c" . helm-google-suggest)))
+
   (use-package helm-swoop
     ;; Efficiently hopping squeezed lines powered by helm interface
     :quelpa
