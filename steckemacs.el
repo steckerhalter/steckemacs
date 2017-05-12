@@ -1293,7 +1293,6 @@ line instead."
               ("<S-iso-lefttab>" . markdown-promote)
               ("<S-tab>" . markdown-promote)
               ("<C-tab>" . markdown-shifttab)
-              ("RET" . my-markdown-ret)
               ("<M-S-return>" . my-markdown-checkbox))
   :mode
   ("\\.markdown\\'" . gfm-mode)
@@ -1301,23 +1300,6 @@ line instead."
   ("\\.lr\\'" . gfm-mode)
 
   :init
-  (defun my-markdown-ret ()
-    "Preserve list indentation after RET in markdown-mode."
-    ;; improved version of http://emacs.stackexchange.com/a/14642
-    (interactive)
-    (if-let ((bounds (markdown-cur-list-item-bounds))
-             (beg (car bounds))
-             (end (cadr bounds))
-             (indent (cadddr bounds))
-             (text (buffer-substring beg end)))
-        (if (= (- end beg)
-               indent)
-            (progn
-              (kill-region beg end)
-              (markdown-enter-key))
-          (call-interactively #'markdown-insert-list-item))
-      (markdown-enter-key)))
-
   (defun my-markdown-checkbox ()
     "Shortcut for list item with checkbox."
     (interactive)
