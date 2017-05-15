@@ -947,9 +947,9 @@ line instead."
   :quelpa (deft :url "git://jblevins.org/git/deft.git" :fetcher git)
   :bind (("C-;" . deft)
          :map deft-mode-map
-         ("<f7>" . quit-window)
-         ("<f8>" . deft-filter-clear)
-         ("<f9>" . deft-refresh)
+         ("<f6>" . quit-window)
+         ("C-g" . deft-filter-clear)
+         ("C-c C-c" . deft-refresh)
          ("<M-return>" . deft-new-file))
   :commands (deft)
   :config
