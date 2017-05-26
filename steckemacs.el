@@ -1320,6 +1320,7 @@ line instead."
   (setq markdown-footnote-location 'immediately)
   (setq markdown-wiki-link-fontify-missing t)
   (setq markdown-wiki-link-alias-first nil)
+  (setq markdown-indent-on-enter 'indent-and-new-item)
   (setq markdown-command "pandoc -c http://benjam.info/panam/styling.css --from markdown_github -t html5 --mathjax --highlight-style pygments --standalone")
 
   :config
@@ -1523,6 +1524,11 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing YAML files
 (use-package yaml-mode
   :quelpa (yaml-mode :repo "yoshiki/yaml-mode" :fetcher github))
+
+;;;; visual-regexp
+(use-package use-package
+  :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github)
+  :bind ("C-h v" . vr/replace))
 
 ;;;; vlf
 ;; View Large Files
