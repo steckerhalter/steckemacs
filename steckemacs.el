@@ -1074,15 +1074,6 @@ line instead."
   :quelpa (json-mode :fetcher github :repo "joshwnj/json-mode")
   :mode "\\.json\\'")
 
-;;;; kurecolor
-(use-package kurecolor
-  :bind (("<C-right>" . kurecolor-increase-brightness-by-step)
-         ("<C-left>" . kurecolor-decrease-brightness-by-step)
-         ("<M-right>" . kurecolor-increase-saturation-by-step)
-         ("<M-left>" . kurecolor-decrease-saturation-by-step)
-         ("<M-S-right>" . kurecolor-increase-hue-by-step)
-         ("<M-S-left>" . kurecolor-decrease-hue-by-step)))
-
 ;;;; magit
 ;; Emacs interface to git
 (use-package magit
