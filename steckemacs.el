@@ -772,7 +772,7 @@ line instead."
 ;;;; deft
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
-  :quelpa (deft :url "git://jblevins.org/git/deft.git" :fetcher git)
+  :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
   :bind (("C-;" . deft)
          :map deft-mode-map
          ("<f6>" . quit-window)
