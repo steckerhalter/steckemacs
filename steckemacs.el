@@ -1110,7 +1110,9 @@ line instead."
               ("<S-iso-lefttab>" . markdown-promote)
               ("<S-tab>" . markdown-promote)
               ("<C-tab>" . markdown-shifttab)
-              ("<M-S-return>" . my-markdown-checkbox))
+              ("<M-S-return>" . my-markdown-checkbox)
+              ("<C-up>" . markdown-move-up)
+              ("<C-down>" . markdown-move-down))
   :mode
   ("\\.markdown\\'" . gfm-mode)
   ("\\.md\\'" . gfm-mode)
