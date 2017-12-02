@@ -796,13 +796,12 @@ line instead."
                 "\\|^# .*$" ;; md titles
                 "\\)"))
   (setq deft-separator " ")
-  (setq deft-directory "~/ownCloud/Notes")
-  (setq deft-new-file-format "%y/%m/%d-%H:%M")
+  (setq deft-directory "~/Dropbox/notes")
   (setq deft-file-naming-rules nil)
+  (setq deft-use-filename-as-title t)
   (setq deft-recursive t)
-  (setq deft-default-extension "md")
-  (setq deft-extensions '("md"))
-  (setq deft-markdown-mode-title-level 1)
+  (setq deft-default-extension "org")
+  (setq deft-extensions '("org"))
   (setq deft-auto-save-interval 0))
 
 ;;;; diatheke
