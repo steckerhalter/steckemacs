@@ -518,7 +518,7 @@ line instead."
 ;;  "Outline-based notes management and organizer"
 (use-package org-mode
   :init
-  (setq org-startup-indented nil)
+  (setq org-startup-indented t)
   (setq org-startup-with-inline-images t)
   (setq org-startup-truncated t)
   (setq org-src-fontify-natively t)
