@@ -531,7 +531,8 @@ line instead."
   (setq org-html-postamble nil)
   (setq org-agenda-dim-blocked-tasks t)
   (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-enforce-todo-dependencies t))
+  (setq org-enforce-todo-dependencies t)
+  (setq org-speed-commands-user '(("S" . org-schedule))))
 
 ;;;; paren
 ;; highlight matching paren
