@@ -362,7 +362,7 @@ line instead."
 
   (use-package dired+
     ;; dired+ adds some features to standard dired (like reusing buffers)
-    :quelpa (dired+ :fetcher wiki)
+    :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
     :bind ("C-]" . dired-jump)
     :defer 1
     :init
@@ -637,7 +637,7 @@ line instead."
 ;;;; apache-mode
 ;; major mode for editing Apache configuration files
 (use-package apache-mode
-  :quelpa (apache-mode :fetcher wiki))
+  :quelpa (apache-mode :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/apache-mode.el"))
 
 ;;;; ansible-doc
 (use-package ansible-doc
@@ -860,7 +860,14 @@ line instead."
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
-  :quelpa (eval-sexp-fu :fetcher wiki :files ("eval-sexp-fu.el"))
+  :when (use-package highlight
+          :quelpa (highlight
+                   :fetcher url
+                   :version original
+                   :url "https://github.com/emacsmirror/emacswiki.org/raw/master/highlight.el")
+          :config (featurep 'highlight))
+
+  :quelpa (eval-sexp-fu  :fetcher github :repo "hchbaw/eval-sexp-fu.el")
   :bind
   (:map
    lisp-interaction-mode-map
@@ -1157,7 +1164,7 @@ line instead."
 ;;;; open-junk-file
 ;; Open a junk (memo) file to try-and-error
 (use-package open-junk-file
-  :quelpa (open-junk-file :fetcher wiki)
+  :quelpa (open-junk-file :repo "rubikitch/open-junk-file" :fetcher github)
   :bind ("C-h j" . open-junk-file)
   :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
 
