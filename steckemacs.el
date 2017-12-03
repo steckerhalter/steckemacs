@@ -514,6 +514,25 @@ line instead."
             (lambda ()
               (turn-on-eldoc-mode))))
 
+;;;; org-mode
+;;  "Outline-based notes management and organizer"
+(use-package org-mode
+  :init
+  (setq org-startup-indented nil)
+  (setq org-startup-with-inline-images t)
+  (setq org-startup-truncated t)
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  (setq org-edit-src-content-indentation 0)
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-use-speed-commands t)
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-html-postamble nil)
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-enforce-todo-checkbox-dependencies t)
+  (setq org-enforce-todo-dependencies t))
+
 ;;;; paren
 ;; highlight matching paren
 (use-package paren
