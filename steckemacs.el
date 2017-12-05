@@ -384,7 +384,7 @@ line instead."
 (use-package elec-pair
   :config
   ;;auto pair brackets, parens etc.
-  (electric-pair-mode 1))
+  (electric-pair-mode 0))
 
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
@@ -532,7 +532,11 @@ line instead."
   (setq org-agenda-dim-blocked-tasks t)
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-enforce-todo-dependencies t)
-  (setq org-speed-commands-user '(("S" . org-schedule))))
+  (setq org-speed-commands-user '(("S" . org-schedule)))
+  :config
+  (use-package org-bullets
+    :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
+    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
 
 ;;;; paren
 ;; highlight matching paren
