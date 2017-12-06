@@ -514,9 +514,9 @@ line instead."
             (lambda ()
               (turn-on-eldoc-mode))))
 
-;;;; org-mode
+;;;; org
 ;;  "Outline-based notes management and organizer"
-(use-package org-mode
+(use-package org
   :init
   (setq org-startup-indented t)
   (setq org-startup-with-inline-images t)
