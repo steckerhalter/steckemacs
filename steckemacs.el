@@ -820,7 +820,7 @@ line instead."
                 "\\|^# .*$" ;; md titles
                 "\\)"))
   (setq deft-separator " ")
-  (setq deft-directory "~/Dropbox/notes")
+  (setq deft-directory "~/Sync/notes")
   (setq deft-file-naming-rules nil)
   (setq deft-recursive t)
   (setq deft-default-extension "org")
