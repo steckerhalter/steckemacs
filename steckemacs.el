@@ -876,12 +876,11 @@ line instead."
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
-  :when (use-package highlight
-          :quelpa (highlight
-                   :fetcher url
-                   :version original
-                   :url "https://github.com/emacsmirror/emacswiki.org/raw/master/highlight.el")
-          :config (featurep 'highlight))
+  :when (add-to-list
+         'quelpa-melpa-recipe-stores
+         '((highlight :fetcher url
+                      :version original
+                      :url "https://github.com/emacsmirror/emacswiki.org/raw/master/highlight.el")))
 
   :quelpa (eval-sexp-fu  :fetcher github :repo "hchbaw/eval-sexp-fu.el")
   :bind
@@ -911,11 +910,11 @@ line instead."
 ;; on-the-fly source code syntax checks
 (use-package flycheck
   :requires let-alist
-  :when (use-package let-alist
-          :quelpa (let-alist :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
-                             :fetcher url
-                             :version original)
-          :config (featurep 'let-alist))
+  :when (add-to-list
+         'quelpa-melpa-recipe-stores
+         '((let-alist :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
+                      :fetcher url
+                      :version original)))
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :config
   (add-hook 'php-mode-hook 'flycheck-mode)
