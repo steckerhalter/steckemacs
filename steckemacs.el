@@ -749,12 +749,10 @@ line instead."
     (set (make-local-variable 'company-backends)
          '((company-capf :with company-dabbrev-code))))
 
-  (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook 'my-company-elisp-setup))
-
   (use-package company-statistics
     ;; Usage based completion sorting
     :quelpa (company-statistics :repo "company-mode/company-statistics" :fetcher github)
+    :hook ((emacs-lisp-mode lisp-interaction-mode) . my-company-elisp-setup)
     :config (company-statistics-mode)))
 
 ;;;; company-anaconda
@@ -833,7 +831,7 @@ line instead."
 
 ;;;; diatheke
 (use-package diatheke
-  :quelpa ((diatheke :fetcher github :repo "steckerhalter/diatheke.el") :upgrade t)
+  :quelpa (diatheke :fetcher github :repo "steckerhalter/diatheke.el")
   :init
   (setq diatheke-bible "GerLut1912")
   (setq diatheke-locale "de")
