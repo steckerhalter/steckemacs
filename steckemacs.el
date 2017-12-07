@@ -621,6 +621,24 @@ line instead."
   (add-hook 'term-mode-hook 'my-term-setup t))
 
 ;;; external packages
+;;;; add recipes that are required by some packages
+(add-to-list
+ 'quelpa-melpa-recipe-stores
+ '(;; eval-sexp-fu
+   (highlight :fetcher url
+              :version original
+              :url "https://github.com/emacsmirror/emacswiki.org/raw/master/highlight.el")
+   ;; flycheck
+   (let-alist :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
+                      :fetcher url
+                      :version original)
+   ;; cider
+   (queue :url "http://www.dr-qubit.org/predictive/queue.el"
+          :fetcher url
+          :version original)
+   (seq :repo "NicolasPetton/seq.el" :fetcher github)
+   (spinner :repo "Malabarba/spinner.el" :fetcher github)))
+
 ;;;; anaconda-mode
 ;; Code navigation, documentation lookup and completion for Python
 (use-package anaconda-mode
@@ -695,13 +713,6 @@ line instead."
 ;;;; cider
 ;; Clojure Interactive Development Environment that Rocks
 (use-package cider
-  :when (add-to-list
-         'quelpa-melpa-recipe-stores
-         '((queue :url "http://www.dr-qubit.org/predictive/queue.el"
-                  :fetcher url
-                  :version original)
-           (seq :repo "NicolasPetton/seq.el" :fetcher github)
-           (spinner :repo "Malabarba/spinner.el" :fetcher github)))
   :quelpa (cider
            :fetcher github
            :repo "clojure-emacs/cider"
@@ -876,12 +887,6 @@ line instead."
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
-  :when (add-to-list
-         'quelpa-melpa-recipe-stores
-         '((highlight :fetcher url
-                      :version original
-                      :url "https://github.com/emacsmirror/emacswiki.org/raw/master/highlight.el")))
-
   :quelpa (eval-sexp-fu  :fetcher github :repo "hchbaw/eval-sexp-fu.el")
   :bind
   (:map
@@ -910,11 +915,6 @@ line instead."
 ;; on-the-fly source code syntax checks
 (use-package flycheck
   :requires let-alist
-  :when (add-to-list
-         'quelpa-melpa-recipe-stores
-         '((let-alist :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
-                      :fetcher url
-                      :version original)))
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :config
   (add-hook 'php-mode-hook 'flycheck-mode)
