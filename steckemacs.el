@@ -795,7 +795,7 @@ line instead."
   (defun my-company-web ()
     (set (make-local-variable 'company-backends) '(company-web-html))
     (company-mode t))
-  (add-hook 'web-mode-hook 'my-company-web))
+  :hook (web-mode . my-company-web))
 
 ;;;; deft
 ;; quickly browse, filter, and edit plain text notes
@@ -837,7 +837,7 @@ line instead."
   :init
   (setq diatheke-bible "GerLut1912")
   (setq diatheke-locale "de")
-  (add-hook 'text-mode-hook 'diatheke-mode))
+  :hook text-mode)
 
 ;;;; diff-hl
 ;; Highlight uncommitted changes
@@ -878,11 +878,8 @@ line instead."
   ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
   ("C-h C-d" . my-show-help)
   ("C-h C-," . elisp-slime-nav-describe-elisp-thing-at-point)
-
   :diminish elisp-slime-nav-mode
-  :config
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook 'elisp-slime-nav-mode)))
+  :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
@@ -916,14 +913,8 @@ line instead."
 (use-package flycheck
   :requires let-alist
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
+  :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flycheck-mode)
   :config
-  (add-hook 'php-mode-hook 'flycheck-mode)
-  (add-hook 'sh-mode-hook 'flycheck-mode)
-  (add-hook 'json-mode-hook 'flycheck-mode)
-  (add-hook 'nxml-mode-hook 'flycheck-mode)
-  (add-hook 'python-mode-hook 'flycheck-mode)
-  (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
-  (add-hook 'lisp-interaction-mode-hook 'flycheck-mode)
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
   (setq flycheck-indication-mode 'right-fringe))
 
@@ -1025,8 +1016,8 @@ line instead."
 (use-package highlight-parentheses
   :quelpa (highlight-parentheses :repo "nschum/highlight-parentheses.el"
                                  :fetcher github)
+  :hook (prog-mode . highlight-parentheses-mode)
   :init
-  (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
   (setq hl-paren-delay 0.2)
   (setq hl-paren-colors '("Springgreen3"
                           "IndianRed1"
@@ -1034,6 +1025,7 @@ line instead."
                           "IndianRed4"))
   :config
   (set-face-attribute 'hl-paren-face nil :weight 'ultra-bold))
+
 ;;;; highlight-symbol
 ;; automatic and manual symbol highlighting
 (use-package highlight-symbol
@@ -1042,9 +1034,9 @@ line instead."
   :bind (("M-2" . highlight-symbol-occur)
          ("M-3" . highlight-symbol-prev)
          ("M-4" . highlight-symbol-next))
+  :hook (prog-mode . highlight-symbol-mode)
   :init
-  (setq highlight-symbol-on-navigation-p t)
-  (add-hook 'prog-mode-hook 'highlight-symbol-mode))
+  (setq highlight-symbol-on-navigation-p t))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
@@ -1086,7 +1078,7 @@ line instead."
 (use-package js2-mode
   :quelpa (js2-mode :repo "mooz/js2-mode" :fetcher github)
   :mode "\\.js$"
-  :init (add-hook 'js2-mode-hook 'flycheck-mode))
+  :hook (js2-mode . flycheck-mode))
 
 ;;;; json-mode
 ;; syntax highlighting for `json'
@@ -1162,10 +1154,10 @@ line instead."
   (setq markdown-indent-on-enter 'indent-and-new-item)
   (setq markdown-command "pandoc -c http://benjam.info/panam/styling.css --from markdown_github -t html5 --mathjax --highlight-style pygments --standalone")
 
+  :hook (markdown-mode . visual-line-mode)
   :config
   (advice-add 'markdown-convert-wiki-link-to-filename
-              :around 'my-markdown-convert-wiki-link)
-  (add-hook 'markdown-mode-hook 'visual-line-mode))
+              :around 'my-markdown-convert-wiki-link))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
@@ -1190,10 +1182,10 @@ line instead."
   :bind ("M-# 3" . outshine-insert-heading)
   :diminish outline-minor-mode
   :commands outshine-hook-function
+  :hook ((outline-minor-mode . outshine-hook-function)
+         (emacs-lisp-mode . outline-minor-mode))
   :init
   (setq outshine-imenu-show-headlines-p nil)
-  (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-  (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
   :config
   (use-package navi-mode
     ;; major-mode for easy buffer-navigation
@@ -1237,7 +1229,8 @@ line instead."
 
   (defun setup-php-mode ()
     (php-eldoc-enable))
-  (add-hook 'php-mode-hook 'setup-php-mode))
+
+  :hook (php-mode . setup-php-mode))
 
 ;;;; pos-tip
 ;; Show tooltip at point
@@ -1296,14 +1289,7 @@ Pass symbol-name to the function DOC-FUNCTION."
            :fetcher url
            :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/rainbow-mode/rainbow-mode.el")
   :diminish rainbow-mode
-  :config
-  (dolist (hook '(css-mode-hook
-                  html-mode-hook
-                  js-mode-hook
-                  emacs-lisp-mode-hook
-                  text-mode-hook
-                  ))
-    (add-hook hook 'rainbow-mode)))
+  :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
 
 ;;;; robe
 ;; Code navigation, documentation lookup and completion for Ruby
@@ -1314,7 +1300,7 @@ Pass symbol-name to the function DOC-FUNCTION."
            :files ("robe*.el" "company-robe.el" "lib"))
   :config
   (push 'company-robe company-backends)
-  (add-hook 'ruby-mode-hook 'robe-mode))
+  :hook (ruby-mode . robe-mode))
 
 ;;;; smart-mode-line
 ;; A color coded smart mode-line.
@@ -1387,7 +1373,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   (setq web-mode-enable-engine-detection t)
   (defun setup-web-mode ()
     (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
-  (add-hook 'web-mode-hook 'setup-web-mode))
+  :hook (web-mode . setup-web-mode))
 
 ;;;; my-keys-minor-mode (must be last)
 (define-minor-mode my-keys-minor-mode
