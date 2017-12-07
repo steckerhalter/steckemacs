@@ -215,7 +215,7 @@ buffer is not visiting a file."
    tab-always-indent 'complete            ;try to complete before identing
    confirm-nonexistent-file-or-buffer nil ;don't ask to create a buffer
    vc-follow-symlinks t                   ;follow symlinks automatically
-   recentf-max-saved-items 5000           ;same up to 5000 recent files
+   recentf-max-saved-items 5000           ;save up to 5000 recent files
    eval-expression-print-length nil       ;do not truncate printed expressions
    eval-expression-print-level nil        ;print nested expressions
    send-mail-function 'sendmail-send-it
@@ -223,10 +223,10 @@ buffer is not visiting a file."
    mark-ring-max 5000                     ;truncate mark ring after 5000 entries
    mouse-autoselect-window -.1            ;window focus follows the mouse pointer
    mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
-   indicate-buffer-boundaries 'left       ;fringe markers
+   indicate-buffer-boundaries 'left       ;fringe markers (on the left side)
    split-height-threshold 110             ;more readily split horziontally
-   enable-recursive-minibuffers t
-   show-paren-delay 0
+   enable-recursive-minibuffers t         ;whatever...
+   show-paren-delay 0                     ;show the paren immediately
    load-prefer-newer t                    ;prefer newer .el instead of the .elc
    split-width-threshold 160              ;split horizontally only if less than 160 columns
    gc-cons-percentage 0.3                 ;increase garbage collection limit
@@ -242,7 +242,7 @@ buffer is not visiting a file."
    c-basic-offset 4                       ;"tab" with in c-related modes
    c-hungry-delete-key t)                 ;delete more than one space
 
-  ;; disable full `yes' or `no' answers
+  ;; disable full `yes' or `no' answers, `y' and `n' suffices
   (defalias 'yes-or-no-p 'y-or-n-p)
 
   ;; minor mode to override bindings
