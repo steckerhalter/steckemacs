@@ -695,20 +695,13 @@ line instead."
 ;;;; cider
 ;; Clojure Interactive Development Environment that Rocks
 (use-package cider
-  :when (and (use-package queue
-               :quelpa (queue
-                        :url "http://www.dr-qubit.org/predictive/queue.el"
-                        :fetcher url
-                        :version original)
-               :config (featurep 'queue))
-             (use-package seq
-               :quelpa (seq
-                        :repo "NicolasPetton/seq.el"
-                        :fetcher github)
-               :config (featurep 'seq))
-             (use-package spinner
-               :quelpa (spinner :repo "Malabarba/spinner.el" :fetcher github)
-               :config (featurep 'spinner)))
+  :when (add-to-list
+         'quelpa-melpa-recipe-stores
+         '((queue :url "http://www.dr-qubit.org/predictive/queue.el"
+                  :fetcher url
+                  :version original)
+           (seq :repo "NicolasPetton/seq.el" :fetcher github)
+           (spinner :repo "Malabarba/spinner.el" :fetcher github)))
   :quelpa (cider
            :fetcher github
            :repo "clojure-emacs/cider"
