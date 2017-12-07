@@ -835,7 +835,7 @@ line instead."
   :init
   (setq diatheke-bible "GerLut1912")
   (setq diatheke-locale "de")
-  :hook text-mode)
+  :hook (text-mode . diatheke-mode))
 
 ;;;; diff-hl
 ;; Highlight uncommitted changes
