@@ -1,6 +1,6 @@
 ;;; steckemacs.el --- steckemacs emacs configuration
 
-;; Copyright 2015, Steckerhalter
+;; Copyright 2017, Steckerhalter
 
 ;; Author: steckerhalter
 ;; Keywords: emacs configuration init
@@ -871,10 +871,9 @@ line instead."
   :demand
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
   :bind
-  (:map elisp-slime-nav-mode-map
-        ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
-        ("C-c C-d" . my-show-help)
-        ("C-c d" . elisp-slime-nav-describe-elisp-thing-at-point))
+  ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
+  ("C-h C-d" . my-show-help)
+  ("C-h C-," . elisp-slime-nav-describe-elisp-thing-at-point)
 
   :diminish elisp-slime-nav-mode
   :config
@@ -1375,7 +1374,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; visual-regexp
 (use-package use-package
   :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github)
-  :bind ("C-h v" . vr/replace))
+  :bind ("C-h V" . vr/replace))
 
 ;;;; vlf
 ;; View Large Files
