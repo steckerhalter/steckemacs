@@ -634,16 +634,10 @@ line instead."
 (add-to-list
  'quelpa-melpa-recipe-stores
  '(;; eval-sexp-fu
-   (highlight :fetcher github :repo "emacsmirror/highlight"
-   ;; flycheck
-   (let-alist :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
-                      :fetcher url
-                      :version original)
+   (highlight :fetcher github :repo "emacsmirror/highlight")
    ;; cider
-   (queue :url "http://www.dr-qubit.org/predictive/queue.el"
-          :fetcher url
-          :version original)
-   (seq :fetcher github :repo "NicolasPetton/seq.el" )
+   (queue :fetcher github :repo "emacsmirror/queue")
+   (seq :fetcher github :repo "NicolasPetton/seq.el")
    (spinner :fetcher github :repo "Malabarba/spinner.el")))
 
 ;;;; anaconda-mode
