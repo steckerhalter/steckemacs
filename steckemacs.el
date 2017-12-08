@@ -343,6 +343,7 @@ line instead."
 ;;;; dired
 ;; directory-browsing commands
 (use-package dired
+  :demand
   :init
   (setq dired-auto-revert-buffer t)
   (setq dired-no-confirm
@@ -370,7 +371,15 @@ line instead."
     (setq diredp-hide-details-propagate-flag nil)
 
     :config
-    (diredp-toggle-find-file-reuse-dir 1)))
+    (diredp-toggle-find-file-reuse-dir 1))
+
+  ;; Tree browser leveraging dired
+  (use-package dired-sidebar
+    :quelpa (dired-sidebar :fetcher github :repo "jojojames/dired-sidebar")
+    :bind ("C-h C-n" . dired-sidebar-toggle-sidebar)
+    :init
+    (setq dired-sidebar-should-follow-file t)
+    (setq dired-sidebar-use-term-integration t)))
 
 ;;;; eldoc
 ;; display information about a function or variable in the the echo area
@@ -979,6 +988,7 @@ line instead."
   (require 'helm-config)
   (helm-mode 1)
   (add-to-list 'helm-completing-read-handlers-alist '(dired-create-directory))
+  (add-to-list 'helm-boring-buffer-regexp-list ":.*")
 
   (use-package helm-descbinds
     ;; Yet Another `describe-bindings' with `helm'.
@@ -1058,7 +1068,8 @@ line instead."
                                 "*Quail Completions*"
                                 "*Completions*"
                                 "*anaconda-mode*"
-                                "*Deft*"))
+                                "*Deft*"
+                                ":.*"))
 
   :bind (("<f8>" . iflipb-next-buffer)
          ("<f9>" . iflipb-previous-buffer)))

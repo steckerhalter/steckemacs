@@ -14,9 +14,8 @@ if ! test -e /usr/local/bin/emacs; then
         sudo apt-get update
         sudo apt-get -y install build-essential wget
         sudo apt-get -y build-dep emacs23
-        wget http://ftp.gnu.org/gnu/emacs/emacs-24.5.tar.gz
-        tar -xzf emacs-24.5.tar.gz
-        cd emacs-24.5
+        wget http://ftp.gnu.org/gnu/emacs/emacs-25.3.tar.gz -O- | tar xz
+        cd emacs-25.3
         >&2 echo "--- building emacs ---"
         ./configure &&\
             make &&\
