@@ -378,6 +378,7 @@ line instead."
     :quelpa (dired-sidebar :fetcher github :repo "jojojames/dired-sidebar")
     :bind ("C-h C-n" . dired-sidebar-toggle-sidebar)
     :init
+    (setq dired-sidebar-width 25)
     (setq dired-sidebar-should-follow-file t)
     (setq dired-sidebar-use-term-integration t)))
 
