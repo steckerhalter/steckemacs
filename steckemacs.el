@@ -635,6 +635,10 @@ line instead."
  'quelpa-melpa-recipe-stores
  '(;; eval-sexp-fu
    (highlight :fetcher github :repo "emacsmirror/highlight")
+   ;; flycheck + magit
+   (let-alist :fetcher url
+              :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
+              :version original)
    ;; cider
    (queue :fetcher github :repo "emacsmirror/queue")
    (seq :fetcher github :repo "NicolasPetton/seq.el")
