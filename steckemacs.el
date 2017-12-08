@@ -393,7 +393,7 @@ line instead."
 (use-package elec-pair
   :config
   ;;auto pair brackets, parens etc.
-  (electric-pair-mode 0))
+  (electric-pair-mode 1))
 
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
@@ -1292,9 +1292,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
 (use-package rainbow-mode
-  :quelpa (rainbow-mode
-           :fetcher url
-           :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/rainbow-mode/rainbow-mode.el")
+  :quelpa (rainbow-mode :fetcher github :repo "emacsmirror/rainbow-mode")
   :diminish rainbow-mode
   :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
 
