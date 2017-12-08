@@ -634,9 +634,7 @@ line instead."
 (add-to-list
  'quelpa-melpa-recipe-stores
  '(;; eval-sexp-fu
-   (highlight :fetcher url
-              :version original
-              :url "https://github.com/emacsmirror/emacswiki.org/raw/master/highlight.el")
+   (highlight :fetcher github :repo "emacsmirror/highlight"
    ;; flycheck
    (let-alist :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
                       :fetcher url
@@ -645,8 +643,8 @@ line instead."
    (queue :url "http://www.dr-qubit.org/predictive/queue.el"
           :fetcher url
           :version original)
-   (seq :repo "NicolasPetton/seq.el" :fetcher github)
-   (spinner :repo "Malabarba/spinner.el" :fetcher github)))
+   (seq :fetcher github :repo "NicolasPetton/seq.el" )
+   (spinner :fetcher github :repo "Malabarba/spinner.el")))
 
 ;;;; anaconda-mode
 ;; Code navigation, documentation lookup and completion for Python
@@ -688,7 +686,7 @@ line instead."
 ;;;; apache-mode
 ;; major mode for editing Apache configuration files
 (use-package apache-mode
-  :quelpa (apache-mode :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/apache-mode.el"))
+  :quelpa (apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
 
 ;;;; ansible-doc
 (use-package ansible-doc
