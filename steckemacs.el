@@ -527,6 +527,8 @@ line instead."
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
+  :quelpa (org :url "git://orgmode.org/org-mode.git" :fetcher git
+               :files ("lisp/*.el" "contrib/lisp/*.el" "doc/dir" "doc/*.texi"))
   :init
   (setq org-startup-indented t)
   (setq org-startup-with-inline-images t)
@@ -1008,6 +1010,10 @@ line instead."
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
     :bind (("C-h C-o" . helm-google)
            ("C-h C-c" . helm-google-suggest)))
+
+  (use-package helm-tramp
+    :quelpa (helm-tramp :repo "masasam/emacs-helm-tramp" :fetcher github)
+    :bind ("C-h C-t" . helm-tramp))
 
   (use-package helm-swoop
     ;; Efficiently hopping squeezed lines powered by helm interface
