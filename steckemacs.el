@@ -48,8 +48,6 @@
   :init
   (setq bind-key-describe-special-forms t)
   (global-unset-key (kbd "C-t"))
-  ;; make it possible to map C-i
-  (define-key input-decode-map "\C-i" [C-i])
 
   ;; minor mode to override bindings
   (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
@@ -175,6 +173,8 @@ buffer is not visiting a file."
    ("C-c w" . whitespace-cleanup)
    ("C-h C-v" . visual-line-mode)
    ("C-h t" . my-timestamp)
+   ("M-k" . kill-line)
+   ("M-K" . kill-sentence)
    ;; source
    ("C-h C-0" . edebug-defun)
    ("C-h C-b" . eval-buffer)
@@ -189,7 +189,6 @@ buffer is not visiting a file."
    ("C-c n" . my-show-file-name)
    ("C-h 0" . text-scale-adjust)
    ;; windows
-   ("C-i" . my-select-prev-window)
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -203,7 +202,8 @@ buffer is not visiting a file."
    ("C-h g" . helm-do-grep-ag)
    ("C-h O" . occur)
    ;; C-j needs to be set so it overrides anything else via minor mode
-   :map my-keys-minor-mode-map ("C-j" . my-select-next-window)))
+   :map my-keys-minor-mode-map (("C-j" . my-select-next-window)
+                                ("C-k" . my-select-prev-window))))
 
 ;;; settings
 (use-package steckemacs-settings
