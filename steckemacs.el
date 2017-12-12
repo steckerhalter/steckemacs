@@ -1022,8 +1022,9 @@ line instead."
   (use-package helm-swoop
     ;; Efficiently hopping squeezed lines powered by helm interface
     :quelpa
-    :bind (("M-i" . helm-swoop)
+    :bind (
            ("M-I" . helm-multi-swoop)
+           :map my-keys-minor-mode-map ("M-i" . helm-swoop)
            :map isearch-mode-map ("M-i" . helm-swoop-from-isearch)
            :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))))
 
