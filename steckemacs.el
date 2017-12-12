@@ -48,6 +48,8 @@
   :init
   (setq bind-key-describe-special-forms t)
   (global-unset-key (kbd "C-t"))
+  ;; make it possible to map C-i
+  (define-key input-decode-map "\C-i" [C-i])
 
   ;; minor mode to override bindings
   (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
@@ -187,7 +189,7 @@ buffer is not visiting a file."
    ("C-c n" . my-show-file-name)
    ("C-h 0" . text-scale-adjust)
    ;; windows
-   ("H-i" . my-select-prev-window)
+   ("C-i" . my-select-prev-window)
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -201,9 +203,7 @@ buffer is not visiting a file."
    ("C-h g" . helm-do-grep-ag)
    ("C-h O" . occur)
    ;; C-j needs to be set so it overrides anything else via minor mode
-   :map my-keys-minor-mode-map ("C-j" . my-select-next-window))
-  ;; move C-i to H-i so that C-i can be bound without affecting TAB
-  :hook (after-init . (lambda () (keyboard-translate ?\C-i ?\H-i))))
+   :map my-keys-minor-mode-map ("C-j" . my-select-next-window)))
 
 ;;; settings
 (use-package steckemacs-settings
