@@ -49,6 +49,9 @@
   (setq bind-key-describe-special-forms t)
   (global-unset-key (kbd "C-t"))
 
+  ;; minor mode to override bindings
+  (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
+
 ;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
@@ -165,6 +168,7 @@ buffer is not visiting a file."
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
+   ("C-S-j" . electric-newline-and-maybe-indent)
    ("C-c q" . auto-fill-mode)
    ("C-c w" . whitespace-cleanup)
    ("C-h C-v" . visual-line-mode)
@@ -183,8 +187,7 @@ buffer is not visiting a file."
    ("C-c n" . my-show-file-name)
    ("C-h 0" . text-scale-adjust)
    ;; windows
-   ("C-0" . my-select-prev-window)
-   ("C-9" . my-select-next-window)
+   ("H-i" . my-select-prev-window)
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -196,7 +199,11 @@ buffer is not visiting a file."
    ("C-S-h C-S-g" . find-grep-dired)
    ("C-h o" . helm-projectile-grep)
    ("C-h g" . helm-do-grep-ag)
-   ("C-h O" . occur)))
+   ("C-h O" . occur)
+   ;; C-j needs to be set so it overrides anything else via minor mode
+   :map my-keys-minor-mode-map ("C-j" . my-select-next-window))
+  ;; move C-i to H-i so that C-i can be bound without affecting TAB
+  :hook (after-init . (lambda () (keyboard-translate ?\C-i ?\H-i))))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -244,9 +251,6 @@ buffer is not visiting a file."
 
   ;; disable full `yes' or `no' answers, `y' and `n' suffices
   (defalias 'yes-or-no-p 'y-or-n-p)
-
-  ;; minor mode to override bindings
-  (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
 
   (provide 'steckemacs-settings)
 
