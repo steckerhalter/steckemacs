@@ -887,6 +887,7 @@ line instead."
   :bind
   ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
   ("C-h C-d" . my-show-help)
+  ("C-h C-," . elisp-slime-nav-describe-elisp-thing-at-point)
   :diminish elisp-slime-nav-mode
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
@@ -1025,14 +1026,6 @@ line instead."
            ("M-I" . helm-multi-swoop)
            :map isearch-mode-map ("M-i" . helm-swoop-from-isearch)
            :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))))
-
-;;;; helpful
-(use-package helpful
-  :quelpa (helpful :repo "Wilfred/helpful" :fetcher github)
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
-         ("C-h k" . helpful-key)
-         ("C-h C-," . helpful-at-point)))
 
 ;;;; highlight-parentheses
 (use-package highlight-parentheses
