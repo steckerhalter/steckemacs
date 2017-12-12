@@ -202,8 +202,8 @@ buffer is not visiting a file."
    ("C-h g" . helm-do-grep-ag)
    ("C-h O" . occur)
    ;; C-j needs to be set so it overrides anything else via minor mode
-   :map my-keys-minor-mode-map (("C-j" . my-select-next-window)
-                                ("C-k" . my-select-prev-window))))
+   :map my-keys-minor-mode-map (("M-n" . my-select-next-window)
+                                ("M-p" . my-select-prev-window))))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -985,7 +985,7 @@ line instead."
    ("C-h C-l" . helm-locate)
    ("C-S-h C-c" . helm-wikipedia-suggest)
    ("C-h i" . helm-imenu)
-   :map my-keys-minor-mode-map ("<C-return>" . helm-mini))
+   :map my-keys-minor-mode-map ("C-," . helm-mini))
 
   :config
   (require 'helm-config)
