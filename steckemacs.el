@@ -811,7 +811,7 @@ line instead."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind (("C-;" . deft)
+  :bind (("C-," . deft)
          :map deft-mode-map
          ("<f6>" . quit-window)
          ("C-g" . deft-filter-clear)
@@ -985,7 +985,7 @@ line instead."
    ("C-h C-l" . helm-locate)
    ("C-S-h C-c" . helm-wikipedia-suggest)
    ("C-h i" . helm-imenu)
-   :map my-keys-minor-mode-map ("C-," . helm-mini))
+   :map my-keys-minor-mode-map ("C-;" . helm-mini))
 
   :config
   (require 'helm-config)
