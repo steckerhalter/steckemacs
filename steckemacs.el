@@ -497,7 +497,8 @@ line instead."
     (interactive)
     (if (erc-buffer-list)
         (erc-track-switch-buffer 1)
-      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
+      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
+  :bind ("C-u e" . my-erc-connect))
 
 ;;;; ibuffer
 (use-package ibuffer
@@ -862,7 +863,7 @@ line instead."
 (use-package diff-hl
   :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
-  :bind ("H-i n" . diff-hl-revert-hunk)
+  :bind ("C-u C-r" . diff-hl-revert-hunk)
   :config
   (global-diff-hl-mode 1)
   (eval-after-load 'magit
@@ -1115,9 +1116,9 @@ line instead."
 ;; Emacs interface to git
 (use-package magit
   :quelpa
-  :bind (("C-c g" . magit-status)
-         ("C-c l" . magit-log)
-         ("H-i B" . magit-blame))
+  :bind (("C-u g" . magit-status)
+         ("C-u l" . magit-log)
+         ("H-i b" . magit-blame))
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
