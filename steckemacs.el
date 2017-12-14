@@ -992,7 +992,7 @@ line instead."
    ("H-i C-SPC" . helm-show-kill-ring)
    ("H-i SPC" . helm-all-mark-rings)
    ("H-i C-l" . helm-locate)
-   ("C-S-h C-c" . helm-wikipedia-suggest)
+   ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    :map my-keys-minor-mode-map ("C-;" . helm-mini))
 
@@ -1067,8 +1067,9 @@ line instead."
 ;; change multiple occurences of word-at-point (compress display to show all of them)
 (use-package iedit
   :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
+  :bind ("C-u H-i" . iedit-mode)
   :init
-  (setq iedit-unmatched-lines-invisible-default t)
+  (setq iedit-unmatched-lines-invisible t)
   (setq iedit-toggle-key-default nil))
 
 ;;;; iflipb
@@ -1189,10 +1190,9 @@ line instead."
 ;; allow editing with multiple cursors
 (use-package multiple-cursors
   :quelpa (multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el")
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-         ("C-<" . mc/mark-previous-like-this)
+  :bind (("C-<" . mc/mark-previous-like-this)
          ("C->" . mc/mark-next-like-this)
-         ("C-*" . mc/mark-all-like-this)))
+         ("C-?" . mc/mark-all-like-this)))
 
 ;;;; open-junk-file
 ;; Open a junk (memo) file to try-and-error
