@@ -47,7 +47,14 @@
   ;; A simple way to manage personal keybindings, provided by `use-package'
   :init
   (setq bind-key-describe-special-forms t)
+  ;; free C-t and C-u they can be used as prefix keys
   (global-unset-key (kbd "C-t"))
+  (global-unset-key (kbd "C-u"))
+  ;; translate C-i to H-i so it can be used apart from TAB
+  (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
+  ;; use C-h as backspace
+  (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
+  (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))
 
   ;; minor mode to override bindings
   (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
@@ -87,7 +94,11 @@ Call a second time to restore the original window configuration."
 
   (defun my-insert-package-desc-summary ()
     (interactive)
-    (my-package-desc summary (thing-at-point 'symbol t)))
+    (let* ((name (thing-at-point 'symbol t))
+           (summary (my-package-desc summary name)))
+      (back-to-indentation)
+      (open-line 1)
+      (insert (format ";; %s" summary))))
 
   (defun my-show-file-name ()
     "Show the full path file name in the minibuffer."
@@ -154,41 +165,45 @@ buffer is not visiting a file."
 ;;;; global key bindings
   :bind
   (;; general
-   ("C-h x" . kill-emacs)
+   ("<f1> <f1>" . universal-argument) 	;remap what was C-u
+   ("H-i x" . kill-emacs)
    ("C-S-l" . package-list-packages)
    ("C-c d" . ispell-change-dictionary)
    ("C-t f" . flyspell-buffer)
    ("C-t C-f" . flyspell-mode)
-   ("C-h C-p" . find-file)
+   ("H-i C-p" . find-file)
    ("C-x C-r" . my-sudo-edit)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
-   ("C-h C-<return>" . eww)
+   ("C-u C-e" . eww)
    ("M-1" . my-xdg-open-dir)
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
-   ("C-S-j" . electric-newline-and-maybe-indent)
    ("C-c q" . auto-fill-mode)
    ("C-c w" . whitespace-cleanup)
-   ("C-h C-v" . visual-line-mode)
-   ("C-h t" . my-timestamp)
+   ("H-i C-v" . visual-line-mode)
+   ("H-i t" . my-timestamp)
    ("M-k" . kill-line)
    ("M-K" . kill-sentence)
    ;; source
-   ("C-h C-0" . edebug-defun)
-   ("C-h C-b" . eval-buffer)
-   ("C-h C-e" . toggle-debug-on-error)
+   ("H-i C-0" . edebug-defun)
+   ("H-i C-b" . eval-buffer)
+   ("H-i C-e" . toggle-debug-on-error)
    ("C-t C-s" . my-insert-package-desc-summary)
    ;; buffers
-   ("C-h C-h" . save-buffer)
+   ("H-i H-i" . save-buffer)
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
    ("C-." . my-switch-to-scratch)
-   ("C-h TAB" . my-indent-whole-buffer)
+   ("H-i TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
-   ("C-h 0" . text-scale-adjust)
+   ("H-i 0" . text-scale-adjust)
    ;; windows
+   :map my-keys-minor-mode-map
+   ;; minor mode is used so modes do not override
+   (("M-n" . my-select-next-window)
+    ("M-p" . my-select-prev-window))
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -196,14 +211,11 @@ buffer is not visiting a file."
    ("<f4>" . delete-window)
    ("<f5>" . delete-other-windows)
    ;; find/grep
-   ("C-h G" . grep-find)
-   ("C-S-h C-S-g" . find-grep-dired)
-   ("C-h o" . helm-projectile-grep)
-   ("C-h g" . helm-do-grep-ag)
-   ("C-h O" . occur)
-   ;; C-j needs to be set so it overrides anything else via minor mode
-   :map my-keys-minor-mode-map (("M-n" . my-select-next-window)
-                                ("M-p" . my-select-prev-window))))
+   ("H-i G" . grep-find)
+   ("C-S-u C-S-g" . find-grep-dired)
+   ("H-i o" . helm-projectile-grep)
+   ("H-i g" . helm-do-grep-ag)
+   ("H-i O" . occur)))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -375,16 +387,7 @@ line instead."
     (setq diredp-hide-details-propagate-flag nil)
 
     :config
-    (diredp-toggle-find-file-reuse-dir 1))
-
-  ;; Tree browser leveraging dired
-  (use-package dired-sidebar
-    :quelpa (dired-sidebar :fetcher github :repo "jojojames/dired-sidebar")
-    :bind ("C-h C-n" . dired-sidebar-toggle-sidebar)
-    :init
-    (setq dired-sidebar-width 25)
-    (setq dired-sidebar-should-follow-file t)
-    (setq dired-sidebar-use-term-integration t)))
+    (diredp-toggle-find-file-reuse-dir 1)))
 
 ;;;; eldoc
 ;; display information about a function or variable in the the echo area
@@ -631,7 +634,6 @@ line instead."
     (define-key term-raw-map (kbd "M-,") 'term-send-input)
     (define-key term-raw-map (kbd "C-c y") 'term-paste)
     (define-key term-raw-map (kbd "C-S-y") 'term-paste)
-    (define-key term-raw-map (kbd "C-h") nil) ;unbind C-h
     (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
     (define-key term-raw-map (kbd "C-]") nil))
   (add-hook 'term-mode-hook 'my-term-setup t))
@@ -686,7 +688,7 @@ line instead."
 ;; A front-end for ag ('the silver searcher'), the C ack replacement.
 (use-package ag
   :quelpa (ag :repo "Wilfred/ag.el" :fetcher github)
-  :bind ("C-h C-g" . ag-project))
+  :bind ("H-i C-g" . ag-project))
 
 ;;;; apache-mode
 ;; major mode for editing Apache configuration files
@@ -854,7 +856,7 @@ line instead."
 (use-package diff-hl
   :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
-  :bind ("C-h n" . diff-hl-revert-hunk)
+  :bind ("H-i n" . diff-hl-revert-hunk)
   :config
   (global-diff-hl-mode 1)
   (eval-after-load 'magit
@@ -864,7 +866,7 @@ line instead."
 ;; discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major
   :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major")
-  :bind ("C-h C-m" . discover-my-major))
+  :bind ("H-i C-m" . discover-my-major))
 
 ;;;; dokuwiki-mode
 (use-package dokuwiki-mode
@@ -885,9 +887,9 @@ line instead."
   :demand
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
   :bind
-  ("C-h C-." . elisp-slime-nav-find-elisp-thing-at-point)
-  ("C-h C-d" . my-show-help)
-  ("C-h C-," . elisp-slime-nav-describe-elisp-thing-at-point)
+  ("H-i C-." . elisp-slime-nav-find-elisp-thing-at-point)
+  ("H-i C-d" . my-show-help)
+  ("H-i C-," . elisp-slime-nav-describe-elisp-thing-at-point)
   :diminish elisp-slime-nav-mode
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
@@ -913,7 +915,7 @@ line instead."
 ;; find previous files/dirs quickly (uses `fasd' shell script)
 (use-package fasd
   :quelpa (fasd :repo "steckerhalter/emacs-fasd" :fetcher github)
-  :bind ("C-h C-f" . fasd-find-file)
+  :bind ("H-i C-f" . fasd-find-file)
   :config
   (setq fasd-completing-read-function 'helm--completing-read-default)
   (global-fasd-mode 1))
@@ -946,8 +948,8 @@ line instead."
 ;; Emacs interface to Google's translation service
 (use-package google-translate
   :quelpa (google-translate :fetcher github :repo "atykhonov/google-translate")
-  :bind (("C-h r" . google-translate-query-translate)
-         ("C-h C-r" . google-translate-query-translate-reverse))
+  :bind (("H-i r" . google-translate-query-translate)
+         ("H-i C-r" . google-translate-query-translate-reverse))
   :init
   (setq google-translate-default-source-language "de")
   (setq google-translate-default-target-language "en"))
@@ -976,15 +978,15 @@ line instead."
 
   :bind
   (("M-x" . helm-M-x)
-   ("C-h ," . helm-apropos)
-   ("C-h ." . helm-info-emacs)
-   ("C-h 4" . helm-info-elisp)
-   ("C-h 3" . helm-locate-library)
-   ("C-h C-SPC" . helm-show-kill-ring)
-   ("C-h SPC" . helm-all-mark-rings)
-   ("C-h C-l" . helm-locate)
+   ("H-i ," . helm-apropos)
+   ("H-i ." . helm-info-emacs)
+   ("H-i 4" . helm-info-elisp)
+   ("H-i 3" . helm-locate-library)
+   ("H-i C-SPC" . helm-show-kill-ring)
+   ("H-i SPC" . helm-all-mark-rings)
+   ("H-i C-l" . helm-locate)
    ("C-S-h C-c" . helm-wikipedia-suggest)
-   ("C-h i" . helm-imenu)
+   ("H-i i" . helm-imenu)
    :map my-keys-minor-mode-map ("C-;" . helm-mini))
 
   :config
@@ -1007,17 +1009,17 @@ line instead."
   (use-package helm-projectile
     ;; Helm integration for Projectile
     :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github)
-    :bind ("C-h h" . helm-projectile))
+    :bind ("H-i h" . helm-projectile))
 
   (use-package helm-google
     ;; Emacs Helm Interface for quick Google searches
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :bind (("C-h C-o" . helm-google)
-           ("C-h C-c" . helm-google-suggest)))
+    :bind (("H-i C-o" . helm-google)
+           ("H-i C-c" . helm-google-suggest)))
 
   (use-package helm-tramp
     :quelpa (helm-tramp :repo "masasam/emacs-helm-tramp" :fetcher github)
-    :bind ("C-h C-t" . helm-tramp))
+    :bind ("H-i C-t" . helm-tramp))
 
   (use-package helm-swoop
     ;; Efficiently hopping squeezed lines powered by helm interface
@@ -1087,8 +1089,8 @@ line instead."
 (use-package ipretty
   :quelpa (ipretty :fetcher github :repo "steckerhalter/ipretty")
   :config (ipretty-mode t)
-  :bind (("C-h C-j" . ipretty-last-sexp)
-         ("C-h C-k" . ipretty-last-sexp-other-buffer)))
+  :bind (("H-i C-j" . ipretty-last-sexp)
+         ("H-i C-k" . ipretty-last-sexp-other-buffer)))
 
 ;;;; js2-mode
 ;; extended javascript mode
@@ -1109,7 +1111,7 @@ line instead."
   :quelpa
   :bind (("C-c g" . magit-status)
          ("C-c l" . magit-log)
-         ("C-h B" . magit-blame))
+         ("H-i B" . magit-blame))
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
@@ -1189,7 +1191,7 @@ line instead."
 ;; Open a junk (memo) file to try-and-error
 (use-package open-junk-file
   :quelpa (open-junk-file :repo "rubikitch/open-junk-file" :fetcher github)
-  :bind ("C-h j" . open-junk-file)
+  :bind ("H-i j" . open-junk-file)
   :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
 
 ;;;; outshine
@@ -1239,7 +1241,7 @@ line instead."
                 ("M-." . ac-php-find-symbol-at-point)
                 ("M-," . ac-php-location-stack-back)
                 ("M-S-," . ac-php-location-stack-forward)
-                ("C-h d" . my-var_dump-die)))
+                ("H-i d" . my-var_dump-die)))
 
   (use-package php-eldoc
     :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
@@ -1284,11 +1286,11 @@ Pass symbol-name to the function DOC-FUNCTION."
            :fetcher github
            :files ("projectile.el"))
   :bind
-  (("C-h C-u" . projectile-find-file)
-   ("C-h C-y" . projectile-find-dir)
-   ("C-h G" . projectile-grep)
-   ("C-h z" . projectile-ack)
-   ("C-h C-p" . projectile-switch-project))
+  (("H-i C-u" . projectile-find-file)
+   ("H-i C-y" . projectile-find-dir)
+   ("H-i G" . projectile-grep)
+   ("H-i z" . projectile-ack)
+   ("H-i C-p" . projectile-switch-project))
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
@@ -1367,7 +1369,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; visual-regexp
 (use-package use-package
   :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github)
-  :bind ("C-h V" . vr/replace))
+  :bind ("C-u v" . vr/replace))
 
 ;;;; vlf
 ;; View Large Files
