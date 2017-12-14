@@ -46,15 +46,20 @@
 (use-package bind-key
   ;; A simple way to manage personal keybindings, provided by `use-package'
   :init
+  ;; If non-nil, extract docstrings from lambdas, closures and keymaps if possible.
   (setq bind-key-describe-special-forms t)
   ;; free C-t and C-u they can be used as prefix keys
   (global-unset-key (kbd "C-t"))
   (global-unset-key (kbd "C-u"))
-  ;; translate C-i to H-i so it can be used apart from TAB
-  (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
-  ;; use C-h as backspace
-  (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
-  (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))
+
+  (defun my-keyboard-translations (&optional frame)
+    (with-selected-frame (or frame (selected-frame))
+      ;; translate C-i to H-i so it can be used apart from TAB
+      (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
+      ;; use C-h as backspace
+      (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
+      (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
+  (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
 
   ;; minor mode to override bindings
   (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
@@ -434,14 +439,15 @@ line instead."
   ;; maximize emacs
   (modify-all-frames-parameters '((fullscreen . maximized)))
 
-  (defun my-after-make-frame (frame)
-    ;; use symbola font for emoticons
-    (when (find-font (font-spec :name "Symbola") frame)
-      (dolist (range '((#x2600 . #x26ff)
-                       (#x1f300 . #x1f5ff)
-                       (#x1f600 . #x1f640)
-                       (#x1f680 . #x1f6ff)))
-        (set-fontset-font "fontset-default" range "Symbola"))))
+  (defun my-after-make-frame (&optional frame)
+    (with-selected-frame (or frame (selected-frame))
+      ;; use symbola font for emoticons
+      (when (find-font (font-spec :name "Symbola") frame)
+        (dolist (range '((#x2600 . #x26ff)
+                         (#x1f300 . #x1f5ff)
+                         (#x1f600 . #x1f640)
+                         (#x1f680 . #x1f6ff)))
+          (set-fontset-font "fontset-default" range "Symbola")))))
   (add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
   ;; better frame title
