@@ -1228,6 +1228,11 @@ line instead."
   :quelpa (page-break-lines :fetcher github :repo "purcell/page-break-lines")
   :config (global-page-break-lines-mode))
 
+;;;; package-lint
+(use-package package-lint
+  :quelpa (package-lint :fetcher github :repo "purcell/package-lint")
+  :bind ("C-t C-l" . package-lint-current-buffer))
+
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
