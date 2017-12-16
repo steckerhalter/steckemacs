@@ -547,7 +547,7 @@ line instead."
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
-  :bind ("C-i C-w" . org-cut-special)
+  :bind ("H-i C-w" . org-cut-special)
   :init
   (setq org-startup-indented t)
   (setq org-startup-with-inline-images t)
