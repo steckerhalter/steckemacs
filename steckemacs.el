@@ -950,7 +950,6 @@ line instead."
 ;;;; flycheck
 ;; on-the-fly source code syntax checks
 (use-package flycheck
-  :requires let-alist
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
   :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flycheck-mode)
   :config
