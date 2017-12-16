@@ -683,10 +683,11 @@ line instead."
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'eldoc-mode)
 
+  ;; A major mode for editing pip requirements files
   (use-package pip-requirements
-    ;; A major mode for editing pip requirements files
     :quelpa (pip-requirements :repo "Wilfred/pip-requirements.el" :fetcher github))
 
+  ;; Integrate pyenv with python-mode
   (use-package pyenv-mode
     :quelpa (pyenv-mode :fetcher github :repo "proofit404/pyenv-mode")
     :init
@@ -715,6 +716,7 @@ line instead."
   :quelpa (apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
 
 ;;;; ansible-doc
+;; Ansible documentation Minor Mode
 (use-package ansible-doc
   :quelpa (ansible-doc :repo "lunaryorn/ansible-doc.el" :fetcher github)
   :config (add-hook 'yaml-mode-hook #'ansible-doc-mode))
@@ -782,8 +784,8 @@ line instead."
     (set (make-local-variable 'company-backends)
          '((company-capf :with company-dabbrev-code))))
 
+  ;; Usage based completion sorting
   (use-package company-statistics
-    ;; Usage based completion sorting
     :quelpa (company-statistics :repo "company-mode/company-statistics" :fetcher github)
     :hook ((emacs-lisp-mode lisp-interaction-mode) . my-company-elisp-setup)
     :config (company-statistics-mode)))
@@ -797,16 +799,19 @@ line instead."
   :config (add-to-list 'company-backends 'company-anaconda))
 
 ;;;; company-ansible
+;; A company back-end for ansible
 (use-package company-ansible
   :quelpa (company-ansible :repo "krzysztof-magosa/company-ansible" :fetcher github)
   :config (add-to-list 'company-backends 'company-ansible))
 
 ;;;; company-dict
+;; A backend that emulates ac-source-dictionary
 (use-package company-dict
   :quelpa (company-dict :repo "hlissner/emacs-company-dict" :fetcher github)
   :config (add-to-list 'company-backends 'company-dict))
 
 ;;;; company-flx
+;; flx based fuzzy matching for company
 (use-package company-flx
   :quelpa (company-flx :repo "PythonNut/company-flx" :fetcher github)
   :config (company-flx-mode +1))
@@ -862,14 +867,6 @@ line instead."
   (setq deft-extensions '("org"))
   (setq deft-auto-save-interval 0))
 
-;;;; diatheke
-(use-package diatheke
-  :quelpa (diatheke :fetcher github :repo "steckerhalter/diatheke.el")
-  :init
-  (setq diatheke-bible "GerLut1912")
-  (setq diatheke-locale "de")
-  :hook (text-mode . diatheke-mode))
-
 ;;;; diff-hl
 ;; Highlight uncommitted changes
 (use-package diff-hl
@@ -897,6 +894,7 @@ line instead."
   (drag-stuff-define-keys))
 
 ;;;; dokuwiki-mode
+;; Major mode for DokuWiki document
 (use-package dokuwiki-mode
   :quelpa (dokuwiki-mode :fetcher github :repo "kai2nenobu/emacs-dokuwiki-mode")
   :mode "\\.dokuwiki$")
@@ -988,6 +986,13 @@ line instead."
   :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
   :config (load-theme 'grandshell t))
 
+;;;; hackernews
+;; Hacker News Client for Emacs
+(use-package hackernews
+  :quelpa (hackernews :fetcher github :repo "clarete/hackernews.el")
+  :bind ("H-i h" . hackernews)
+  :init (setq hackernews-items-per-page 50))
+
 ;;;; helm
 ;; fancy candidate selection framework
 (use-package helm
@@ -1023,24 +1028,24 @@ line instead."
   (add-to-list 'helm-completing-read-handlers-alist '(dired-create-directory))
   (add-to-list 'helm-boring-buffer-regexp-list ":.*")
 
+  ;; Yet Another `describe-bindings' with `helm'.
   (use-package helm-descbinds
-    ;; Yet Another `describe-bindings' with `helm'.
     :quelpa (helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github)
     :config (helm-descbinds-mode))
 
+  ;; GNU GLOBAL helm interface
   (use-package helm-gtags
-    ;; GNU GLOBAL helm interface
     :quelpa (helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el"))
     :diminish helm-gtags-mode
     :config (helm-gtags-mode 1))
 
+  ;; Helm integration for Projectile
   (use-package helm-projectile
-    ;; Helm integration for Projectile
     :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github)
     :bind ("H-i h" . helm-projectile))
 
+  ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
-    ;; Emacs Helm Interface for quick Google searches
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
     :bind (("H-i C-o" . helm-google)
            ("H-i C-c" . helm-google-suggest)))
@@ -1049,8 +1054,8 @@ line instead."
     :quelpa (helm-tramp :repo "masasam/emacs-helm-tramp" :fetcher github)
     :bind ("H-i C-t" . helm-tramp))
 
+  ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
-    ;; Efficiently hopping squeezed lines powered by helm interface
     :quelpa
     :bind (
            ("M-I" . helm-multi-swoop)
@@ -1152,6 +1157,7 @@ line instead."
         'magit-default-tracking-name-branch-only) ;don't track with origin-*
 
   :config
+  ;; Emacs Minor mode to automatically commit and push
   (use-package git-auto-commit-mode
     :quelpa (git-auto-commit-mode :fetcher github
                                   :repo "ryuslash/git-auto-commit-mode")
@@ -1395,10 +1401,12 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config (symon-mode))
 
 ;;;; systemd
+;; Major mode for editing systemd units
 (use-package systemd
   :quelpa (systemd :fetcher github :repo "holomorph/systemd-mode" :files (:defaults "*.txt")))
 
 ;;;; term+
+;; term+ terminal multiplexer and session management
 (use-package term+mux
   :quelpa (term+mux :repo "tarao/term-plus-mux-el" :fetcher github)
   :bind (("C-'" . term+mux-other-window)
@@ -1419,7 +1427,8 @@ Pass symbol-name to the function DOC-FUNCTION."
   :quelpa (yaml-mode :repo "yoshiki/yaml-mode" :fetcher github))
 
 ;;;; visual-regexp
-(use-package use-package
+;; A regexp/replace command for Emacs with interactive visual feedback
+(use-package visual-regexp
   :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github)
   :bind ("C-u v" . vr/replace))
 
