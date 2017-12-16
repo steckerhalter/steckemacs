@@ -887,6 +887,15 @@ line instead."
   :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major")
   :bind ("H-i C-m" . discover-my-major))
 
+;;;; drag-stuff
+;; Drag stuff (lines, words, region, etc...) around
+(use-package drag-stuff
+  :quelpa (drag-stuff :repo "rejeep/drag-stuff.el" :fetcher github)
+  :init (setq drag-stuff-modifier '(ctrl shift))
+  :config
+  (drag-stuff-global-mode 1)
+  (drag-stuff-define-keys))
+
 ;;;; dokuwiki-mode
 (use-package dokuwiki-mode
   :quelpa (dokuwiki-mode :fetcher github :repo "kai2nenobu/emacs-dokuwiki-mode")
@@ -1374,6 +1383,12 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing .jade files
 (use-package stylus-mode
   :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
+
+;;;; symon
+;; tiny graphical system monitor
+(use-package symon
+  :quelpa (symon :repo "zk-phi/symon" :fetcher github :files ("symon.el"))
+  :config (symon-mode))
 
 ;;;; systemd
 (use-package systemd
