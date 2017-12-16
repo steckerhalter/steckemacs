@@ -1217,6 +1217,11 @@ line instead."
     ;; major-mode for easy buffer-navigation
     :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
 
+;;;; page-break-lines
+(use-package page-break-lines
+  :quelpa (page-break-lines :fetcher github :repo "purcell/page-break-lines")
+  :config (global-page-break-lines-mode))
+
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
