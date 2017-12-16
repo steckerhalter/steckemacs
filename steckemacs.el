@@ -1217,11 +1217,7 @@ line instead."
   :hook ((outline-minor-mode . outshine-hook-function)
          (emacs-lisp-mode . outline-minor-mode))
   :init
-  (setq outshine-imenu-show-headlines-p nil)
-  :config
-  (use-package navi-mode
-    ;; major-mode for easy buffer-navigation
-    :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
+  (setq outshine-imenu-show-headlines-p nil))
 
 ;;;; page-break-lines
 (use-package page-break-lines
