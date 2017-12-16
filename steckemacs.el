@@ -1388,6 +1388,10 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; tiny graphical system monitor
 (use-package symon
   :quelpa (symon :repo "zk-phi/symon" :fetcher github :files ("symon.el"))
+  :init
+  (setq symon-sparkline-height 9)
+  (setq symon-sparkline-type 'plain)
+  (setq symon-sparkline-thickness 1)
   :config (symon-mode))
 
 ;;;; systemd
