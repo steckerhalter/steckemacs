@@ -538,6 +538,12 @@ line instead."
             (lambda ()
               (turn-on-eldoc-mode))))
 
+;;;; man
+;; browse UNIX manual pages
+(use-package man
+  :bind ("H-i m" . man)
+  :init (setq Man-notify-method 'aggressive))
+
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
