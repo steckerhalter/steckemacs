@@ -1220,11 +1220,13 @@ line instead."
   (setq outshine-imenu-show-headlines-p nil))
 
 ;;;; page-break-lines
+;; Display ^L page breaks as tidy horizontal lines
 (use-package page-break-lines
   :quelpa (page-break-lines :fetcher github :repo "purcell/page-break-lines")
   :config (global-page-break-lines-mode))
 
 ;;;; package-lint
+;; A linting library for elisp package authors
 (use-package package-lint
   :quelpa (package-lint :fetcher github :repo "purcell/package-lint")
   :bind ("C-t C-l" . package-lint-current-buffer))
