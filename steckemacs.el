@@ -588,8 +588,9 @@ line instead."
 (use-package prog-mode
   :config
   (defun my-prog-mode-hook ()
-    (setq show-trailing-whitespace 1))
-  (add-hook 'prog-mode-hook 'my-prog-mode-hook))
+    (setq show-trailing-whitespace 1)
+    (prettify-symbols-mode 1))
+  :hook (prog-mode . my-prog-mode-hook))
 
 ;;;; recentf
 ;; setup a menu of recently opened files
@@ -1460,3 +1461,4 @@ Pass symbol-name to the function DOC-FUNCTION."
 (my-keys-minor-mode 1)
 
 ;;; steckemacs.el ends here
+(put 'narrow-to-page 'disabled nil)
