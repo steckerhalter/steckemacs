@@ -1117,9 +1117,9 @@ line instead."
 ;; Emacs interface to git
 (use-package magit
   :quelpa
-  :bind (("C-u g" . magit-status)
+  :bind (("C-u C-u" . magit-status)
          ("C-u l" . magit-log)
-         ("H-i b" . magit-blame))
+         ("C-u b" . magit-blame))
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
