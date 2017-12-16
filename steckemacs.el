@@ -837,7 +837,7 @@ line instead."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind (("C-," . deft)
+  :bind (:map my-keys-minor-mode-map ("C-," . deft)
          :map deft-mode-map
          ("<f6>" . quit-window)
          ("C-g" . deft-filter-clear)
@@ -991,7 +991,7 @@ line instead."
 (use-package hackernews
   :quelpa (hackernews :fetcher github :repo "clarete/hackernews.el")
   :bind ("H-i h" . hackernews)
-  :init (setq hackernews-items-per-page 50))
+  :init (setq hackernews-items-per-page 30))
 
 ;;;; helm
 ;; fancy candidate selection framework
