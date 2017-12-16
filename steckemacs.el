@@ -547,8 +547,7 @@ line instead."
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
-  :quelpa (org :url "git://orgmode.org/org-mode.git" :fetcher git
-               :files ("lisp/*.el" "contrib/lisp/*.el" "doc/dir" "doc/*.texi"))
+  :bind ("C-i C-w" . org-cut-special)
   :init
   (setq org-startup-indented t)
   (setq org-startup-with-inline-images t)
@@ -565,10 +564,17 @@ line instead."
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-enforce-todo-dependencies t)
   (setq org-speed-commands-user '(("S" . org-schedule)))
+
   :config
+
+  ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
     :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
-    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
+    :config (add-hook 'org-mode-hook 'org-bullets-mode))
+
+  ;; Pomodoro implementation for org-mode.
+  (use-package org-pomodoro
+    :bind ("C-u C-p" . org-pomodoro)))
 
 ;;;; paren
 ;; highlight matching paren
@@ -1044,6 +1050,7 @@ line instead."
            :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))))
 
 ;;;; highlight-parentheses
+;; highlight surrounding parentheses
 (use-package highlight-parentheses
   :quelpa (highlight-parentheses :repo "nschum/highlight-parentheses.el"
                                  :fetcher github)
