@@ -1217,11 +1217,6 @@ line instead."
     ;; major-mode for easy buffer-navigation
     :quelpa (navi-mode :fetcher github :repo "tj64/navi")))
 
-;;;;
-(use-package package-lint
-  :quelpa (package-lint :fetcher github :repo "purcell/package-lint")
-  :bind ("C-t C-l" . package-lint-current-buffer))
-
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
