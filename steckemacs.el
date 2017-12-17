@@ -1393,16 +1393,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package stylus-mode
   :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
 
-;;;; symon
-;; tiny graphical system monitor
-(use-package symon
-  :quelpa (symon :repo "zk-phi/symon" :fetcher github :files ("symon.el"))
-  :init
-  (setq symon-sparkline-height 9)
-  (setq symon-sparkline-type 'plain)
-  (setq symon-sparkline-thickness 1)
-  :config (symon-mode))
-
 ;;;; systemd
 ;; Major mode for editing systemd units
 (use-package systemd
