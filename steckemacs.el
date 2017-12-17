@@ -574,6 +574,7 @@ line instead."
 
   ;; Pomodoro implementation for org-mode.
   (use-package org-pomodoro
+    :init (setq org-pomodoro-audio-player "play -v 0.1")
     :bind ("C-u C-p" . org-pomodoro)))
 
 ;;;; paren
