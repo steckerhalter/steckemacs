@@ -1348,7 +1348,9 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; quelpa
 ;; Emacs Lisp packages built directly from source
 (use-package quelpa
-  :bind ("C-t C-e" . quelpa-expand-recipe))
+  :bind
+  ("C-t C-e" . quelpa-expand-recipe)
+  ("C-t C-q" . quelpa))
 
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
@@ -1432,6 +1434,12 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package visual-regexp
   :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github)
   :bind ("C-u v" . vr/replace))
+
+;;;; vkill
+;; view and kill Unix processes from within Emacs
+(use-package vkill
+  :quelpa (vkill :fetcher github :repo "emacsmirror/vkill")
+  :bind ("C-t k" . vkill))
 
 ;;;; vlf
 ;; View Large Files
