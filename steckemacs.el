@@ -574,7 +574,10 @@ line instead."
 
   ;; Pomodoro implementation for org-mode.
   (use-package org-pomodoro
-    :init (setq org-pomodoro-audio-player "play -v 0.1")
+    :init
+    (setq org-pomodoro-audio-player "play -v 0.5")
+    (setq org-pomodoro-ticking-sound (expand-file-name "~/Sync/sounds/tick.wav"))
+    (setq org-pomodoro-ticking-sound-args "-v 0.03")
     :bind ("C-u C-p" . org-pomodoro)))
 
 ;;;; paren
