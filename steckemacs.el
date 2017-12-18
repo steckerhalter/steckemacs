@@ -1047,7 +1047,7 @@ line instead."
   ;; Helm integration for Projectile
   (use-package helm-projectile
     :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github)
-    :bind ("H-i h" . helm-projectile))
+    :bind ("H-i p" . helm-projectile))
 
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
