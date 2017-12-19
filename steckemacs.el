@@ -962,7 +962,11 @@ line instead."
   :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flycheck-mode)
   :config
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
-  (setq flycheck-indication-mode 'right-fringe))
+  (setq flycheck-indication-mode 'right-fringe)
+  ;; Display flycheck error messages with inline popup style.
+  (use-package flycheck-inline
+    :quelpa (flycheck-inline :repo "stardiviner/flycheck-inline" :fetcher github)
+    :hook (flycheck-mode . flycheck-inline-enable)))
 
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
