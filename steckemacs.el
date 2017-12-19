@@ -564,6 +564,8 @@ line instead."
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-enforce-todo-dependencies t)
   (setq org-speed-commands-user '(("S" . org-schedule)))
+  (setf org-blank-before-new-entry
+        '((heading . nil) (plain-list-item . nil)))
 
   :config
 
@@ -1274,7 +1276,7 @@ line instead."
            :files ("php-mode.el" "skeleton/*.el"))
   :mode "\\.module\\'"
   :init
-  (setq php-mode-coding-style "Symfony2")
+  (setq php-mode-coding-style 'symfony2)
   (setq php-template-compatibility nil)
 
   (defun my-var_dump-die (start end)
