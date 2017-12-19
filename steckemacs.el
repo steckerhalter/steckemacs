@@ -496,7 +496,7 @@ line instead."
     "Connect with ERC or open the last active buffer."
     (interactive)
     (if (erc-buffer-list)
-        (erc-track-switch-buffer 1)
+        (switch-to-buffer (car (erc-buffer-list)))
       (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
   :bind ("C-u e" . my-erc-connect))
 
@@ -583,7 +583,7 @@ line instead."
     (setq org-pomodoro-finished-sound "~/Sync/sounds/finished.ogg")
     (setq org-pomodoro-short-break-sound "~/Sync/sounds/short-break.ogg")
     (setq org-pomodoro-long-break-sound "~/Sync/sounds/long-break.ogg")
-    (setq org-pomodoro-ticking-sound-args "--volume=30000")
+    (setq org-pomodoro-ticking-sound-args "--volume=20000")
     :bind ("C-u C-p" . org-pomodoro)))
 
 ;;;; paren
@@ -955,6 +955,7 @@ line instead."
   (turn-on-eval-sexp-fu-flash-mode))
 
 ;;;; fancy-narrow
+;; narrow-to-region with more eye candy.
 (use-package fancy-narrow
   :quelpa (fancy-narrow :repo Malabarba/fancy-narrow :fetcher github)
   :config (fancy-narrow-mode))
