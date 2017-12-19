@@ -633,7 +633,8 @@ line instead."
 ;; Lisp language extension for writing statement skeletons
 (use-package skeleton
   :bind (("C-t q" . liquid-quote)
-         ("C-t l" . liquid-tag))
+         ("C-t l" . liquid-tag)
+         ("C-t p" . my-package-def))
   :config
   (define-skeleton liquid-tag
     "Inserts a liquid tag"
@@ -644,7 +645,12 @@ line instead."
     "Inserts a liquid quote tag"
     "tag: "
     "{% quote " _ " %}" \n
-    "{% endquote %}"))
+    "{% endquote %}")
+  (define-skeleton my-package-def
+    "Inserts use-package definition"
+    "pkg: "
+    "(use-package " str \n
+    ":quelpa " (format "%s" (quelpa-expand-recipe str)) ")"))
 
 ;;;; term
 ;; general command interpreter in a window stuff
@@ -947,6 +953,11 @@ line instead."
   (setq eval-sexp-fu-flash-duration 0.4)
   :config
   (turn-on-eval-sexp-fu-flash-mode))
+
+;;;; fancy-narrow
+(use-package fancy-narrow
+  :quelpa (fancy-narrow :repo Malabarba/fancy-narrow :fetcher github)
+  :config (fancy-narrow-mode))
 
 ;;;; fasd
 ;; find previous files/dirs quickly (uses `fasd' shell script)
