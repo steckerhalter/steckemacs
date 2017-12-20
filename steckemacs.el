@@ -42,6 +42,11 @@
 (quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
 (require 'quelpa-use-package)
 
+;;; diminish
+;; Diminished modes are minor modes with no modeline display
+(use-package diminish
+  :quelpa (diminish :fetcher github :repo myrjola/diminish.el))
+
 ;;; key bindings
 (use-package bind-key
   ;; A simple way to manage personal keybindings, provided by `use-package'
@@ -273,10 +278,6 @@ buffer is not visiting a file."
   (when (file-readable-p "~/.user.el")
     (load "~/.user.el"))
 
-  ;; display the time in the mode-line
-  (setq display-time-day-and-date t)
-  (display-time)
-
   ;; encoding
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
@@ -335,6 +336,7 @@ line instead."
 ;;;; autorevert
 ;; revert buffers when files on disk change
 (use-package autorevert
+  :diminish auto-revert-mode
   :config
   ;; auto revert buffers when changed on disk
   (global-auto-revert-mode 1))
@@ -393,6 +395,7 @@ line instead."
 ;;;; eldoc
 ;; display information about a function or variable in the the echo area
 (use-package eldoc
+  :diminish
   :init
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
@@ -752,6 +755,7 @@ line instead."
 ;; Visual navigation through mark rings
 (use-package back-button
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
+  :diminish
   :bind (("C-3" . back-button-local-backward)
          ("C-4" . back-button-local-forward))
   :config
@@ -776,7 +780,7 @@ line instead."
 ;; Modular text completion framework
 (use-package company
   :quelpa (company :repo "company-mode/company-mode" :fetcher github)
-  :diminish company-mode
+  :diminish
 
   :init
   (setq company-idle-delay 0.3)
@@ -901,6 +905,7 @@ line instead."
 ;; Drag stuff (lines, words, region, etc...) around
 (use-package drag-stuff
   :quelpa (drag-stuff :repo "rejeep/drag-stuff.el" :fetcher github)
+  :diminish
   :init (setq drag-stuff-modifier '(ctrl shift))
   :config
   (drag-stuff-global-mode 1)
@@ -929,7 +934,7 @@ line instead."
   ("H-i C-." . elisp-slime-nav-find-elisp-thing-at-point)
   ("H-i C-d" . my-show-help)
   ("H-i C-," . elisp-slime-nav-describe-elisp-thing-at-point)
-  :diminish elisp-slime-nav-mode
+  :diminish
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
 ;;;; eval-sexp-fu
@@ -954,6 +959,7 @@ line instead."
 ;; narrow-to-region with more eye candy.
 (use-package fancy-narrow
   :quelpa (fancy-narrow :repo Malabarba/fancy-narrow :fetcher github)
+  :diminish
   :config (fancy-narrow-mode))
 
 ;;;; fasd
@@ -969,6 +975,7 @@ line instead."
 ;; on-the-fly source code syntax checks
 (use-package flycheck
   :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
+  :diminish
   :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flycheck-mode)
   :config
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
@@ -1020,7 +1027,7 @@ line instead."
 (use-package helm
   :unless (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
   :quelpa (helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh"))
-  :diminish helm-mode
+  :diminish
   :commands helm-mini
 
   :init
@@ -1058,7 +1065,7 @@ line instead."
   ;; GNU GLOBAL helm interface
   (use-package helm-gtags
     :quelpa (helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el"))
-    :diminish helm-gtags-mode
+    :diminish
     :config (helm-gtags-mode 1))
 
   ;; Helm integration for Projectile
@@ -1103,7 +1110,7 @@ line instead."
 ;; automatic and manual symbol highlighting
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
-  :diminish highlight-symbol-mode
+  :diminish
   :bind (("M-2" . highlight-symbol-occur)
          ("M-3" . highlight-symbol-prev)
          ("M-4" . highlight-symbol-next))
@@ -1266,6 +1273,7 @@ line instead."
 ;; Display ^L page breaks as tidy horizontal lines
 (use-package page-break-lines
   :quelpa (page-break-lines :fetcher github :repo "purcell/page-break-lines")
+  :diminish
   :config (global-page-break-lines-mode))
 
 ;;;; package-lint
@@ -1376,7 +1384,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Colorize color names in buffers
 (use-package rainbow-mode
   :quelpa (rainbow-mode :fetcher github :repo "emacsmirror/rainbow-mode")
-  :diminish rainbow-mode
+  :diminish
   :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
 
 ;;;; robe
