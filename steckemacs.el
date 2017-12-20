@@ -169,6 +169,12 @@ buffer is not visiting a file."
      (concat "xdg-open " (shell-quote-argument
                           (expand-file-name default-directory)))))
 
+  (defun my-find-name-dired (pattern)
+    (interactive "sFind-name (filename wildcard): ")
+    (find-dired
+     default-directory
+     (concat find-name-arg " " (shell-quote-argument pattern))))
+
 ;;;; global key bindings
   :bind
   (;; general
@@ -215,7 +221,8 @@ buffer is not visiting a file."
    ("<f5>" . delete-other-windows)
    ;; find/grep
    ("H-i G" . grep-find)
-   ("C-S-u C-S-g" . find-grep-dired)
+   ("H-i f" . find-grep-dired)
+   ("H-i n" . my-find-name-dired)
    ("H-i o" . helm-projectile-grep)
    ("H-i g" . helm-do-grep-ag)
    ("H-i O" . occur))
@@ -985,11 +992,7 @@ line instead."
   :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flycheck-mode)
   :config
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
-  (setq flycheck-indication-mode 'right-fringe)
-  ;; Display flycheck error messages with inline popup style.
-  (use-package flycheck-inline
-    :quelpa (flycheck-inline :repo "stardiviner/flycheck-inline" :fetcher github)
-    :hook (flycheck-mode . flycheck-inline-enable)))
+  (setq flycheck-indication-mode 'right-fringe))
 
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
@@ -1207,12 +1210,11 @@ line instead."
     :config
     (defun gac ()
       (interactive)
-      (gac-commit))))
-;;;; magithub
-(use-package magithub
+      (gac-commit)))
+
+  (use-package magithub
   :quelpa (magithub :fetcher github :repo vermiculus/magithub)
-  :after magit
-  :config (magithub-feature-autoinject t))
+  :config (magithub-feature-autoinject t)))
 
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
@@ -1300,6 +1302,17 @@ line instead."
 (use-package package-lint
   :quelpa (package-lint :fetcher github :repo "purcell/package-lint")
   :bind ("C-t C-l" . package-lint-current-buffer))
+
+;;;; pdf-tools
+(use-package pdf-tools
+  :quelpa (pdf-tools :fetcher github :repo politza/pdf-tools
+                     :files (lisp/*.el
+                             README
+                             (build Makefile)
+                             (build server)
+                             (:exclude lisp/tablist.el lisp/tablist-filter.el)))
+  :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
+  :magic ("%PDF" . pdf-view-mode))
 
 ;;;; php
 ;; Major mode for editing PHP code
