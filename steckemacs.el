@@ -61,9 +61,6 @@
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
   (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
 
-  ;; minor mode to override bindings
-  (defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
-
 ;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
@@ -205,10 +202,6 @@ buffer is not visiting a file."
    ("C-c n" . my-show-file-name)
    ("H-i 0" . text-scale-adjust)
    ;; windows
-   :map my-keys-minor-mode-map
-   ;; minor mode is used so modes do not override
-   (("M-n" . my-select-next-window)
-    ("M-p" . my-select-prev-window))
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -220,7 +213,10 @@ buffer is not visiting a file."
    ("C-S-u C-S-g" . find-grep-dired)
    ("H-i o" . helm-projectile-grep)
    ("H-i g" . helm-do-grep-ag)
-   ("H-i O" . occur)))
+   ("H-i O" . occur))
+  :bind* (("M-n" . my-select-next-window)
+          ("M-p" . my-select-prev-window)))
+
 
 ;;; settings
 (use-package steckemacs-settings
@@ -577,7 +573,7 @@ line instead."
   ;; Pomodoro implementation for org-mode.
   (use-package org-pomodoro
     :init
-    (setq org-pomodoro-audio-player "paplay --volume=30000")
+    (setq org-pomodoro-audio-player "paplay --volume=40000")
     (setq org-pomodoro-ticking-sound-p t)
     (setq org-pomodoro-ticking-sound "~/Sync/sounds/tick.wav")
     (setq org-pomodoro-finished-sound "~/Sync/sounds/finished.ogg")
@@ -854,12 +850,12 @@ line instead."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind (:map my-keys-minor-mode-map ("C-," . deft)
-         :map deft-mode-map
-         ("<f6>" . quit-window)
-         ("C-g" . deft-filter-clear)
-         ("C-c C-c" . deft-refresh)
-         ("<M-return>" . deft-new-file))
+  :bind*  (("C-," . deft)
+           :map deft-mode-map
+           ("<f6>" . quit-window)
+           ("C-g" . deft-filter-clear)
+           ("C-c C-c" . deft-refresh)
+           ("<M-return>" . deft-new-file))
   :commands (deft)
   :config
   ;; display filter in mode-line instead of header
@@ -1045,8 +1041,8 @@ line instead."
    ("H-i SPC" . helm-all-mark-rings)
    ("H-i C-l" . helm-locate)
    ("H-i w" . helm-wikipedia-suggest)
-   ("H-i i" . helm-imenu)
-   :map my-keys-minor-mode-map ("C-;" . helm-mini))
+   ("H-i i" . helm-imenu))
+  :bind* ("C-;" . helm-mini)
 
   :config
   (require 'helm-config)
@@ -1083,11 +1079,10 @@ line instead."
   ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
     :quelpa
-    :bind (
-           ("M-I" . helm-multi-swoop)
-           :map my-keys-minor-mode-map ("M-i" . helm-swoop)
+    :bind (("M-I" . helm-multi-swoop)
            :map isearch-mode-map ("M-i" . helm-swoop-from-isearch)
-           :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))))
+           :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))
+    :bind* ("M-i" . helm-swoop)))
 
 ;;;; highlight-parentheses
 ;; highlight surrounding parentheses
@@ -1476,12 +1471,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   (defun setup-web-mode ()
     (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
   :hook (web-mode . setup-web-mode))
-
-;;;; my-keys-minor-mode (must be last)
-(define-minor-mode my-keys-minor-mode
-  "A minor mode so that my key settings override annoying major modes."
-  t nil 'my-keys-minor-mode-map)
-(my-keys-minor-mode 1)
 
 ;;; steckemacs.el ends here
 (put 'narrow-to-page 'disabled nil)
