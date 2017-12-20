@@ -1019,8 +1019,16 @@ line instead."
 ;; Hacker News Client for Emacs
 (use-package hackernews
   :quelpa (hackernews :fetcher github :repo "clarete/hackernews.el")
-  :bind ("H-i h" . hackernews)
-  :init (setq hackernews-items-per-page 30))
+  :bind (("H-i h" . hackernews)
+         :map hackernews-mode-map ("o" . hackernews-browse-other-window))
+  :init
+  (setq hackernews-items-per-page 30)
+  (defun hackernews-browse-other-window ()
+    "Open URL of button under point within Emacs in other window."
+    (interactive)
+    (let ((url (button-get (button-at (point)) 'shr-url)))
+      (pop-to-buffer "*eww*")
+      (eww url))))
 
 ;;;; helm
 ;; fancy candidate selection framework
