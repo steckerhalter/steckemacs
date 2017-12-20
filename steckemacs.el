@@ -751,6 +751,12 @@ line instead."
                  (interactive)
                  (TeX-command-menu "LaTeX")))))
 
+;;;; avy
+;; Jump to arbitrary positions in visible text and select text quickly.
+(use-package avy
+  :quelpa (avy :repo abo-abo/avy :fetcher github)
+  :bind ("C-1" . avy-goto-char))
+
 ;;;; back-button
 ;; Visual navigation through mark rings
 (use-package back-button
@@ -1202,6 +1208,11 @@ line instead."
     (defun gac ()
       (interactive)
       (gac-commit))))
+;;;; magithub
+(use-package magithub
+  :quelpa (magithub :fetcher github :repo vermiculus/magithub)
+  :after magit
+  :config (magithub-feature-autoinject t))
 
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
@@ -1487,6 +1498,11 @@ Pass symbol-name to the function DOC-FUNCTION."
   (defun setup-web-mode ()
     (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
   :hook (web-mode . setup-web-mode))
+
+;;;; which-key
+(use-package which-key
+  :quelpa (which-key :repo justbur/emacs-which-key :fetcher github)
+  :config (which-key-mode))
 
 ;;; steckemacs.el ends here
 (put 'narrow-to-page 'disabled nil)
