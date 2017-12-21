@@ -420,6 +420,7 @@ line instead."
 (use-package eww
   :bind ("C-t C-u" . my-eww-browse-dwim)
   :config
+  (setq shr-use-fonts nil)
   (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
   (defun my-eww-browse-dwim ()
