@@ -306,7 +306,7 @@ buffer is not visiting a file."
               kill-buffer-query-functions))
 
   ;; default font
-  (defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120)))
+  (defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120))
   ;; (defvar my-font-attributes '(default nil :family "DejaVu Sans Mono" :height 90))
   ;; (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 90))
   (apply 'set-face-attribute  my-font-attributes))
@@ -1505,6 +1505,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; which-key
 (use-package which-key
   :quelpa (which-key :repo justbur/emacs-which-key :fetcher github)
+  :diminish
   :config (which-key-mode))
 
 ;;; steckemacs.el ends here
