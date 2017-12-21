@@ -578,19 +578,7 @@ line instead."
   ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
     :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
-    :config (add-hook 'org-mode-hook 'org-bullets-mode))
-
-  ;; Pomodoro implementation for org-mode.
-  (use-package org-pomodoro
-    :init
-    (setq org-pomodoro-audio-player "paplay --volume=40000")
-    (setq org-pomodoro-ticking-sound-p t)
-    (setq org-pomodoro-ticking-sound "~/Sync/sounds/tick.wav")
-    (setq org-pomodoro-finished-sound "~/Sync/sounds/finished.ogg")
-    (setq org-pomodoro-short-break-sound "~/Sync/sounds/short-break.ogg")
-    (setq org-pomodoro-long-break-sound "~/Sync/sounds/long-break.ogg")
-    (setq org-pomodoro-ticking-sound-args "--volume=20000")
-    :bind ("C-u C-p" . org-pomodoro)))
+    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
 
 ;;;; paren
 ;; highlight matching paren
