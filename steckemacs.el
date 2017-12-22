@@ -169,12 +169,6 @@ buffer is not visiting a file."
      (concat "xdg-open " (shell-quote-argument
                           (expand-file-name default-directory)))))
 
-  (defun my-find-name-dired (pattern)
-    (interactive "sFind-name (filename wildcard): ")
-    (find-dired
-     default-directory
-     (concat find-name-arg " " (shell-quote-argument pattern))))
-
 ;;;; global key bindings
   :bind
   (;; general
@@ -188,7 +182,6 @@ buffer is not visiting a file."
    ("C-x C-r" . my-sudo-edit)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
-   ("C-u C-e" . eww)
    ("M-1" . my-xdg-open-dir)
    ;; editing
    ("C-z" . undo-only)
@@ -221,10 +214,6 @@ buffer is not visiting a file."
    ("<f5>" . delete-other-windows)
    ;; find/grep
    ("H-i G" . grep-find)
-   ("H-i f" . find-grep-dired)
-   ("H-i n" . my-find-name-dired)
-   ("H-i o" . helm-projectile-grep)
-   ("H-i g" . helm-do-grep-ag)
    ("H-i O" . occur))
   :bind* (("M-n" . my-select-next-window)
           ("M-p" . my-select-prev-window)))
@@ -372,11 +361,18 @@ line instead."
 (use-package dired
   :demand
   :init
+  (defun my-find-name-dired (pattern)
+    (interactive "sFind-name (filename wildcard): ")
+    (find-dired
+     default-directory
+     (concat find-name-arg " " (shell-quote-argument pattern))))
   (setq dired-auto-revert-buffer t)
   (setq dired-no-confirm
         '(byte-compile chgrp chmod chown copy delete load move symlink))
   (setq dired-deletion-confirmer (lambda (x) t))
-  :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
+  :bind (("H-i f" . find-grep-dired)
+         ("H-i n" . my-find-name-dired)
+         :map dired-mode-map ("`" . dired-toggle-read-only))
   :config
   ;; make rename use ido and not helm
   (put 'dired-do-rename 'ido 'find-file)
@@ -418,7 +414,7 @@ line instead."
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
 (use-package eww
-  :bind ("C-t C-u" . my-eww-browse-dwim)
+  :bind ("C-u C-e" . my-eww-browse-dwim)
   :config
   (setq shr-use-fonts nil)
   (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
@@ -555,7 +551,7 @@ line instead."
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
-  :bind ("H-i C-w" . org-cut-special)
+  :bind (:map org-mode-map ("C-c w" . org-cut-special))
   :init
   (setq org-startup-indented t)
   (setq org-startup-with-inline-images t)
@@ -1055,7 +1051,8 @@ line instead."
    ("H-i SPC" . helm-all-mark-rings)
    ("H-i C-l" . helm-locate)
    ("H-i w" . helm-wikipedia-suggest)
-   ("H-i i" . helm-imenu))
+   ("H-i i" . helm-imenu)
+   ("H-i g" . helm-do-grep-ag))
   :bind* ("C-;" . helm-mini)
 
   :config
@@ -1078,7 +1075,9 @@ line instead."
   ;; Helm integration for Projectile
   (use-package helm-projectile
     :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github)
-    :bind ("H-i p" . helm-projectile))
+    :bind
+    ("H-i o" . helm-projectile-grep)
+    ("H-i p" . helm-projectile))
 
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
