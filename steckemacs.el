@@ -172,7 +172,7 @@ buffer is not visiting a file."
 ;;;; global key bindings
   :bind
   (;; general
-   ("<f1> <f1>" . universal-argument) 	;remap what was C-u
+   ("C-u u" . universal-argument) 	;remap what was C-u
    ("H-i x" . kill-emacs)
    ("C-S-l" . package-list-packages)
    ("C-c d" . ispell-change-dictionary)
@@ -836,7 +836,9 @@ line instead."
 ;; Popup documentation for completion candidates
 (use-package company-quickhelp
   :quelpa (company-quickhelp :fetcher github :repo "expez/company-quickhelp")
-  :init (setq company-quickhelp-delay 1)
+  :init
+  (setq company-quickhelp-use-propertized-text t)
+  (setq company-quickhelp-delay 1)
   :config (company-quickhelp-mode 1))
 
 ;;;; company-web
@@ -1043,7 +1045,7 @@ line instead."
 
   :bind
   (("M-x" . helm-M-x)
-   ("H-i ," . helm-apropos)
+   ("H-i a" . helm-apropos)
    ("H-i ." . helm-info-emacs)
    ("H-i 4" . helm-info-elisp)
    ("H-i 3" . helm-locate-library)
@@ -1294,12 +1296,14 @@ line instead."
 
 ;;;; pdf-tools
 (use-package pdf-tools
-  :quelpa (pdf-tools :fetcher github :repo politza/pdf-tools
-                     :files (lisp/*.el
-                             README
-                             (build Makefile)
-                             (build server)
-                             (:exclude lisp/tablist.el lisp/tablist-filter.el)))
+  :quelpa (pdf-tools
+ :fetcher github
+ :repo "politza/pdf-tools"
+ :files ("lisp/*.el"
+         "README"
+         ("build" "Makefile")
+         ("build" "server")
+         (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
   :magic ("%PDF" . pdf-view-mode))
 
