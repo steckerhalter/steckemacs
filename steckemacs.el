@@ -1201,11 +1201,7 @@ line instead."
     :config
     (defun gac ()
       (interactive)
-      (gac-commit)))
-
-  (use-package magithub
-  :quelpa (magithub :fetcher github :repo vermiculus/magithub)
-  :config (magithub-feature-autoinject t)))
+      (gac-commit))))
 
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
