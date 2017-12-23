@@ -172,7 +172,7 @@ buffer is not visiting a file."
 ;;;; global key bindings
   :bind
   (;; general
-   ("C-u u" . universal-argument) 	;remap what was C-u
+   ("C-u C-u" . universal-argument) 	;remap what was C-u
    ("H-i x" . kill-emacs)
    ("C-S-l" . package-list-packages)
    ("C-c d" . ispell-change-dictionary)
@@ -379,13 +379,14 @@ line instead."
   ;; make copy use ido and not helm
   (put 'dired-do-copy 'ido 'find-file)
 
+  ;; Rename files editing their names in dired buffers
   (use-package wdired
     :init
     ;; allow changing of file permissions
     (setq wdired-allow-to-change-permissions t))
 
+  ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
-    ;; dired+ adds some features to standard dired (like reusing buffers)
     :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
     :bind ("C-]" . dired-jump)
     :defer 1
@@ -410,6 +411,38 @@ line instead."
   :config
   ;;auto pair brackets, parens etc.
   (electric-pair-mode 1))
+
+;;;; eshell
+(use-package eshell
+  :bind
+  ("C-'" . eshell)
+  ("C-\"" . (lambda () (interactive) (eshell t)))
+  :hook
+  (eshell-mode . my-eshell-bind-keys)
+  (eshell-mod . eldoc-mode)
+  :init
+  (defun my-eshell-bind-keys ()
+    (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
+    (bind-key "C-c h" 'helm-eshell-history eshell-mode-map))
+  :config
+  (use-package eshell-z
+    :quelpa (eshell-z :fetcher github :repo xuchunyang/eshell-z))
+  (use-package esh-help
+    :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
+    :config (setup-esh-help-eldoc))
+
+  ;; BASH completion for the shell buffer
+  (use-package bash-completion
+    :quelpa (bash-completion :repo szermatt/emacs-bash-completion :fetcher github)
+    :config
+    (defun eshell-bash-completion ()
+      (setq-local bash-completion-nospace t)
+      (while (pcomplete-here
+                (nth 2 (bash-completion-dynamic-complete-nocomint
+                        (save-excursion (eshell-bol) (point)) (point))))))
+    (setq eshell-default-completion-function 'eshell-bash-completion))
+  (use-package em-smart
+    :hook (eshell-mode . eshell-smart-initialize)))
 
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
@@ -606,7 +639,13 @@ line instead."
 (use-package savehist
   :config
   (setq savehist-additional-variables
-        '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
+        '(kill-ring
+          mark-ring
+          global-mark-ring
+          search-ring
+          regexp-search-ring
+          extended-command-history
+          eshell-history-ring))
   (savehist-mode 1))
 
 ;;;; saveplace
@@ -1180,7 +1219,7 @@ line instead."
 ;; Emacs interface to git
 (use-package magit
   :quelpa
-  :bind (("C-u C-u" . magit-status)
+  :bind (("C-u u" . magit-status)
          ("C-u l" . magit-log)
          ("C-u b" . magit-blame))
   :init
@@ -1446,17 +1485,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing systemd units
 (use-package systemd
   :quelpa (systemd :fetcher github :repo "holomorph/systemd-mode" :files (:defaults "*.txt")))
-
-;;;; term+
-;; term+ terminal multiplexer and session management
-(use-package term+mux
-  :quelpa (term+mux :repo "tarao/term-plus-mux-el" :fetcher github)
-  :bind (("C-'" . term+mux-other-window)
-         ("C-\"" . term+mux-new))
-  :config
-  (define-key term-raw-map (kbd "M-8") 'term+mux-new)
-  (define-key term-raw-map (kbd "M-9") 'tab-group:next)
-  (define-key term-raw-map (kbd "M-0") 'tab-group:prev))
 
 ;;;; toml-mode
 ;; Major mode for editing toml files
