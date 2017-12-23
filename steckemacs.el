@@ -417,13 +417,21 @@ line instead."
   :bind*
   ("C-'" . eshell)
   ("C-\"" . (lambda () (interactive) (eshell t)))
-  :hook
-  (eshell-mode . my-eshell-bind-keys)
-  (eshell-mod . eldoc-mode)
+  :hook ((eshell-mode . my-eshell-bind-keys)
+         (eshell-mode . eldoc-mode)
+         (eshell-directory-change . my-toggle-shell-auto-completion-based-on-path))
   :init
   (defun my-eshell-bind-keys ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
     (bind-key "C-c h" 'helm-eshell-history eshell-mode-map))
+  (defun my-toggle-shell-auto-completion-based-on-path ()
+    "Deactivates automatic completion on remote paths.
+Retrieving completions for Eshell blocks Emacs. Over remote
+connections the delay is often annoying, so it's better to let
+the user activate the completion manually."
+    (if (file-remote-p default-directory)
+        (setq-local company-idle-delay nil)
+      (setq-local company-idle-delay 0.3)))
   :config
   (use-package eshell-z
     :quelpa (eshell-z :fetcher github :repo xuchunyang/eshell-z))
