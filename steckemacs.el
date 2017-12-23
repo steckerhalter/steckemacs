@@ -414,7 +414,7 @@ line instead."
 
 ;;;; eshell
 (use-package eshell
-  :bind
+  :bind*
   ("C-'" . eshell)
   ("C-\"" . (lambda () (interactive) (eshell t)))
   :hook
