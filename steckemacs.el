@@ -182,7 +182,8 @@ buffer is not visiting a file."
    ("C-x C-r" . my-sudo-edit)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
-   ("M-1" . my-xdg-open-dir)
+   ("C-t o" . my-xdg-open-dir)
+   ("M-]" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -198,14 +199,15 @@ buffer is not visiting a file."
    ("H-i C-e" . toggle-debug-on-error)
    ("C-t C-s" . my-insert-package-desc-summary)
    ;; buffers
-   ("H-i H-i" . save-buffer)
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
-   ("C-." . my-switch-to-scratch)
+   ("M-'" . my-switch-to-scratch)
    ("H-i TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
    ("H-i 0" . text-scale-adjust)
    ;; windows
+   ("C-4" . my-select-next-window)
+   ("C-3" . my-select-prev-window)
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -215,9 +217,7 @@ buffer is not visiting a file."
    ;; find/grep
    ("H-i G" . grep-find)
    ("H-i O" . occur))
-  :bind* (("M-n" . my-select-next-window)
-          ("M-p" . my-select-prev-window)))
-
+  :bind* ("C-;" . save-buffer))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -423,7 +423,7 @@ line instead."
   :init
   (defun my-eshell-bind-keys ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
-    (bind-key "C-c h" 'helm-eshell-history eshell-mode-map))
+    (bind-key "M-r" 'helm-eshell-history eshell-mode-map))
   (defun my-toggle-shell-auto-completion-based-on-path ()
     "Deactivates automatic completion on remote paths.
 Retrieving completions for Eshell blocks Emacs. Over remote
@@ -791,19 +791,13 @@ the user activate the completion manually."
                  (interactive)
                  (TeX-command-menu "LaTeX")))))
 
-;;;; avy
-;; Jump to arbitrary positions in visible text and select text quickly.
-(use-package avy
-  :quelpa (avy :repo abo-abo/avy :fetcher github)
-  :bind ("C-1" . avy-goto-char))
-
 ;;;; back-button
 ;; Visual navigation through mark rings
 (use-package back-button
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
   :diminish
-  :bind (("C-3" . back-button-local-backward)
-         ("C-4" . back-button-local-forward))
+  :bind (("M-3" . back-button-local-backward)
+         ("M-4" . back-button-local-forward))
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
@@ -902,7 +896,7 @@ the user activate the completion manually."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind*  (("C-," . deft)
+  :bind*  (("C-:" . deft)
            :map deft-mode-map
            ("<f6>" . quit-window)
            ("C-g" . deft-filter-clear)
@@ -981,7 +975,7 @@ the user activate the completion manually."
   :bind
   ("H-i C-." . elisp-slime-nav-find-elisp-thing-at-point)
   ("H-i C-d" . my-show-help)
-  ("H-i C-," . elisp-slime-nav-describe-elisp-thing-at-point)
+  ("<f1> <f1>" . elisp-slime-nav-describe-elisp-thing-at-point)
   :diminish
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
@@ -1091,7 +1085,8 @@ the user activate the completion manually."
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
 
   :bind
-  (("M-x" . helm-M-x)
+  (("M-[" . helm-mini)
+   ("M-x" . helm-M-x)
    ("H-i a" . helm-apropos)
    ("H-i ." . helm-info-emacs)
    ("H-i 4" . helm-info-elisp)
@@ -1102,7 +1097,6 @@ the user activate the completion manually."
    ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    ("H-i g" . helm-do-grep-ag))
-  :bind* ("C-;" . helm-mini)
 
   :config
   (require 'helm-config)
@@ -1144,7 +1138,8 @@ the user activate the completion manually."
     :bind (("M-I" . helm-multi-swoop)
            :map isearch-mode-map ("M-i" . helm-swoop-from-isearch)
            :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))
-    :bind* ("M-i" . helm-swoop)))
+    :bind* ("M-i" . helm-swoop)
+    :init (setq helm-swoop-speed-or-color t)))
 
 ;;;; highlight-parentheses
 ;; highlight surrounding parentheses
@@ -1166,9 +1161,9 @@ the user activate the completion manually."
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
   :diminish
-  :bind (("M-2" . highlight-symbol-occur)
-         ("M-3" . highlight-symbol-prev)
-         ("M-4" . highlight-symbol-next))
+  :bind (("C-1" . highlight-symbol-occur)
+         ("C-2" . highlight-symbol-prev)
+         ("C-5" . highlight-symbol-next))
   :hook (prog-mode . highlight-symbol-mode)
   :init
   (setq highlight-symbol-on-navigation-p t))
