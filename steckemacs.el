@@ -61,6 +61,11 @@
     (with-selected-frame (or frame (selected-frame))
       ;; translate C-i to H-i so it can be used apart from TAB
       (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
+      ;; movement translations
+      (define-key input-decode-map (kbd "M-e") (kbd "C-p"))
+      (define-key input-decode-map (kbd "M-a") (kbd "C-b"))
+      (define-key input-decode-map (kbd "M-d") (kbd "C-n"))
+      (define-key input-decode-map (kbd "M-f") (kbd "C-f"))
       ;; use C-h as backspace
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
