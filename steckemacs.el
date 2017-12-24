@@ -707,7 +707,6 @@ the user activate the completion manually."
     (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
     (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
     (define-key term-raw-map (kbd "M-,") 'term-send-input)
-    (define-key term-raw-map (kbd "C-c y") 'term-paste)
     (define-key term-raw-map (kbd "C-S-y") 'term-paste)
     (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
     (define-key term-raw-map (kbd "C-]") nil))
