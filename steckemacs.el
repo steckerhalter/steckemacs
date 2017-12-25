@@ -1124,6 +1124,7 @@ the user activate the completion manually."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
+    :demand
     :bind (("H-i C-o" . helm-google)
            ("H-i C-c" . helm-google-suggest)))
 
