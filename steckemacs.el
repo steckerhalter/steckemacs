@@ -62,9 +62,10 @@
       ;; translate C-i to H-i so it can be used apart from TAB
       (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
       ;; movement translations
-      (define-key input-decode-map (kbd "C-e") (kbd "C-p"))
-      (define-key input-decode-map (kbd "C-a") (kbd "C-b"))
-      (define-key input-decode-map (kbd "C-d") (kbd "C-n"))
+      (define-key input-decode-map (kbd "M-e") (kbd "C-p"))
+      (define-key input-decode-map (kbd "M-a") (kbd "C-b"))
+      (define-key input-decode-map (kbd "M-d") (kbd "C-n"))
+      (define-key input-decode-map (kbd "M-f") (kbd "C-f"))
       ;; use C-h as backspace
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
@@ -221,10 +222,7 @@ buffer is not visiting a file."
    ;; find/grep
    ("H-i G" . grep-find)
    ("H-i O" . occur))
-  :bind*
-  ("C-;" . save-buffer)
-  ("M-a" . move-beginning-of-line)
-  ("M-e" . move-end-of-line))
+  :bind* ("C-;" . save-buffer))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -1131,7 +1129,6 @@ the user activate the completion manually."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :demand
     :bind (("H-i C-o" . helm-google)
            ("H-i C-c" . helm-google-suggest)))
 
