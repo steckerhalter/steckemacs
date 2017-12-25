@@ -62,9 +62,9 @@
       ;; translate C-i to H-i so it can be used apart from TAB
       (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
       ;; movement translations
-      (define-key input-decode-map (kbd "C-e") (kbd "C-p")) ;lh
-      (define-key input-decode-map (kbd "C-a") (kbd "C-b")) ;lh
-      (define-key input-decode-map (kbd "C-d") (kbd "C-n")) ;lh
+      (define-key input-decode-map (kbd "C-e") (kbd "C-p"))
+      (define-key input-decode-map (kbd "C-a") (kbd "C-b"))
+      (define-key input-decode-map (kbd "C-d") (kbd "C-n"))
       ;; use C-h as backspace
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
@@ -190,8 +190,6 @@ buffer is not visiting a file."
    ("M-]" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
    ;; editing
    ("C-z" . undo-only)
-   ("M-d" . delete-char)                ;lh
-   ("S-C-d" . kill-word)                ;lh
    ("M-W" . delete-region)
    ("C-c q" . auto-fill-mode)
    ("C-c w" . whitespace-cleanup)
@@ -225,8 +223,8 @@ buffer is not visiting a file."
    ("H-i O" . occur))
   :bind*
   ("C-;" . save-buffer)
-  ("M-a" . move-beginning-of-line)      ;lh
-  ("M-e" . move-end-of-line))           ;lh
+  ("M-a" . move-beginning-of-line)
+  ("M-e" . move-end-of-line))
 
 ;;; settings
 (use-package steckemacs-settings
