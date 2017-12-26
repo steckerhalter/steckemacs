@@ -414,6 +414,7 @@ line instead."
 
 ;;;; eshell
 (use-package eshell
+  :demand
   :bind*
   ("C-5" . eshell)
   ("C-%" . (lambda () (interactive) (eshell t)))
