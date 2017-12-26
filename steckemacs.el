@@ -415,9 +415,6 @@ line instead."
 ;;;; eshell
 (use-package eshell
   :demand
-  :bind*
-  ("C-5" . eshell)
-  ("C-%" . (lambda () (interactive) (eshell t)))
   :hook ((eshell-mode . my-eshell-bind-keys)
          (eshell-mode . eldoc-mode)
          (eshell-directory-change . my-toggle-shell-auto-completion-based-on-path))
@@ -1085,8 +1082,7 @@ the user activate the completion manually."
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
 
   :bind
-  (("C-'" . helm-mini)
-   ("M-x" . helm-M-x)
+  (("M-x" . helm-M-x)
    ("H-i a" . helm-apropos)
    ("H-i ." . helm-info-emacs)
    ("H-i 4" . helm-info-elisp)
@@ -1097,6 +1093,7 @@ the user activate the completion manually."
    ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    ("H-i g" . helm-do-grep-ag))
+  :bind* ("C-'" . helm-mini)
 
   :config
   (require 'helm-config)
@@ -1461,6 +1458,18 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config
   (push 'company-robe company-backends)
   :hook (ruby-mode . robe-mode))
+
+;;;; shell-switcher
+(use-package shell-switcher
+  :quelpa (shell-switcher :fetcher github
+                :repo "DamienCassou/shell-switcher"
+                :files ("rswitcher.el" "shell-switcher.el"))
+  :demand
+  :bind  (:map shell-switcher-mode-map
+               ("C-1" . shell-switcher-switch-buffer)
+               ("C-!" . shell-switcher-new-shell)
+               ("M-1" . shell-switcher-switch-buffer-other-window))
+  :config (shell-switcher-mode 1))
 
 ;;;; smart-mode-line
 ;; A color coded smart mode-line.
