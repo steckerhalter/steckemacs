@@ -183,7 +183,7 @@ buffer is not visiting a file."
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
    ("C-t o" . my-xdg-open-dir)
-   ("M-]" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
+   ("C-2" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -206,8 +206,8 @@ buffer is not visiting a file."
    ("C-c n" . my-show-file-name)
    ("H-i 0" . text-scale-adjust)
    ;; windows
-   ("C-4" . my-select-next-window)
-   ("C-3" . my-select-prev-window)
+   ("M-[" . my-select-next-window)
+   ("M-]" . my-select-prev-window)
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -415,8 +415,8 @@ line instead."
 ;;;; eshell
 (use-package eshell
   :bind*
-  ("C-'" . eshell)
-  ("C-\"" . (lambda () (interactive) (eshell t)))
+  ("C-5" . eshell)
+  ("C-%" . (lambda () (interactive) (eshell t)))
   :hook ((eshell-mode . my-eshell-bind-keys)
          (eshell-mode . eldoc-mode)
          (eshell-directory-change . my-toggle-shell-auto-completion-based-on-path))
@@ -795,8 +795,8 @@ the user activate the completion manually."
 (use-package back-button
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
   :diminish
-  :bind (("M-3" . back-button-local-backward)
-         ("M-4" . back-button-local-forward))
+  :bind (("C-3" . back-button-local-backward)
+         ("C-4" . back-button-local-forward))
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
@@ -1084,7 +1084,7 @@ the user activate the completion manually."
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
 
   :bind
-  (("M-[" . helm-mini)
+  (("C-'" . helm-mini)
    ("M-x" . helm-M-x)
    ("H-i a" . helm-apropos)
    ("H-i ." . helm-info-emacs)
@@ -1161,9 +1161,9 @@ the user activate the completion manually."
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
   :diminish
-  :bind (("C-1" . highlight-symbol-occur)
-         ("C-2" . highlight-symbol-prev)
-         ("C-5" . highlight-symbol-next))
+  :bind (("M-2" . highlight-symbol-occur)
+         ("M-3" . highlight-symbol-prev)
+         ("M-4" . highlight-symbol-next))
   :hook (prog-mode . highlight-symbol-mode)
   :init
   (setq highlight-symbol-on-navigation-p t))
