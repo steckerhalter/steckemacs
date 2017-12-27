@@ -173,12 +173,11 @@ buffer is not visiting a file."
   :bind
   (;; general
    ("C-u C-u" . universal-argument) 	;remap what was C-u
-   ("H-i x" . kill-emacs)
+   ("C-x k" . kill-emacs)
    ("C-S-l" . package-list-packages)
    ("C-c d" . ispell-change-dictionary)
    ("C-t f" . flyspell-buffer)
    ("C-t C-f" . flyspell-mode)
-   ("H-i C-p" . find-file)
    ("C-x C-r" . my-sudo-edit)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
@@ -190,7 +189,7 @@ buffer is not visiting a file."
    ("C-c q" . auto-fill-mode)
    ("C-c w" . whitespace-cleanup)
    ("H-i C-v" . visual-line-mode)
-   ("H-i t" . my-timestamp)
+   ("C-t t" . my-timestamp)
    ("M-k" . kill-line)
    ("M-K" . kill-sentence)
    ;; source
