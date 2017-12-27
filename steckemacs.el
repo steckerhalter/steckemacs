@@ -415,13 +415,26 @@ line instead."
 ;;;; eshell
 (use-package eshell
   :demand
-  :hook ((eshell-mode . my-eshell-bind-keys)
+  :hook ((eshell-mode . my-eshell-setup)
          (eshell-mode . eldoc-mode)
          (eshell-directory-change . my-toggle-shell-auto-completion-based-on-path))
   :init
-  (defun my-eshell-bind-keys ()
+  (setq eshell-save-history-on-exit t)
+  (setq eshell-destroy-buffer-when-process-dies t)
+
+  (defun my-eshell-setup ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
-    (bind-key "M-r" 'helm-eshell-history eshell-mode-map))
+    (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
+    ;; aliases
+    (eshell/alias "e" "find-file $1")
+    (eshell/alias "eo" "find-file-other-window $1")
+    (eshell/alias "gd" "magit-diff-unstaged")
+    (eshell/alias "gds" "magit-diff-staged")
+    (eshell/alias "d" "dired $1")
+    (eshell/alias "ll" "ls -l")
+    (eshell/alias "la" "ls -A")
+    (eshell/alias "l" "ls -CF"))
+
   (defun my-toggle-shell-auto-completion-based-on-path ()
     "Deactivates automatic completion on remote paths.
 Retrieving completions for Eshell blocks Emacs. Over remote
@@ -430,6 +443,7 @@ the user activate the completion manually."
     (if (file-remote-p default-directory)
         (setq-local company-idle-delay nil)
       (setq-local company-idle-delay 0.3)))
+
   :config
   (use-package eshell-z
     :quelpa (eshell-z :fetcher github :repo xuchunyang/eshell-z))
@@ -650,8 +664,7 @@ the user activate the completion manually."
           global-mark-ring
           search-ring
           regexp-search-ring
-          extended-command-history
-          eshell-history-ring))
+          extended-command-history))
   (savehist-mode 1))
 
 ;;;; saveplace
