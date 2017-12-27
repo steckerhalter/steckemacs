@@ -217,7 +217,7 @@ buffer is not visiting a file."
    ;; find/grep
    ("H-i G" . grep-find)
    ("H-i O" . occur))
-  :bind* ("C-;" . save-buffer))
+  :bind* ("C-'" . save-buffer))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -422,10 +422,15 @@ line instead."
   (setq eshell-save-history-on-exit t)
   (setq eshell-destroy-buffer-when-process-dies t)
 
+  (defun eshell/g (&rest args)
+    (magit-status (pop args) nil)
+    (eshell/echo))   ;; The echo command suppresses output
+
   (defun my-eshell-setup ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
     (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
     ;; aliases
+    (eshell/alias "cs" "apt search $1")
     (eshell/alias "e" "find-file $1")
     (eshell/alias "eo" "find-file-other-window $1")
     (eshell/alias "gd" "magit-diff-unstaged")
@@ -1106,7 +1111,7 @@ the user activate the completion manually."
    ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    ("H-i g" . helm-do-grep-ag))
-  :bind* ("C-'" . helm-mini)
+  :bind* ("C-;" . helm-mini)
 
   :config
   (require 'helm-config)
@@ -1562,4 +1567,3 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config (which-key-mode))
 
 ;;; steckemacs.el ends here
-(put 'narrow-to-page 'disabled nil)
