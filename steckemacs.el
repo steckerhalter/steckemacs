@@ -687,9 +687,9 @@ the user activate the completion manually."
 ;;;; skeleton
 ;; Lisp language extension for writing statement skeletons
 (use-package skeleton
-  :bind (("C-t q" . liquid-quote)
-         ("C-t l" . liquid-tag)
-         ("C-t p" . my-package-def))
+  :bind (("C-t s q" . liquid-quote)
+         ("C-t s t" . liquid-tag)
+         ("C-t s p" . my-package-def))
   :config
   (define-skeleton liquid-tag
     "Inserts a liquid tag"
@@ -1238,9 +1238,9 @@ the user activate the completion manually."
 ;; Emacs interface to git
 (use-package magit
   :quelpa
-  :bind (("C-u u" . magit-status)
-         ("C-u l" . magit-log)
-         ("C-u b" . magit-blame))
+  :bind (("C-t g" . magit-status)
+         ("C-t l" . magit-log)
+         ("C-t b" . magit-blame))
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
