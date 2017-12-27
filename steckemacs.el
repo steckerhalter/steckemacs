@@ -207,8 +207,6 @@ buffer is not visiting a file."
    ("C-c n" . my-show-file-name)
    ("H-i 0" . text-scale-adjust)
    ;; windows
-   ("M-[" . my-select-next-window)
-   ("M-]" . my-select-prev-window)
    ("<f7>" . my-toggle-window-split)
    ("C-8" . my-split-window)
    ("<f2>" . split-window-vertically)
@@ -218,7 +216,10 @@ buffer is not visiting a file."
    ;; find/grep
    ("H-i G" . grep-find)
    ("H-i O" . occur))
-  :bind* ("C-;" . save-buffer))
+  :bind*
+  ("C-;" . save-buffer)
+  ("M-." . my-select-next-window)
+  ("M-," . my-select-prev-window))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -723,7 +724,6 @@ the user activate the completion manually."
     (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
     (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
     (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
-    (define-key term-raw-map (kbd "M-,") 'term-send-input)
     (define-key term-raw-map (kbd "C-S-y") 'term-paste)
     (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
     (define-key term-raw-map (kbd "C-]") nil))
@@ -1239,9 +1239,9 @@ the user activate the completion manually."
 ;; Emacs interface to git
 (use-package magit
   :quelpa
-  :bind (("C-t g" . magit-status)
-         ("C-t l" . magit-log)
-         ("C-t b" . magit-blame))
+  :bind (("C-u u" . magit-status)
+         ("C-u l" . magit-log)
+         ("C-u b" . magit-blame))
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
