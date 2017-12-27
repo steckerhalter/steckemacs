@@ -61,6 +61,8 @@
     (with-selected-frame (or frame (selected-frame))
       ;; translate C-i to H-i so it can be used apart from TAB
       (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
+      (define-key input-decode-map (kbd "C-.") (kbd "C-f"))
+      (define-key input-decode-map (kbd "C-,") (kbd "C-b"))
       ;; use C-h as backspace
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
@@ -182,7 +184,7 @@ buffer is not visiting a file."
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
    ("C-t o" . my-xdg-open-dir)
-   ("C-2" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
+   ("C-=" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -200,7 +202,7 @@ buffer is not visiting a file."
    ;; buffers
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
-   ("M-'" . my-switch-to-scratch)
+   ("M-=" . my-switch-to-scratch)
    ("H-i TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
    ("H-i 0" . text-scale-adjust)
@@ -216,7 +218,7 @@ buffer is not visiting a file."
    ;; find/grep
    ("H-i G" . grep-find)
    ("H-i O" . occur))
-  :bind* ("C-'" . save-buffer))
+  :bind* ("C-;" . save-buffer))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -910,7 +912,7 @@ the user activate the completion manually."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind*  (("C-:" . deft)
+  :bind*  (("M-'" . deft)
            :map deft-mode-map
            ("<f6>" . quit-window)
            ("C-g" . deft-filter-clear)
@@ -1110,7 +1112,7 @@ the user activate the completion manually."
    ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    ("H-i g" . helm-do-grep-ag))
-  :bind* ("C-;" . helm-mini)
+  :bind* ("C-'" . helm-mini)
 
   :config
   (require 'helm-config)
@@ -1483,9 +1485,9 @@ Pass symbol-name to the function DOC-FUNCTION."
                 :files ("rswitcher.el" "shell-switcher.el"))
   :demand
   :bind  (:map shell-switcher-mode-map
-               ("C-1" . shell-switcher-switch-buffer)
+               ("M--" . shell-switcher-switch-buffer)
                ("C-!" . shell-switcher-new-shell)
-               ("M-1" . shell-switcher-switch-buffer-other-window))
+               ("C--" . shell-switcher-switch-buffer-other-window))
   :config (shell-switcher-mode 1))
 
 ;;;; smart-mode-line
