@@ -423,6 +423,7 @@ line instead."
   :init
   (setq eshell-save-history-on-exit t)
   (setq eshell-destroy-buffer-when-process-dies t)
+  (setq eshell-where-to-jump 'end)
 
   (defun eshell/g (&rest args)
     (magit-status (pop args) nil)
@@ -1309,6 +1310,12 @@ the user activate the completion manually."
   (advice-add 'markdown-convert-wiki-link-to-filename
               :around 'my-markdown-convert-wiki-link))
 
+;;;; monky
+(use-package monky
+  :quelpa (monky :fetcher github :repo ananthakumaran/monky :files ("*.el" "*.info" "style"))
+  :bind ("C-u o" . monky-status)
+  :init (setq monky-process-type 'cmdserver))
+
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
 (use-package multiple-cursors
@@ -1486,7 +1493,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   :demand
   :bind  (:map shell-switcher-mode-map
                ("M--" . shell-switcher-switch-buffer)
-               ("C-!" . shell-switcher-new-shell)
+               ("C-_" . shell-switcher-new-shell)
                ("C--" . shell-switcher-switch-buffer-other-window))
   :config (shell-switcher-mode 1))
 
