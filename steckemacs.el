@@ -423,7 +423,7 @@ line instead."
   :init
   (setq eshell-save-history-on-exit t)
   (setq eshell-destroy-buffer-when-process-dies t)
-  (setq eshell-where-to-jump 'end)
+  (setq eshell-where-to-jump 'begin)
 
   (defun eshell/g (&rest args)
     (magit-status (pop args) nil)
@@ -432,6 +432,8 @@ line instead."
   (defun my-eshell-setup ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
     (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
+    (setenv "PAGER" "cat")
+    (setenv "EDITOR" "emacsclient")
     ;; aliases
     (eshell/alias "cs" "apt search $1")
     (eshell/alias "e" "find-file $1")
@@ -1484,6 +1486,11 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config
   (push 'company-robe company-backends)
   :hook (ruby-mode . robe-mode))
+
+;;;; rust-mode
+;; A major emacs mode for editing Rust source code
+(use-package rust-mode
+  :quelpa (rust-mode :repo rust-lang/rust-mode :fetcher github))
 
 ;;;; shell-switcher
 (use-package shell-switcher
