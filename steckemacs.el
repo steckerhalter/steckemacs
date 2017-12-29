@@ -184,7 +184,6 @@ buffer is not visiting a file."
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
    ("C-t o" . my-xdg-open-dir)
-   ("C-=" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -202,7 +201,7 @@ buffer is not visiting a file."
    ;; buffers
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
-   ("M-=" . my-switch-to-scratch)
+   ("M-'" . my-switch-to-scratch)
    ("H-i TAB" . my-indent-whole-buffer)
    ("C-c n" . my-show-file-name)
    ("H-i 0" . text-scale-adjust)
@@ -217,7 +216,8 @@ buffer is not visiting a file."
    ("H-i G" . grep-find)
    ("H-i O" . occur))
   :bind*
-  ("C-;" . save-buffer)
+  ("M-=" . save-buffer)
+  ("C-'" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
   ("M-." . my-select-next-window)
   ("M-," . my-select-prev-window))
 
@@ -356,7 +356,7 @@ line instead."
   (setq
    custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
-  :bind ("C-S-g" . customize-group))
+  :bind ("C-u g" . customize-group))
 
 ;;;; dired
 ;; directory-browsing commands
@@ -390,7 +390,7 @@ line instead."
   ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
     :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
-    :bind ("C-]" . dired-jump)
+    :bind* ("C-;" . dired-jump)
     :defer 1
     :init
     (setq diredp-hide-details-initially-flag nil)
@@ -915,12 +915,12 @@ the user activate the completion manually."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind*  (("M-'" . deft)
-           :map deft-mode-map
-           ("<f6>" . quit-window)
-           ("C-g" . deft-filter-clear)
-           ("C-c C-c" . deft-refresh)
-           ("<M-return>" . deft-new-file))
+  :bind  (("C-u d" . deft)
+          :map deft-mode-map
+          ("<f6>" . quit-window)
+          ("C-g" . deft-filter-clear)
+          ("C-c C-c" . deft-refresh)
+          ("<M-return>" . deft-new-file))
   :commands (deft)
   :config
   ;; display filter in mode-line instead of header
@@ -1115,7 +1115,7 @@ the user activate the completion manually."
    ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    ("H-i g" . helm-do-grep-ag))
-  :bind* ("C-'" . helm-mini)
+  :bind* ("C-=" . helm-mini)
 
   :config
   (require 'helm-config)
@@ -1322,6 +1322,9 @@ the user activate the completion manually."
 ;; allow editing with multiple cursors
 (use-package multiple-cursors
   :quelpa (multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el")
+  :init
+  (setq mc/always-repeat-command t)
+  (setq mc/always-run-for-all t)
   :bind (("C-<" . mc/mark-previous-like-this)
          ("C->" . mc/mark-next-like-this)
          ("C-?" . mc/mark-all-like-this)))
