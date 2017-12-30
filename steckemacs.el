@@ -433,6 +433,7 @@ line instead."
   (defun my-eshell-setup ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
     (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
+    (set (make-local-variable 'eldoc-idle-delay) 3)
     (setenv "PAGER" "cat")
     (setenv "EDITOR" "emacsclient")
     ;; aliases
@@ -994,8 +995,8 @@ the user activate the completion manually."
   :demand
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
   :bind
-  ("H-i C-." . elisp-slime-nav-find-elisp-thing-at-point)
-  ("H-i C-d" . my-show-help)
+  ("C-u C-f" . elisp-slime-nav-find-elisp-thing-at-point)
+  ("C-u C-b" . my-show-help)
   ("<f1> <f1>" . elisp-slime-nav-describe-elisp-thing-at-point)
   :diminish
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
