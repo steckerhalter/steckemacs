@@ -199,6 +199,7 @@ buffer is not visiting a file."
    ("H-i C-e" . toggle-debug-on-error)
    ("C-t C-s" . my-insert-package-desc-summary)
    ;; buffers
+   ("C-=" . save-buffer)
    ("C-c r" . revert-buffer)
    ("<f6>" . my-kill-buffer)
    ("M-'" . my-switch-to-scratch)
@@ -216,8 +217,7 @@ buffer is not visiting a file."
    ("H-i G" . grep-find)
    ("H-i O" . occur))
   :bind*
-  ("M-=" . save-buffer)
-  ("C-'" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
+  ("C-;" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
   ("M-." . my-select-next-window)
   ("M-," . my-select-prev-window))
 
@@ -390,7 +390,7 @@ line instead."
   ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
     :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
-    :bind* ("C-;" . dired-jump)
+    :bind* ("M-=" . dired-jump)
     :defer 1
     :init
     (setq diredp-hide-details-initially-flag nil)
@@ -815,6 +815,7 @@ the user activate the completion manually."
 (use-package back-button
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
   :diminish
+  :demand
   :bind (("C-3" . back-button-local-backward)
          ("C-4" . back-button-local-forward))
   :config
@@ -1115,7 +1116,7 @@ the user activate the completion manually."
    ("H-i w" . helm-wikipedia-suggest)
    ("H-i i" . helm-imenu)
    ("H-i g" . helm-do-grep-ag))
-  :bind* ("C-=" . helm-mini)
+  :bind* ("C-'" . helm-mini)
 
   :config
   (require 'helm-config)
