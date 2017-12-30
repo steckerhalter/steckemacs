@@ -184,6 +184,7 @@ buffer is not visiting a file."
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
    ("C-t o" . my-xdg-open-dir)
+   ("C-u C-a" . find-file)
    ;; editing
    ("C-z" . undo-only)
    ("M-W" . delete-region)
@@ -1246,6 +1247,7 @@ the user activate the completion manually."
   :bind (("C-u u" . magit-status)
          ("C-u l" . magit-log)
          ("C-u b" . magit-blame))
+  :demand
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
