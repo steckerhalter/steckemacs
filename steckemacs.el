@@ -481,7 +481,6 @@ the user activate the completion manually."
 (use-package eww
   :bind ("C-u C-e" . my-eww-browse-dwim)
   :config
-  (setq shr-use-fonts nil)
   (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
   (defun my-eww-browse-dwim ()
@@ -690,6 +689,12 @@ the user activate the completion manually."
   :config
   (setq sgml-basic-offset 4)
   (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode))
+
+;;;; shr
+;; Simple HTML Renderer
+(use-package shr
+  ;; don't use proportional fonts
+  :config (setq shr-use-fonts nil))
 
 ;;;; skeleton
 ;; Lisp language extension for writing statement skeletons
@@ -1199,6 +1204,16 @@ the user activate the completion manually."
   :init
   (setq iedit-unmatched-lines-invisible t)
   (setq iedit-toggle-key-default nil))
+
+;;;; elfeed-protocol
+;; Provide owncloud/ttrss protocols for elfeed
+(use-package elfeed-protocol
+  :quelpa (elfeed-protocol :repo fasheng/elfeed-protocol :fetcher github)
+  :bind ("C-t e" . elfeed)
+  :config
+  (elfeed-set-timeout 36000)
+  (setq elfeed-use-curl t)
+  (elfeed-protocol-enable))
 
 ;;;; iflipb
 ;; interactively flip between recently visited buffers
