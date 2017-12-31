@@ -1257,6 +1257,13 @@ the user activate the completion manually."
   :quelpa (json-mode :fetcher github :repo "joshwnj/json-mode")
   :mode "\\.json\\'")
 
+;;;; logview
+;; Major mode for viewing log files
+(use-package logview
+  :quelpa (logview :repo "doublep/logview" :fetcher github)
+  :mode "\\.log"
+  :config (setq logview-auto-revert-mode t))
+
 ;;;; magit
 ;; Emacs interface to git
 (use-package magit
