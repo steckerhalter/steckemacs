@@ -1209,6 +1209,7 @@ the user activate the completion manually."
 ;; Provide owncloud/ttrss protocols for elfeed
 (use-package elfeed-protocol
   :quelpa (elfeed-protocol :repo fasheng/elfeed-protocol :fetcher github)
+  :demand
   :bind ("C-t e" . elfeed)
   :config
   (elfeed-set-timeout 36000)
