@@ -161,7 +161,7 @@ buffer is not visiting a file."
     (interactive)
     (let ((timestring (if current-prefix-arg
                           "%H:%M"
-                        "%d.%m.%y")))
+                        "%a %d.%m.%y %H:%M")))
       (insert (format-time-string timestring))))
 
   (defun my-xdg-open-dir ()
@@ -425,6 +425,8 @@ line instead."
   (setq eshell-save-history-on-exit t)
   (setq eshell-destroy-buffer-when-process-dies t)
   (setq eshell-where-to-jump 'begin)
+  (setq eshell-hist-ignoredups t)
+  (setq eshell-history-size 10000)
 
   (defun eshell/g (&rest args)
     (magit-status (pop args) nil)
@@ -1344,6 +1346,47 @@ the user activate the completion manually."
   :quelpa (monky :fetcher github :repo ananthakumaran/monky :files ("*.el" "*.info" "style"))
   :bind ("C-u o" . monky-status)
   :init (setq monky-process-type 'cmdserver))
+
+;;;; mu4e
+(use-package mu4e
+  :bind ("C-u 4" . mu4e)
+  :init
+  ;; enable inline images
+  (setq mu4e-view-show-images t)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types))
+  (setq mu4e-html2text-command "html2text -utf8 -width 72")
+  (setq mu4e-update-interval 60)
+  (setq mu4e-auto-retrieve-keys t)
+  (setq mu4e-headers-leave-behavior 'apply)
+  (setq mu4e-headers-visible-lines 20)
+  (setq mu4e-hide-index-messages t)
+  (setq mu4e-maildir (expand-file-name "~/Maildir"))
+  (setq mu4e-get-mail-command "mbsync gmail")
+  ;; rename files when moving (needed for mbsync)
+  (setq mu4e-change-filenames-when-moving t)
+  ;; set up queue for offline email (use mu mkdir  ~/Maildir/queue to set up first)
+  (setq smtpmail-queue-mail nil  ;; start in normal mode
+        smtpmail-queue-dir   "~/Maildir/queue/cur")
+
+  (add-hook 'mu4e-headers-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
+  (add-hook 'mu4e-view-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
+
+  (defun mu4e-headers-mark-all-unread-read ()
+    (interactive)
+    (mu4e~headers-mark-for-each-if
+     (cons 'read nil)
+     (lambda (msg param)
+       (memq 'unread (mu4e-msg-field msg :flags)))))
+
+  (defun mu4e-flag-all-read ()
+    (interactive)
+    (mu4e-headers-mark-all-unread-read)
+    (mu4e-mark-execute-all t))
+
+  (setq message-kill-buffer-on-exit t)
+  :config (use-package org-mu4e))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
