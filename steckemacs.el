@@ -365,10 +365,17 @@ line instead."
   :demand
   :init
   (defun my-find-name-dired (pattern)
+    "Find files in `default-directory' using `rg' if available.
+PREFIX forces the use of `find'."
     (interactive "sFind-name (filename wildcard): ")
-    (find-dired
-     default-directory
-     (concat find-name-arg " " (shell-quote-argument pattern))))
+    (if (and (not current-prefix-arg) (executable-find "rg"))
+        (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
+              (find-ls-option (cons "" "-dilsb")))
+          (find-dired default-directory ""))
+      (find-dired
+       default-directory
+       (concat find-name-arg " " (shell-quote-argument pattern)))))
+
   (setq dired-auto-revert-buffer t)
   (setq dired-no-confirm
         '(byte-compile chgrp chmod chown copy delete load move symlink))
@@ -1112,6 +1119,7 @@ the user activate the completion manually."
   (setq helm-M-x-always-save-history t)
   (setq helm-buffer-details-flag nil)
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
+  (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
   :bind
   (("M-x" . helm-M-x)
