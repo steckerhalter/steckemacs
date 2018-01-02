@@ -1364,7 +1364,6 @@ the user activate the completion manually."
   ;; use imagemagick, if available
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
-  (setq mu4e-html2text-command "html2text -utf8 -width 72")
   (setq mu4e-update-interval 60)
   (setq mu4e-auto-retrieve-keys t)
   (setq mu4e-headers-leave-behavior 'apply)
