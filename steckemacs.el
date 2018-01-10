@@ -1224,6 +1224,7 @@ the user activate the completion manually."
   :config
   (elfeed-set-timeout 36000)
   (setq elfeed-use-curl t)
+  (setq elfeed-search-title-max-width 150)
   (elfeed-protocol-enable))
 
 ;;;; iflipb
