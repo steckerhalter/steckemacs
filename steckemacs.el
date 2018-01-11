@@ -1272,7 +1272,7 @@ the user activate the completion manually."
 ;; Major mode for viewing log files
 (use-package logview
   :quelpa (logview :repo "doublep/logview" :fetcher github)
-  :mode "\\.log"
+  :mode ("\\.log" . logview-mode)
   :config (setq logview-auto-revert-mode t))
 
 ;;;; magit
