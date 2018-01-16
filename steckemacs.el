@@ -1618,6 +1618,20 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package toml-mode
   :quelpa (toml-mode :fetcher github :repo "dryman/toml-mode.el"))
 
+;;;; twittering-mode
+(use-package twittering-mode
+  :quelpa (twittering-mode :repo "hayamiz/twittering-mode" :fetcher github)
+  :hook (twittering-mode . visual-line-mode)
+  :bind (:map twittering-mode-map
+              ("l" . twittering-favorite)
+              ("L" . twittering-unfavorite))
+  :init
+  (setq twittering-icon-mode t)
+  (setq twittering-convert-fix-size 32)
+  (setq twittering-use-icon-storage 1)
+  (setq twittering-enable-unread-status-notifier t)
+  (setq twittering-display-remaining t))
+
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
 (use-package yaml-mode
