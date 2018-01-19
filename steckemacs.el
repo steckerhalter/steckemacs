@@ -359,20 +359,6 @@ line instead."
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
   :bind ("C-u g" . customize-group))
 
-;;;; desktop
-(use-package desktop
-  :init (defun autostart ()
-          (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
-          (hackernews)
-          (elfeed)
-          (mu4e))
-  :custom
-  (desktop-path '("~"))
-  (desktop-restore-frames t)
-  (desktop-restore-in-current-display t)
-  (desktop-restore-forces-onscreen nil)
-  :hook (after-init . autostart))
-
 ;;;; dired
 ;; directory-browsing commands
 (use-package dired
@@ -1047,12 +1033,6 @@ the user activate the completion manually."
   :config
   (turn-on-eval-sexp-fu-flash-mode))
 
-;;;; eyebrowse
-(use-package eyebrowse
-  :quelpa (eyebrowse :fetcher github :repo "wasamasa/eyebrowse")
-  :custom (eyebrowse-new-workspace t)
-  :config (eyebrowse-mode t))
-
 ;;;; fancy-narrow
 ;; narrow-to-region with more eye candy.
 (use-package fancy-narrow
@@ -1470,6 +1450,21 @@ the user activate the completion manually."
                    (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
   :magic ("%PDF" . pdf-view-mode))
+
+;;;; persp-mode
+(use-package persp-mode
+  :quelpa (persp-mode :repo "Bad-ptr/persp-mode.el" :fetcher github)
+  :hook (after-init . autostart)
+  :init
+  (defun autostart ()
+    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
+    (hackernews)
+    (elfeed)
+    (mu4e)
+    (magit-status "~/steckemacs.el"))
+  (setq wg-morph-on nil)
+  (setq persp-autokill-buffer-on-remove 'kill-weak)
+  (add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
 
 ;;;; php
 ;; Major mode for editing PHP code
