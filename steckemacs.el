@@ -175,7 +175,7 @@ buffer is not visiting a file."
   :bind
   (;; general
    ("C-u C-u" . universal-argument) 	;remap what was C-u
-   ("C-x k" . kill-emacs)
+   ("C-u k" . kill-emacs)
    ("C-S-l" . package-list-packages)
    ("C-c d" . ispell-change-dictionary)
    ("C-t f" . flyspell-buffer)
@@ -358,6 +358,20 @@ line instead."
    custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
   :bind ("C-u g" . customize-group))
+
+;;;; desktop
+(use-package desktop
+  :init (defun autostart ()
+          (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
+          (hackernews)
+          (elfeed)
+          (mu4e))
+  :custom
+  (desktop-path '("~"))
+  (desktop-restore-frames t)
+  (desktop-restore-in-current-display t)
+  (desktop-restore-forces-onscreen nil)
+  :hook (after-init . autostart))
 
 ;;;; dired
 ;; directory-browsing commands
@@ -1033,6 +1047,12 @@ the user activate the completion manually."
   :config
   (turn-on-eval-sexp-fu-flash-mode))
 
+;;;; eyebrowse
+(use-package eyebrowse
+  :quelpa (eyebrowse :fetcher github :repo "wasamasa/eyebrowse")
+  :custom (eyebrowse-new-workspace t)
+  :config (eyebrowse-mode t))
+
 ;;;; fancy-narrow
 ;; narrow-to-region with more eye candy.
 (use-package fancy-narrow
@@ -1096,7 +1116,6 @@ the user activate the completion manually."
   :bind (("H-i h" . hackernews)
          :map hackernews-mode-map ("o" . hackernews-browse-other-window))
   :init
-  (setq hackernews-items-per-page 30)
   (defun hackernews-browse-other-window ()
     "Open URL of button under point within Emacs in other window."
     (interactive)
