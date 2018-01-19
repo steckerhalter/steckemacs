@@ -1461,10 +1461,23 @@ the user activate the completion manually."
     (hackernews)
     (elfeed)
     (mu4e)
-    (magit-status "~/steckemacs.el"))
+    (twit))
   (setq wg-morph-on nil)
-  (setq persp-autokill-buffer-on-remove 'kill-weak)
-  (add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
+  (setq persp-add-buffer-on-find-file nil)
+  (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
+
+  :config
+
+;;;;; eshell
+  (persp-def-buffer-save/load
+   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
+   :save-vars '(major-mode default-directory))
+
+;;;;; magit
+  (persp-def-buffer-save/load
+   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
+   :save-vars '(major-mode default-directory)
+   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
 
 ;;;; php
 ;; Major mode for editing PHP code
@@ -1644,7 +1657,8 @@ Pass symbol-name to the function DOC-FUNCTION."
   (setq twittering-convert-fix-size 32)
   (setq twittering-use-icon-storage 1)
   (setq twittering-enable-unread-status-notifier t)
-  (setq twittering-display-remaining t))
+  (setq twittering-display-remaining t)
+  (setq twittering-use-master-password t))
 
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
