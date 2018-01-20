@@ -1379,6 +1379,7 @@ the user activate the completion manually."
 
   (add-hook 'mu4e-headers-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
   (add-hook 'mu4e-view-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
+  (add-hook 'mu4e-compose-mode-hook (lambda () (interactive) (auto-fill-mode -1)))
 
   (defun mu4e-headers-mark-all-unread-read ()
     (interactive)
@@ -1454,6 +1455,9 @@ the user activate the completion manually."
 ;;;; persp-mode
 (use-package persp-mode
   :quelpa (persp-mode :repo "Bad-ptr/persp-mode.el" :fetcher github)
+  :bind
+  ("C-u C-o" . persp-frame-switch)
+  ("C-u <backspace>" . (lambda () (interactive) (persp-frame-switch "dash")))
   :hook (after-init . autostart)
   :init
   (defun autostart ()
