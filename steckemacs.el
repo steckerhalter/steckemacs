@@ -361,10 +361,25 @@ line instead."
 
 ;;;; desktop
 (use-package desktop
-  :init (defun autostart ()
+  :bind
+  ("C-u C-d s" . my-desktop-save)
+  ("C-u C-d r" . my-desktop-read)
+  :init
+  (defun my-desktop-read ()
+    "Read the desktop."
+    (interactive)
+    (desktop-read "~"))
+
+  (defun my-desktop-save ()
+    "Save the desktop."
+    (interactive)
+    (desktop-save "~"))
+
+  (defun autostart ()
           (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
           (hackernews)
           (elfeed)
+          (twit)
           (mu4e))
   :custom
   (desktop-path '("~"))
@@ -1034,12 +1049,10 @@ the user activate the completion manually."
 (use-package eval-sexp-fu
   :quelpa (eval-sexp-fu  :fetcher github :repo "hchbaw/eval-sexp-fu.el")
   :bind
-  (:map
-   lisp-interaction-mode-map
+  (:map lisp-interaction-mode-map
    ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
    ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp)
-   :map
-   emacs-lisp-mode-map
+   :map emacs-lisp-mode-map
    ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
    ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp))
   :init
@@ -1050,6 +1063,12 @@ the user activate the completion manually."
 ;;;; eyebrowse
 (use-package eyebrowse
   :quelpa (eyebrowse :fetcher github :repo "wasamasa/eyebrowse")
+  :bind
+  ("C-u 1" . eyebrowse-switch-to-window-config-1)
+  ("C-u 2" . eyebrowse-switch-to-window-config-2)
+  ("C-u 3" . eyebrowse-switch-to-window-config-3)
+  ("C-u 4" . eyebrowse-switch-to-window-config-4)
+  ("C-u <backspace>" . eyebrowse-last-window-config)
   :custom (eyebrowse-new-workspace t)
   :config (eyebrowse-mode t))
 
@@ -1377,7 +1396,7 @@ the user activate the completion manually."
 
 ;;;; mu4e
 (use-package mu4e
-  :bind ("C-u 4" . mu4e)
+  :bind ("C-u m" . mu4e)
   :init
   ;; enable inline images
   (setq mu4e-view-show-images t)
@@ -1399,7 +1418,11 @@ the user activate the completion manually."
 
   (add-hook 'mu4e-headers-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
   (add-hook 'mu4e-view-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
-  (add-hook 'mu4e-compose-mode-hook (lambda () (interactive) (auto-fill-mode -1)))
+  (add-hook 'mu4e-compose-mode-hook
+            (lambda ()
+              (interactive)
+              (visual-line-mode 1)
+              (auto-fill-mode -1)))
 
   (defun mu4e-headers-mark-all-unread-read ()
     (interactive)
