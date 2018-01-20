@@ -359,6 +359,20 @@ line instead."
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
   :bind ("C-u g" . customize-group))
 
+;;;; desktop
+(use-package desktop
+  :init (defun autostart ()
+          (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
+          (hackernews)
+          (elfeed)
+          (mu4e))
+  :custom
+  (desktop-path '("~"))
+  (desktop-restore-frames t)
+  (desktop-restore-in-current-display t)
+  (desktop-restore-forces-onscreen nil)
+  :hook (after-init . autostart))
+
 ;;;; dired
 ;; directory-browsing commands
 (use-package dired
@@ -1033,6 +1047,12 @@ the user activate the completion manually."
   :config
   (turn-on-eval-sexp-fu-flash-mode))
 
+;;;; eyebrowse
+(use-package eyebrowse
+  :quelpa (eyebrowse :fetcher github :repo "wasamasa/eyebrowse")
+  :custom (eyebrowse-new-workspace t)
+  :config (eyebrowse-mode t))
+
 ;;;; fancy-narrow
 ;; narrow-to-region with more eye candy.
 (use-package fancy-narrow
@@ -1451,37 +1471,6 @@ the user activate the completion manually."
                    (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
   :magic ("%PDF" . pdf-view-mode))
-
-;;;; persp-mode
-(use-package persp-mode
-  :quelpa (persp-mode :repo "Bad-ptr/persp-mode.el" :fetcher github)
-  :bind
-  ("C-u C-o" . persp-frame-switch)
-  ("C-u <backspace>" . (lambda () (interactive) (persp-frame-switch "dash")))
-  :hook (after-init . autostart)
-  :init
-  (defun autostart ()
-    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
-    (hackernews)
-    (elfeed)
-    (mu4e)
-    (twit))
-  (setq wg-morph-on nil)
-  (setq persp-add-buffer-on-find-file nil)
-  (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
-
-  :config
-
-;;;;; eshell
-  (persp-def-buffer-save/load
-   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
-   :save-vars '(major-mode default-directory))
-
-;;;;; magit
-  (persp-def-buffer-save/load
-   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
-   :save-vars '(major-mode default-directory)
-   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
 
 ;;;; php
 ;; Major mode for editing PHP code
