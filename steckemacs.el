@@ -1068,7 +1068,8 @@ the user activate the completion manually."
   ("C-u 2" . eyebrowse-switch-to-window-config-2)
   ("C-u 3" . eyebrowse-switch-to-window-config-3)
   ("C-u 4" . eyebrowse-switch-to-window-config-4)
-  ("C-u <backspace>" . eyebrowse-last-window-config)
+  ("C-u '" . eyebrowse-last-window-config)
+  ("C-u \"" . eyebrowse-close-window-config)
   :custom (eyebrowse-new-workspace t)
   :config (eyebrowse-mode t))
 
