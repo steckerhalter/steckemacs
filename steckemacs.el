@@ -1250,6 +1250,8 @@ the user activate the completion manually."
     ("SPC f" find-file)
     ("SPC d" jump-dired)
     ("SPC g" magit-status)
+    ("-" shell-switcher-switch-buffer)
+    ("'" helm-mini)
     ("<escape>" nil)))
 
 ;;;; iedit
