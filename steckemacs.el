@@ -1206,8 +1206,7 @@ the user activate the completion manually."
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
   :init
   (defun simulate (key)
-    (interactive)
-    (setq unread-command-events (listify-key-sequence (kbd key))))
+    (execute-kbd-macro (kbd key)))
   :config
   (defhydra escape (global-map "<escape>"
                                :color pink
