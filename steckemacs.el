@@ -1204,10 +1204,9 @@ the user activate the completion manually."
 ;;;; hydra
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
-  :init
-  (defun simulate (key)
-    (execute-kbd-macro (kbd key)))
   :config
+  (defun simulate (key &optional special)
+    (execute-kbd-macro (kbd key)))
   (defhydra escape (global-map "<escape>"
                                :color pink
                                :pre (progn (setq hydra-is-helpful nil)
@@ -1225,16 +1224,16 @@ the user activate the completion manually."
     ("u" (simulate "C-e"))
     ("d" (simulate "C-d"))
     ("D" (simulate "M-d"))
-    ("/" (simulate "C-/"))
+    ("/" undo)
     ("g" (simulate "C-g"))
     ;; mark
     ("m" (simulate "C-SPC"))
     ("w" (simulate "M-w"))
     ("W" (simulate "C-w"))
     ("y" (simulate "C-y"))
-    ("Y" (simulate "M-y"))
+    ("Y" yank-pop)
     ;; buffers
-    ("l" (simulate "C-l"))
+    ("l" recenter-top-bottom)
     ;; windows
     ("," my-select-prev-window)
     ("." my-select-next-window)
