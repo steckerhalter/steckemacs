@@ -61,9 +61,6 @@
     (with-selected-frame (or frame (selected-frame))
       ;; translate C-i to H-i so it can be used apart from TAB
       (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
-      (define-key input-decode-map (kbd "C-.") (kbd "C-f"))
-      (define-key input-decode-map (kbd "C-,") (kbd "C-b"))
-      (define-key input-decode-map (kbd "C-t") (kbd "C-p"))
       ;; use C-h as backspace
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
@@ -1207,28 +1204,38 @@ the user activate the completion manually."
 ;;;; hydra
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
+  :init
+  (defun simulate (key)
+    (interactive)
+    (setq unread-command-events (listify-key-sequence (kbd key))))
   :config
   (defhydra escape (global-map "<escape>"
-                               :pre (setq hydra-is-helpful nil)
-                               :post (setq hydra-is-helpful t))
-    ;; movement
-    ("s" forward-char)
-    ("h" backward-char)
-    ("t" previous-line)
-    ("n" next-line)
-    ("e" scroll-down-command)
-    ("o" scroll-up-command)
-    ("a" beginning-of-line)
-    ("u" end-of-line)
-    ("d" delete-char)
+                               :color pink
+                               :pre (progn (setq hydra-is-helpful nil)
+                                           (setq cursor-type 'hollow))
+                               :post (progn (setq hydra-is-helpful t)
+                                            (setq cursor-type 'box)))
+    ;; edit
+    ("s" (simulate "C-f"))
+    ("h" (simulate "C-b"))
+    ("t" (simulate "C-n"))
+    ("n" (simulate "C-p"))
+    ("e" (simulate "C-v"))
+    ("o" (simulate "M-v"))
+    ("a" (simulate "C-a"))
+    ("u" (simulate "C-e"))
+    ("d" (simulate "C-d"))
+    ("D" (simulate "M-d"))
+    ("/" (simulate "C-/"))
+    ("g" (simulate "C-g"))
     ;; mark
-    ("m" set-mark-command)
-    ("w" easy-kill)
-    ("W" kill-region)
-    ("y" yank)
-    ("Y" yank-pop)
+    ("m" (simulate "C-SPC"))
+    ("w" (simulate "M-w"))
+    ("W" (simulate "C-w"))
+    ("y" (simulate "C-y"))
+    ("Y" (simulate "M-y"))
     ;; buffers
-    ("l" recenter-top-bottom)
+    ("l" (simulate "C-l"))
     ;; windows
     ("," my-select-prev-window)
     ("." my-select-next-window)
@@ -1238,6 +1245,11 @@ the user activate the completion manually."
     ("3" my-persp-switch-to-3)
     ("4" my-persp-switch-to-4)
     ("5" my-persp-switch-to-5)
+    ;; commands
+    ("SPC s" save-buffer)
+    ("SPC f" find-file)
+    ("SPC d" jump-dired)
+    ("SPC g" magit-status)
     ("<escape>" nil)))
 
 ;;;; iedit
@@ -1527,6 +1539,7 @@ the user activate the completion manually."
     (twit))
   (setq wg-morph-on nil)
   (setq persp-add-buffer-on-find-file nil)
+  (setq persp-auto-save-opt nil)
   (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
 
   :config
