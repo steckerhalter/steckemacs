@@ -360,35 +360,6 @@ line instead."
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
   :bind ("C-S-g" . customize-group))
 
-;;;; desktop
-(use-package desktop
-  :bind
-  ("C-u C-d s" . my-desktop-save)
-  ("C-u C-d r" . my-desktop-read)
-  :init
-  (defun my-desktop-read ()
-    "Read the desktop."
-    (interactive)
-    (desktop-read "~"))
-
-  (defun my-desktop-save ()
-    "Save the desktop."
-    (interactive)
-    (desktop-save "~"))
-
-  (defun autostart ()
-          (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
-          (hackernews)
-          (elfeed)
-          (twit)
-          (mu4e))
-  :custom
-  (desktop-path '("~"))
-  (desktop-restore-frames t)
-  (desktop-restore-in-current-display t)
-  (desktop-restore-forces-onscreen nil)
-  :hook (after-init . autostart))
-
 ;;;; dired
 ;; directory-browsing commands
 (use-package dired
@@ -1061,19 +1032,6 @@ the user activate the completion manually."
   :config
   (turn-on-eval-sexp-fu-flash-mode))
 
-;;;; eyebrowse
-(use-package eyebrowse
-  :quelpa (eyebrowse :fetcher github :repo "wasamasa/eyebrowse")
-  :bind
-  ("C-u 1" . eyebrowse-switch-to-window-config-1)
-  ("C-u 2" . eyebrowse-switch-to-window-config-2)
-  ("C-u 3" . eyebrowse-switch-to-window-config-3)
-  ("C-u 4" . eyebrowse-switch-to-window-config-4)
-  ("C-u '" . eyebrowse-last-window-config)
-  ("C-u \"" . eyebrowse-close-window-config)
-  :custom (eyebrowse-new-workspace t)
-  :config (eyebrowse-mode t))
-
 ;;;; fancy-narrow
 ;; narrow-to-region with more eye candy.
 (use-package fancy-narrow
@@ -1245,6 +1203,42 @@ the user activate the completion manually."
   :hook (prog-mode . highlight-symbol-mode)
   :init
   (setq highlight-symbol-on-navigation-p t))
+
+;;;; hydra
+(use-package hydra
+  :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
+  :config
+  (defhydra escape (global-map "<escape>"
+                               :pre (setq hydra-is-helpful nil)
+                               :post (setq hydra-is-helpful t))
+    ;; movement
+    ("s" forward-char)
+    ("h" backward-char)
+    ("t" previous-line)
+    ("n" next-line)
+    ("e" scroll-down-command)
+    ("o" scroll-up-command)
+    ("a" beginning-of-line)
+    ("u" end-of-line)
+    ("d" delete-char)
+    ;; mark
+    ("m" set-mark-command)
+    ("w" easy-kill)
+    ("W" kill-region)
+    ("y" yank)
+    ("Y" yank-pop)
+    ;; buffers
+    ("l" recenter-top-bottom)
+    ;; windows
+    ("," my-select-prev-window)
+    ("." my-select-next-window)
+    ("`" my-jump-to-last-layout)
+    ("1" my-persp-switch-to-1)
+    ("2" my-persp-switch-to-2)
+    ("3" my-persp-switch-to-3)
+    ("4" my-persp-switch-to-4)
+    ("5" my-persp-switch-to-5)
+    ("<escape>" nil)))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
@@ -1489,6 +1483,64 @@ the user activate the completion manually."
                    (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
   :magic ("%PDF" . pdf-view-mode))
+
+;;;; persp-mode
+(use-package persp-mode
+  :quelpa (persp-mode :repo "Bad-ptr/persp-mode.el" :fetcher github)
+  :bind
+  :hook (after-init . autostart)
+  :init
+  (defvar my-last-selected-layout "none" "Previously selected layout.")
+
+  (defun my-jump-to-last-layout ()
+    "Open the previously selected layout, if it exists."
+    (interactive)
+    (unless (eq 'non-existent
+                (gethash my-last-selected-layout
+                         *persp-hash* 'non-existent))
+      (persp-switch my-last-selected-layout)))
+
+  (defun my-layout-switch-by-pos (pos)
+    "Switch to perspective of position POS."
+    (let ((persp-to-switch
+           (nth pos (persp-names-current-frame-fast-ordered))))
+      (if persp-to-switch
+          (persp-switch persp-to-switch)
+        (when (y-or-n-p
+               (concat "Perspective in this position doesn't exist.\n"
+                       "Do you want to create one? "))
+          (let ((persp-reset-windows-on-nil-window-conf t))
+            (persp-switch nil))))))
+
+  ;; Define all `my-persp-switch-to-X' functions
+  (dolist (i (number-sequence 1 5))
+    (eval `(defun ,(intern (format "my-persp-switch-to-%s" i)) nil
+             ,(format "Switch to layout %s." i)
+             (interactive)
+             (my-layout-switch-by-pos ,(1- i)))))
+
+  (defun autostart ()
+    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
+    (hackernews)
+    (elfeed)
+    (mu4e)
+    (twit))
+  (setq wg-morph-on nil)
+  (setq persp-add-buffer-on-find-file nil)
+  (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
+
+  :config
+
+;;;;; eshell
+  (persp-def-buffer-save/load
+   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
+   :save-vars '(major-mode default-directory))
+
+;;;;; magit
+  (persp-def-buffer-save/load
+   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
+   :save-vars '(major-mode default-directory)
+   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
 
 ;;;; php
 ;; Major mode for editing PHP code
