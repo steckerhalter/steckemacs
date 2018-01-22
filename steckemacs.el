@@ -63,6 +63,7 @@
       (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
       (define-key input-decode-map (kbd "C-.") (kbd "C-f"))
       (define-key input-decode-map (kbd "C-,") (kbd "C-b"))
+      (define-key input-decode-map (kbd "C-t") (kbd "C-p"))
       ;; use C-h as backspace
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
@@ -178,12 +179,12 @@ buffer is not visiting a file."
    ("C-u k" . kill-emacs)
    ("C-S-l" . package-list-packages)
    ("C-c d" . ispell-change-dictionary)
-   ("C-t f" . flyspell-buffer)
-   ("C-t C-f" . flyspell-mode)
+   ("H-i s f" . flyspell-buffer)
+   ("H-i s m" . flyspell-mode)
    ("C-x C-r" . my-sudo-edit)
    ("C-c m" . menu-bar-mode)
    ("C-x C-u" . my-url-insert-file-contents)
-   ("C-t o" . my-xdg-open-dir)
+   ("C-u o" . my-xdg-open-dir)
    ("C-u C-a" . find-file)
    ;; editing
    ("C-z" . undo-only)
@@ -191,14 +192,14 @@ buffer is not visiting a file."
    ("C-c q" . auto-fill-mode)
    ("C-c w" . whitespace-cleanup)
    ("H-i C-v" . visual-line-mode)
-   ("C-t t" . my-timestamp)
+   ("H-i t" . my-timestamp)
    ("M-k" . kill-line)
    ("M-K" . kill-sentence)
    ;; source
    ("H-i C-0" . edebug-defun)
    ("H-i C-b" . eval-buffer)
    ("H-i C-e" . toggle-debug-on-error)
-   ("C-t C-s" . my-insert-package-desc-summary)
+   ("H-i C-s" . my-insert-package-desc-summary)
    ;; buffers
    ("C-=" . save-buffer)
    ("C-c r" . revert-buffer)
@@ -348,7 +349,7 @@ line instead."
     (interactive)
     (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
       (browse-url-of-file file)))
-  :bind ("C-t C-b" . my-browse-url-file))
+  :bind ("C-u b" . my-browse-url-file))
 
 ;;;; custom
 ;; tools for declaring and initializing options
@@ -357,7 +358,7 @@ line instead."
   (setq
    custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
-  :bind ("C-u g" . customize-group))
+  :bind ("C-S-g" . customize-group))
 
 ;;;; desktop
 (use-package desktop
@@ -737,9 +738,9 @@ the user activate the completion manually."
 ;;;; skeleton
 ;; Lisp language extension for writing statement skeletons
 (use-package skeleton
-  :bind (("C-t s q" . liquid-quote)
-         ("C-t s t" . liquid-tag)
-         ("C-t s p" . my-package-def))
+  :bind (("C-u s q" . liquid-quote)
+         ("C-u s t" . liquid-tag)
+         ("C-u s p" . my-package-def))
   :config
   (define-skeleton liquid-tag
     "Inserts a liquid tag"
@@ -1259,7 +1260,7 @@ the user activate the completion manually."
 (use-package elfeed-protocol
   :quelpa (elfeed-protocol :repo fasheng/elfeed-protocol :fetcher github)
   :demand
-  :bind ("C-t e" . elfeed)
+  :bind ("C-u f" . elfeed)
   :config
   (elfeed-set-timeout 36000)
   (setq elfeed-use-curl t)
@@ -1319,8 +1320,8 @@ the user activate the completion manually."
 (use-package magit
   :quelpa
   :bind (("C-u u" . magit-status)
-         ("C-u l" . magit-log)
-         ("C-u b" . magit-blame))
+         ("C-u g l" . magit-log)
+         ("C-u g b" . magit-blame))
   :demand
   :init
   (setq magit-push-always-verify nil)
@@ -1392,7 +1393,6 @@ the user activate the completion manually."
 ;;;; monky
 (use-package monky
   :quelpa (monky :fetcher github :repo ananthakumaran/monky :files ("*.el" "*.info" "style"))
-  :bind ("C-u o" . monky-status)
   :init (setq monky-process-type 'cmdserver))
 
 ;;;; mu4e
@@ -1476,12 +1476,6 @@ the user activate the completion manually."
   :quelpa (page-break-lines :fetcher github :repo "purcell/page-break-lines")
   :diminish
   :config (global-page-break-lines-mode))
-
-;;;; package-lint
-;; A linting library for elisp package authors
-(use-package package-lint
-  :quelpa (package-lint :fetcher github :repo "purcell/package-lint")
-  :bind ("C-t C-l" . package-lint-current-buffer))
 
 ;;;; pdf-tools
 (use-package pdf-tools
@@ -1591,8 +1585,8 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Emacs Lisp packages built directly from source
 (use-package quelpa
   :bind
-  ("C-t C-e" . quelpa-expand-recipe)
-  ("C-t C-q" . quelpa))
+  ("C-u q e" . quelpa-expand-recipe)
+  ("C-u q q" . quelpa))
 
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
@@ -1692,7 +1686,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; view and kill Unix processes from within Emacs
 (use-package vkill
   :quelpa (vkill :fetcher github :repo "emacsmirror/vkill")
-  :bind ("C-t k" . vkill))
+  :bind ("C-u C-v" . vkill))
 
 ;;;; vlf
 ;; View Large Files
