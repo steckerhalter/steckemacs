@@ -1205,7 +1205,7 @@ the user activate the completion manually."
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
   :config
-  (defun simulate (key &optional special)
+  (defun simulate (key)
     (execute-kbd-macro (kbd key)))
   (defhydra escape (global-map "<escape>"
                                :color pink
@@ -1221,6 +1221,7 @@ the user activate the completion manually."
     ("e" (simulate "C-v"))
     ("o" (simulate "M-v"))
     ("a" (simulate "C-a"))
+    ("A" (simulate "M-m"))
     ("u" (simulate "C-e"))
     ("d" (simulate "C-d"))
     ("D" (simulate "M-d"))
