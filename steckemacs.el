@@ -1548,7 +1548,6 @@ KEYS should be provided as with `kbd'."
     (twit))
   (setq wg-morph-on nil)
   (setq persp-add-buffer-on-find-file nil)
-  (setq persp-auto-save-opt nil)
   (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
 
   :config
