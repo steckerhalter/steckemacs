@@ -1205,8 +1205,10 @@ the user activate the completion manually."
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
   :config
-  (defun simulate (key)
-    (execute-kbd-macro (kbd key)))
+  (defun kbds (keys)
+    "Simulate keyboard input.
+KEYS should be provided as with `kbd'."
+    (execute-kbd-macro (kbd keys)))
   (defhydra escape (global-map "<escape>"
                                :color pink
                                :pre (progn (setq hydra-is-helpful nil)
@@ -1214,24 +1216,24 @@ the user activate the completion manually."
                                :post (progn (setq hydra-is-helpful t)
                                             (setq cursor-type 'box)))
     ;; edit
-    ("s" (simulate "C-f"))
-    ("h" (simulate "C-b"))
-    ("t" (simulate "C-n"))
-    ("n" (simulate "C-p"))
-    ("e" (simulate "C-v"))
-    ("o" (simulate "M-v"))
-    ("a" (simulate "C-a"))
-    ("A" (simulate "M-m"))
-    ("u" (simulate "C-e"))
-    ("d" (simulate "C-d"))
-    ("D" (simulate "M-d"))
+    ("s" (kbds "C-f"))
+    ("h" (kbds "C-b"))
+    ("t" (kbds "C-n"))
+    ("n" (kbds "C-p"))
+    ("e" (kbds "C-v"))
+    ("o" (kbds "M-v"))
+    ("a" (kbds "C-a"))
+    ("A" (kbds "M-m"))
+    ("u" (kbds "C-e"))
+    ("d" (kbds "C-d"))
+    ("D" (kbds "M-d"))
     ("/" undo)
-    ("g" (simulate "C-g"))
+    ("g" (kbds "C-g"))
     ;; mark
-    ("m" (simulate "C-SPC"))
-    ("w" (simulate "M-w"))
-    ("W" (simulate "C-w"))
-    ("y" (simulate "C-y"))
+    ("m" (kbds "C-SPC"))
+    ("w" (kbds "M-w"))
+    ("W" (kbds "C-w"))
+    ("y" (kbds "C-y"))
     ("Y" yank-pop)
     ;; buffers
     ("l" recenter-top-bottom)
