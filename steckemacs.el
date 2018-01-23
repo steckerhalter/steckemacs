@@ -1205,6 +1205,7 @@ the user activate the completion manually."
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
   :config
+  (defvar my-cursor-bg (face-attribute 'cursor :background))
   (defun kbds (keys)
     "Simulate keyboard input.
 KEYS should be provided as with `kbd'."
@@ -1212,9 +1213,9 @@ KEYS should be provided as with `kbd'."
   (defhydra escape (global-map "<escape>"
                                :color pink
                                :pre (progn (setq hydra-is-helpful nil)
-                                           (setq cursor-type 'hollow))
+                                           (set-face-background 'cursor "#ff5f87"))
                                :post (progn (setq hydra-is-helpful t)
-                                            (setq cursor-type 'box)))
+                                            (set-face-background 'cursor my-cursor-bg)))
     ;; edit
     ("s" (kbds "C-f"))
     ("h" (kbds "C-b"))
