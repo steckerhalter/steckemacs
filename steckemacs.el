@@ -1230,11 +1230,16 @@ KEYS should be provided as with `kbd'."
     ("D" (kbds "M-d"))
     ("/" undo)
     ("g" (kbds "C-g"))
+    ("c" back-button-local-backward)
+    ("r" back-button-local-forward)
+    ("C" highlight-symbol-prev)
+    ("R" highlight-symbol-next)
     ;; mark
     ("m" (kbds "C-SPC"))
     ("w" (kbds "M-w"))
     ("W" (kbds "C-w"))
     ("y" (kbds "C-y"))
+    ("M" easy-mark-sexp)
     ("Y" yank-pop)
     ;; buffers
     ("l" recenter-top-bottom)
