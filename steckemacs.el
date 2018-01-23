@@ -1259,6 +1259,9 @@ KEYS should be provided as with `kbd'."
     ("SPC g" magit-status)
     ("-" shell-switcher-switch-buffer)
     ("'" helm-mini)
+    ("(" eval-sexp-fu-eval-sexp-inner-list)
+    ("M-(" eval-sexp-fu-eval-sexp-inner-sexp)
+    (")" eval-last-sexp)
     ("<escape>" nil)))
 
 ;;;; iedit
