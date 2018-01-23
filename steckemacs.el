@@ -66,6 +66,58 @@
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
   (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
 
+;;;; hydra
+  (use-package hydra
+    :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
+    :config
+    (defvar my-cursor-bg (face-attribute 'cursor :background))
+    (defun kbds (keys)
+      "Simulate keyboard input.
+KEYS should be provided as with `kbd'."
+      (execute-kbd-macro (kbd keys)))
+    (defhydra hydra-main (global-map "<escape>"
+                                     :color pink
+                                     :pre (progn (setq hydra-is-helpful nil)
+                                                 (set-face-background 'cursor "#ff5f87"))
+                                     :post (progn (setq hydra-is-helpful t)
+                                                  (set-face-background 'cursor my-cursor-bg)))
+      ;; edit
+      ("s" (kbds "C-f"))
+      ("h" (kbds "C-b"))
+      ("t" (kbds "C-n"))
+      ("n" (kbds "C-p"))
+      ("e" (kbds "C-v"))
+      ("o" (kbds "M-v"))
+      ("a" (kbds "C-a"))
+      ("A" (kbds "M-m"))
+      ("u" (kbds "C-e"))
+      ("d" (kbds "C-d"))
+      ("D" (kbds "M-d"))
+      ("/" undo)
+      ("g" (kbds "C-g"))
+      ;; mark
+      ("m" (kbds "C-SPC"))
+      ("w" (kbds "M-w"))
+      ("W" (kbds "C-w"))
+      ("y" (kbds "C-y"))
+      ("M" easy-mark-sexp)
+      ("Y" yank-pop)
+      ;; buffers
+      ("l" recenter-top-bottom)
+      ;; windows
+      ("," my-select-prev-window)
+      ("." my-select-next-window)
+      ;; commands
+      ("SPC s" save-buffer)
+      ("SPC f" find-file)
+      ("SPC d" jump-dired)
+      ("SPC g" magit-status)
+      ("-" shell-switcher-switch-buffer)
+      ("'" helm-mini)
+      ("i" isearch-forward :exit t)
+      ("I" isearch-backward :exit t)
+      ("<escape>" nil)))
+
 ;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
@@ -830,8 +882,9 @@ the user activate the completion manually."
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
   :diminish
   :demand
-  :bind (("C-3" . back-button-local-backward)
-         ("C-4" . back-button-local-forward))
+  :bind (:map hydra-main/keymap
+              ("c" . back-button-local-backward)
+              ("r" . back-button-local-forward))
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
@@ -965,7 +1018,10 @@ the user activate the completion manually."
 (use-package diff-hl
   :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
-  :bind ("C-u C-r" . diff-hl-revert-hunk)
+  :bind (:map hydra-main/keymap
+              ("SPC h r" . diff-hl-revert-hunk)
+              ("SPC h p" . diff-hl-previous-hunk)
+              ("SPC h n" . diff-hl-next-hunk))
   :config
   (global-diff-hl-mode 1)
   (eval-after-load 'magit
@@ -1194,72 +1250,12 @@ the user activate the completion manually."
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
   :diminish
-  :bind (("M-2" . highlight-symbol-occur)
-         ("M-3" . highlight-symbol-prev)
-         ("M-4" . highlight-symbol-next))
+  :bind (:map hydra-main/keymap
+              ("C" . highlight-symbol-prev)
+              ("R" . highlight-symbol-next))
   :hook (prog-mode . highlight-symbol-mode)
   :init
   (setq highlight-symbol-on-navigation-p t))
-
-;;;; hydra
-(use-package hydra
-  :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
-  :config
-  (defvar my-cursor-bg (face-attribute 'cursor :background))
-  (defun kbds (keys)
-    "Simulate keyboard input.
-KEYS should be provided as with `kbd'."
-    (execute-kbd-macro (kbd keys)))
-  (defhydra escape (global-map "<escape>"
-                               :color pink
-                               :pre (progn (setq hydra-is-helpful nil)
-                                           (set-face-background 'cursor "#ff5f87"))
-                               :post (progn (setq hydra-is-helpful t)
-                                            (set-face-background 'cursor my-cursor-bg)))
-    ;; edit
-    ("s" (kbds "C-f"))
-    ("h" (kbds "C-b"))
-    ("t" (kbds "C-n"))
-    ("n" (kbds "C-p"))
-    ("e" (kbds "C-v"))
-    ("o" (kbds "M-v"))
-    ("a" (kbds "C-a"))
-    ("A" (kbds "M-m"))
-    ("u" (kbds "C-e"))
-    ("d" (kbds "C-d"))
-    ("D" (kbds "M-d"))
-    ("/" undo)
-    ("g" (kbds "C-g"))
-    ("c" back-button-local-backward)
-    ("r" back-button-local-forward)
-    ("C" highlight-symbol-prev)
-    ("R" highlight-symbol-next)
-    ;; mark
-    ("m" (kbds "C-SPC"))
-    ("w" (kbds "M-w"))
-    ("W" (kbds "C-w"))
-    ("y" (kbds "C-y"))
-    ("M" easy-mark-sexp)
-    ("Y" yank-pop)
-    ;; buffers
-    ("l" recenter-top-bottom)
-    ;; windows
-    ("," my-select-prev-window)
-    ("." my-select-next-window)
-    ("`" my-jump-to-last-layout)
-    ("1" my-persp-switch-to-1)
-    ("2" my-persp-switch-to-2)
-    ("3" my-persp-switch-to-3)
-    ("4" my-persp-switch-to-4)
-    ("5" my-persp-switch-to-5)
-    ;; commands
-    ("SPC s" save-buffer)
-    ("SPC f" find-file)
-    ("SPC d" jump-dired)
-    ("SPC g" magit-status)
-    ("-" shell-switcher-switch-buffer)
-    ("'" helm-mini)
-    ("<escape>" nil)))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
@@ -1509,6 +1505,13 @@ KEYS should be provided as with `kbd'."
 (use-package persp-mode
   :quelpa (persp-mode :repo "Bad-ptr/persp-mode.el" :fetcher github)
   :bind
+  (:map hydra-main/keymap
+        ("`" . my-jump-to-last-layout)
+        ("1" . my-persp-switch-to-1)
+        ("2" . my-persp-switch-to-2)
+        ("3" . my-persp-switch-to-3)
+        ("4" . my-persp-switch-to-4)
+        ("5" . my-persp-switch-to-5))
   :hook (after-init . autostart)
   :init
   (defvar my-last-selected-layout "none" "Previously selected layout.")
@@ -1548,7 +1551,6 @@ KEYS should be provided as with `kbd'."
     (twit))
   (setq wg-morph-on nil)
   (setq persp-add-buffer-on-find-file nil)
-  (setq persp-auto-save-opt nil)
   (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
 
   :config
