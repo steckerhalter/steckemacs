@@ -1210,7 +1210,7 @@ the user activate the completion manually."
     "Simulate keyboard input.
 KEYS should be provided as with `kbd'."
     (execute-kbd-macro (kbd keys)))
-  (defhydra escape (global-map "<escape>"
+  (defhydra ! (global-map "<escape>"
                                :color pink
                                :pre (progn (setq hydra-is-helpful nil)
                                            (set-face-background 'cursor "#ff5f87"))
@@ -1222,7 +1222,9 @@ KEYS should be provided as with `kbd'."
     ("t" (kbds "C-n"))
     ("n" (kbds "C-p"))
     ("e" (kbds "C-v"))
+    ("E" (kbds "M->"))
     ("o" (kbds "M-v"))
+    ("O" (kbds "M-<"))
     ("a" (kbds "C-a"))
     ("A" (kbds "M-m"))
     ("u" (kbds "C-e"))
@@ -1243,6 +1245,7 @@ KEYS should be provided as with `kbd'."
     ("Y" yank-pop)
     ;; buffers
     ("l" recenter-top-bottom)
+    ("<backtab>" outshine-cycle-buffer)
     ;; windows
     ("," my-select-prev-window)
     ("." my-select-next-window)
@@ -1257,7 +1260,14 @@ KEYS should be provided as with `kbd'."
     ("SPC f" find-file)
     ("SPC d" jump-dired)
     ("SPC g" magit-status)
-    ("-" shell-switcher-switch-buffer)
+    ("SPC t" tldr)
+    ("SPC l" list-packages)
+    ("SPC c" customize-group)
+    ("SPC o" helm-google)
+    ("SPC k" kill-emacs)
+    ("i" isearch-forward :exit t)
+    ("I" isearch-backward :exit t)
+    ("-" shell-switcher-switch-buffer :exit t)
     ("'" helm-mini)
     ("(" eval-sexp-fu-eval-sexp-inner-list)
     ("M-(" eval-sexp-fu-eval-sexp-inner-sexp)
@@ -1508,64 +1518,6 @@ KEYS should be provided as with `kbd'."
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
   :magic ("%PDF" . pdf-view-mode))
 
-;;;; persp-mode
-(use-package persp-mode
-  :quelpa (persp-mode :repo "Bad-ptr/persp-mode.el" :fetcher github)
-  :bind
-  :hook (after-init . autostart)
-  :init
-  (defvar my-last-selected-layout "none" "Previously selected layout.")
-
-  (defun my-jump-to-last-layout ()
-    "Open the previously selected layout, if it exists."
-    (interactive)
-    (unless (eq 'non-existent
-                (gethash my-last-selected-layout
-                         *persp-hash* 'non-existent))
-      (persp-switch my-last-selected-layout)))
-
-  (defun my-layout-switch-by-pos (pos)
-    "Switch to perspective of position POS."
-    (let ((persp-to-switch
-           (nth pos (persp-names-current-frame-fast-ordered))))
-      (if persp-to-switch
-          (persp-switch persp-to-switch)
-        (when (y-or-n-p
-               (concat "Perspective in this position doesn't exist.\n"
-                       "Do you want to create one? "))
-          (let ((persp-reset-windows-on-nil-window-conf t))
-            (persp-switch nil))))))
-
-  ;; Define all `my-persp-switch-to-X' functions
-  (dolist (i (number-sequence 1 5))
-    (eval `(defun ,(intern (format "my-persp-switch-to-%s" i)) nil
-             ,(format "Switch to layout %s." i)
-             (interactive)
-             (my-layout-switch-by-pos ,(1- i)))))
-
-  (defun autostart ()
-    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
-    (hackernews)
-    (elfeed)
-    (mu4e)
-    (twit))
-  (setq wg-morph-on nil)
-  (setq persp-add-buffer-on-find-file nil)
-  (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
-
-  :config
-
-;;;;; eshell
-  (persp-def-buffer-save/load
-   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
-   :save-vars '(major-mode default-directory))
-
-;;;;; magit
-  (persp-def-buffer-save/load
-   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
-   :save-vars '(major-mode default-directory)
-   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
-
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
@@ -1731,6 +1683,10 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing toml files
 (use-package toml-mode
   :quelpa (toml-mode :fetcher github :repo "dryman/toml-mode.el"))
+
+;;;; tldr
+(use-package tldr
+  :quelpa (tldr :fetcher github :repo "kuanyui/tldr.el"))
 
 ;;;; twittering-mode
 (use-package twittering-mode
