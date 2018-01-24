@@ -1249,16 +1249,16 @@ KEYS should be provided as with `kbd'."
     ;; windows
     ("," my-select-prev-window)
     ("." my-select-next-window)
-    ("`" my-jump-to-last-layout)
-    ("1" my-persp-switch-to-1)
-    ("2" my-persp-switch-to-2)
-    ("3" my-persp-switch-to-3)
-    ("4" my-persp-switch-to-4)
-    ("5" my-persp-switch-to-5)
+    ("`" wg-switch-to-previous-workgroup)
+    ("1" wg-switch-to-workgroup-at-index-0)
+    ("2" wg-switch-to-workgroup-at-index-1)
+    ("3" wg-switch-to-workgroup-at-index-2)
+    ("4" wg-switch-to-workgroup-at-index-3)
+    ("5" wg-switch-to-workgroup-at-index-4)
     ;; commands
     ("SPC s" save-buffer)
     ("SPC f" find-file)
-    ("SPC d" jump-dired)
+    ("SPC d" dired-jump)
     ("SPC g" magit-status)
     ("SPC t" tldr)
     ("SPC l" list-packages)
@@ -1746,5 +1746,21 @@ Pass symbol-name to the function DOC-FUNCTION."
   :quelpa (which-key :repo justbur/emacs-which-key :fetcher github)
   :diminish
   :config (which-key-mode))
+
+;;;; workgroups
+(use-package workgroups2
+  :diminish (workgroups-mode)
+  :hook (window-setup . autostart)
+  :init
+  (defun autostart ()
+    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
+    (hackernews)
+    (elfeed)
+    (mu4e)
+    (twit)
+    (workgroups-mode 1)
+    (wg-open-session "~/.emacs_workgroups"))
+  (setq wg-emacs-exit-save-behavior nil)
+  (setq wg-workgroups-mode-exit-save-behavior nil))
 
 ;;; steckemacs.el ends here
