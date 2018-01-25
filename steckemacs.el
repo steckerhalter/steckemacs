@@ -1161,9 +1161,9 @@ the user activate the completion manually."
     :bind (("H-i C-o" . helm-google)
            ("H-i C-c" . helm-google-suggest)))
 
-  (use-package helm-tramp
-    :quelpa (helm-tramp :repo "masasam/emacs-helm-tramp" :fetcher github)
-    :bind ("H-i C-t" . helm-tramp))
+  ;; Helm UI wrapper for system package managers.
+  (use-package helm-system-packages
+    :quelpa (helm-system-packages :repo "emacs-helm/helm-system-packages" :fetcher github))
 
   ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
@@ -1262,17 +1262,19 @@ KEYS should be provided as with `kbd'."
     ("SPC g" magit-status)
     ("SPC t" tldr)
     ("SPC l" list-packages)
+    ("SPC L" helm-system-packages)
     ("SPC c" customize-group)
     ("SPC o" helm-google)
     ("SPC k" kill-emacs)
-    ("i" isearch-forward :exit t)
-    ("I" isearch-backward :exit t)
+    ("SPC q" quelpa)
+    ("i" helm-swoop)
+    ("I" isearch-forward :exit t)
     ("-" shell-switcher-switch-buffer :exit t)
     ("'" helm-mini)
     ("(" eval-sexp-fu-eval-sexp-inner-list)
     ("M-(" eval-sexp-fu-eval-sexp-inner-sexp)
     (")" eval-last-sexp)
-    ("<escape>" nil)))
+    ("<escape>" nil :color blue)))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
