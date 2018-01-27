@@ -1016,7 +1016,8 @@ the user activate the completion manually."
 
 ;;;; emojify
 (use-package emojify
-  :quelpa (emojify :fetcher github :repo "iqbalansari/emacs-emojify" :files (:defaults "data" "images")))
+  :quelpa (emojify :fetcher github :repo "iqbalansari/emacs-emojify" :files (:defaults "data" "images"))
+  :config (global-emojify-mode 1))
 
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
@@ -1211,10 +1212,18 @@ the user activate the completion manually."
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
   :config
   (defvar my-cursor-bg (face-attribute 'cursor :background))
+
   (defun kbds (keys)
     "Simulate keyboard input.
 KEYS should be provided as with `kbd'."
     (execute-kbd-macro (kbd keys)))
+
+  (defmacro hydra-resume (fn &rest args)
+    "Execute FN and resume the current hydra."
+    `(progn (interactive)
+            (,fn ,@args)
+            (funcall hydra-curr-body-fn)))
+
   (defhydra ! (global-map "<escape>"
                                :color pink
                                :pre (progn (setq hydra-is-helpful nil)
@@ -1279,10 +1288,11 @@ KEYS should be provided as with `kbd'."
     ("SPC h n" diff-hl-next-hunk)
     ("SPC %" (insert "¯\\_(ツ)_/¯"))
     ("SPC 0" edebug-defun)
+    ("SPC r" helm-all-mark-rings)
     (">" mc/mark-next-like-this)
     ("<" mc/mark-previous-like-this)
     ("i" helm-swoop)
-    ("I" isearch-forward :exit t)
+    ("I" (hydra-resume isearch-forward) :exit t)
     ("-" shell-switcher-switch-buffer :exit t)
     ("_" shell-switcher-new-shell :exit t)
     ("b" helm-mini)
