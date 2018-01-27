@@ -1782,6 +1782,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 
 ;;;; workgroups
 (use-package workgroups2
+  :quelpa (workgroups2 :repo "pashinin/workgroups2" :fetcher github :files ("src/*.el"))
   :diminish (workgroups-mode)
   :hook (window-setup . autostart)
   :init
