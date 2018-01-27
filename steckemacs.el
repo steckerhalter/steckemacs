@@ -40,6 +40,7 @@
     (eval-buffer)))
 ;; install use-package and the quelpa handler
 (quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
+(setq use-package-expand-minimally t)
 (require 'quelpa-use-package)
 
 ;;; diminish
@@ -1234,6 +1235,7 @@ KEYS should be provided as with `kbd'."
     ("u" (kbds "C-e"))
     ("d" (kbds "C-d"))
     ("D" (kbds "M-d"))
+    ("k" (kbds "C-k"))
     ("/" undo)
     ("c" back-button-local-backward)
     ("r" back-button-local-forward)
