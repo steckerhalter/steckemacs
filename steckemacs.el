@@ -1013,6 +1013,10 @@ the user activate the completion manually."
   :diminish
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
+;;;; emojify
+(use-package emojify
+  :quelpa (emojify :fetcher github :repo "iqbalansari/emacs-emojify" :files (:defaults "data" "images")))
+
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
@@ -1231,7 +1235,6 @@ KEYS should be provided as with `kbd'."
     ("d" (kbds "C-d"))
     ("D" (kbds "M-d"))
     ("/" undo)
-    ("g" (kbds "C-g"))
     ("c" back-button-local-backward)
     ("r" back-button-local-forward)
     ("C" highlight-symbol-prev)
@@ -1267,13 +1270,23 @@ KEYS should be provided as with `kbd'."
     ("SPC o" helm-google)
     ("SPC k" kill-emacs)
     ("SPC q" quelpa)
+    ("SPC m" mu4e)
+    ("SPC h r" diff-hl-revert-hunk)
+    ("SPC h p" diff-hl-previous-hunk)
+    ("SPC h n" diff-hl-next-hunk)
+    ("SPC %" (insert "¯\\_(ツ)_/¯"))
+    ("SPC 0" edebug-defun)
+    (">" mc/mark-next-like-this)
+    ("<" mc/mark-previous-like-this)
     ("i" helm-swoop)
     ("I" isearch-forward :exit t)
     ("-" shell-switcher-switch-buffer :exit t)
-    ("'" helm-mini)
-    ("(" eval-sexp-fu-eval-sexp-inner-list)
-    ("M-(" eval-sexp-fu-eval-sexp-inner-sexp)
-    (")" eval-last-sexp)
+    ("_" shell-switcher-new-shell :exit t)
+    ("b" helm-mini)
+    ("B" (switch-to-buffer nil))
+    ("9" eval-sexp-fu-eval-sexp-inner-list)
+    ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
+    ("0" eval-last-sexp)
     ("<escape>" nil :color blue)))
 
 ;;;; iedit
