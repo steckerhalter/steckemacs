@@ -1241,6 +1241,7 @@ KEYS should be provided as with `kbd'."
     ("r" back-button-local-forward)
     ("C" highlight-symbol-prev)
     ("R" highlight-symbol-next)
+    ("j" ipretty-last-sexp)
     ;; mark
     ("m" (kbds "C-SPC"))
     ("w" (kbds "M-w"))
@@ -1286,6 +1287,7 @@ KEYS should be provided as with `kbd'."
     ("_" shell-switcher-new-shell :exit t)
     ("b" helm-mini)
     ("B" (switch-to-buffer nil))
+    ("M-b" my-switch-to-scratch)
     ("9" eval-sexp-fu-eval-sexp-inner-list)
     ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
     ("0" eval-last-sexp)
