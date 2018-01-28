@@ -1210,7 +1210,6 @@ the user activate the completion manually."
 ;;;; hydra
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
-  :hook (window-setup . my-cursor-bg!)
   :config
   (defun kbds (keys)
     "Simulate keyboard input.
@@ -1289,7 +1288,7 @@ KEYS should be provided as with `kbd'."
     ("SPC L" helm-system-packages)
     ("SPC m" mu4e)
     ("SPC s" helm-google)
-    ("SPC o l" org-open-at-point)
+    ("SPC o" org-open-at-point)
     ("SPC q" quelpa)
     ("SPC r" helm-all-mark-rings)
     ("SPC t" tldr)
