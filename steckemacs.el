@@ -1210,8 +1210,10 @@ the user activate the completion manually."
 ;;;; hydra
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
+  :hook (window-setup . my-cursor-bg!)
   :config
-  (defvar my-cursor-bg (face-attribute 'cursor :background))
+  (defun my-cursor-bg! ()
+    (defvar my-cursor-bg (face-attribute 'cursor :background)))
 
   (defun kbds (keys)
     "Simulate keyboard input.
@@ -1220,7 +1222,7 @@ KEYS should be provided as with `kbd'."
 
   (defmacro hydra-resume (fn &rest args)
     "Execute FN and resume the current hydra."
-    `(progn (call-interactively ',fn)
+    `(progn (,fn ,@args)
             (funcall hydra-curr-body-fn)))
 
   (defhydra ! (global-map "<escape>"
@@ -1289,12 +1291,13 @@ KEYS should be provided as with `kbd'."
     ("SPC l" list-packages)
     ("SPC L" helm-system-packages)
     ("SPC m" mu4e)
-    ("SPC o" helm-google)
+    ("SPC s" helm-google)
+    ("SPC o l" org-open-at-point)
     ("SPC q" quelpa)
     ("SPC r" helm-all-mark-rings)
-    ("SPC s" save-buffer)
     ("SPC t" tldr)
     ("SPC v" visual-line-mode)
+    ("SPC SPC" save-buffer)
     ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
     ("SPC >" elisp-slime-nav-describe-elisp-thing-at-point)
     ("SPC ," pop-tag-mark)
