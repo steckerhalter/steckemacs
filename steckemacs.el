@@ -752,7 +752,7 @@ the user activate the completion manually."
 (add-to-list
  'quelpa-melpa-recipe-stores
  '(;; eval-sexp-fu
-   (highlight :fetcher github :repo "emacsmirror/highlight")
+   (highlight :fetcher github :repo "steckerhalter/highlight.el")
    ;; flycheck + magit
    (let-alist :fetcher url
               :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
