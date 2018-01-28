@@ -1220,8 +1220,7 @@ KEYS should be provided as with `kbd'."
 
   (defmacro hydra-resume (fn &rest args)
     "Execute FN and resume the current hydra."
-    `(progn (interactive)
-            (,fn ,@args)
+    `(progn (call-interactively ',fn)
             (funcall hydra-curr-body-fn)))
 
   (defhydra ! (global-map "<escape>"
@@ -1300,6 +1299,7 @@ KEYS should be provided as with `kbd'."
     ("SPC >" elisp-slime-nav-describe-elisp-thing-at-point)
     ("SPC ," pop-tag-mark)
     ("SPC %" (insert "¯\\_(ツ)_/¯"))
+    ("SPC ;" (find-file "~/Sync/notes/todo.org"))
     (">" mc/mark-next-like-this)
     ("<" mc/mark-previous-like-this)
     ("i" helm-swoop)
