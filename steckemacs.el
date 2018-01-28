@@ -927,6 +927,10 @@ the user activate the completion manually."
     (company-mode t))
   :hook (web-mode . my-company-web))
 
+;;;; default-text-scale
+(use-package default-text-scale
+  :quelpa (default-text-scale :fetcher github :repo "purcell/default-text-scale"))
+
 ;;;; deft
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
@@ -1260,6 +1264,8 @@ KEYS should be provided as with `kbd'."
     ("l" recenter-top-bottom)
     ("<backtab>" outshine-cycle-buffer)
     ;; windows
+    ("=" default-text-scale-increase)
+    ("+" default-text-scale-decrease)
     ("," my-select-prev-window)
     ("." my-select-next-window)
     ("`" wg-switch-to-previous-workgroup)
