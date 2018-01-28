@@ -1022,7 +1022,7 @@ the user activate the completion manually."
 ;;;; emojify
 (use-package emojify
   :quelpa (emojify :fetcher github :repo "iqbalansari/emacs-emojify" :files (:defaults "data" "images"))
-  :custom (emojify-download-emojis-p t)
+  :custom (emojify-download-emojis-p nil)
   :config (global-emojify-mode 1))
 
 ;;;; eval-sexp-fu
