@@ -624,23 +624,24 @@ the user activate the completion manually."
 ;;  "Outline-based notes management and organizer"
 (use-package org
   :bind (:map org-mode-map ("C-c w" . org-cut-special))
-  :init
-  (setq org-startup-indented t)
-  (setq org-startup-with-inline-images t)
-  (setq org-startup-truncated t)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (setq org-edit-src-content-indentation 0)
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-use-speed-commands t)
-  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-  (setq org-refile-use-outline-path 'file)
-  (setq org-html-postamble nil)
-  (setq org-agenda-dim-blocked-tasks t)
-  (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-enforce-todo-dependencies t)
-  (setq org-speed-commands-user '(("S" . org-schedule)))
-  (setf org-blank-before-new-entry
+  :custom
+  (org-startup-indented t)
+  (org-startup-with-inline-images t)
+  (org-startup-truncated t)
+  (org-startup-folded nil)
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
+  (org-edit-src-content-indentation 0)
+  (org-confirm-babel-evaluate nil)
+  (org-use-speed-commands t)
+  (org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (org-refile-use-outline-path 'file)
+  (org-html-postamble nil)
+  (org-agenda-dim-blocked-tasks t)
+  (org-enforce-todo-checkbox-dependencies t)
+  (org-enforce-todo-dependencies t)
+  (org-speed-commands-user '(("S" . org-schedule)))
+  (org-blank-before-new-entry
         '((heading . nil) (plain-list-item . nil)))
 
   :config
