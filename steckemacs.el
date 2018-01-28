@@ -1228,11 +1228,11 @@ KEYS should be provided as with `kbd'."
             (funcall hydra-curr-body-fn)))
 
   (defhydra ! (global-map "<escape>"
-                               :color pink
-                               :pre (progn (setq hydra-is-helpful nil)
-                                           (set-face-background 'cursor "#ff5f87"))
-                               :post (progn (setq hydra-is-helpful t)
-                                            (custom-theme-recalc-face 'cursor)))
+                          :color pink
+                          :pre (progn (setq hydra-is-helpful nil)
+                                      (set-face-background 'cursor "#ff5f87"))
+                          :post (progn (setq hydra-is-helpful t)
+                                       (custom-theme-recalc-face 'cursor)))
     ;; edit
     ("a" (kbds "C-a"))
     ("A" (kbds "M-m"))
@@ -1280,8 +1280,9 @@ KEYS should be provided as with `kbd'."
     ("SPC a" helm-apropos)
     ("SPC b" helm-locate-library)
     ("SPC c" customize-group)
-    ("SPC d" deft)
+    ("SPC d" (hydra-resume deft) :exit t)
     ("SPC f" find-file)
+    ("SPC F F" revert-buffer)
     ("SPC e e" edebug-defun)
     ("SPC e b" eval-buffer)
     ("SPC e d" toggle-debug-on-error)
