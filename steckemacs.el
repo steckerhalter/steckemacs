@@ -1806,22 +1806,5 @@ Pass symbol-name to the function DOC-FUNCTION."
   :diminish
   :config (which-key-mode))
 
-;;;; workgroups
-(use-package workgroups2
-  :quelpa (workgroups2 :repo "pashinin/workgroups2" :fetcher github :files ("src/*.el"))
-  :demand
-  :diminish (workgroups-mode)
-  :hook (window-setup . autostart)
-  :init
-  (defun autostart ()
-    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
-    (hackernews)
-    (elfeed)
-    (mu4e)
-    (twit)
-    (workgroups-mode 1)
-    (wg-open-session "~/.emacs_workgroups"))
-  (setq wg-emacs-exit-save-behavior nil)
-  (setq wg-workgroups-mode-exit-save-behavior nil))
 
 ;;; steckemacs.el ends here
