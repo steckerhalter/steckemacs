@@ -1232,13 +1232,21 @@ KEYS should be provided as with `kbd'."
     `(progn (,fn ,@args)
             (funcall hydra-curr-body-fn)))
 
+  (defun !/state (&optional exit)
+    ;; TODO: add state to mode-line
+    (setq hydra-is-helpful exit)
+    (if exit
+        (progn
+          (setq which-key-show-docstrings 'docstring-only)
+          (custom-theme-recalc-face 'cursor))
+      (set-face-background 'cursor "#ff5f87")
+      (setq which-key-show-docstrings nil)))
+
   (global-set-key
    (kbd "<escape>")
    (defhydra ! (:color pink
-                       :pre (progn (setq hydra-is-helpful nil)
-                                   (set-face-background 'cursor "#ff5f87"))
-                       :post (progn (setq hydra-is-helpful t)
-                                    (custom-theme-recalc-face 'cursor)))
+                       :pre (!/state)
+                       :post (!/state t))
      ;; edit
      ("a" (kbds "C-a"))
      ("A" (kbds "M-m"))
