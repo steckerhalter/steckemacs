@@ -288,8 +288,11 @@ buffer is not visiting a file."
   (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
   (scroll-bar-mode -1)         ;disable the sroll bar
 
-  ;;narrow to region should be enabled by default
+  ;; narrow to region should be enabled by default
   (put 'narrow-to-region 'disabled nil)
+
+  ;; when yanking, replace selection
+  (delete-selection-mode 1)
 
   ;; don't ask to kill buffers
   (setq kill-buffer-query-functions
@@ -321,6 +324,11 @@ line instead."
       (if (equal buffer-to-kill "*scratch*")
           (bury-buffer)
         ad-do-it))))
+
+;;;; aggressive-indent
+(use-package aggressive-indent
+  :quelpa (aggressive-indent :repo "Malabarba/aggressive-indent-mode" :fetcher github)
+  :config (global-aggressive-indent-mode 1))
 
 ;;;; appt
 ;; appointment notification functions
@@ -1399,6 +1407,7 @@ KEYS should be provided as with `kbd'."
          ("C-u g l" . magit-log)
          ("C-u g b" . magit-blame))
   :demand
+  :diminish magit-wip-after-apply-mode
   :init
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
@@ -1800,8 +1809,9 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; workgroups
 (use-package workgroups2
   :quelpa (workgroups2 :repo "pashinin/workgroups2" :fetcher github :files ("src/*.el"))
+  :demand
   :diminish (workgroups-mode)
-  ;:hook (window-setup . autostart)
+  :hook (window-setup . autostart)
   :init
   (defun autostart ()
     (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)
