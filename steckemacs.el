@@ -1062,6 +1062,10 @@ the user activate the completion manually."
   (setq fasd-completing-read-function 'helm--completing-read-default)
   (global-fasd-mode 1))
 
+;;;; ff
+(use-package ff
+  :quelpa (ff :fetcher github :repo "steckerhalter/ff.el"))
+
 ;;;; flycheck
 ;; on-the-fly source code syntax checks
 (use-package flycheck
@@ -1301,7 +1305,10 @@ KEYS should be provided as with `kbd'."
      ("SPC e e" edebug-defun)
      ("SPC e b" eval-buffer)
      ("SPC e d" toggle-debug-on-error)
+     ("SPC E" my-erc-connect)
      ("SPC g" magit-status)
+     ("SPC f f" helm-ff-places)
+     ("SPC f p" ff-paste-current-url)
      ("SPC G b" magit-blame)
      ("SPC h r" diff-hl-revert-hunk)
      ("SPC h p" diff-hl-previous-hunk)
@@ -1310,7 +1317,7 @@ KEYS should be provided as with `kbd'."
      ("SPC k" kill-emacs)
      ("SPC l" list-packages)
      ("SPC L" helm-system-packages)
-     ("SPC m" mu4e)
+     ("SPC m" mu4e :exit t)
      ("SPC s" helm-google)
      ("SPC o" org-open-at-point)
      ("SPC q" quelpa)
