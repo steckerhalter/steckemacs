@@ -1308,6 +1308,7 @@ KEYS should be provided as with `kbd'."
      ("SPC E" my-erc-connect)
      ("SPC g" magit-status)
      ("SPC f f" helm-ff-places)
+     ("SPC f b" helm-ff-bookmarks)
      ("SPC f p" ff-paste-current-url)
      ("SPC G b" magit-blame)
      ("SPC h r" diff-hl-revert-hunk)
