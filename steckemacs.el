@@ -202,8 +202,8 @@ buffer is not visiting a file."
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
-   custom-file "/tmp/custom-file.el") ;don't pollute the init file and don't `load' the customs
-                                        ;but keep them for reference...
+   custom-file "/tmp/custom-file.el" ;don't pollute the init file and don't `load' the customs but keep them for reference...
+   initial-buffer-choice "~/todo.org")
 
   ;; default flags
   (setq-default
