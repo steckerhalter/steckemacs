@@ -54,18 +54,6 @@
   :init
   ;; If non-nil, extract docstrings from lambdas, closures and keymaps if possible.
   (setq bind-key-describe-special-forms t)
-  ;; free C-t and C-u they can be used as prefix keys
-  (global-unset-key (kbd "C-t"))
-  (global-unset-key (kbd "C-u"))
-
-  (defun my-keyboard-translations (&optional frame)
-    (with-selected-frame (or frame (selected-frame))
-      ;; translate C-i to H-i so it can be used apart from TAB
-      (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
-      ;; use C-h as backspace
-      (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
-      (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
-  (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
 
 ;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
@@ -172,54 +160,13 @@ buffer is not visiting a file."
 
 ;;;; global key bindings
   :bind
-  (;; general
-   ("C-u C-u" . universal-argument) 	;remap what was C-u
-   ("C-u k" . kill-emacs)
-   ("C-S-l" . package-list-packages)
-   ("C-c d" . ispell-change-dictionary)
-   ("H-i s f" . flyspell-buffer)
-   ("H-i s m" . flyspell-mode)
-   ("C-x C-r" . my-sudo-edit)
-   ("C-c m" . menu-bar-mode)
-   ("C-x C-u" . my-url-insert-file-contents)
-   ("C-u o" . my-xdg-open-dir)
-   ("C-u C-a" . find-file)
-   ;; editing
-   ("C-z" . undo-only)
-   ("M-W" . delete-region)
-   ("C-c q" . auto-fill-mode)
-   ("C-c w" . whitespace-cleanup)
-   ("H-i C-v" . visual-line-mode)
-   ("H-i t" . my-timestamp)
-   ("M-k" . kill-line)
-   ("M-K" . kill-sentence)
-   ;; source
-   ("H-i C-0" . edebug-defun)
-   ("H-i C-b" . eval-buffer)
-   ("H-i C-e" . toggle-debug-on-error)
-   ("H-i C-s" . my-insert-package-desc-summary)
-   ;; buffers
-   ("C-=" . save-buffer)
-   ("C-c r" . revert-buffer)
-   ("<f6>" . my-kill-buffer)
-   ("M-'" . my-switch-to-scratch)
-   ("H-i TAB" . my-indent-whole-buffer)
-   ("C-c n" . my-show-file-name)
-   ("H-i 0" . text-scale-adjust)
-   ;; windows
-   ("<f7>" . my-toggle-window-split)
-   ("C-8" . my-split-window)
-   ("<f2>" . split-window-vertically)
-   ("<f3>" . split-window-horizontally)
-   ("<f4>" . delete-window)
-   ("<f5>" . delete-other-windows)
-   ;; find/grep
-   ("H-i G" . grep-find)
-   ("H-i O" . occur))
-  :bind*
-  ("C-;" . (lambda () (interactive) (find-file "~/Sync/notes/todo.org")))
-  ("M-." . my-select-next-window)
-  ("M-," . my-select-prev-window))
+  ("<f6>" . my-kill-buffer)
+  ("<f7>" . my-toggle-window-split)
+  ("C-8" . my-split-window)
+  ("<f2>" . split-window-vertically)
+  ("<f3>" . split-window-horizontally)
+  ("<f4>" . delete-window)
+  ("<f5>" . delete-other-windows))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -351,8 +298,7 @@ line instead."
   (defun my-browse-url-file (&optional file)
     (interactive)
     (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
-      (browse-url-of-file file)))
-  :bind ("C-u b" . my-browse-url-file))
+      (browse-url-of-file file))))
 
 ;;;; custom
 ;; tools for declaring and initializing options
@@ -361,7 +307,7 @@ line instead."
   (setq
    custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
    custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
-  :bind ("C-S-g" . customize-group))
+  )
 
 ;;;; dired
 ;; directory-browsing commands
@@ -384,9 +330,7 @@ PREFIX forces the use of `find'."
   (setq dired-no-confirm
         '(byte-compile chgrp chmod chown copy delete load move symlink))
   (setq dired-deletion-confirmer (lambda (x) t))
-  :bind (("H-i f" . find-grep-dired)
-         ("H-i n" . my-find-name-dired)
-         :map dired-mode-map ("`" . dired-toggle-read-only))
+  :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
   :config
   ;; make rename use ido and not helm
   (put 'dired-do-rename 'ido 'find-file)
@@ -402,7 +346,6 @@ PREFIX forces the use of `find'."
   ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
     :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
-    :bind* ("M-=" . dired-jump)
     :defer 1
     :init
     (setq diredp-hide-details-initially-flag nil)
@@ -492,7 +435,6 @@ the user activate the completion manually."
 ;;;; eww
 ;; Emacs Web Wowser (web browser) settings
 (use-package eww
-  :bind ("C-u C-e" . my-eww-browse-dwim)
   :config
   (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
@@ -578,8 +520,7 @@ the user activate the completion manually."
     (interactive)
     (if (erc-buffer-list)
         (switch-to-buffer (car (erc-buffer-list)))
-      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
-  :bind ("C-u e" . my-erc-connect))
+      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
 
 ;;;; ibuffer
 (use-package ibuffer
@@ -622,7 +563,6 @@ the user activate the completion manually."
 ;;;; man
 ;; browse UNIX manual pages
 (use-package man
-  :bind ("H-i m" . man)
   :init (setq Man-notify-method 'aggressive))
 
 ;;;; org
@@ -713,9 +653,6 @@ the user activate the completion manually."
 ;;;; skeleton
 ;; Lisp language extension for writing statement skeletons
 (use-package skeleton
-  :bind (("C-u s q" . liquid-quote)
-         ("C-u s t" . liquid-tag)
-         ("C-u s p" . my-package-def))
   :config
   (define-skeleton liquid-tag
     "Inserts a liquid tag"
@@ -803,8 +740,7 @@ the user activate the completion manually."
 ;;;; ag
 ;; A front-end for ag ('the silver searcher'), the C ack replacement.
 (use-package ag
-  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github)
-  :bind ("H-i C-g" . ag-project))
+  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github))
 
 ;;;; apache-mode
 ;; major mode for editing Apache configuration files
@@ -837,8 +773,6 @@ the user activate the completion manually."
   :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
   :diminish
   :demand
-  :bind (("C-3" . back-button-local-backward)
-         ("C-4" . back-button-local-forward))
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
@@ -941,12 +875,11 @@ the user activate the completion manually."
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
   :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
-  :bind  (("C-u d" . deft)
-          :map deft-mode-map
-          ("<f6>" . quit-window)
-          ("C-g" . deft-filter-clear)
-          ("C-c C-c" . deft-refresh)
-          ("<M-return>" . deft-new-file))
+  :bind  (:map deft-mode-map
+               ("<f6>" . quit-window)
+               ("C-g" . deft-filter-clear)
+               ("C-c C-c" . deft-refresh)
+               ("<M-return>" . deft-new-file))
   :commands (deft)
   :config
   ;; display filter in mode-line instead of header
@@ -976,7 +909,6 @@ the user activate the completion manually."
 (use-package diff-hl
   :demand
   :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
-  :bind ("C-u C-r" . diff-hl-revert-hunk)
   :config
   (global-diff-hl-mode 1)
   (eval-after-load 'magit
@@ -985,8 +917,7 @@ the user activate the completion manually."
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major
-  :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major")
-  :bind ("H-i C-m" . discover-my-major))
+  :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
 
 ;;;; drag-stuff
 ;; Drag stuff (lines, words, region, etc...) around
@@ -1018,8 +949,6 @@ the user activate the completion manually."
   :demand
   :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
   :bind
-  ("C-u C-f" . elisp-slime-nav-find-elisp-thing-at-point)
-  ("C-u C-b" . my-show-help)
   ("<f1> <f1>" . elisp-slime-nav-describe-elisp-thing-at-point)
   :diminish
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
@@ -1057,7 +986,6 @@ the user activate the completion manually."
 ;; find previous files/dirs quickly (uses `fasd' shell script)
 (use-package fasd
   :quelpa (fasd :repo "steckerhalter/emacs-fasd" :fetcher github)
-  :bind ("H-i C-f" . fasd-find-file)
   :config
   (setq fasd-completing-read-function 'helm--completing-read-default)
   (global-fasd-mode 1))
@@ -1094,8 +1022,6 @@ the user activate the completion manually."
 ;; Emacs interface to Google's translation service
 (use-package google-translate
   :quelpa (google-translate :fetcher github :repo "atykhonov/google-translate")
-  :bind (("H-i r" . google-translate-query-translate)
-         ("H-i C-r" . google-translate-query-translate-reverse))
   :init
   (setq google-translate-default-source-language "de")
   (setq google-translate-default-target-language "en"))
@@ -1110,8 +1036,7 @@ the user activate the completion manually."
 ;; Hacker News Client for Emacs
 (use-package hackernews
   :quelpa (hackernews :fetcher github :repo "clarete/hackernews.el")
-  :bind (("H-i h" . hackernews)
-         :map hackernews-mode-map ("o" . hackernews-browse-other-window))
+  :bind (:map hackernews-mode-map ("o" . hackernews-browse-other-window))
   :init
   (defun hackernews-browse-other-window ()
     "Open URL of button under point within Emacs in other window."
@@ -1137,19 +1062,7 @@ the user activate the completion manually."
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
   (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  :bind
-  (("M-x" . helm-M-x)
-   ("H-i a" . helm-apropos)
-   ("H-i ." . helm-info-emacs)
-   ("H-i 4" . helm-info-elisp)
-   ("H-i 3" . helm-locate-library)
-   ("H-i C-SPC" . helm-show-kill-ring)
-   ("H-i SPC" . helm-all-mark-rings)
-   ("H-i C-l" . helm-locate)
-   ("H-i w" . helm-wikipedia-suggest)
-   ("H-i i" . helm-imenu)
-   ("H-i g" . helm-do-grep-ag))
-  :bind* ("C-'" . helm-mini)
+  :bind ("M-x" . helm-M-x)
 
   :config
   (require 'helm-config)
@@ -1170,17 +1083,12 @@ the user activate the completion manually."
 
   ;; Helm integration for Projectile
   (use-package helm-projectile
-    :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github)
-    :bind
-    ("H-i o" . helm-projectile-grep)
-    ("H-i p" . helm-projectile))
+    :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github))
 
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :demand
-    :bind (("H-i C-o" . helm-google)
-           ("H-i C-c" . helm-google-suggest)))
+    :demand)
 
   ;; Helm UI wrapper for system package managers.
   (use-package helm-system-packages
@@ -1189,10 +1097,10 @@ the user activate the completion manually."
   ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
     :quelpa
-    :bind (("M-I" . helm-multi-swoop)
-           :map isearch-mode-map ("M-i" . helm-swoop-from-isearch)
-           :map helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))
-    :bind* ("M-i" . helm-swoop)
+    :bind (:map
+           isearch-mode-map ("M-i" . helm-swoop-from-isearch)
+           :map
+           helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))
     :init (setq helm-swoop-speed-or-color t)))
 
 ;;;; highlight-parentheses
@@ -1215,9 +1123,6 @@ the user activate the completion manually."
 (use-package highlight-symbol
   :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
   :diminish
-  :bind (("M-2" . highlight-symbol-occur)
-         ("M-3" . highlight-symbol-prev)
-         ("M-4" . highlight-symbol-next))
   :hook (prog-mode . highlight-symbol-mode)
   :init
   (setq highlight-symbol-on-navigation-p t))
@@ -1354,7 +1259,6 @@ KEYS should be provided as with `kbd'."
 ;; change multiple occurences of word-at-point (compress display to show all of them)
 (use-package iedit
   :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
-  :bind ("C-u H-i" . iedit-mode)
   :init
   (setq iedit-unmatched-lines-invisible t)
   (setq iedit-toggle-key-default nil))
@@ -1364,7 +1268,6 @@ KEYS should be provided as with `kbd'."
 (use-package elfeed-protocol
   :quelpa (elfeed-protocol :repo fasheng/elfeed-protocol :fetcher github)
   :demand
-  :bind ("C-u f" . elfeed)
   :config
   (elfeed-set-timeout 36000)
   (setq elfeed-use-curl t)
@@ -1395,9 +1298,7 @@ KEYS should be provided as with `kbd'."
 ;; pretty-print the result elisp expressions
 (use-package ipretty
   :quelpa (ipretty :fetcher github :repo "steckerhalter/ipretty")
-  :config (ipretty-mode t)
-  :bind (("H-i C-j" . ipretty-last-sexp)
-         ("H-i C-k" . ipretty-last-sexp-other-buffer)))
+  :config (ipretty-mode t))
 
 ;;;; js2-mode
 ;; extended javascript mode
@@ -1423,9 +1324,6 @@ KEYS should be provided as with `kbd'."
 ;; Emacs interface to git
 (use-package magit
   :quelpa
-  :bind (("C-u u" . magit-status)
-         ("C-u g l" . magit-log)
-         ("C-u g b" . magit-blame))
   :demand
   :diminish magit-wip-after-apply-mode
   :init
@@ -1504,7 +1402,6 @@ KEYS should be provided as with `kbd'."
 
 ;;;; mu4e
 (use-package mu4e
-  :bind ("C-u m" . mu4e)
   :init
   ;; enable inline images
   (setq mu4e-view-show-images t)
@@ -1562,14 +1459,12 @@ KEYS should be provided as with `kbd'."
 ;; Open a junk (memo) file to try-and-error
 (use-package open-junk-file
   :quelpa (open-junk-file :repo "rubikitch/open-junk-file" :fetcher github)
-  :bind ("H-i j" . open-junk-file)
   :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
 (use-package outshine
   :quelpa (outshine :fetcher github :repo "tj64/outshine")
-  :bind ("M-# 3" . outshine-insert-heading)
   :diminish outline-minor-mode
   :commands outshine-hook-function
   :hook ((outline-minor-mode . outshine-hook-function)
@@ -1672,12 +1567,6 @@ Pass symbol-name to the function DOC-FUNCTION."
            :repo "bbatsov/projectile"
            :fetcher github
            :files ("projectile.el"))
-  :bind
-  (("H-i C-u" . projectile-find-file)
-   ("H-i C-y" . projectile-find-dir)
-   ("H-i G" . projectile-grep)
-   ("H-i z" . projectile-ack)
-   ("H-i C-p" . projectile-switch-project))
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
@@ -1687,13 +1576,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 
   :config
   (projectile-global-mode 1))
-
-;;;; quelpa
-;; Emacs Lisp packages built directly from source
-(use-package quelpa
-  :bind
-  ("C-u q e" . quelpa-expand-recipe)
-  ("C-u q q" . quelpa))
 
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
@@ -1721,13 +1603,9 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; shell-switcher
 (use-package shell-switcher
   :quelpa (shell-switcher :fetcher github
-                :repo "DamienCassou/shell-switcher"
-                :files ("rswitcher.el" "shell-switcher.el"))
+                          :repo "DamienCassou/shell-switcher"
+                          :files ("rswitcher.el" "shell-switcher.el"))
   :demand
-  :bind  (:map shell-switcher-mode-map
-               ("M--" . shell-switcher-switch-buffer)
-               ("C-_" . shell-switcher-new-shell)
-               ("C--" . shell-switcher-switch-buffer-other-window))
   :config (shell-switcher-mode 1))
 
 ;;;; smart-mode-line
@@ -1790,14 +1668,12 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; visual-regexp
 ;; A regexp/replace command for Emacs with interactive visual feedback
 (use-package visual-regexp
-  :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github)
-  :bind ("C-u v" . vr/replace))
+  :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github))
 
 ;;;; vkill
 ;; view and kill Unix processes from within Emacs
 (use-package vkill
-  :quelpa (vkill :fetcher github :repo "emacsmirror/vkill")
-  :bind ("C-u C-v" . vkill))
+  :quelpa (vkill :fetcher github :repo "emacsmirror/vkill"))
 
 ;;;; vlf
 ;; View Large Files
