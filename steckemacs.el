@@ -1165,6 +1165,7 @@ KEYS should be provided as with `kbd'."
      ("e" (kbds "C-v"))
      ("E" (kbds "M->"))
      ("f" find-file)
+     ("G" (kbds "C-g"))                 ;`g' is often used as refresh
      ("h" (kbds "C-b"))
      ("j" ipretty-last-sexp)
      ("J" ipretty-last-sexp-other-buffer)
@@ -1402,6 +1403,7 @@ KEYS should be provided as with `kbd'."
 
 ;;;; mu4e
 (use-package mu4e
+  :when (featurep 'mu4e)
   :init
   ;; enable inline images
   (setq mu4e-view-show-images t)
