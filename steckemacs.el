@@ -1403,7 +1403,7 @@ KEYS should be provided as with `kbd'."
 
 ;;;; mu4e
 (use-package mu4e
-  :when (featurep 'mu4e)
+  :when (locate-library "mu4e")
   :init
   ;; enable inline images
   (setq mu4e-view-show-images t)
