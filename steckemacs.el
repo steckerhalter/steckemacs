@@ -1705,6 +1705,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   :custom
   (which-key-show-docstrings 'docstring-only)
   (which-key-max-description-length nil)
+  (which-key-side-window-max-height 0.75)
   :config (which-key-mode))
 
 
