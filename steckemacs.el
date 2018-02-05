@@ -450,7 +450,7 @@ the user activate the completion manually."
                 (current-kill 0 t))))
       (if current-prefix-arg
           (browse-url arg)
-        (eww arg))))
+        (eww arg)))))
 
 ;;;; flyspell
 ;;On-the-fly spell checker
@@ -592,7 +592,50 @@ the user activate the completion manually."
    '((heading . nil) (plain-list-item . nil)))
 
   :config
+  (add-to-list 'org-structure-template-alist
+               '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
+  (add-to-list 'org-structure-template-alist
+               '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
 
+;;;;; org-agenda
+  (use-package org-agenda
+    :init
+    (defun my-org-agenda () (interactive) (org-agenda nil "n"))
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
+    (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
+    (setq org-agenda-dim-blocked-tasks t)
+
+    :config
+    ;; add state to the sorting strategy of todo
+    (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
+
+    ;; create the file for the agendas if it doesn't exist
+    (let ((agendas "~/.agenda_files"))
+      (unless (file-readable-p agendas)
+        (with-temp-file agendas nil))
+      (setq org-agenda-files agendas))
+
+    ;; display the agenda first
+    (setq org-agenda-custom-commands
+          '(("n" "Agenda and all TODO's"
+             ((alltodo "")
+              (agenda "")))))
+
+    ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
+    (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
+    (defun my-org-mode-hook ()
+      (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
+    (add-hook 'org-mode-hook 'my-org-mode-hook))
+
+  (use-package notifications
+    :config
+    (defun my-appt-disp-window-function (min-to-app new-time msg)
+      (notifications-notify :title (format "Appointment in %s min" min-to-app) :body msg))
+    (setq appt-disp-window-function 'my-appt-disp-window-function)
+    (setq appt-delete-window-function (lambda (&rest args))))
+
+;;;;; org-bullets
   ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
     :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
@@ -1233,6 +1276,7 @@ KEYS should be provided as with `kbd'."
      ("SPC l" list-packages)
      ("SPC L" helm-system-packages)
      ("SPC m" mu4e :exit t)
+     ("SPC n" my-org-agenda)
      ("SPC s" helm-google)
      ("SPC o" org-open-at-point)
      ("SPC q" quelpa)
