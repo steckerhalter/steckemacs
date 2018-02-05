@@ -587,7 +587,7 @@ the user activate the completion manually."
   (org-enforce-todo-dependencies t)
   (org-speed-commands-user '(("S" . org-schedule)))
   (org-blank-before-new-entry
-        '((heading . nil) (plain-list-item . nil)))
+   '((heading . nil) (plain-list-item . nil)))
 
   :config
 
@@ -1212,14 +1212,20 @@ KEYS should be provided as with `kbd'."
      ("SPC e b" eval-buffer)
      ("SPC e d" toggle-debug-on-error)
      ("SPC E" my-erc-connect)
-     ("SPC g" magit-status)
      ("SPC f f" ff-helm-places)
      ("SPC f b" ff-helm-bookmarks)
      ("SPC f p" ff-paste-current-url)
+     ("SPC g" magit-status)
      ("SPC G b" magit-blame)
      ("SPC h r" diff-hl-revert-hunk)
      ("SPC h p" diff-hl-previous-hunk)
      ("SPC h n" diff-hl-next-hunk)
+     ("SPC i i" info)
+     ("SPC i I" helm-info)
+     ("SPC i r" info-emacs-manual)
+     ("SPC i R" helm-info-emacs)
+     ("SPC i s" helm-info-at-point)
+     ("SPC i S" info-lookup-symbol)
      ("SPC j" dired-jump)
      ("SPC k" kill-emacs)
      ("SPC l" list-packages)
