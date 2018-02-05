@@ -443,12 +443,14 @@ the user activate the completion manually."
  Browse the url at point if there is one. Otherwise use the last
  kill-ring item and provide that to `eww'. If it is an url `eww'
  will browse it, if not `eww' will search for it using a search
- engine."
+ engine. With prefix argument will use `browse-url' instead."
     (interactive)
     (let ((arg (or
                 (url-get-url-at-point)
                 (current-kill 0 t))))
-      (eww arg))))
+      (if current-prefix-arg
+          (browse-url arg)
+        (eww arg))))
 
 ;;;; flyspell
 ;;On-the-fly spell checker
@@ -1237,6 +1239,7 @@ KEYS should be provided as with `kbd'."
      ("SPC r" helm-show-kill-ring)
      ("SPC R" helm-all-mark-rings)
      ("SPC t" tldr)
+     ("SPC u" my-eww-browse-dwim)
      ("SPC v" visual-line-mode)
      ("SPC w" (lambda ()
                 (interactive)
