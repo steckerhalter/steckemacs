@@ -592,6 +592,7 @@ the user activate the completion manually."
    '((heading . nil) (plain-list-item . nil)))
 
   :config
+  (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
   (add-to-list 'org-structure-template-alist
                '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
   (add-to-list 'org-structure-template-alist
