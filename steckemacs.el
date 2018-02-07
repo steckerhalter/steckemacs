@@ -844,13 +844,29 @@ the user activate the completion manually."
   :diminish
 
   :init
-  (setq company-idle-delay 0.3)
+  (setq company-idle-delay nil)
   (setq company-tooltip-limit 20)
   (setq company-minimum-prefix-length 2)
-  (setq company-echo-delay 0)
-  (setq company-auto-complete nil)
 
   :config
+  (company-tng-configure-default)
+  (define-key company-mode-map [remap indent-for-tab-command]
+    'company-indent-for-tab-command)
+
+  (setq tab-always-indent 'complete)
+
+  (defvar completion-at-point-functions-saved nil)
+
+  (defun company-indent-for-tab-command (&optional arg)
+    (interactive "P")
+    (let ((completion-at-point-functions-saved completion-at-point-functions)
+          (completion-at-point-functions '(company-complete-common-wrapper)))
+      (indent-for-tab-command arg)))
+
+  (defun company-complete-common-wrapper ()
+    (let ((completion-at-point-functions completion-at-point-functions-saved))
+      (company-complete-common)))
+
   (global-company-mode 1)
   (add-to-list 'company-backends 'company-dabbrev t)
   (add-to-list 'company-backends 'company-ispell t)
@@ -1134,7 +1150,8 @@ the user activate the completion manually."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :demand)
+    :demand
+    :custom (helm-google-default-engine 'searx))
 
   ;; Helm UI wrapper for system package managers.
   (use-package helm-system-packages
