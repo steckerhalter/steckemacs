@@ -379,8 +379,7 @@ PREFIX forces the use of `find'."
 (use-package eshell
   :demand
   :hook ((eshell-mode . my-eshell-setup)
-         (eshell-mode . eldoc-mode)
-         (eshell-directory-change . my-toggle-shell-auto-completion-based-on-path))
+         (eshell-mode . eldoc-mode))
   :init
   (setq eshell-save-history-on-exit t)
   (setq eshell-destroy-buffer-when-process-dies t)
@@ -409,15 +408,6 @@ PREFIX forces the use of `find'."
     (eshell/alias "la" "ls -A")
     (eshell/alias "l" "ls -CF"))
 
-  (defun my-toggle-shell-auto-completion-based-on-path ()
-    "Deactivates automatic completion on remote paths.
-Retrieving completions for Eshell blocks Emacs. Over remote
-connections the delay is often annoying, so it's better to let
-the user activate the completion manually."
-    (if (file-remote-p default-directory)
-        (setq-local company-idle-delay nil)
-      (setq-local company-idle-delay 0.3)))
-
   :config
   (use-package eshell-z
     :quelpa (eshell-z :fetcher github :repo xuchunyang/eshell-z))
@@ -432,8 +422,8 @@ the user activate the completion manually."
     (defun eshell-bash-completion ()
       (setq-local bash-completion-nospace t)
       (while (pcomplete-here
-                (nth 2 (bash-completion-dynamic-complete-nocomint
-                        (save-excursion (eshell-bol) (point)) (point))))))
+              (nth 2 (bash-completion-dynamic-complete-nocomint
+                      (save-excursion (eshell-bol) (point)) (point))))))
     (setq eshell-default-completion-function 'eshell-bash-completion))
   (use-package em-smart
     :hook (eshell-mode . eshell-smart-initialize)))
