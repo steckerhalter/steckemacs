@@ -849,7 +849,10 @@ the user activate the completion manually."
   (setq company-minimum-prefix-length 2)
 
   :config
-  (company-tng-configure-default)
+  (company-tng-configure-default)       ;TAB selects candidates
+
+  ;; use TAB to trigger completion ----------------------------------------------
+  ;; https://github.com/company-mode/company-mode/issues/94#issuecomment-40884387
   (define-key company-mode-map [remap indent-for-tab-command]
     'company-indent-for-tab-command)
 
@@ -866,6 +869,7 @@ the user activate the completion manually."
   (defun company-complete-common-wrapper ()
     (let ((completion-at-point-functions completion-at-point-functions-saved))
       (company-complete-common)))
+  ;; ----------------------------------------------------------------------------
 
   (global-company-mode 1)
   (add-to-list 'company-backends 'company-dabbrev t)
