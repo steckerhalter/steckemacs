@@ -223,6 +223,12 @@ buffer is not visiting a file."
   (when (file-readable-p "~/.user.el")
     (load "~/.user.el"))
 
+  ;; display the time in the mode-line
+  (setq display-time-24hr-format t)
+  (setq display-time-default-load-average nil)
+  (setq display-time-use-mail-icon t)
+  (display-time)
+
   ;; encoding
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
