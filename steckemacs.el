@@ -1148,8 +1148,7 @@ the user activate the completion manually."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :demand
-    :custom (helm-google-default-engine 'searx))
+    :demand)
 
   ;; Helm UI wrapper for system package managers.
   (use-package helm-system-packages
@@ -1293,7 +1292,8 @@ KEYS should be provided as with `kbd'."
      ("SPC L" helm-system-packages)
      ("SPC m" mu4e :exit t)
      ("SPC n" my-org-agenda)
-     ("SPC s" helm-google)
+     ("SPC s" helm-google-searx)
+     ("SPC S" helm-google-google)
      ("SPC o" org-open-at-point)
      ("SPC q" quelpa)
      ("SPC r" helm-show-kill-ring)
