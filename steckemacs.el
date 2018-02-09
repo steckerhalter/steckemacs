@@ -565,6 +565,7 @@ PREFIX forces the use of `find'."
 ;;  "Outline-based notes management and organizer"
 (use-package org
   :bind (:map org-mode-map ("C-c w" . org-cut-special))
+  :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :custom
   (org-startup-indented t)
   (org-startup-with-inline-images t)
@@ -1289,6 +1290,7 @@ KEYS should be provided as with `kbd'."
      ("SPC s" helm-google-searx)
      ("SPC S" helm-google-google)
      ("SPC o" org-open-at-point)
+     ("SPC p" zenity-cp-color-at-point-dwim)
      ("SPC q" quelpa)
      ("SPC r" helm-show-kill-ring)
      ("SPC R" helm-all-mark-rings)
@@ -1771,5 +1773,8 @@ Pass symbol-name to the function DOC-FUNCTION."
   (which-key-side-window-max-height 0.75)
   :config (which-key-mode))
 
+;;;; zenity-color-picker
+(use-package zenity-color-picker
+  :quelpa (zenity-color-picker :fetcher git :url "https://bitbucket.org/Soft/zenity-color-picker.el.git"))
 
 ;;; steckemacs.el ends here
