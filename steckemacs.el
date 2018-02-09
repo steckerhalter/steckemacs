@@ -394,7 +394,7 @@ PREFIX forces the use of `find'."
   (defun my-eshell-setup ()
     (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
     (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
-    (set (make-local-variable 'eldoc-idle-delay) 3)
+    (setq-local eldoc-idle-delay 3)
     (setenv "PAGER" "cat")
     (setenv "EDITOR" "emacsclient")
     ;; aliases
@@ -409,8 +409,6 @@ PREFIX forces the use of `find'."
     (eshell/alias "l" "ls -CF"))
 
   :config
-  (use-package eshell-z
-    :quelpa (eshell-z :fetcher github :repo xuchunyang/eshell-z))
   (use-package esh-help
     :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
     :config (setup-esh-help-eldoc))
