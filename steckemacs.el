@@ -418,19 +418,20 @@ PREFIX forces the use of `find'."
     (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
     (setq-local eldoc-idle-delay 3)
     (setenv "PAGER" "cat")
-    (setenv "EDITOR" "emacsclient")
-    ;; aliases
-    (eshell/alias "cs" "apt search $1")
-    (eshell/alias "e" "find-file $1")
-    (eshell/alias "eo" "find-file-other-window $1")
-    (eshell/alias "gd" "magit-diff-unstaged")
-    (eshell/alias "gds" "magit-diff-staged")
-    (eshell/alias "d" "dired $1")
-    (eshell/alias "ll" "ls -l")
-    (eshell/alias "la" "ls -A")
-    (eshell/alias "l" "ls -CF"))
+    (setenv "EDITOR" "emacsclient"))
 
   :config
+  ;; aliases
+  (eshell/alias "cs" "apt search $1")
+  (eshell/alias "e" "find-file $1")
+  (eshell/alias "eo" "find-file-other-window $1")
+  (eshell/alias "gd" "magit-diff-unstaged")
+  (eshell/alias "gds" "magit-diff-staged")
+  (eshell/alias "d" "dired $1")
+  (eshell/alias "ll" "ls -l")
+  (eshell/alias "la" "ls -A")
+  (eshell/alias "l" "ls -CF")
+
   (use-package esh-help
     :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
     :config (setup-esh-help-eldoc))
@@ -464,7 +465,7 @@ PREFIX forces the use of `find'."
 (use-package frame
   :config
   ;; maximize emacs
-  (modify-all-frames-parameters '((fullscreen . maximized)))
+  (modify-all-frames-parameters '((fullscreen . fullboth)))
 
   (defun my-after-make-frame (&optional frame)
     (with-selected-frame (or frame (selected-frame))
