@@ -165,6 +165,7 @@ buffer is not visiting a file."
  default. With prefix argument use `eww', with `digit-argument' 0
  use `xwidget'."
     (interactive)
+    (require 'ffap)
     (let* ((input (or
                    (url-get-url-at-point)
                    (when (eq major-mode 'org-mode)
@@ -175,7 +176,6 @@ buffer is not visiting a file."
                     input
                   (read-string "URL: ")))
            (prefix (prefix-numeric-value current-prefix-arg)))
-      (require 'ffap)
       (cond ((= prefix 0) (xwidget-webkit-browse-url url))
             ((= prefix 4) (eww url))
             (t (browse-url url)))))
