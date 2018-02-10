@@ -421,16 +421,18 @@ PREFIX forces the use of `find'."
     (setenv "EDITOR" "emacsclient"))
 
   :config
-  ;; aliases
-  (eshell/alias "cs" "apt search $1")
-  (eshell/alias "e" "find-file $1")
-  (eshell/alias "eo" "find-file-other-window $1")
-  (eshell/alias "gd" "magit-diff-unstaged")
-  (eshell/alias "gds" "magit-diff-staged")
-  (eshell/alias "d" "dired $1")
-  (eshell/alias "ll" "ls -l")
-  (eshell/alias "la" "ls -A")
-  (eshell/alias "l" "ls -CF")
+
+  (use-package em-alias
+    :config
+    (eshell/alias "cs" "apt search $1")
+    (eshell/alias "e" "find-file $1")
+    (eshell/alias "eo" "find-file-other-window $1")
+    (eshell/alias "gd" "magit-diff-unstaged")
+    (eshell/alias "gds" "magit-diff-staged")
+    (eshell/alias "d" "dired $1")
+    (eshell/alias "ll" "ls -l")
+    (eshell/alias "la" "ls -A")
+    (eshell/alias "l" "ls -CF"))
 
   (use-package esh-help
     :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
