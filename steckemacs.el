@@ -158,6 +158,28 @@ buffer is not visiting a file."
      (concat "xdg-open " (shell-quote-argument
                           (expand-file-name default-directory)))))
 
+  (defun my-browse-url-dwim ()
+    "Browse url \"do what I mean\".
+ Browse the url at point if there is one. Otherwise use the last
+ kill-ring item if it is an url. Browse with desktop browser by
+ default. With prefix argument use `eww', with `digit-argument' 0
+ use `xwidget'."
+    (interactive)
+    (let* ((input (or
+                   (url-get-url-at-point)
+                   (when (eq major-mode 'org-mode)
+                     (org-element-property
+                      :raw-link (org-element-lineage (org-element-context) '(link) t)))
+                   (current-kill 0 t)))
+           (url (if (string-match-p ffap-url-regexp input)
+                    input
+                  (read-string "URL: ")))
+           (prefix (prefix-numeric-value current-prefix-arg)))
+      (require 'ffap)
+      (cond ((= prefix 0) (xwidget-webkit-browse-url url))
+            ((= prefix 4) (eww url))
+            (t (browse-url url)))))
+
 ;;;; global key bindings
   :bind
   ("<f6>" . my-kill-buffer)
@@ -430,21 +452,7 @@ PREFIX forces the use of `find'."
 ;; Emacs Web Wowser (web browser) settings
 (use-package eww
   :config
-  (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
-
-  (defun my-eww-browse-dwim ()
-    "`eww' browse \"do what I mean\".
- Browse the url at point if there is one. Otherwise use the last
- kill-ring item and provide that to `eww'. If it is an url `eww'
- will browse it, if not `eww' will search for it using a search
- engine. With prefix argument will use `browse-url' instead."
-    (interactive)
-    (let ((arg (or
-                (url-get-url-at-point)
-                (current-kill 0 t))))
-      (if current-prefix-arg
-          (browse-url arg)
-        (eww arg)))))
+  (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query="))
 
 ;;;; flyspell
 ;;On-the-fly spell checker
@@ -730,6 +738,19 @@ PREFIX forces the use of `find'."
     (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
     (define-key term-raw-map (kbd "C-]") nil))
   (add-hook 'term-mode-hook 'my-term-setup t))
+
+;;;; xwidget
+;; api functions for xwidgets
+(use-package x-widget
+  :bind (:map xwidget-webkit-mode-map
+              ("<mouse-4>" . xwidget-webkit-scroll-down)
+              ("<mouse-5>" . xwidget-webkit-scroll-up)
+              ("<up>" . xwidget-webkit-scroll-down)
+              ("<down>" . xwidget-webkit-scroll-up)
+              ("M-w" . xwidget-webkit-copy-selection-as-kill))
+  :hook (window-configuration-change . (lambda ()
+                                         (when (equal major-mode 'xwidget-webkit-mode)
+                                           (xwidget-webkit-adjust-size-dispatch)))))
 
 ;;; external packages
 ;;;; add recipes that are required by some packages
@@ -1251,12 +1272,6 @@ KEYS should be provided as with `kbd'."
      ("+" default-text-scale-decrease)
      ("," my-select-prev-window)
      ("." my-select-next-window)
-     ("`" wg-switch-to-previous-workgroup)
-     ("1" wg-switch-to-workgroup-at-index-0)
-     ("2" wg-switch-to-workgroup-at-index-1)
-     ("3" wg-switch-to-workgroup-at-index-2)
-     ("4" wg-switch-to-workgroup-at-index-3)
-     ("5" wg-switch-to-workgroup-at-index-4)
      ;; commands
      ("SPC a" helm-apropos)
      ("SPC b" helm-locate-library)
@@ -1295,7 +1310,7 @@ KEYS should be provided as with `kbd'."
      ("SPC r" helm-show-kill-ring)
      ("SPC R" helm-all-mark-rings)
      ("SPC t" tldr)
-     ("SPC u" my-eww-browse-dwim)
+     ("SPC u" my-browse-url-dwim)
      ("SPC v" visual-line-mode)
      ("SPC w" (lambda ()
                 (interactive)
