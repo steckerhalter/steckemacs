@@ -1319,6 +1319,7 @@ KEYS should be provided as with `kbd'."
                 (interactive)
                 (let ((which-key-show-docstrings 'docstring-only))
                   (which-key-show-major-mode))))
+     ("SPC z" zoom-window)
      ("SPC SPC" save-buffer)
      ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
      ("SPC >" elisp-slime-nav-describe-elisp-thing-at-point)
@@ -1549,7 +1550,7 @@ KEYS should be provided as with `kbd'."
 ;;;; outshine
 ;; outline with outshine outshines outline
 (use-package outshine
-  :quelpa (outshine :fetcher github :repo "tj64/outshine")
+  :quelpa (outshine :fetcher github :repo "alphapapa/outshine")
   :diminish outline-minor-mode
   :commands outshine-hook-function
   :hook ((outline-minor-mode . outshine-hook-function)
@@ -1794,5 +1795,8 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; zenity-color-picker
 (use-package zenity-color-picker
   :quelpa (zenity-color-picker :fetcher git :url "https://bitbucket.org/Soft/zenity-color-picker.el.git"))
+
+(use-package zoom-window
+  :quelpa (zoom-window :fetcher github :repo "syohex/emacs-zoom-window"))
 
 ;;; steckemacs.el ends here
