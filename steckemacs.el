@@ -277,377 +277,7 @@ buffer is not visiting a file."
   ;; (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 90))
   (apply 'set-face-attribute  my-font-attributes))
 
-;;; core packages
-;;;; advice
-;; An overloading mechanism for Emacs Lisp functions
-(use-package advice
-  :config
-  (defadvice kill-region (before slick-cut activate compile)
-    "When called interactively with no active region, kill a single
-line instead."
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
-
-  (defadvice kill-buffer (around kill-buffer-around-advice activate)
-    "Don't really kill *scratch* but only bury it."
-    (let ((buffer-to-kill (ad-get-arg 0)))
-      (if (equal buffer-to-kill "*scratch*")
-          (bury-buffer)
-        ad-do-it))))
-
-;;;; aggressive-indent
-(use-package aggressive-indent
-  :quelpa (aggressive-indent :repo "Malabarba/aggressive-indent-mode" :fetcher github)
-  :config (global-aggressive-indent-mode 1))
-
-;;;; appt
-;; appointment notification functions
-(use-package appt
-  :init (setq
-         appt-message-warning-time 30
-         appt-display-interval 15
-         appt-display-mode-line t             ;show in the modeline
-         appt-display-format 'window)
-  :config (appt-activate 1))
-
-;;;; autorevert
-;; revert buffers when files on disk change
-(use-package autorevert
-  :diminish auto-revert-mode
-  :config
-  ;; auto revert buffers when changed on disk
-  (global-auto-revert-mode 1))
-
-;;;; browse-url
-(use-package browse-url
-  :preface
-  (defun my-browse-url-file (&optional file)
-    (interactive)
-    (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
-      (browse-url-of-file file))))
-
-;;;; custom
-;; tools for declaring and initializing options
-(use-package custom
-  :init
-  (setq
-   custom-unlispify-menu-entries nil ;M-x customize should not cripple menu entries
-   custom-unlispify-tag-names nil) ;M-x customize should not cripple tags
-  )
-
-;;;; dired
-;; directory-browsing commands
-(use-package dired
-  :demand
-  :init
-  (defun my-find-name-dired (pattern)
-    "Find files in `default-directory' using `rg' if available.
-PREFIX forces the use of `find'."
-    (interactive "sFind-name (filename wildcard): ")
-    (if (and (not current-prefix-arg) (executable-find "rg"))
-        (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
-              (find-ls-option (cons "" "-dilsb")))
-          (find-dired default-directory ""))
-      (find-dired
-       default-directory
-       (concat find-name-arg " " (shell-quote-argument pattern)))))
-
-  (setq dired-auto-revert-buffer t)
-  (setq dired-no-confirm
-        '(byte-compile chgrp chmod chown copy delete load move symlink))
-  (setq dired-deletion-confirmer (lambda (x) t))
-  :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
-  :config
-  ;; make rename use ido and not helm
-  (put 'dired-do-rename 'ido 'find-file)
-  ;; make copy use ido and not helm
-  (put 'dired-do-copy 'ido 'find-file)
-
-  ;; Rename files editing their names in dired buffers
-  (use-package wdired
-    :init
-    ;; allow changing of file permissions
-    (setq wdired-allow-to-change-permissions t))
-
-  ;; dired+ adds some features to standard dired (like reusing buffers)
-  (use-package dired+
-    :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
-    :defer 1
-    :init
-    (setq diredp-hide-details-initially-flag nil)
-    (setq diredp-hide-details-propagate-flag nil)
-
-    :config
-    (diredp-toggle-find-file-reuse-dir 1)))
-
-;;;; eldoc
-;; display information about a function or variable in the the echo area
-(use-package eldoc
-  :diminish
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
-
-;;;; elec-pair
-;; Automatic parenthesis pairing
-(use-package elec-pair
-  :config
-  ;;auto pair brackets, parens etc.
-  (electric-pair-mode 1))
-
-;;;; eshell
-(use-package eshell
-  :demand
-  :hook ((eshell-mode . my-eshell-setup)
-         (eshell-mode . eldoc-mode))
-  :init
-  (setq eshell-save-history-on-exit t)
-  (setq eshell-destroy-buffer-when-process-dies t)
-  (setq eshell-where-to-jump 'begin)
-  (setq eshell-hist-ignoredups t)
-  (setq eshell-history-size 10000)
-
-  (defun eshell/g (&rest args)
-    (magit-status (pop args) nil)
-    (eshell/echo))   ;; The echo command suppresses output
-
-  (defun my-eshell-setup ()
-    (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
-    (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
-    (setq-local eldoc-idle-delay 3)
-    (setenv "PAGER" "cat")
-    (setenv "EDITOR" "emacsclient"))
-
-  :config
-
-  (use-package em-alias
-    :config
-    (eshell/alias "cs" "apt search $1")
-    (eshell/alias "e" "find-file $1")
-    (eshell/alias "eo" "find-file-other-window $1")
-    (eshell/alias "gd" "magit-diff-unstaged")
-    (eshell/alias "gds" "magit-diff-staged")
-    (eshell/alias "d" "dired $1")
-    (eshell/alias "ll" "ls -l")
-    (eshell/alias "la" "ls -A")
-    (eshell/alias "l" "ls -CF"))
-
-  (use-package esh-help
-    :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
-    :config (setup-esh-help-eldoc))
-
-  ;; BASH completion for the shell buffer
-  (use-package bash-completion
-    :quelpa (bash-completion :repo szermatt/emacs-bash-completion :fetcher github)
-    :config
-    (defun eshell-bash-completion ()
-      (setq-local bash-completion-nospace t)
-      (while (pcomplete-here
-              (nth 2 (bash-completion-dynamic-complete-nocomint
-                      (save-excursion (eshell-bol) (point)) (point))))))
-    (setq eshell-default-completion-function 'eshell-bash-completion))
-  (use-package em-smart
-    :hook (eshell-mode . eshell-smart-initialize)))
-
-;;;; eww
-;; Emacs Web Wowser (web browser) settings
-(use-package eww
-  :config
-  (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query="))
-
-;;;; flyspell
-;;On-the-fly spell checker
-(use-package flyspell
-  :init (setq flyspell-auto-correct-binding [nil]))
-
-;;;; frame
-;; multi-frame management independent of window systems
-(use-package frame
-  :config
-  ;; maximize emacs
-  (modify-all-frames-parameters '((fullscreen . fullboth)))
-
-  (defun my-after-make-frame (&optional frame)
-    (with-selected-frame (or frame (selected-frame))
-      ;; use symbola font for emoticons
-      (when (find-font (font-spec :name "Symbola") frame)
-        (dolist (range '((#x2600 . #x26ff)
-                         (#x1f300 . #x1f5ff)
-                         (#x1f600 . #x1f640)
-                         (#x1f680 . #x1f6ff)))
-          (set-fontset-font "fontset-default" range "Symbola")))))
-  (add-to-list 'after-make-frame-functions 'my-after-make-frame)
-
-  ;; better frame title
-  (setq frame-title-format
-        '((:eval (if (buffer-file-name)
-                     (abbreviate-file-name (buffer-file-name))
-                   "%b")))))
-
-;;;; erc
-;; Emacs ERC client settings
-(use-package erc
-  :quelpa (erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks")
-  :config
-  (add-hook 'erc-mode-hook (lambda ()
-                             (erc-truncate-mode t)
-                             (erc-fill-disable)
-                             (set (make-local-variable 'scroll-conservatively) 1000)
-                             (visual-line-mode)))
-  (setq erc-timestamp-format "%H:%M "
-        erc-fill-prefix "      "
-        erc-insert-timestamp-function 'erc-insert-timestamp-left)
-  (setq erc-interpret-mirc-color t)
-  (setq erc-kill-buffer-on-part t)
-  (setq erc-kill-server-buffer-on-quit t)
-  (setq erc-kill-queries-on-quit t)
-  (setq erc-kill-server-buffer-on-quit t)
-  (setq erc-server-send-ping-interval 45)
-  (setq erc-server-send-ping-timeout 180)
-  (setq erc-server-reconnect-timeout 60)
-  (erc-track-mode t)
-  (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                  "324" "329" "332" "333" "353" "477"))
-  (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
-
-  ;; ------ template for .user.el
-  ;; (setq erc-prompt-for-nickserv-password nil)
-  ;; (setq erc-server "hostname"
-  ;;       erc-port 7000
-  ;;       erc-nick "user"
-  ;;       erc-user-full-name "user"
-  ;;       erc-email-userid "user"
-  ;;       erc-password "user:pw"
-  ;;       )
-
-  (defun my-erc-connect ()
-    "Connect with ERC or open the last active buffer."
-    (interactive)
-    (if (erc-buffer-list)
-        (switch-to-buffer (car (erc-buffer-list)))
-      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
-
-;;;; ibuffer
-(use-package ibuffer
-  :init (setq ibuffer-default-display-maybe-show-predicates t)
-  :bind  ("C-x b" . ibuffer))
-
-;;;; ido
-;; selection framework (used for file opening `C-x C-f' by me)
-(use-package ido
-  :demand
-  :init
-  (setq ido-enable-flex-matching t
-        ido-auto-merge-work-directories-length -1
-        ido-create-new-buffer 'always
-        ido-everywhere t
-        ido-default-buffer-method 'selected-window
-        ido-max-prospects 32
-        ido-use-filename-at-point 'guess
-        ido-use-faces nil)
-
-  :bind ("C-x C-b" . ido-switch-buffer)
-
-  :config
-  (ido-mode 1)
-
-  (use-package flx-ido
-    ;; flx integration for ido
-    :quelpa (flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el"))
-    :config
-    (flx-ido-mode 1)))
-
-;;;; ielm
-;; interactively evaluate Emacs Lisp expressions
-(use-package ielm
-  :config
-  (add-hook 'inferior-emacs-lisp-mode-hook
-            (lambda ()
-              (turn-on-eldoc-mode))))
-
-;;;; man
-;; browse UNIX manual pages
-(use-package man
-  :init (setq Man-notify-method 'aggressive))
-
-;;;; org
-;;  "Outline-based notes management and organizer"
-(use-package org
-  :bind (:map org-mode-map ("C-c w" . org-cut-special))
-  :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
-  :custom
-  (org-startup-indented t)
-  (org-startup-with-inline-images t)
-  (org-startup-truncated t)
-  (org-startup-folded nil)
-  (org-src-fontify-natively t)
-  (org-src-tab-acts-natively t)
-  (org-edit-src-content-indentation 0)
-  (org-confirm-babel-evaluate nil)
-  (org-use-speed-commands t)
-  (org-refile-targets '((org-agenda-files :maxlevel . 3)))
-  (org-refile-use-outline-path 'file)
-  (org-html-postamble nil)
-  (org-agenda-dim-blocked-tasks t)
-  (org-enforce-todo-checkbox-dependencies t)
-  (org-enforce-todo-dependencies t)
-  (org-speed-commands-user '(("S" . org-schedule)))
-  (org-blank-before-new-entry
-   '((heading . nil) (plain-list-item . nil)))
-
-  :config
-  (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
-  (add-to-list 'org-structure-template-alist
-               '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
-  (add-to-list 'org-structure-template-alist
-               '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
-
-;;;;; org-agenda
-  (use-package org-agenda
-    :init
-    (defun my-org-agenda () (interactive) (org-agenda nil "n"))
-    (setq org-agenda-start-with-log-mode t)
-    (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
-    (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
-    (setq org-agenda-dim-blocked-tasks t)
-
-    :config
-    ;; add state to the sorting strategy of todo
-    (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
-
-    ;; create the file for the agendas if it doesn't exist
-    (let ((agendas "~/.agenda_files"))
-      (unless (file-readable-p agendas)
-        (with-temp-file agendas nil))
-      (setq org-agenda-files agendas))
-
-    ;; display the agenda first
-    (setq org-agenda-custom-commands
-          '(("n" "Agenda and all TODO's"
-             ((alltodo "")
-              (agenda "")))))
-
-    ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
-    (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
-    (defun my-org-mode-hook ()
-      (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
-    (add-hook 'org-mode-hook 'my-org-mode-hook))
-
-  (use-package notifications
-    :config
-    (defun my-appt-disp-window-function (min-to-app new-time msg)
-      (notifications-notify :title (format "Appointment in %s min" min-to-app) :body msg))
-    (setq appt-disp-window-function 'my-appt-disp-window-function)
-    (setq appt-delete-window-function (lambda (&rest args))))
-
-;;;;; org-bullets
-  ;; Show bullets in org-mode as UTF-8 characters
-  (use-package org-bullets
-    :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
-    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
-
+;;; packages
 ;;;; paren
 ;; highlight matching paren
 (use-package paren
@@ -755,7 +385,6 @@ PREFIX forces the use of `find'."
                                          (when (equal major-mode 'xwidget-webkit-mode)
                                            (xwidget-webkit-adjust-size-dispatch)))))
 
-;;; external packages
 ;;;; add recipes that are required by some packages
 (add-to-list
  'quelpa-melpa-recipe-stores
@@ -769,6 +398,35 @@ PREFIX forces the use of `find'."
    (queue :fetcher github :repo "emacsmirror/queue")
    (seq :fetcher github :repo "NicolasPetton/seq.el")
    (spinner :fetcher github :repo "Malabarba/spinner.el")))
+
+;;;; advice
+;; An overloading mechanism for Emacs Lisp functions
+(use-package advice
+  :config
+  (defadvice kill-region (before slick-cut activate compile)
+    "When called interactively with no active region, kill a single
+line instead."
+    (interactive
+     (if mark-active (list (region-beginning) (region-end))
+       (list (line-beginning-position)
+             (line-beginning-position 2)))))
+
+  (defadvice kill-buffer (around kill-buffer-around-advice activate)
+    "Don't really kill *scratch* but only bury it."
+    (let ((buffer-to-kill (ad-get-arg 0)))
+      (if (equal buffer-to-kill "*scratch*")
+          (bury-buffer)
+        ad-do-it))))
+
+;;;; ag
+;; A front-end for ag ('the silver searcher'), the C ack replacement.
+(use-package ag
+  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github))
+
+;;;; aggressive-indent
+(use-package aggressive-indent
+  :quelpa (aggressive-indent :repo "Malabarba/aggressive-indent-mode" :fetcher github)
+  :config (global-aggressive-indent-mode 1))
 
 ;;;; anaconda-mode
 ;; Code navigation, documentation lookup and completion for Python
@@ -802,21 +460,26 @@ PREFIX forces the use of `find'."
 
     :config (pyenv-mode 1)))
 
-;;;; ag
-;; A front-end for ag ('the silver searcher'), the C ack replacement.
-(use-package ag
-  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github))
+;;;; ansible-doc
+;; Ansible documentation Minor Mode
+(use-package ansible-doc
+  :quelpa (ansible-doc :repo "lunaryorn/ansible-doc.el" :fetcher github)
+  :config (add-hook 'yaml-mode-hook #'ansible-doc-mode))
 
 ;;;; apache-mode
 ;; major mode for editing Apache configuration files
 (use-package apache-mode
   :quelpa (apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
 
-;;;; ansible-doc
-;; Ansible documentation Minor Mode
-(use-package ansible-doc
-  :quelpa (ansible-doc :repo "lunaryorn/ansible-doc.el" :fetcher github)
-  :config (add-hook 'yaml-mode-hook #'ansible-doc-mode))
+;;;; appt
+;; appointment notification functions
+(use-package appt
+  :init (setq
+         appt-message-warning-time 30
+         appt-display-interval 15
+         appt-display-mode-line t             ;show in the modeline
+         appt-display-format 'window)
+  :config (appt-activate 1))
 
 ;;;; auctex
 ;; enhanced LaTeX mode
@@ -832,6 +495,14 @@ PREFIX forces the use of `find'."
                  (interactive)
                  (TeX-command-menu "LaTeX")))))
 
+;;;; autorevert
+;; revert buffers when files on disk change
+(use-package autorevert
+  :diminish auto-revert-mode
+  :config
+  ;; auto revert buffers when changed on disk
+  (global-auto-revert-mode 1))
+
 ;;;; back-button
 ;; Visual navigation through mark rings
 (use-package back-button
@@ -841,6 +512,14 @@ PREFIX forces the use of `find'."
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
+
+;;;; browse-url
+(use-package browse-url
+  :preface
+  (defun my-browse-url-file (&optional file)
+    (interactive)
+    (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
+      (browse-url-of-file file))))
 
 ;;;; cider
 ;; Clojure Interactive Development Environment that Rocks
@@ -946,6 +625,16 @@ PREFIX forces the use of `find'."
     (company-mode t))
   :hook (web-mode . my-company-web))
 
+;;;; custom
+;; tools for declaring and initializing options
+(use-package custom
+  :init
+  (setq
+   ;; M-x customize should not cripple menu entries
+   custom-unlispify-menu-entries nil
+   ;;M-x customize should not cripple tags
+   custom-unlispify-tag-names nil))
+
 ;;;; default-text-scale
 (use-package default-text-scale
   :quelpa (default-text-scale :fetcher github :repo "purcell/default-text-scale"))
@@ -993,6 +682,51 @@ PREFIX forces the use of `find'."
   (eval-after-load 'magit
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
+;;;; dired
+;; directory-browsing commands
+(use-package dired
+  :demand
+  :init
+  (defun my-find-name-dired (pattern)
+    "Find files in `default-directory' using `rg' if available.
+PREFIX forces the use of `find'."
+    (interactive "sFind-name (filename wildcard): ")
+    (if (and (not current-prefix-arg) (executable-find "rg"))
+        (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
+              (find-ls-option (cons "" "-dilsb")))
+          (find-dired default-directory ""))
+      (find-dired
+       default-directory
+       (concat find-name-arg " " (shell-quote-argument pattern)))))
+
+  (setq dired-auto-revert-buffer t)
+  (setq dired-no-confirm
+        '(byte-compile chgrp chmod chown copy delete load move symlink))
+  (setq dired-deletion-confirmer (lambda (x) t))
+  :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
+  :config
+  ;; make rename use ido and not helm
+  (put 'dired-do-rename 'ido 'find-file)
+  ;; make copy use ido and not helm
+  (put 'dired-do-copy 'ido 'find-file)
+
+  ;; Rename files editing their names in dired buffers
+  (use-package wdired
+    :init
+    ;; allow changing of file permissions
+    (setq wdired-allow-to-change-permissions t))
+
+  ;; dired+ adds some features to standard dired (like reusing buffers)
+  (use-package dired+
+    :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
+    :defer 1
+    :init
+    (setq diredp-hide-details-initially-flag nil)
+    (setq diredp-hide-details-propagate-flag nil)
+
+    :config
+    (diredp-toggle-find-file-reuse-dir 1)))
+
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major
@@ -1022,6 +756,21 @@ PREFIX forces the use of `find'."
   (global-set-key [remap kill-ring-save] 'easy-kill)
   (global-set-key [remap mark-sexp] 'easy-mark))
 
+;;;; eldoc
+;; display information about a function or variable in the the echo area
+(use-package eldoc
+  :diminish
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
+
+;;;; elec-pair
+;; Automatic parenthesis pairing
+(use-package elec-pair
+  :config
+  ;;auto pair brackets, parens etc.
+  (electric-pair-mode 1))
+
 ;;;; elisp-slime-nav
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
@@ -1038,21 +787,124 @@ PREFIX forces the use of `find'."
   :custom (emojify-download-emojis-p nil)
   :config (global-emojify-mode 1))
 
+;;;; erc
+;; Emacs ERC client settings
+(use-package erc
+  :quelpa (erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks")
+  :config
+  (add-hook 'erc-mode-hook (lambda ()
+                             (erc-truncate-mode t)
+                             (erc-fill-disable)
+                             (set (make-local-variable 'scroll-conservatively) 1000)
+                             (visual-line-mode)))
+  (setq erc-timestamp-format "%H:%M "
+        erc-fill-prefix "      "
+        erc-insert-timestamp-function 'erc-insert-timestamp-left)
+  (setq erc-interpret-mirc-color t)
+  (setq erc-kill-buffer-on-part t)
+  (setq erc-kill-server-buffer-on-quit t)
+  (setq erc-kill-queries-on-quit t)
+  (setq erc-kill-server-buffer-on-quit t)
+  (setq erc-server-send-ping-interval 45)
+  (setq erc-server-send-ping-timeout 180)
+  (setq erc-server-reconnect-timeout 60)
+  (erc-track-mode t)
+  (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                  "324" "329" "332" "333" "353" "477"))
+  (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+
+  ;; ------ template for .user.el
+  ;; (setq erc-prompt-for-nickserv-password nil)
+  ;; (setq erc-server "hostname"
+  ;;       erc-port 7000
+  ;;       erc-nick "user"
+  ;;       erc-user-full-name "user"
+  ;;       erc-email-userid "user"
+  ;;       erc-password "user:pw"
+  ;;       )
+
+  (defun my-erc-connect ()
+    "Connect with ERC or open the last active buffer."
+    (interactive)
+    (if (erc-buffer-list)
+        (switch-to-buffer (car (erc-buffer-list)))
+      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
+
+;;;; eshell
+(use-package eshell
+  :demand
+  :hook ((eshell-mode . my-eshell-setup)
+         (eshell-mode . eldoc-mode))
+  :init
+  (setq eshell-save-history-on-exit t)
+  (setq eshell-destroy-buffer-when-process-dies t)
+  (setq eshell-where-to-jump 'begin)
+  (setq eshell-hist-ignoredups t)
+  (setq eshell-history-size 10000)
+
+  (defun eshell/g (&rest args)
+    (magit-status (pop args) nil)
+    (eshell/echo))   ;; The echo command suppresses output
+
+  (defun my-eshell-setup ()
+    (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
+    (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
+    (setq-local eldoc-idle-delay 3)
+    (setenv "PAGER" "cat")
+    (setenv "EDITOR" "emacsclient"))
+
+  :config
+
+  (use-package em-alias
+    :config
+    (eshell/alias "cs" "apt search $1")
+    (eshell/alias "e" "find-file $1")
+    (eshell/alias "eo" "find-file-other-window $1")
+    (eshell/alias "gd" "magit-diff-unstaged")
+    (eshell/alias "gds" "magit-diff-staged")
+    (eshell/alias "d" "dired $1")
+    (eshell/alias "ll" "ls -l")
+    (eshell/alias "la" "ls -A")
+    (eshell/alias "l" "ls -CF"))
+
+  (use-package esh-help
+    :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
+    :config (setup-esh-help-eldoc))
+
+  ;; BASH completion for the shell buffer
+  (use-package bash-completion
+    :quelpa (bash-completion :repo szermatt/emacs-bash-completion :fetcher github)
+    :config
+    (defun eshell-bash-completion ()
+      (setq-local bash-completion-nospace t)
+      (while (pcomplete-here
+              (nth 2 (bash-completion-dynamic-complete-nocomint
+                      (save-excursion (eshell-bol) (point)) (point))))))
+    (setq eshell-default-completion-function 'eshell-bash-completion))
+  (use-package em-smart
+    :hook (eshell-mode . eshell-smart-initialize)))
+
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
   :quelpa (eval-sexp-fu  :fetcher github :repo "hchbaw/eval-sexp-fu.el")
   :bind
   (:map lisp-interaction-mode-map
-   ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
-   ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp)
-   :map emacs-lisp-mode-map
-   ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
-   ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp))
+        ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
+        ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp)
+        :map emacs-lisp-mode-map
+        ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
+        ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp))
   :init
   (setq eval-sexp-fu-flash-duration 0.4)
   :config
   (turn-on-eval-sexp-fu-flash-mode))
+
+;;;; eww
+;; Emacs Web Wowser (web browser) settings
+(use-package eww
+  :config
+  (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query="))
 
 ;;;; fancy-narrow
 ;; narrow-to-region with more eye candy.
@@ -1082,6 +934,35 @@ PREFIX forces the use of `find'."
   :config
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
   (setq flycheck-indication-mode 'right-fringe))
+
+;;;; flyspell
+;;On-the-fly spell checker
+(use-package flyspell
+  :init (setq flyspell-auto-correct-binding [nil]))
+
+;;;; frame
+;; multi-frame management independent of window systems
+(use-package frame
+  :config
+  ;; maximize emacs
+  (modify-all-frames-parameters '((fullscreen . fullboth)))
+
+  (defun my-after-make-frame (&optional frame)
+    (with-selected-frame (or frame (selected-frame))
+      ;; use symbola font for emoticons
+      (when (find-font (font-spec :name "Symbola") frame)
+        (dolist (range '((#x2600 . #x26ff)
+                         (#x1f300 . #x1f5ff)
+                         (#x1f600 . #x1f640)
+                         (#x1f680 . #x1f6ff)))
+          (set-fontset-font "fontset-default" range "Symbola")))))
+  (add-to-list 'after-make-frame-functions 'my-after-make-frame)
+
+  ;; better frame title
+  (setq frame-title-format
+        '((:eval (if (buffer-file-name)
+                     (abbreviate-file-name (buffer-file-name))
+                   "%b")))))
 
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
@@ -1346,6 +1227,36 @@ KEYS should be provided as with `kbd'."
      ("0" eval-last-sexp)
      ("<escape>" nil :color blue))))
 
+;;;; ibuffer
+(use-package ibuffer
+  :init (setq ibuffer-default-display-maybe-show-predicates t)
+  :bind  ("C-x b" . ibuffer))
+
+;;;; ido
+;; selection framework (used for file opening `C-x C-f' by me)
+(use-package ido
+  :demand
+  :init
+  (setq ido-enable-flex-matching t
+        ido-auto-merge-work-directories-length -1
+        ido-create-new-buffer 'always
+        ido-everywhere t
+        ido-default-buffer-method 'selected-window
+        ido-max-prospects 32
+        ido-use-filename-at-point 'guess
+        ido-use-faces nil)
+
+  :bind ("C-x C-b" . ido-switch-buffer)
+
+  :config
+  (ido-mode 1)
+
+  (use-package flx-ido
+    ;; flx integration for ido
+    :quelpa (flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el"))
+    :config
+    (flx-ido-mode 1)))
+
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
 (use-package iedit
@@ -1353,6 +1264,14 @@ KEYS should be provided as with `kbd'."
   :init
   (setq iedit-unmatched-lines-invisible t)
   (setq iedit-toggle-key-default nil))
+
+;;;; ielm
+;; interactively evaluate Emacs Lisp expressions
+(use-package ielm
+  :config
+  (add-hook 'inferior-emacs-lisp-mode-hook
+            (lambda ()
+              (turn-on-eldoc-mode))))
 
 ;;;; elfeed-protocol
 ;; Provide owncloud/ttrss protocols for elfeed
@@ -1438,6 +1357,11 @@ KEYS should be provided as with `kbd'."
     (defun gac ()
       (interactive)
       (gac-commit))))
+
+;;;; man
+;; browse UNIX manual pages
+(use-package man
+  :init (setq Man-notify-method 'aggressive))
 
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
@@ -1552,6 +1476,82 @@ KEYS should be provided as with `kbd'."
 (use-package open-junk-file
   :quelpa (open-junk-file :repo "rubikitch/open-junk-file" :fetcher github)
   :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
+
+;;;; org
+;;  "Outline-based notes management and organizer"
+(use-package org
+  :bind (:map org-mode-map ("C-c w" . org-cut-special))
+  :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
+  :custom
+  (org-startup-indented t)
+  (org-startup-with-inline-images t)
+  (org-startup-truncated t)
+  (org-startup-folded nil)
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
+  (org-edit-src-content-indentation 0)
+  (org-confirm-babel-evaluate nil)
+  (org-use-speed-commands t)
+  (org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (org-refile-use-outline-path 'file)
+  (org-html-postamble nil)
+  (org-agenda-dim-blocked-tasks t)
+  (org-enforce-todo-checkbox-dependencies t)
+  (org-enforce-todo-dependencies t)
+  (org-speed-commands-user '(("S" . org-schedule)))
+  (org-blank-before-new-entry
+   '((heading . nil) (plain-list-item . nil)))
+
+  :config
+  (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
+  (add-to-list 'org-structure-template-alist
+               '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
+  (add-to-list 'org-structure-template-alist
+               '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
+
+;;;;; org-agenda
+  (use-package org-agenda
+    :init
+    (defun my-org-agenda () (interactive) (org-agenda nil "n"))
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
+    (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
+    (setq org-agenda-dim-blocked-tasks t)
+
+    :config
+    ;; add state to the sorting strategy of todo
+    (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
+
+    ;; create the file for the agendas if it doesn't exist
+    (let ((agendas "~/.agenda_files"))
+      (unless (file-readable-p agendas)
+        (with-temp-file agendas nil))
+      (setq org-agenda-files agendas))
+
+    ;; display the agenda first
+    (setq org-agenda-custom-commands
+          '(("n" "Agenda and all TODO's"
+             ((alltodo "")
+              (agenda "")))))
+
+    ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
+    (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
+    (defun my-org-mode-hook ()
+      (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
+    (add-hook 'org-mode-hook 'my-org-mode-hook))
+
+  (use-package notifications
+    :config
+    (defun my-appt-disp-window-function (min-to-app new-time msg)
+      (notifications-notify :title (format "Appointment in %s min" min-to-app) :body msg))
+    (setq appt-disp-window-function 'my-appt-disp-window-function)
+    (setq appt-delete-window-function (lambda (&rest args))))
+
+;;;;; org-bullets
+  ;; Show bullets in org-mode as UTF-8 characters
+  (use-package org-bullets
+    :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
+    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
