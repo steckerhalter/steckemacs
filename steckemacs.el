@@ -781,6 +781,19 @@ PREFIX forces the use of `find'."
   :diminish
   :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
 
+;;;; emms
+;; Playlist mode for Emms
+(use-package emms
+  :quelpa (emms :url "https://git.savannah.gnu.org/git/emms.git"
+                :fetcher git :files ("lisp/*.el" "doc/emms.texinfo"))
+  :config
+  (use-package emms-setup
+    :config
+    (emms-standard)
+    (emms-default-players))
+  (use-package org-emms
+    :quelpa (org-emms :fetcher github :repo "jagrg/org-emms")))
+
 ;;;; emojify
 (use-package emojify
   :quelpa (emojify :fetcher github :repo "iqbalansari/emacs-emojify" :files (:defaults "data" "images"))
@@ -1048,7 +1061,7 @@ PREFIX forces the use of `find'."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :init (add-to-list 'helm-google-engines '(searx . "https://s.n0.is/?engines=google&format=json&q=%s"))
+    :config (add-to-list 'helm-google-engines '(searx . "https://s.n0.is/?engines=google&format=json&q=%s"))
     :demand)
 
   ;; Helm UI wrapper for system package managers.
