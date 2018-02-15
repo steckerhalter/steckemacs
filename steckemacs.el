@@ -790,9 +790,7 @@ PREFIX forces the use of `find'."
   (use-package emms-setup
     :config
     (emms-standard)
-    (emms-default-players))
-  (use-package org-emms
-    :quelpa (org-emms :fetcher github :repo "jagrg/org-emms")))
+    (emms-default-players)))
 
 ;;;; emojify
 (use-package emojify
@@ -1564,7 +1562,12 @@ KEYS should be provided as with `kbd'."
   ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
     :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
-    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
+    :config (add-hook 'org-mode-hook 'org-bullets-mode))
+
+;;;;; org-emms
+  (use-package org-emms
+    :requires org
+    :quelpa (org-emms :fetcher github :repo "jagrg/org-emms")))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
