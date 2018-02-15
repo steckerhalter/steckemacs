@@ -1167,11 +1167,15 @@ PREFIX forces the use of `find'."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
+    :init (add-to-list 'helm-google-engines '(searx . "https://s.n0.is/?engines=google&format=json&q=%s"))
     :demand)
 
   ;; Helm UI wrapper for system package managers.
   (use-package helm-system-packages
     :quelpa (helm-system-packages :repo "emacs-helm/helm-system-packages" :fetcher github))
+
+  (use-package helm-rg
+    :quelpa (helm-rg :fetcher github :repo "cosmicexplorer/helm-rg"))
 
   ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
@@ -1244,7 +1248,7 @@ KEYS should be provided as with `kbd'."
      ("e" (kbds "C-v"))
      ("E" (kbds "M->"))
      ("f" find-file)
-     ("G" (kbds "C-g"))                 ;`g' is often used as refresh
+     ("g" (kbds "C-g"))
      ("h" (kbds "C-b"))
      ("j" ipretty-last-sexp)
      ("J" ipretty-last-sexp-other-buffer)
@@ -1276,18 +1280,24 @@ KEYS should be provided as with `kbd'."
      ("," my-select-prev-window)
      ("." my-select-next-window)
      ;; commands
+     ("SPC SPC" save-buffer)
+     ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
+     ("SPC >" elisp-slime-nav-describe-elisp-thing-at-point)
+     ("SPC ," pop-tag-mark)
+     ("SPC %" (insert "¯\\_(ツ)_/¯"))
+     ("SPC ;" (find-file "~/Sync/notes/todo.org"))
+     ("SPC /" helm-rg)
+     ("SPC 4" mu4e :exit t)
      ("SPC a" helm-apropos)
      ("SPC b" helm-locate-library)
      ("SPC c" customize-group)
+     ("SPC C" zenity-cp-color-at-point-dwim)
      ("SPC d" (hydra-resume deft) :exit t)
-     ("SPC f r" revert-buffer)
      ("SPC e e" edebug-defun)
      ("SPC e b" eval-buffer)
      ("SPC e d" toggle-debug-on-error)
      ("SPC E" my-erc-connect)
-     ("SPC f f" ff-helm-places)
-     ("SPC f b" ff-helm-bookmarks)
-     ("SPC f p" ff-paste-current-url)
+     ("SPC f r" revert-buffer)
      ("SPC g" magit-status)
      ("SPC G b" magit-blame)
      ("SPC h r" diff-hl-revert-hunk)
@@ -1303,15 +1313,16 @@ KEYS should be provided as with `kbd'."
      ("SPC k" kill-emacs)
      ("SPC l" list-packages)
      ("SPC L" helm-system-packages)
-     ("SPC m" mu4e :exit t)
+     ("SPC m" man)
      ("SPC n" my-org-agenda)
-     ("SPC s" helm-google-searx)
-     ("SPC S" helm-google-google)
      ("SPC o" org-open-at-point)
-     ("SPC p" zenity-cp-color-at-point-dwim)
+     ("SPC p" ff-helm-places)
+     ("SPC P" ff-helm-bookmarks)
      ("SPC q" quelpa)
      ("SPC r" helm-show-kill-ring)
      ("SPC R" helm-all-mark-rings)
+     ("SPC s" helm-google-searx)
+     ("SPC S" helm-google-google)
      ("SPC t" tldr)
      ("SPC u" my-browse-url-dwim)
      ("SPC v" visual-line-mode)
@@ -1319,13 +1330,8 @@ KEYS should be provided as with `kbd'."
                 (interactive)
                 (let ((which-key-show-docstrings 'docstring-only))
                   (which-key-show-major-mode))))
-     ("SPC z" zoom-window)
-     ("SPC SPC" save-buffer)
-     ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
-     ("SPC >" elisp-slime-nav-describe-elisp-thing-at-point)
-     ("SPC ," pop-tag-mark)
-     ("SPC %" (insert "¯\\_(ツ)_/¯"))
-     ("SPC ;" (find-file "~/Sync/notes/todo.org"))
+     ("SPC y u" ff-paste-current-url)
+     ("SPC z" zoom-window-zoom)
      (">" mc/mark-next-like-this)
      ("<" mc/mark-previous-like-this)
      ("i" helm-swoop)
@@ -1796,6 +1802,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package zenity-color-picker
   :quelpa (zenity-color-picker :fetcher git :url "https://bitbucket.org/Soft/zenity-color-picker.el.git"))
 
+;; Zoom window like tmux
 (use-package zoom-window
   :quelpa (zoom-window :fetcher github :repo "syohex/emacs-zoom-window"))
 
