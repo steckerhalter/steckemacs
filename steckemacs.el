@@ -1054,7 +1054,7 @@ PREFIX forces the use of `find'."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :config (add-to-list 'helm-google-engines '(searx . "https://s.n0.is/?engines=google&format=json&q=%s"))
+    :config (add-to-list 'helm-google-engines '(searx . "https://search.kosebamse.com/?engines=google&format=json&q=%s"))
     :demand)
 
   ;; Helm UI wrapper for system package managers.
@@ -1561,7 +1561,7 @@ KEYS should be provided as with `kbd'."
 
 ;;;;; org-emms
   (use-package org-emms
-    :requires org
+    :after org
     :quelpa (org-emms :fetcher github :repo "jagrg/org-emms")))
 
 ;;;; outshine
