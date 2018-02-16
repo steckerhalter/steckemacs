@@ -390,7 +390,7 @@ buffer is not visiting a file."
  'quelpa-melpa-recipe-stores
  '(;; eval-sexp-fu
    (highlight :fetcher github :repo "steckerhalter/highlight.el")
-   ;; flycheck + magit
+   ;; magit
    (let-alist :fetcher url
               :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
               :version original)
@@ -936,15 +936,10 @@ PREFIX forces the use of `find'."
 (use-package ff
   :quelpa (ff :fetcher github :repo "steckerhalter/ff.el"))
 
-;;;; flycheck
-;; on-the-fly source code syntax checks
-(use-package flycheck
-  :quelpa (flycheck :repo "flycheck/flycheck" :fetcher github)
+(use-package flymake
   :diminish
-  :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flycheck-mode)
-  :config
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)) ;disable the annoying doc checker
-  (setq flycheck-indication-mode 'right-fringe))
+  :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flymake-mode-on)
+  :config (flymake-mode-on))
 
 ;;;; flyspell
 ;;On-the-fly spell checker
