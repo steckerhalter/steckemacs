@@ -1108,7 +1108,9 @@ KEYS should be provided as with `kbd'."
 
   (defmacro hydra-resume (fn &rest args)
     "Execute FN and resume the current hydra."
-    `(progn (,fn ,@args)
+    `(progn (if (commandp ',fn)
+                (call-interactively ',fn)
+              (,fn ,@args))
             (funcall hydra-curr-body-fn)))
 
   (defun !/state (&optional exit)
@@ -1134,7 +1136,7 @@ KEYS should be provided as with `kbd'."
      ("D" (kbds "M-d"))
      ("e" (kbds "C-v"))
      ("E" (kbds "M->"))
-     ("f" find-file)
+     ("f" (hydra-resume find-file) :exit t)
      ("g" (kbds "C-g"))
      ("h" (kbds "C-b"))
      ("j" ipretty-last-sexp)
@@ -1210,7 +1212,7 @@ KEYS should be provided as with `kbd'."
      ("SPC R" helm-all-mark-rings)
      ("SPC s" helm-google-searx)
      ("SPC S" helm-google-google)
-     ("SPC t" tldr)
+     ("SPC t" mastodon-toot)
      ("SPC u" my-browse-url-dwim)
      ("SPC v" visual-line-mode)
      ("SPC w" (lambda ()
@@ -1415,6 +1417,10 @@ KEYS should be provided as with `kbd'."
   :config
   (advice-add 'markdown-convert-wiki-link-to-filename
               :around 'my-markdown-convert-wiki-link))
+
+;;;; mastodon
+(use-package mastodon
+  :quelpa (mastodon :fetcher github :repo "jdenen/mastodon.el" :files ("lisp/*.el")))
 
 ;;;; monky
 (use-package monky
