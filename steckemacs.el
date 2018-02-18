@@ -1475,26 +1475,28 @@ KEYS should be provided as with `kbd'."
     "Add a context to `mu4e-contexts'.
 ID is the context name, NAME is the full name and mail is the
 email address."
-    `(add-to-list
-      'mu4e-contexts
-      (make-mu4e-context
-       :name ,id
-       :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
-       :match-func (lambda (msg)
-                     (when msg
-                       (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
-       :vars '((user-mail-address . ,mail)
-               (user-full-name . ,name)
-               (mu4e-sent-folder . ,(concat "/" id "/sent"))
-               (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
-               (mu4e-trash-folder . ,(concat "/" id "/trash"))
-               (mu4e-refile-folder . ,(concat "/" id "/archive"))
-               (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
-                                          (,(concat "/" id "/archive") . ?a)
-                                          (,(concat "/" id "/sent") . ?s)
-                                          (,(concat "/" id "/drafts") . ?d)
-                                          (,(concat "/" id "/trash") . ?t)))))
-      t))
+    `(progn
+       (add-to-list
+        'mu4e-contexts
+        (make-mu4e-context
+         :name ,id
+         :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
+         :match-func (lambda (msg)
+                       (when msg
+                         (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
+         :vars '((user-mail-address . ,mail)
+                 (user-full-name . ,name)
+                 (mu4e-sent-folder . ,(concat "/" id "/sent"))
+                 (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
+                 (mu4e-trash-folder . ,(concat "/" id "/trash"))
+                 (mu4e-refile-folder . ,(concat "/" id "/archive"))
+                 (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
+                                            (,(concat "/" id "/archive") . ?a)
+                                            (,(concat "/" id "/sent") . ?s)
+                                            (,(concat "/" id "/drafts") . ?d)
+                                            (,(concat "/" id "/trash") . ?t)))))
+        t)
+       (add-to-list 'mu4e-user-mail-address-list ,mail)))
 
   (setq message-kill-buffer-on-exit t)
   :config (use-package org-mu4e))
