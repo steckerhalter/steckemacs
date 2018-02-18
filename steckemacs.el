@@ -1468,19 +1468,24 @@ KEYS should be provided as with `kbd'."
     (mu4e-mark-execute-all t))
 
   (defmacro mu4e-add-context (id name mail)
-       `(add-to-list 'mu4e-contexts
-                     (make-mu4e-context
-                      :name ,id
-                      :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
-                      :match-func (lambda (_) (string-equal ,id (and (mu4e-context-current)
-                                                                (mu4e-context-name (mu4e-context-current)))))
-                      :vars '((user-mail-address . ,mail)
-                              (user-full-name . ,name)
-                              (mu4e-inbox-folder . ,(concat "/" id "/INBOX"))
-                              (mu4e-sent-folder . ,(concat "/" id "/sent"))
-                              (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
-                              (mu4e-trash-folder . ,(concat "/" id "/trash"))
-                              (mu4e-refile-folder . ,(concat "/" id "/archive"))))))
+    "Add a context to `mu4e-contexts'.
+ID is the context name, NAME is the full name and mail is the
+email address."
+    `(add-to-list
+      'mu4e-contexts
+      (make-mu4e-context
+       :name ,id
+       :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
+       :match-func (lambda (_) (string-equal ,id (and (mu4e-context-current)
+                                                 (mu4e-context-name (mu4e-context-current)))))
+       :vars '((user-mail-address . ,mail)
+               (user-full-name . ,name)
+               (mu4e-inbox-folder . ,(concat "/" id "/INBOX"))
+               (mu4e-sent-folder . ,(concat "/" id "/sent"))
+               (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
+               (mu4e-trash-folder . ,(concat "/" id "/trash"))
+               (mu4e-refile-folder . ,(concat "/" id "/archive"))))
+      t))
 
   (setq message-kill-buffer-on-exit t)
   :config (use-package org-mu4e))
@@ -1721,6 +1726,10 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; A major emacs mode for editing Rust source code
 (use-package rust-mode
   :quelpa (rust-mode :repo rust-lang/rust-mode :fetcher github))
+
+;;;; services
+(use-package services
+  :quelpa (services :fetcher github :repo "cbowdon/services-mode"))
 
 ;;;; shell-switcher
 (use-package shell-switcher
