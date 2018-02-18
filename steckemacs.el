@@ -786,6 +786,10 @@ PREFIX forces the use of `find'."
 (use-package emms
   :quelpa (emms :url "https://git.savannah.gnu.org/git/emms.git"
                 :fetcher git :files ("lisp/*.el" "doc/emms.texinfo"))
+  :bind
+  ("<XF86AudioPlay>" . emms-pause)
+  ("<XF86AudioPrev>" . emms-previous)
+  ("<XF86AudioNext>" . emms-next)
   :config
   (use-package emms-setup
     :config
@@ -1442,7 +1446,7 @@ KEYS should be provided as with `kbd'."
   (setq mu4e-headers-leave-behavior 'apply)
   (setq mu4e-headers-visible-lines 20)
   (setq mu4e-hide-index-messages t)
-  (setq mu4e-maildir (expand-file-name "~/Maildir"))
+  (setq mu4e-view-show-addresses t)
   (setq mu4e-get-mail-command "mbsync -a")
   ;; rename files when moving (needed for mbsync)
   (setq mu4e-change-filenames-when-moving t)
@@ -1476,15 +1480,20 @@ email address."
       (make-mu4e-context
        :name ,id
        :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
-       :match-func (lambda (_) (string-equal ,id (and (mu4e-context-current)
-                                                 (mu4e-context-name (mu4e-context-current)))))
+       :match-func (lambda (msg)
+                     (when msg
+                       (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
        :vars '((user-mail-address . ,mail)
                (user-full-name . ,name)
-               (mu4e-inbox-folder . ,(concat "/" id "/INBOX"))
                (mu4e-sent-folder . ,(concat "/" id "/sent"))
                (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
                (mu4e-trash-folder . ,(concat "/" id "/trash"))
-               (mu4e-refile-folder . ,(concat "/" id "/archive"))))
+               (mu4e-refile-folder . ,(concat "/" id "/archive"))
+               (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
+                                          (,(concat "/" id "/archive") . ?a)
+                                          (,(concat "/" id "/sent") . ?s)
+                                          (,(concat "/" id "/drafts") . ?d)
+                                          (,(concat "/" id "/trash") . ?t)))))
       t))
 
   (setq message-kill-buffer-on-exit t)
