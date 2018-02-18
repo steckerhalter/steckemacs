@@ -1436,18 +1436,16 @@ KEYS should be provided as with `kbd'."
   ;; use imagemagick, if available
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
+  (setq mu4e-confirm-quit nil)
   (setq mu4e-update-interval 60)
   (setq mu4e-auto-retrieve-keys t)
   (setq mu4e-headers-leave-behavior 'apply)
   (setq mu4e-headers-visible-lines 20)
   (setq mu4e-hide-index-messages t)
   (setq mu4e-maildir (expand-file-name "~/Maildir"))
-  (setq mu4e-get-mail-command "mbsync gmail")
+  (setq mu4e-get-mail-command "mbsync -a")
   ;; rename files when moving (needed for mbsync)
   (setq mu4e-change-filenames-when-moving t)
-  ;; set up queue for offline email (use mu mkdir  ~/Maildir/queue to set up first)
-  (setq smtpmail-queue-mail nil  ;; start in normal mode
-        smtpmail-queue-dir   "~/Maildir/queue/cur")
 
   (add-hook 'mu4e-headers-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
   (add-hook 'mu4e-view-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
@@ -1468,6 +1466,21 @@ KEYS should be provided as with `kbd'."
     (interactive)
     (mu4e-headers-mark-all-unread-read)
     (mu4e-mark-execute-all t))
+
+  (defmacro mu4e-add-context (id name mail)
+       `(add-to-list 'mu4e-contexts
+                     (make-mu4e-context
+                      :name ,id
+                      :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
+                      :match-func (lambda (_) (string-equal ,id (and (mu4e-context-current)
+                                                                (mu4e-context-name (mu4e-context-current)))))
+                      :vars '((user-mail-address . ,mail)
+                              (user-full-name . ,name)
+                              (mu4e-inbox-folder . ,(concat "/" id "/INBOX"))
+                              (mu4e-sent-folder . ,(concat "/" id "/sent"))
+                              (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
+                              (mu4e-trash-folder . ,(concat "/" id "/trash"))
+                              (mu4e-refile-folder . ,(concat "/" id "/archive"))))))
 
   (setq message-kill-buffer-on-exit t)
   :config (use-package org-mu4e))
