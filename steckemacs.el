@@ -1770,6 +1770,12 @@ Pass symbol-name to the function DOC-FUNCTION."
   :demand
   :config (shell-switcher-mode 1))
 
+;;;; shr
+(use-package shr
+  :custom
+  ;; increase contrast between similar colors
+  (shr-color-visible-luminance-min 60))
+
 ;;;; smart-mode-line
 ;; A color coded smart mode-line.
 (use-package smart-mode-line
