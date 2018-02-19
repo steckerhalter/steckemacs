@@ -1500,7 +1500,20 @@ email address."
        (add-to-list 'mu4e-user-mail-address-list ,mail)))
 
   (setq message-kill-buffer-on-exit t)
-  :config (use-package org-mu4e))
+
+  :config
+
+  ;; Support for links to mu4e messages/queries from withinorg-mode,
+  ;; and for writing message in org-mode, sending them as rich-text
+  (use-package org-mu4e)
+
+  ;; Helm sources for searching emails and contacts
+  (use-package helm-mu
+    :quelpa (helm-mu :fetcher github :repo "emacs-helm/helm-mu")
+    :after helm
+    :bind (:map mu4e-main-mode-map ("M-s" . helm-mu)
+                :map mu4e-headers-mode-map ("M-s" . helm-mu)
+                :map mu4e-view-mode-map ("M-s" . helm-mu))))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
