@@ -1181,6 +1181,7 @@ KEYS should be provided as with `kbd'."
      ("SPC ;" (find-file "~/Sync/notes/todo.org"))
      ("SPC /" helm-rg)
      ("SPC 4" mu4e :exit t)
+     ("SPC $" org-mu4e-store-and-capture)
      ("SPC a" helm-apropos)
      ("SPC b" helm-locate-library)
      ("SPC c" customize-group)
@@ -1524,6 +1525,10 @@ email address."
   :bind (:map org-mode-map ("C-c w" . org-cut-special))
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :custom
+  (org-capture-templates
+   '(("t" "Task" entry (file "") "* TODO %?\n %a" :prepend t)
+     ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
+     ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (org-startup-indented t)
   (org-startup-with-inline-images t)
   (org-startup-truncated t)
@@ -1540,6 +1545,8 @@ email address."
   (org-enforce-todo-checkbox-dependencies t)
   (org-enforce-todo-dependencies t)
   (org-speed-commands-user '(("S" . org-schedule)))
+  (org-directory "~/Sync/notes")
+  (org-default-notes-file (expand-file-name "todo.org" org-directory))
   (org-blank-before-new-entry
    '((heading . nil) (plain-list-item . nil)))
 
