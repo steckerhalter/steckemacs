@@ -17,9 +17,7 @@ if ! test -e /usr/local/bin/emacs; then
         git clone --depth=1 git://git.savannah.gnu.org/emacs.git
         cd emacs
         >&2 echo "--- building emacs ---"
-        ./configure &&\
-            make &&\
-            sudo make install
+        make && sudo make install
         sudo apt-get install -y -qq git
     } > /dev/null
 fi
