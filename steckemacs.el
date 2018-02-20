@@ -718,7 +718,7 @@ PREFIX forces the use of `find'."
 
   ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
-    :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired%2b.el")
+    :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
     :defer 1
     :init
     (setq diredp-hide-details-initially-flag nil)
@@ -1496,7 +1496,7 @@ KEYS should be provided as with `kbd'."
     (mu4e-headers-mark-all-unread-read)
     (mu4e-mark-execute-all t))
 
-  (defmacro mu4e-add-context (id name mail)
+  (defmacro mu4e-add-context (id name mail &optional signature)
     "Add a context to `mu4e-contexts'.
 ID is the context name, NAME is the full name and mail is the
 email address."
@@ -1515,6 +1515,7 @@ email address."
                  (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
                  (mu4e-trash-folder . ,(concat "/" id "/trash"))
                  (mu4e-refile-folder . ,(concat "/" id "/archive"))
+                 (mu4e-compose-signature . ,signature)
                  (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
                                             (,(concat "/" id "/archive") . ?a)
                                             (,(concat "/" id "/sent") . ?s)
