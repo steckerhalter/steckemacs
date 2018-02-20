@@ -718,7 +718,7 @@ PREFIX forces the use of `find'."
 
   ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
-    :quelpa (dired+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/dired+.el")
+    :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired%2b.el")
     :defer 1
     :init
     (setq diredp-hide-details-initially-flag nil)
