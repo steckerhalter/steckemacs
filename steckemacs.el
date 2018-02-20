@@ -1118,6 +1118,13 @@ KEYS should be provided as with `kbd'."
             (funcall hydra-curr-body-fn)))
 
   (defmacro hydra-arg (fn &rest plist)
+    "Example: (\"SPC f\" (hydra-arg ff-helm-places 4 hydra-ff) :exit t)
+(defhydra hydra-ff (:color blue :pre (setq hydra-is-helpful t) :post (!/body))
+  \"Firefox\"
+  (\"f\" ff-helm-places \"History\")
+  (\"b\" ff-helm-bookmarks \"Bookmarks\")
+  (\"u\" ff-paste-current-url \"Yank current url\")
+  (\"q\" nil \"quit\"))"
     `(let* ((prefix (prefix-numeric-value current-prefix-arg))
             (hydra (plist-get ',plist prefix)))
        (funcall (or (and hydra
