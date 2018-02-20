@@ -1117,6 +1117,13 @@ KEYS should be provided as with `kbd'."
               (,fn ,@args))
             (funcall hydra-curr-body-fn)))
 
+  (defmacro hydra-arg (fn &rest plist)
+    `(let* ((prefix (prefix-numeric-value current-prefix-arg))
+            (hydra (plist-get ',plist prefix)))
+       (funcall (or (and hydra
+                         (intern (format "%s/body" hydra)))
+                    ',fn))))
+
   (defun !/state (&optional exit)
     ;; TODO: add state to mode-line
     (setq hydra-is-helpful exit)
@@ -1191,7 +1198,8 @@ KEYS should be provided as with `kbd'."
      ("SPC e b" eval-buffer)
      ("SPC e d" toggle-debug-on-error)
      ("SPC E" my-erc-connect)
-     ("SPC f r" revert-buffer)
+     ("SPC f" (hydra-arg ff-helm-places 0 hydra-ff) :exit t)
+     ;; ("SPC f r" revert-buffer)
      ("SPC g" magit-status)
      ("SPC G b" magit-blame)
      ("SPC h r" diff-hl-revert-hunk)
@@ -1238,7 +1246,14 @@ KEYS should be provided as with `kbd'."
      ("9" eval-sexp-fu-eval-sexp-inner-list)
      ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
      ("0" eval-last-sexp)
-     ("<escape>" nil :color blue))))
+     ("<escape>" nil :color blue)))
+
+  (defhydra hydra-ff (:color pink :pre (setq hydra-is-helpful t))
+    "Firefox"
+    ("f" ff-helm-places "History")
+    ("b" ff-helm-bookmarks "Bookmarks")
+    ("u" ff-paste-current-url "Yank current url")
+    ("q" nil "quit" :color blue)))
 
 ;;;; ibuffer
 (use-package ibuffer
