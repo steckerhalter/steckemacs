@@ -1198,13 +1198,9 @@ KEYS should be provided as with `kbd'."
      ("SPC e b" eval-buffer)
      ("SPC e d" toggle-debug-on-error)
      ("SPC E" my-erc-connect)
-     ("SPC f" (hydra-arg ff-helm-places 0 hydra-ff) :exit t)
+     ("SPC f" (hydra-arg ff-helm-places 4 hydra-ff) :exit t)
      ;; ("SPC f r" revert-buffer)
-     ("SPC g" magit-status)
-     ("SPC G b" magit-blame)
-     ("SPC h r" diff-hl-revert-hunk)
-     ("SPC h p" diff-hl-previous-hunk)
-     ("SPC h n" diff-hl-next-hunk)
+     ("SPC g" (hydra-arg magit-status 4 hydra-magit) :exit t)
      ("SPC i i" info)
      ("SPC i I" helm-info)
      ("SPC i r" info-emacs-manual)
@@ -1248,12 +1244,25 @@ KEYS should be provided as with `kbd'."
      ("0" eval-last-sexp)
      ("<escape>" nil :color blue)))
 
-  (defhydra hydra-ff (:color pink :pre (setq hydra-is-helpful t))
+  (defhydra hydra-ff (:color blue :pre (setq hydra-is-helpful t) :post (!/body))
     "Firefox"
     ("f" ff-helm-places "History")
     ("b" ff-helm-bookmarks "Bookmarks")
     ("u" ff-paste-current-url "Yank current url")
-    ("q" nil "quit" :color blue)))
+    ("q" nil "quit"))
+
+  (defhydra hydra-magit (:color blue :pre (setq hydra-is-helpful t) :post (!/body))
+    "Magit"
+    ("g" magit-status "status")
+    ("d" magit-diff "diff")
+    ("l" magit-log-all "log")
+    ("c" magit-checkout "checkout")
+    ("b" magit-blame "blame")
+    ("!" magit-git-command "command")
+    ("$" magit-process "process")
+    ("r" diff-hl-revert-hunk "revert hunk")
+    ("p" diff-hl-previous-hunk "previous hunk")
+    ("n" diff-hl-next-hunk "next hunk")))
 
 ;;;; ibuffer
 (use-package ibuffer
