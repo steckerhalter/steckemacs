@@ -1599,6 +1599,16 @@ email address."
   (add-to-list 'org-structure-template-alist
                '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
 
+;;;;; org-protocol
+  (use-package org-protocol
+    :config
+    (add-to-list 'org-capture-templates
+                 '("p" "Protocol" entry (file+headline "" "capture")
+                   "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?"))
+    (add-to-list 'org-capture-templates
+                 '("L" "Protocol Link" entry (file+headline "" "capture")
+                   "* %? [[%:link][%:description]] \nCaptured On: %U")))
+
 ;;;;; org-agenda
   (use-package org-agenda
     :init
