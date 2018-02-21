@@ -1202,6 +1202,7 @@ KEYS should be provided as with `kbd'."
      ("SPC a m" mastodon)
      ("SPC a M" mastodon-toot)
      ("SPC a h" hackernews)
+     ("SPC a d" daemons)
      ("SPC b r" revert-buffer)
      ("SPC b s" my-sudo-edit)
      ("SPC c" customize-group)
@@ -1783,9 +1784,9 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package rust-mode
   :quelpa (rust-mode :repo rust-lang/rust-mode :fetcher github))
 
-;;;; services
-(use-package services
-  :quelpa (services :fetcher github :repo "cbowdon/services-mode"))
+;;;; daemons
+(use-package daemons
+  :quelpa (daemons :fetcher github :repo "cbowdon/daemons.el"))
 
 ;;;; shell-switcher
 (use-package shell-switcher
