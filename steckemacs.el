@@ -167,6 +167,7 @@ buffer is not visiting a file."
     (interactive)
     (require 'ffap)
     (let* ((input (or
+                   (shr-url-at-point nil)
                    (url-get-url-at-point)
                    (when (eq major-mode 'org-mode)
                      (org-element-property
@@ -1058,7 +1059,7 @@ PREFIX forces the use of `find'."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :config (add-to-list 'helm-google-engines '(searx . "https://search.kosebamse.com/?engines=google&format=json&q=%s"))
+    :config (add-to-list 'helm-google-engines '(searx . "https://searx.prvcy.eu/?engines=google&format=json&q=%s"))
     :demand)
 
   ;; Helm UI wrapper for system package managers.
