@@ -1166,6 +1166,7 @@ KEYS should be provided as with `kbd'."
      ("N" highlight-symbol-next)
      ("o" (kbds "M-v"))
      ("O" (kbds "M-<"))
+     ("p" pophint:do-flexibly)
      ("s" (kbds "C-f"))
      ("r" (kbds "C-n"))
      ("t" back-button-local-backward)
@@ -1196,7 +1197,8 @@ KEYS should be provided as with `kbd'."
      ("SPC ;" (find-file "~/Sync/notes/todo.org"))
      ("SPC /" helm-rg)
      ("SPC 4" mu4e :exit t)
-     ("SPC $" org-mu4e-store-and-capture)
+     ("SPC $ l" org-mu4e-store-and-capture)
+     ("SPC $ c" mu4e-compose-new)
      ("SPC a e" my-erc-connect)
      ("SPC a f" elfeed)
      ("SPC a m" mastodon)
@@ -1716,6 +1718,11 @@ email address."
     (php-eldoc-enable))
 
   :hook (php-mode . setup-php-mode))
+
+;;;; pophint
+;; Provide navigation using pop-up tips, like Firefox's Vimperator Hint Mode
+(use-package pophint
+  :quelpa (pophint :repo "aki2o/emacs-pophint" :fetcher github))
 
 ;;;; pos-tip
 ;; Show tooltip at point
