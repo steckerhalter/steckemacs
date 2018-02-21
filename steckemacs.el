@@ -791,6 +791,9 @@ PREFIX forces the use of `find'."
   ("<XF86AudioPlay>" . emms-pause)
   ("<XF86AudioPrev>" . emms-previous)
   ("<XF86AudioNext>" . emms-next)
+  ("S-<XF86AudioPlay>" . emms-toggle-repeat-track)
+  ("S-<XF86AudioPrev>" . emms-seek-backward)
+  ("S-<XF86AudioNext>" . emms-seek-forward)
   :config
   (use-package emms-setup
     :config
@@ -1217,7 +1220,7 @@ KEYS should be provided as with `kbd'."
      ("SPC f" ff-helm-places)
      ("SPC F b" ff-helm-bookmarks)
      ("SPC F u" ff-paste-current-url)
-     ("SPC g" magit-status)
+     ("SPC g" magit-status :exit t)
      ("SPC G l" magit-log-all)
      ("SPC G b" magit-blame)
      ("SPC G r" diff-hl-revert-hunk)
