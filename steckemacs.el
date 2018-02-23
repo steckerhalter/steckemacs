@@ -1481,6 +1481,7 @@ KEYS should be provided as with `kbd'."
   (setq mu4e-headers-visible-lines 20)
   (setq mu4e-hide-index-messages t)
   (setq mu4e-view-show-addresses t)
+  (setq mail-user-agent 'mu4e-user-agent)
   (setq mu4e-get-mail-command "mbsync -a")
   ;; rename files when moving (needed for mbsync)
   (setq mu4e-change-filenames-when-moving t)
@@ -1606,6 +1607,7 @@ email address."
 
 ;;;;; org-protocol
   (use-package org-protocol
+    :demand
     :config
     (add-to-list 'org-capture-templates
                  '("p" "Protocol" entry (file "")
