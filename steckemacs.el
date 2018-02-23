@@ -827,6 +827,7 @@ PREFIX forces the use of `find'."
   (setq erc-server-send-ping-interval 45)
   (setq erc-server-send-ping-timeout 180)
   (setq erc-server-reconnect-timeout 60)
+  (setq erc-join-buffer 'window-noselect)
   (erc-track-mode t)
   (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
                                   "324" "329" "332" "333" "353" "477"))
@@ -1211,6 +1212,7 @@ KEYS should be provided as with `kbd'."
      ("SPC a d" daemons)
      ("SPC b r" revert-buffer)
      ("SPC b s" my-sudo-edit)
+     ("SPC b i" (hydra-resume iedit-mode) :exit t)
      ("SPC c" customize-group)
      ("SPC C" zenity-cp-color-at-point-dwim)
      ("SPC d" (hydra-resume deft) :exit t)
@@ -1571,9 +1573,9 @@ email address."
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :custom
   (org-capture-templates
-   '(("t" "Task" entry (file "") "* TODO %?\n %a" :prepend t)
-     ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
-     ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
+   '(("t" "Task" entry (file+headline "") "* TODO %?\n %a\n" :prepend t)
+     ("s" "Simple Task" entry (file+headline "") "* TODO %?\n" :prepend t)
+     ("l" "Link" entry (file+headline "") "* TODO %a %T\n" :prepend t)))
   (org-startup-indented t)
   (org-startup-with-inline-images t)
   (org-startup-truncated t)
@@ -1606,11 +1608,11 @@ email address."
   (use-package org-protocol
     :config
     (add-to-list 'org-capture-templates
-                 '("p" "Protocol" entry (file+headline "" "capture")
-                   "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?"))
+                 '("p" "Protocol" entry (file "")
+                   "* TODO %?[[%:link][%:description]] %U\n%i\n" :prepend t))
     (add-to-list 'org-capture-templates
-                 '("L" "Protocol Link" entry (file+headline "" "capture")
-                   "* %? [[%:link][%:description]] \nCaptured On: %U")))
+                 '("L" "Protocol Link" entry (file "")
+                   "* TODO %?[[%:link][%:description]] %U\n" :prepend t)))
 
 ;;;;; org-agenda
   (use-package org-agenda
@@ -1711,9 +1713,9 @@ email address."
         (progn
           (goto-char end)
           (insert "));")
-          (goto-char start)
-          (insert "die(var_dump("))
-      (insert "die(var_dump());")))
+     (goto-char start)
+     (insert "die(var_dump("))
+   (insert "die(var_dump());")))
 
   :config
   (use-package company-php
