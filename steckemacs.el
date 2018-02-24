@@ -1574,9 +1574,9 @@ email address."
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :custom
   (org-capture-templates
-   '(("t" "Task" entry (file+headline "") "* TODO %?\n %a\n" :prepend t)
-     ("s" "Simple Task" entry (file+headline "") "* TODO %?\n" :prepend t)
-     ("l" "Link" entry (file+headline "") "* TODO %a %T\n" :prepend t)))
+   '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
+     ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
+     ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (org-startup-indented t)
   (org-startup-with-inline-images t)
   (org-startup-truncated t)
