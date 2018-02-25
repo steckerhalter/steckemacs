@@ -296,8 +296,8 @@ KEYS should be provided as with `kbd'."
      ("SPC $ c" mu4e-compose-new)
      ("SPC a e" my-erc-connect)
      ("SPC a f" elfeed)
-     ("SPC a m" mastodon)
-     ("SPC a M" mastodon-toot)
+     ("SPC a M" mastodon)
+     ("SPC a m" mastodon-toot)
      ("SPC a h" hackernews)
      ("SPC a d" daemons)
      ("SPC b r" revert-buffer)
@@ -361,7 +361,7 @@ KEYS should be provided as with `kbd'."
      ("9" eval-sexp-fu-eval-sexp-inner-list)
      ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
      ("0" eval-last-sexp)
-     ("<escape>" nil :color blue)))))
+     ("<escape>" nil :color blue))))
 
 ;;; settings
 (use-package steckemacs-settings
@@ -963,7 +963,7 @@ PREFIX forces the use of `find'."
   ("<XF86AudioPlay>" . emms-pause)
   ("<XF86AudioPrev>" . emms-previous)
   ("<XF86AudioNext>" . emms-next)
-  ("S-<XF86AudioPlay>" . emms-toggle-repeat-track)
+  ("S-<XF86AudioPause>" . emms-toggle-repeat-track)
   ("S-<XF86AudioPrev>" . emms-seek-backward)
   ("S-<XF86AudioNext>" . emms-seek-forward)
   :config
