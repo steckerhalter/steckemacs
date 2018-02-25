@@ -1162,6 +1162,7 @@ KEYS should be provided as with `kbd'."
      ("e" (kbds "C-v"))
      ("E" (kbds "M->"))
      ("f" (hydra-resume find-file) :exit t)
+     ("F" (hydra-resume project-find-file) :exit t)
      ("g" (kbds "C-g"))
      ("h" (kbds "C-b"))
      ("j" ipretty-last-sexp)
