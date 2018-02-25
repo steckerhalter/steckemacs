@@ -187,9 +187,12 @@ buffer is not visiting a file."
   ("<f7>" . my-toggle-window-split)
   ("C-8" . my-split-window)
   ("<f2>" . split-window-vertically)
+  ("S-<f2>" . make-frame-command)
   ("<f3>" . split-window-horizontally)
   ("<f4>" . delete-window)
-  ("<f5>" . delete-other-windows))
+  ("S-<f4>" . delete-frame)
+  ("<f5>" . delete-other-windows)
+  ("S-<f5>" . delete-other-frames))
 
 ;;; settings
 (use-package steckemacs-settings
