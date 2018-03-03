@@ -1,6 +1,6 @@
 ;;; steckemacs.el --- steckemacs emacs configuration
 
-;; Copyright 2017, Steckerhalter
+;; Copyright 2018, Steckerhalter
 
 ;; Author: steckerhalter
 ;; Keywords: emacs configuration init
@@ -243,30 +243,31 @@ KEYS should be provided as with `kbd'."
                        :pre (!/state)
                        :post (!/state t))
      ;; edit
-     ("a" (kbds "C-a"))
-     ("A" (kbds "M-m"))
-     ("c" (kbds "C-p"))
+     ("o" (kbds "C-a"))
+     ("O" (kbds "M-m"))
+     ("e" (kbds "C-e"))
+     ("," (kbds "C-p"))
+     ("." (kbds "C-n"))
+     ("a" (kbds "C-b"))
+     ("u" (kbds "C-f"))
+     ("c" (kbds "C-v"))
+     ("r" (kbds "M-v"))
+
      ("d" (kbds "C-d"))
      ("D" (kbds "M-d"))
-     ("e" (kbds "C-v"))
      ("E" (kbds "M->"))
      ("f" (hydra-resume find-file) :exit t)
      ("F" (hydra-resume project-find-file) :exit t)
      ("g" (kbds "C-g"))
-     ("h" (kbds "C-b"))
      ("j" ipretty-last-sexp)
      ("J" ipretty-last-sexp-other-buffer)
      ("k" (kbds "C-k"))
      ("n" back-button-local-forward)
      ("N" highlight-symbol-next)
-     ("o" (kbds "M-v"))
      ("O" (kbds "M-<"))
      ("p" pophint:do-flexibly)
-     ("s" (kbds "C-f"))
-     ("r" (kbds "C-n"))
      ("t" back-button-local-backward)
      ("T" highlight-symbol-prev)
-     ("u" (kbds "C-e"))
      ("x" helm-M-x)
      ("/" undo)
      ;; mark
@@ -282,8 +283,8 @@ KEYS should be provided as with `kbd'."
      ;; windows
      ("=" default-text-scale-increase)
      ("+" default-text-scale-decrease)
-     ("," my-select-prev-window)
-     ("." my-select-next-window)
+     ("h" my-select-prev-window)
+     ("s" my-select-next-window)
      ;; commands
      ("SPC SPC" save-buffer)
      ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
@@ -330,7 +331,8 @@ KEYS should be provided as with `kbd'."
      ("SPC k" kill-emacs)
      ("SPC m" man)
      ("SPC n" my-org-agenda)
-     ("SPC o" org-open-at-point)
+     ("SPC o o" org-open-at-point)
+     ("SPC o t" (org-insert-time-stamp (current-time) t t))
      ("SPC p l" list-packages)
      ("SPC p s" helm-system-packages)
      ("SPC p d" my-insert-package-desc-summary)
@@ -1235,7 +1237,7 @@ PREFIX forces the use of `find'."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :config (add-to-list 'helm-google-engines '(searx . "https://searx.prvcy.eu/?engines=google&format=json&q=%s"))
+    :config (add-to-list 'helm-google-engines '(searx . "https://openworlds.info/?engines=google&format=json&q=%s"))
     :demand)
 
   ;; Helm UI wrapper for system package managers.
