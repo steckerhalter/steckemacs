@@ -55,6 +55,12 @@
   ;; If non-nil, extract docstrings from lambdas, closures and keymaps if possible.
   (setq bind-key-describe-special-forms t)
 
+  (defun my-keyboard-translations (&optional frame)
+    (with-selected-frame (or frame (selected-frame))
+      (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
+      (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
+  (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
+
 ;;;; personal functions
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
@@ -283,8 +289,8 @@ KEYS should be provided as with `kbd'."
      ;; windows
      ("=" default-text-scale-increase)
      ("+" default-text-scale-decrease)
-     ("h" my-select-prev-window)
-     ("s" my-select-next-window)
+     ("s" my-select-prev-window)
+     ("h" my-select-next-window)
      ;; commands
      ("SPC SPC" save-buffer)
      ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
@@ -1237,7 +1243,7 @@ PREFIX forces the use of `find'."
   ;; Emacs Helm Interface for quick Google searches
   (use-package helm-google
     :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :config (add-to-list 'helm-google-engines '(searx . "https://openworlds.info/?engines=google&format=json&q=%s"))
+    :config (add-to-list 'helm-google-engines '(searx . "https://openworlds.info/?engines=startpage&format=json&q=%s"))
     :demand)
 
   ;; Helm UI wrapper for system package managers.
