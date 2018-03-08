@@ -1519,33 +1519,50 @@ PREFIX forces the use of `find'."
     (mu4e-headers-mark-all-unread-read)
     (mu4e-mark-execute-all t))
 
-  (defmacro mu4e-add-context (id name mail &optional signature)
-    "Add a context to `mu4e-contexts'.
-ID is the context name, NAME is the full name and mail is the
-email address."
-    `(progn
-       (add-to-list
-        'mu4e-contexts
-        (make-mu4e-context
-         :name ,id
-         :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
-         :match-func (lambda (msg)
-                       (when msg
-                         (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
-         :vars '((user-mail-address . ,mail)
-                 (user-full-name . ,name)
-                 (mu4e-sent-folder . ,(concat "/" id "/sent"))
-                 (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
-                 (mu4e-trash-folder . ,(concat "/" id "/trash"))
-                 (mu4e-refile-folder . ,(concat "/" id "/archive"))
-                 (mu4e-compose-signature . ,signature)
-                 (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
-                                            (,(concat "/" id "/archive") . ?a)
-                                            (,(concat "/" id "/sent") . ?s)
-                                            (,(concat "/" id "/drafts") . ?d)
-                                            (,(concat "/" id "/trash") . ?t)))))
-        t)
-       (add-to-list 'mu4e-user-mail-address-list ,mail)))
+  (defun mu4e-set-contexts (contexts)
+    "Set the `mu4e-contexts'.
+CONTEXTS is a list with elements like this:
+
+(id :name \"full name\" :email \"email\" :signature \"signature\")
+
+`signature' is optional, example:
+
+(work :name \"Ford Prefect\" :email \"ford@galaxy.org\" :signature \"Ford Prefect\\nSubether Quadrant 5\\nEarth\")"
+(setq mu4e-contexts
+      (mapcar (lambda (context)
+                (let* ((id (format "%s" (car context)))
+                       (plist (cdr context))
+                       (name (plist-get plist :name))
+                       (mail (plist-get plist :mail))
+                       (signature (plist-get plist :signature)))
+                  (add-to-list 'mu4e-user-mail-address-list mail)
+                  (eval `(make-mu4e-context
+                          :name ,id
+                          :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
+                          :match-func (lambda (msg)
+                                        (when msg
+                                          (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
+                          :vars '((user-mail-address . ,mail)
+                                  (user-full-name . ,name)
+                                  (mu4e-sent-folder . ,(concat "/" id "/sent"))
+                                  (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
+                                  (mu4e-trash-folder . ,(concat "/" id "/trash"))
+                                  (mu4e-refile-folder . ,(concat "/" id "/archive"))
+                                  (mu4e-compose-signature . ,signature)
+                                  (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
+                                                             (,(concat "/" id "/archive") . ?a)
+                                                             (,(concat "/" id "/sent") . ?s)
+                                                             (,(concat "/" id "/drafts") . ?d)
+                                                             (,(concat "/" id "/trash") . ?t))))))))
+              contexts))
+(add-to-list 'mu4e-bookmarks
+             (make-mu4e-bookmark
+              :name  "Unified Inbox"
+              :query (mapconcat (lambda (context)
+                                  (format "maildir:/%s/INBOX" (car context)))
+                                contexts
+                                " OR ")
+              :key ?b)))
 
   (setq message-kill-buffer-on-exit t)
 
