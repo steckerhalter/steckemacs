@@ -386,7 +386,7 @@ KEYS should be provided as with `kbd'."
      ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
      ("SPC ," pop-tag-mark)
      ("SPC %" (insert "¯\\_(ツ)_/¯"))
-     ("SPC ;" (find-file "~/Sync/notes/todo.org"))
+     ("SPC ;" (find-file my-todo))
      ("SPC /" helm-rg)
      ("SPC 4" mu4e :exit t)
      ("SPC $ l" org-mu4e-store-and-capture)
@@ -1431,6 +1431,7 @@ PREFIX forces the use of `find'."
   (elfeed-set-timeout 36000)
   (setq elfeed-use-curl t)
   (setq elfeed-search-title-max-width 150)
+  (setq elfeed-sort-order 'ascending)
   (elfeed-protocol-enable))
 
 ;;;; iflipb
@@ -1714,7 +1715,7 @@ CONTEXTS is a list with elements like this:
   (org-enforce-todo-dependencies t)
   (org-speed-commands-user '(("S" . org-schedule)))
   (org-directory "~/Sync/notes")
-  (org-default-notes-file (expand-file-name "todo.org" org-directory))
+  (org-default-notes-file my-todo)
   (org-blank-before-new-entry
    '((heading . nil) (plain-list-item . nil)))
 
