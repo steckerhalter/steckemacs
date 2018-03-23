@@ -1732,10 +1732,10 @@ CONTEXTS is a list with elements like this:
     :config
     (add-to-list 'org-capture-templates
                  '("p" "Protocol" entry (file "")
-                   "* TODO %?[[%:link][%:description]] %U\n%i\n" :prepend t))
+                   "* %?[[%:link][%:description]] %U\n%i\n" :prepend t))
     (add-to-list 'org-capture-templates
                  '("L" "Protocol Link" entry (file "")
-                   "* TODO %?[[%:link][%:description]] %U\n" :prepend t)))
+                   "* %?[[%:link][%:description]] %U\n" :prepend t)))
 
 ;;;;; org-agenda
   (use-package org-agenda
