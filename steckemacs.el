@@ -496,7 +496,7 @@ KEYS should be provided as with `kbd'."
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
    custom-file "/tmp/custom-file.el" ;don't pollute the init file and don't `load' the customs but keep them for reference...
-   initial-buffer-choice "~/todo.org")
+   initial-buffer-choice my-todo)
 
   ;; default flags
   (setq-default
