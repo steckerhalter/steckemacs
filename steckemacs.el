@@ -346,9 +346,8 @@ KEYS should be provided as with `kbd'."
      ("." (kbds "C-n"))
      ("a" (kbds "C-b"))
      ("u" (kbds "C-f"))
-     ("c" (kbds "C-v"))
-     ("r" (kbds "M-v"))
-
+     ("C" (kbds "C-v"))
+     ("R" (kbds "M-v"))
      ("d" (kbds "C-d"))
      ("D" (kbds "M-d"))
      ("E" (kbds "M->"))
@@ -367,11 +366,12 @@ KEYS should be provided as with `kbd'."
      ("x" helm-M-x)
      ("/" undo)
      ;; mark
-     ("m" (kbds "C-SPC"))
-     ("w" (kbds "M-w"))
-     ("W" (kbds "C-w"))
-     ("y" (kbds "C-y"))
-     ("M" easy-mark-sexp)
+     ("h" (kbds "C-SPC"))
+     ("H" easy-mark-sexp)
+     ("M-h" mark-whole-buffer)
+     ("s" (kbds "M-w"))
+     ("S" (kbds "C-w"))
+     ("y" yank)
      ("Y" yank-pop)
      ;; buffers
      ("l" recenter-top-bottom)
@@ -379,8 +379,8 @@ KEYS should be provided as with `kbd'."
      ;; windows
      ("=" default-text-scale-increase)
      ("+" default-text-scale-decrease)
-     ("s" my-select-prev-window)
-     ("h" my-select-next-window)
+     ("c" my-select-prev-window)
+     ("r" my-select-next-window)
      ;; commands
      ("SPC SPC" save-buffer)
      ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
@@ -1736,6 +1736,13 @@ CONTEXTS is a list with elements like this:
     (add-to-list 'org-capture-templates
                  '("L" "Protocol Link" entry (file "")
                    "* %?[[%:link][%:description]] %U\n" :prepend t)))
+
+;;;;; org-protocol-capture-html
+  (use-package org-protocol-capture-html
+    :quelpa (org-protocol-capture-html :fetcher github :repo "alphapapa/org-protocol-capture-html")
+    :config (add-to-list 'org-capture-templates
+                         '("w" "Web site" entry (file "")
+                           "* %a :website:\n\n%U %?\n\n%:initial")))
 
 ;;;;; org-agenda
   (use-package org-agenda
