@@ -429,6 +429,7 @@ KEYS should be provided as with `kbd'."
      ("SPC n" my-org-agenda)
      ("SPC o o" org-open-at-point)
      ("SPC o t" (org-insert-time-stamp (current-time) t t))
+     ("SPC o i" org-toggle-inline-images)
      ("SPC p l" list-packages)
      ("SPC p s" helm-system-packages)
      ("SPC p d" my-insert-package-desc-summary)
@@ -1425,7 +1426,7 @@ PREFIX forces the use of `find'."
 ;;;; elfeed-protocol
 ;; Provide owncloud/ttrss protocols for elfeed
 (use-package elfeed-protocol
-  :quelpa (elfeed-protocol :repo fasheng/elfeed-protocol :fetcher github)
+  :quelpa (elfeed-protocol :repo "fasheng/elfeed-protocol" :fetcher github)
   :demand
   :config
   (elfeed-set-timeout 36000)
