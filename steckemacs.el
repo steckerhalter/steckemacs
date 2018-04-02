@@ -1563,7 +1563,8 @@ PREFIX forces the use of `find'."
 
 ;;;; mastodon
 (use-package mastodon
-  :quelpa (mastodon :fetcher github :repo "jdenen/mastodon.el" :files ("lisp/*.el")))
+  :quelpa (mastodon :fetcher github :repo "jdenen/mastodon.el" :branch "develop" :files ("lisp/*.el"))
+  :custom (mastodon-auth-source-file "~/.authinfo.gpg"))
 
 ;;;; monky
 (use-package monky
@@ -1717,6 +1718,7 @@ CONTEXTS is a list with elements like this:
   (org-speed-commands-user '(("S" . org-schedule)))
   (org-directory "~/Sync/notes")
   (org-default-notes-file my-todo)
+  (org-image-actual-width nil)
   (org-blank-before-new-entry
    '((heading . nil) (plain-list-item . nil)))
 
