@@ -1067,9 +1067,9 @@ PREFIX forces the use of `find'."
   ("S-<XF86AudioNext>" . emms-seek-forward)
   :config
   (use-package emms-setup
+    :custom (emms-player-list '(emms-player-mpv))
     :config
-    (emms-standard)
-    (emms-default-players)))
+    (emms-standard)))
 
 ;;;; emojify
 (use-package emojify
