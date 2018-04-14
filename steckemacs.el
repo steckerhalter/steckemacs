@@ -460,7 +460,7 @@ KEYS should be provided as with `kbd'."
      ("9" eval-sexp-fu-eval-sexp-inner-list)
      ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
      ("0" eval-last-sexp)
-     ("<escape>" nil :color blue))))
+     ("<menu>" nil :color blue))))
 
 ;;; settings
 (use-package steckemacs-settings
