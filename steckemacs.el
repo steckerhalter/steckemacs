@@ -334,7 +334,7 @@ KEYS should be provided as with `kbd'."
       (setq which-key-show-docstrings nil)))
 
   (global-set-key
-   (kbd "<escape>")
+   (kbd "<menu>")
    (defhydra ! (:color pink
                        :pre (!/state)
                        :post (!/state t))
