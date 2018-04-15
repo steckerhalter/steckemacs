@@ -2019,11 +2019,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package visual-regexp
   :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github))
 
-;;;; vkill
-;; view and kill Unix processes from within Emacs
-(use-package vkill
-  :quelpa (vkill :fetcher github :repo "emacsmirror/vkill"))
-
 ;;;; vlf
 ;; View Large Files
 (use-package vlf
