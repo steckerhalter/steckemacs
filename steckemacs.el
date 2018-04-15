@@ -308,7 +308,8 @@ KEYS should be provided as with `kbd'."
             (funcall hydra-curr-body-fn)))
 
   (defmacro hydra-arg (fn &rest plist)
-    "Execute FN or with arg the function given in the PLIST."
+    "Execute FN or with arg the function given in the PLIST.
+PLIST are pairs of the numerical argument and function, for example to call `find-file' with C-u, use: 4 find-file"
     ;; Example:
     ;; ("SPC f" (hydra-arg ff-helm-places 4 hydra-ff) :exit t)
     ;; (defhydra hydra-ff (:color blue :pre (setq hydra-is-helpful t) :post (!/body))
@@ -318,10 +319,8 @@ KEYS should be provided as with `kbd'."
     ;;   ("u" ff-paste-current-url "Yank current url")
     ;;   ("q" nil "quit"))
     `(let* ((prefix (prefix-numeric-value current-prefix-arg))
-            (hydra (plist-get ',plist prefix)))
-       (funcall (or (and hydra
-                         (intern (format "%s/body" hydra)))
-                    ',fn))))
+            (fnp (plist-get ',plist prefix)))
+       (funcall (or fnp ',fn))))
 
   (defun !/state (&optional exit)
     ;; TODO: add state to mode-line
@@ -371,6 +370,7 @@ KEYS should be provided as with `kbd'."
      ("M-T" mark-whole-buffer)
      ("T" (kbds "M-w"))
      ("n" (kbds "C-w"))
+     ("N" org-cut-special)
      ("y" yank)
      ("Y" yank-pop)
      ;; buffers
@@ -1693,7 +1693,6 @@ CONTEXTS is a list with elements like this:
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
-  :bind (:map org-mode-map ("C-c w" . org-cut-special))
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :custom
   (org-capture-templates
