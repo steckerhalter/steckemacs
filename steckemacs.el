@@ -461,7 +461,6 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("9" eval-sexp-fu-eval-sexp-inner-list)
     ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
     ("0" eval-last-sexp)
-    ("<f11>" writeroom-mode)
     ("M-SPC" nil :color blue)
     ("<menu>" nil :color blue)))
 
@@ -2052,12 +2051,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   (which-key-max-description-length nil)
   (which-key-side-window-max-height 0.75)
   :config (which-key-mode))
-
-;;;; writeroom-mode
-;; Minor mode for distraction-free writing
-(use-package writeroom-mode
-  :quelpa (writeroom-mode :fetcher github :repo "joostkremers/writeroom-mode")
-  :init (setq writeroom-extra-line-spacing 5))
 
 ;;;; zenity-color-picker
 (use-package zenity-color-picker
