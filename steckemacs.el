@@ -4,7 +4,7 @@
 
 ;; Author: steckerhalter
 ;; Keywords: emacs configuration init
-;; URL: https://github.com/steckerhalter/steckemacs.el
+;; URL: https://framagit.org/steckerhalter/steckemacs.el
 
 ;; This file is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -908,6 +908,14 @@ line instead."
    custom-unlispify-menu-entries nil
    ;;M-x customize should not cripple tags
    custom-unlispify-tag-names nil))
+
+;;;; darkroom
+(use-package darkroom
+  :quelpa (darkroom :fetcher github :repo "joaotavora/darkroom")
+  :bind ("S-<f11>" . darkroom-tentative-mode)
+  :custom
+  (darkroom-text-scale-increase 1)
+  (darkroom-margins-if-failed-guess 0.3))
 
 ;;;; default-text-scale
 (use-package default-text-scale
