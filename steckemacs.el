@@ -1721,7 +1721,6 @@ CONTEXTS is a list with elements like this:
   (org-refile-targets '((org-agenda-files :maxlevel . 3)))
   (org-refile-use-outline-path 'file)
   (org-html-postamble nil)
-  (org-agenda-dim-blocked-tasks t)
   (org-enforce-todo-checkbox-dependencies t)
   (org-enforce-todo-dependencies t)
   (org-speed-commands-user '(("S" . org-schedule)))
@@ -1765,7 +1764,8 @@ CONTEXTS is a list with elements like this:
     (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
     (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
     (setq org-agenda-dim-blocked-tasks t)
-    (setq org-agenda-todo-ignore-scheduled 'future) ;hide future TODOs
+    (setq org-agenda-todo-ignore-scheduled 'all) ;hide scheduled TODOs
+    (setq org-agenda-dim-blocked-tasks t)
 
     :config
     ;; add state to the sorting strategy of todo
