@@ -1728,6 +1728,7 @@ CONTEXTS is a list with elements like this:
   (org-directory "~/Sync/notes")
   (org-default-notes-file my-todo)
   (org-image-actual-width nil)
+  (org-log-repeat nil)
   (org-blank-before-new-entry
    '((heading . nil) (plain-list-item . nil)))
 
@@ -1764,6 +1765,7 @@ CONTEXTS is a list with elements like this:
     (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
     (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
     (setq org-agenda-dim-blocked-tasks t)
+    (setq org-agenda-todo-ignore-scheduled 'future) ;hide future TODOs
 
     :config
     ;; add state to the sorting strategy of todo
