@@ -1722,7 +1722,6 @@ CONTEXTS is a list with elements like this:
   (org-refile-use-outline-path 'file)
   (org-html-postamble nil)
   (org-enforce-todo-checkbox-dependencies t)
-  (org-enforce-todo-dependencies t)
   (org-speed-commands-user '(("S" . org-schedule)))
   (org-directory "~/Sync/notes")
   (org-default-notes-file my-todo)
@@ -1766,6 +1765,7 @@ CONTEXTS is a list with elements like this:
     (setq org-agenda-dim-blocked-tasks t)
     (setq org-agenda-todo-ignore-scheduled 'all) ;hide scheduled TODOs
     (setq org-agenda-dim-blocked-tasks t)
+    (setq org-agenda-show-all-dates nil)
 
     :config
     ;; add state to the sorting strategy of todo
