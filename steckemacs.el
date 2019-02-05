@@ -426,6 +426,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("SPC h p" helm-info-at-point)
     ("SPC j" dired-jump)
     ("SPC k" kill-emacs)
+    ("SPC l" (rename-file (org-latex-export-to-pdf nil t) (concat "~/ownCloud/bridgemate/chords/" (org-entry-get nil "ITEM") ".pdf") t))
     ("SPC m" man)
     ("SPC n" my-org-agenda)
     ("SPC o o" org-open-at-point)
@@ -914,8 +915,8 @@ line instead."
   :quelpa (darkroom :fetcher github :repo "joaotavora/darkroom")
   :bind ("S-<f11>" . darkroom-tentative-mode)
   :custom
-  (darkroom-text-scale-increase 1)
-  (darkroom-margins-if-failed-guess 0.3))
+  (darkroom-text-scale-increase 3)
+  (darkroom-margins-if-failed-guess 0.1))
 
 ;;;; default-text-scale
 (use-package default-text-scale
