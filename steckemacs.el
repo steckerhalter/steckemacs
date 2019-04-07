@@ -1113,7 +1113,7 @@ PREFIX forces the use of `find'."
 (use-package frame
   :config
   ;; maximize emacs
-  (modify-all-frames-parameters '((fullscreen . maximized)))
+  (modify-all-frames-parameters '((fullscreen . fullboth)))
 
   (defun my-after-make-frame (&optional frame)
     (with-selected-frame (or frame (selected-frame))
@@ -1603,11 +1603,6 @@ PREFIX forces the use of `find'."
     (php-eldoc-enable))
 
   :hook (php-mode . setup-php-mode))
-
-;;;; pophint
-;; Provide navigation using pop-up tips, like Firefox's Vimperator Hint Mode
-(use-package pophint
-  :quelpa (pophint :repo "aki2o/emacs-pophint" :fetcher github))
 
 ;;;; pos-tip
 ;; Show tooltip at point
