@@ -786,12 +786,6 @@ line instead."
            :repo "proofit404/company-anaconda")
   :config (add-to-list 'company-backends 'company-anaconda))
 
-;;;; company-ansible
-;; A company back-end for ansible
-(use-package company-ansible
-  :quelpa (company-ansible :repo "krzysztof-magosa/company-ansible" :fetcher github)
-  :config (add-to-list 'company-backends 'company-ansible))
-
 ;;;; company-dict
 ;; A backend that emulates ac-source-dictionary
 (use-package company-dict
@@ -932,22 +926,6 @@ PREFIX forces the use of `find'."
 (use-package discover-my-major
   :quelpa (discover-my-major :fetcher git :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 
-;;;; drag-stuff
-;; Drag stuff (lines, words, region, etc...) around
-(use-package drag-stuff
-  :quelpa (drag-stuff :repo "rejeep/drag-stuff.el" :fetcher github)
-  :diminish
-  :init (setq drag-stuff-modifier '(ctrl shift))
-  :config
-  (drag-stuff-global-mode 1)
-  (drag-stuff-define-keys))
-
-;;;; dokuwiki-mode
-;; Major mode for DokuWiki document
-(use-package dokuwiki-mode
-  :quelpa (dokuwiki-mode :fetcher github :repo "kai2nenobu/emacs-dokuwiki-mode")
-  :mode "\\.dokuwiki$")
-
 ;;;; easy-kill
 ;; make marking and killing easier
 (use-package easy-kill
@@ -998,12 +976,6 @@ PREFIX forces the use of `find'."
     :custom (emms-player-list '(emms-player-mpv))
     :config
     (emms-standard)))
-
-;;;; emojify
-(use-package emojify
-  :quelpa (emojify :fetcher github :repo "iqbalansari/emacs-emojify" :files (:defaults "data" "images"))
-  :custom (emojify-download-emojis-p nil)
-  :config (global-emojify-mode 1))
 
 ;;;; erc
 ;; Emacs ERC client settings
@@ -1125,25 +1097,7 @@ PREFIX forces the use of `find'."
   :config
   (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query="))
 
-;;;; fancy-narrow
-;; narrow-to-region with more eye candy.
-(use-package fancy-narrow
-  :quelpa (fancy-narrow :repo Malabarba/fancy-narrow :fetcher github)
-  :diminish
-  :config (fancy-narrow-mode))
-
-;;;; fasd
-;; find previous files/dirs quickly (uses `fasd' shell script)
-(use-package fasd
-  :quelpa (fasd :repo "steckerhalter/emacs-fasd" :fetcher github)
-  :config
-  (setq fasd-completing-read-function 'helm--completing-read-default)
-  (global-fasd-mode 1))
-
-;;;; ff
-(use-package ff
-  :quelpa (ff :fetcher github :repo "steckerhalter/ff.el"))
-
+;;;; flymake
 (use-package flymake
   :diminish
   :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flymake-mode-on)
@@ -1159,7 +1113,7 @@ PREFIX forces the use of `find'."
 (use-package frame
   :config
   ;; maximize emacs
-  (modify-all-frames-parameters '((fullscreen . fullboth)))
+  (modify-all-frames-parameters '((fullscreen . maximized)))
 
   (defun my-after-make-frame (&optional frame)
     (with-selected-frame (or frame (selected-frame))
@@ -1188,10 +1142,6 @@ PREFIX forces the use of `find'."
 ;; step through historic versions of git controlled file
 (use-package git-timemachine
   :quelpa (git-timemachine :fetcher github :repo "pidu/git-timemachine"))
-;;;; go-mode
-(use-package git-timemachine
-  :quelpa (go-mode :repo "dominikh/go-mode.el" :fetcher github :files ("go-mode.el")))
-
 ;;;; google-translate
 ;; Emacs interface to Google's translation service
 (use-package google-translate
@@ -1205,19 +1155,6 @@ PREFIX forces the use of `find'."
 (use-package grandshell-theme
   :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
   :config (load-theme 'grandshell t))
-
-;;;; hackernews
-;; Hacker News Client for Emacs
-(use-package hackernews
-  :quelpa (hackernews :fetcher github :repo "clarete/hackernews.el")
-  :bind (:map hackernews-mode-map ("o" . hackernews-browse-other-window))
-  :init
-  (defun hackernews-browse-other-window ()
-    "Open URL of button under point within Emacs in other window."
-    (interactive)
-    (let ((url (button-get (button-at (point)) 'shr-url)))
-      (pop-to-buffer "*eww*")
-      (eww url))))
 
 ;;;; helm
 ;; fancy candidate selection framework
@@ -1351,18 +1288,6 @@ PREFIX forces the use of `find'."
             (lambda ()
               (turn-on-eldoc-mode))))
 
-;;;; elfeed-protocol
-;; Provide owncloud/ttrss protocols for elfeed
-(use-package elfeed-protocol
-  :quelpa (elfeed-protocol :repo "fasheng/elfeed-protocol" :fetcher github)
-  :demand
-  :config
-  (elfeed-set-timeout 36000)
-  (setq elfeed-use-curl t)
-  (setq elfeed-search-title-max-width 150)
-  (setq elfeed-sort-order 'ascending)
-  (elfeed-protocol-enable))
-
 ;;;; iflipb
 ;; interactively flip between recently visited buffers
 (use-package iflipb
@@ -1489,117 +1414,10 @@ PREFIX forces the use of `find'."
   (advice-add 'markdown-convert-wiki-link-to-filename
               :around 'my-markdown-convert-wiki-link))
 
-;;;; mastodon
-(use-package mastodon
-  :quelpa (mastodon :fetcher github :repo "jdenen/mastodon.el" :branch "develop" :files ("lisp/*.el"))
-  :custom (mastodon-auth-source-file "~/.authinfo.gpg"))
-
 ;;;; monky
 (use-package monky
   :quelpa (monky :fetcher github :repo ananthakumaran/monky :files ("*.el" "*.info" "style"))
   :init (setq monky-process-type 'cmdserver))
-
-;;;; mu4e
-(use-package mu4e
-  :when (locate-library "mu4e")
-  :init
-  ;; enable inline images
-  (setq mu4e-view-show-images t)
-  ;; use imagemagick, if available
-  (when (fboundp 'imagemagick-register-types)
-    (imagemagick-register-types))
-  (setq mu4e-confirm-quit nil)
-  (setq mu4e-update-interval 60)
-  (setq mu4e-auto-retrieve-keys t)
-  (setq mu4e-headers-leave-behavior 'apply)
-  (setq mu4e-headers-visible-lines 20)
-  (setq mu4e-hide-index-messages t)
-  (setq mu4e-view-show-addresses t)
-  (setq mail-user-agent 'mu4e-user-agent)
-  (setq mu4e-get-mail-command "mbsync -a")
-  ;; rename files when moving (needed for mbsync)
-  (setq mu4e-change-filenames-when-moving t)
-
-  (add-hook 'mu4e-headers-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
-  (add-hook 'mu4e-view-mode-hook (lambda () (local-set-key (kbd "X") (lambda () (interactive) (mu4e-mark-execute-all t)))))
-  (add-hook 'mu4e-compose-mode-hook
-            (lambda ()
-              (interactive)
-              (visual-line-mode 1)
-              (auto-fill-mode -1)))
-
-  (defun mu4e-headers-mark-all-unread-read ()
-    (interactive)
-    (mu4e~headers-mark-for-each-if
-     (cons 'read nil)
-     (lambda (msg param)
-       (memq 'unread (mu4e-msg-field msg :flags)))))
-
-  (defun mu4e-flag-all-read ()
-    (interactive)
-    (mu4e-headers-mark-all-unread-read)
-    (mu4e-mark-execute-all t))
-
-  (defun mu4e-set-contexts (contexts)
-    "Set the `mu4e-contexts'.
-CONTEXTS is a list with elements like this:
-
-(id :name \"full name\" :email \"email\" :signature \"signature\")
-
-`signature' is optional, example:
-
-(work :name \"Ford Prefect\" :email \"ford@galaxy.org\" :signature \"Ford Prefect\\nSubether Quadrant 5\\nEarth\")"
-    (setq mu4e-contexts
-          (mapcar (lambda (context)
-                    (let* ((id (format "%s" (car context)))
-                           (plist (cdr context))
-                           (name (plist-get plist :name))
-                           (mail (plist-get plist :mail))
-                           (signature (plist-get plist :signature)))
-                      (add-to-list 'mu4e-user-mail-address-list mail)
-                      (eval `(make-mu4e-context
-                              :name ,id
-                              :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
-                              :match-func (lambda (msg)
-                                            (when msg
-                                              (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
-                              :vars '((user-mail-address . ,mail)
-                                      (user-full-name . ,name)
-                                      (mu4e-sent-folder . ,(concat "/" id "/sent"))
-                                      (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
-                                      (mu4e-trash-folder . ,(concat "/" id "/trash"))
-                                      (mu4e-refile-folder . ,(concat "/" id "/archive"))
-                                      (mu4e-compose-signature . ,signature)
-                                      (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
-                                                                 (,(concat "/" id "/archive") . ?a)
-                                                                 (,(concat "/" id "/sent") . ?s)
-                                                                 (,(concat "/" id "/drafts") . ?d)
-                                                                 (,(concat "/" id "/trash") . ?t))))))))
-                  contexts))
-    (add-to-list 'mu4e-bookmarks
-                 (make-mu4e-bookmark
-                  :name  "Unified Inbox"
-                  :query (mapconcat (lambda (context)
-                                      (format "maildir:/%s/INBOX" (car context)))
-                                    contexts
-                                    " OR ")
-                  :key ?b)))
-
-  (setq message-kill-buffer-on-exit t)
-
-  :config
-
-  ;; Support for links to mu4e messages/queries from withinorg-mode,
-  ;; and for writing message in org-mode, sending them as rich-text
-  (use-package org-mu4e)
-
-  ;; Helm sources for searching emails and contacts
-  (use-package helm-mu
-    :quelpa (helm-mu :fetcher github :repo "emacs-helm/helm-mu")
-    :after helm
-    :bind (:map mu4e-main-mode-map ("M-s" . helm-mu)
-                :map mu4e-headers-mode-map ("M-s" . helm-mu)
-                :map mu4e-view-mode-map ("M-s" . helm-mu))))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
@@ -1864,11 +1682,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   (push 'company-robe company-backends)
   :hook (ruby-mode . robe-mode))
 
-;;;; rust-mode
-;; A major emacs mode for editing Rust source code
-(use-package rust-mode
-  :quelpa (rust-mode :repo rust-lang/rust-mode :fetcher github))
-
 ;;;; daemons
 (use-package daemons
   :quelpa (daemons :fetcher github :repo "cbowdon/daemons.el" :branch "buffer-per-host"))
@@ -1923,21 +1736,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; tldr
 (use-package tldr
   :quelpa (tldr :fetcher github :repo "kuanyui/tldr.el"))
-
-;;;; twittering-mode
-(use-package twittering-mode
-  :quelpa (twittering-mode :repo "hayamiz/twittering-mode" :fetcher github)
-  :hook (twittering-mode . visual-line-mode)
-  :bind (:map twittering-mode-map
-              ("l" . twittering-favorite)
-              ("L" . twittering-unfavorite))
-  :init
-  (setq twittering-icon-mode t)
-  (setq twittering-convert-fix-size 32)
-  (setq twittering-use-icon-storage 1)
-  (setq twittering-enable-unread-status-notifier t)
-  (setq twittering-display-remaining t)
-  (setq twittering-use-master-password t))
 
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
