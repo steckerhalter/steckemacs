@@ -85,7 +85,7 @@
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
-   custom-file "/tmp/custom-file.el" ;don't pollute the init file and don't `load' the customs but keep them for reference...
+   custom-file (expand-file-name "custom-file.el" temporary-file-directory) ;don't pollute the init file and don't `load' the customs but keep them for reference...
    initial-buffer-choice my-todo)
 
   ;; default flags
@@ -1138,10 +1138,6 @@ PREFIX forces the use of `find'."
   :defer t
   :quelpa (git-modes :fetcher github :repo "magit/git-modes"))
 
-;;;; git-timemachine
-;; step through historic versions of git controlled file
-(use-package git-timemachine
-  :quelpa (git-timemachine :fetcher github :repo "pidu/git-timemachine"))
 ;;;; google-translate
 ;; Emacs interface to Google's translation service
 (use-package google-translate
@@ -1153,7 +1149,7 @@ PREFIX forces the use of `find'."
 ;;;; grandshell-theme
 ;; Grand Shell color theme for Emacs > 24
 (use-package grandshell-theme
-  :quelpa (grandshell-theme :repo "steckerhalter/grandshell-theme" :fetcher github)
+  :quelpa (grandshell-theme :url "https://framagit.org/steckerhalter/grandshell-theme.git" :fetcher git)
   :config (load-theme 'grandshell t))
 
 ;;;; helm
@@ -1195,12 +1191,6 @@ PREFIX forces the use of `find'."
   ;; Helm integration for Projectile
   (use-package helm-projectile
     :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github))
-
-  ;; Emacs Helm Interface for quick Google searches
-  (use-package helm-google
-    :quelpa (helm-google :fetcher github :repo "steckerhalter/helm-google")
-    :config (add-to-list 'helm-google-engines '(searx . "https://openworlds.info/?engines=startpage&format=json&q=%s"))
-    :demand)
 
   ;; Helm UI wrapper for system package managers.
   (use-package helm-system-packages
@@ -1255,7 +1245,6 @@ PREFIX forces the use of `find'."
   (setq ido-enable-flex-matching t
         ido-auto-merge-work-directories-length -1
         ido-create-new-buffer 'always
-        ido-everywhere t
         ido-default-buffer-method 'selected-window
         ido-max-prospects 32
         ido-use-filename-at-point 'guess
@@ -1311,7 +1300,7 @@ PREFIX forces the use of `find'."
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
 (use-package ipretty
-  :quelpa (ipretty :fetcher github :repo "steckerhalter/ipretty")
+  :quelpa (ipretty :fetcher git :url "https://framagit.org/steckerhalter/ipretty.git")
   :config (ipretty-mode t))
 
 ;;;; js2-mode
@@ -1549,7 +1538,7 @@ PREFIX forces the use of `find'."
   :quelpa (outshine :fetcher github :repo "alphapapa/outshine")
   :diminish outline-minor-mode
   :commands outshine-hook-function
-  :hook ((outline-minor-mode . outshine-hook-function)
+  :hook ((outline-minor-mode . outshine-mode)
          (emacs-lisp-mode . outline-minor-mode))
   :init
   (setq outshine-imenu-show-headlines-p nil))
@@ -1682,10 +1671,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   (push 'company-robe company-backends)
   :hook (ruby-mode . robe-mode))
 
-;;;; daemons
-(use-package daemons
-  :quelpa (daemons :fetcher github :repo "cbowdon/daemons.el" :branch "buffer-per-host"))
-
 ;;;; shell-switcher
 (use-package shell-switcher
   :quelpa (shell-switcher :fetcher github
@@ -1712,11 +1697,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config
   (sml/setup)
   (sml/apply-theme 'automatic))
-
-;;;; sqlformat
-;; Use sqlformat to make SQL readable in Emacs
-(use-package sqlformat
-  :quelpa (sqlformat :fetcher github :repo "steckerhalter/sqlformat.el"))
 
 ;;;; stylus-mode
 ;; Major mode for editing .jade files
