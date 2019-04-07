@@ -930,7 +930,7 @@ PREFIX forces the use of `find'."
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major
-  :quelpa (discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
+  :quelpa (discover-my-major :fetcher git :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 
 ;;;; drag-stuff
 ;; Drag stuff (lines, words, region, etc...) around
