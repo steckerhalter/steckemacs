@@ -120,9 +120,10 @@
 
   ;; disable some global modes
   (blink-cursor-mode -1)       ;no cursor blinking
-  (tool-bar-mode -1)           ;disable the awful toolbar
   (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
-  (scroll-bar-mode -1)         ;disable the sroll bar
+  (when (display-graphic-p)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1))
 
   ;; narrow to region should be enabled by default
   (put 'narrow-to-region 'disabled nil)
@@ -290,7 +291,6 @@ buffer is not visiting a file."
   ("<f5>" . delete-other-windows)
   ("S-<f5>" . delete-other-frames))
 
-;;;; hydra
 ;; Make bindings that stick around.
 (use-package hydra
   :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
@@ -426,7 +426,11 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("SPC h p" helm-info-at-point)
     ("SPC j" dired-jump)
     ("SPC k" kill-emacs)
-    ("SPC l" (rename-file (org-latex-export-to-pdf nil t) (concat "~/ownCloud/bridgemate/chords/" (org-entry-get nil "ITEM") ".pdf") t))
+    ("SPC l" (rename-file (org-latex-export-to-pdf nil t)
+                          (concat "~/ownCloud/chords/"
+                                  (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
+                                  ".pdf")
+                          t))
     ("SPC m" man)
     ("SPC n" my-org-agenda)
     ("SPC o o" org-open-at-point)
@@ -464,93 +468,6 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("0" eval-last-sexp)
     ("M-SPC" nil :color blue)
     ("<menu>" nil :color blue)))
-
-;;; settings
-(use-package steckemacs-settings
-  :init
-  ;;global flags
-  (setq
-   inhibit-startup-message t
-   backup-directory-alist `((".*" . ,temporary-file-directory)) ;don't clutter my fs and put backups into tmp
-   auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-   require-final-newline t                ;auto add newline at the end of file
-   column-number-mode t                   ;show the column number
-   default-major-mode 'text-mode          ;use text mode per default
-   mouse-yank-at-point t                  ;middle click with the mouse yanks at point
-   history-length 250                     ;default is 30
-   locale-coding-system 'utf-8            ;utf-8 is default
-   tab-always-indent 'complete            ;try to complete before identing
-   confirm-nonexistent-file-or-buffer nil ;don't ask to create a buffer
-   vc-follow-symlinks t                   ;follow symlinks automatically
-   recentf-max-saved-items 5000           ;save up to 5000 recent files
-   eval-expression-print-length nil       ;do not truncate printed expressions
-   eval-expression-print-level nil        ;print nested expressions
-   send-mail-function 'sendmail-send-it
-   kill-ring-max 5000                     ;truncate kill ring after 5000 entries
-   mark-ring-max 5000                     ;truncate mark ring after 5000 entries
-   mouse-autoselect-window -.1            ;window focus follows the mouse pointer
-   mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
-   indicate-buffer-boundaries 'left       ;fringe markers (on the left side)
-   split-height-threshold 110             ;more readily split horziontally
-   enable-recursive-minibuffers t         ;whatever...
-   show-paren-delay 0                     ;show the paren immediately
-   load-prefer-newer t                    ;prefer newer .el instead of the .elc
-   split-width-threshold 160              ;split horizontally only if less than 160 columns
-   gc-cons-percentage 0.3                 ;increase garbage collection limit
-   safe-local-variable-values '((engine . django))
-   switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
-   custom-file "/tmp/custom-file.el" ;don't pollute the init file and don't `load' the customs but keep them for reference...
-   initial-buffer-choice my-todo)
-
-  ;; default flags
-  (setq-default
-   tab-width 4
-   indent-tabs-mode nil                   ;use spaces instead of tabs
-   c-basic-offset 4                       ;"tab" with in c-related modes
-   c-hungry-delete-key t)                 ;delete more than one space
-
-  ;; disable full `yes' or `no' answers, `y' and `n' suffices
-  (defalias 'yes-or-no-p 'y-or-n-p)
-
-  (provide 'steckemacs-settings)
-
-  :config
-
-  ;; load custom user code
-  (when (file-readable-p "~/.user.el")
-    (load "~/.user.el"))
-
-  ;; display the time in the mode-line
-  (setq display-time-24hr-format t)
-  (setq display-time-default-load-average nil)
-  (setq display-time-use-mail-icon t)
-  (display-time)
-
-  ;; encoding
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-language-environment "UTF-8")
-  (prefer-coding-system 'utf-8)
-
-  ;; disable some global modes
-  (blink-cursor-mode -1)       ;no cursor blinking
-  (tool-bar-mode -1)           ;disable the awful toolbar
-  (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
-  (scroll-bar-mode -1)         ;disable the sroll bar
-
-  ;; narrow to region should be enabled by default
-  (put 'narrow-to-region 'disabled nil)
-
-  ;; don't ask to kill buffers
-  (setq kill-buffer-query-functions
-        (remq 'process-kill-buffer-query-function
-              kill-buffer-query-functions))
-
-  ;; default font
-  (defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120))
-  ;; (defvar my-font-attributes '(default nil :family "DejaVu Sans Mono" :height 90))
-  ;; (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 90))
-  (apply 'set-face-attribute  my-font-attributes))
 
 ;;; packages
 ;;;; paren
@@ -1632,41 +1549,41 @@ CONTEXTS is a list with elements like this:
 `signature' is optional, example:
 
 (work :name \"Ford Prefect\" :email \"ford@galaxy.org\" :signature \"Ford Prefect\\nSubether Quadrant 5\\nEarth\")"
-(setq mu4e-contexts
-      (mapcar (lambda (context)
-                (let* ((id (format "%s" (car context)))
-                       (plist (cdr context))
-                       (name (plist-get plist :name))
-                       (mail (plist-get plist :mail))
-                       (signature (plist-get plist :signature)))
-                  (add-to-list 'mu4e-user-mail-address-list mail)
-                  (eval `(make-mu4e-context
-                          :name ,id
-                          :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
-                          :match-func (lambda (msg)
-                                        (when msg
-                                          (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
-                          :vars '((user-mail-address . ,mail)
-                                  (user-full-name . ,name)
-                                  (mu4e-sent-folder . ,(concat "/" id "/sent"))
-                                  (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
-                                  (mu4e-trash-folder . ,(concat "/" id "/trash"))
-                                  (mu4e-refile-folder . ,(concat "/" id "/archive"))
-                                  (mu4e-compose-signature . ,signature)
-                                  (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
-                                                             (,(concat "/" id "/archive") . ?a)
-                                                             (,(concat "/" id "/sent") . ?s)
-                                                             (,(concat "/" id "/drafts") . ?d)
-                                                             (,(concat "/" id "/trash") . ?t))))))))
-              contexts))
-(add-to-list 'mu4e-bookmarks
-             (make-mu4e-bookmark
-              :name  "Unified Inbox"
-              :query (mapconcat (lambda (context)
-                                  (format "maildir:/%s/INBOX" (car context)))
-                                contexts
-                                " OR ")
-              :key ?b)))
+    (setq mu4e-contexts
+          (mapcar (lambda (context)
+                    (let* ((id (format "%s" (car context)))
+                           (plist (cdr context))
+                           (name (plist-get plist :name))
+                           (mail (plist-get plist :mail))
+                           (signature (plist-get plist :signature)))
+                      (add-to-list 'mu4e-user-mail-address-list mail)
+                      (eval `(make-mu4e-context
+                              :name ,id
+                              :enter-func (lambda () (mu4e-message ,(concat "Context: " id)))
+                              :match-func (lambda (msg)
+                                            (when msg
+                                              (string-match-p ,(concat "^/" id) (mu4e-message-field msg :maildir))))
+                              :vars '((user-mail-address . ,mail)
+                                      (user-full-name . ,name)
+                                      (mu4e-sent-folder . ,(concat "/" id "/sent"))
+                                      (mu4e-drafts-folder . ,(concat "/" id "/drafts"))
+                                      (mu4e-trash-folder . ,(concat "/" id "/trash"))
+                                      (mu4e-refile-folder . ,(concat "/" id "/archive"))
+                                      (mu4e-compose-signature . ,signature)
+                                      (mu4e-maildir-shortcuts . ((,(concat "/" id "/INBOX") . ?i)
+                                                                 (,(concat "/" id "/archive") . ?a)
+                                                                 (,(concat "/" id "/sent") . ?s)
+                                                                 (,(concat "/" id "/drafts") . ?d)
+                                                                 (,(concat "/" id "/trash") . ?t))))))))
+                  contexts))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name  "Unified Inbox"
+                  :query (mapconcat (lambda (context)
+                                      (format "maildir:/%s/INBOX" (car context)))
+                                    contexts
+                                    " OR ")
+                  :key ?b)))
 
   (setq message-kill-buffer-on-exit t)
 
@@ -1858,9 +1775,9 @@ CONTEXTS is a list with elements like this:
         (progn
           (goto-char end)
           (insert "));")
-     (goto-char start)
-     (insert "die(var_dump("))
-   (insert "die(var_dump());")))
+          (goto-char start)
+          (insert "die(var_dump("))
+      (insert "die(var_dump());")))
 
   :config
   (use-package company-php
