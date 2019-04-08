@@ -32,7 +32,7 @@
 ;; disable the GNU ELPA
 (setq package-archives nil)
 ;; initialize the package system
-(package-initialize)
+(unless package--initialized (package-initialize))
 (if (require 'quelpa nil t)
     (quelpa-self-upgrade)
   (with-temp-buffer
@@ -121,9 +121,8 @@
   ;; disable some global modes
   (blink-cursor-mode -1)       ;no cursor blinking
   (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
-  (when (display-graphic-p)
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1))
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
 
   ;; narrow to region should be enabled by default
   (put 'narrow-to-region 'disabled nil)
