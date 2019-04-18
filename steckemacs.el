@@ -350,7 +350,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("d" (kbds "C-d"))
     ("D" (kbds "M-d"))
     ("E" (kbds "M->"))
-    ("f" (hydra-resume find-file) :exit t)
+    ("f" (hydra-resume helm-find-files) :exit t)
     ("F" (hydra-resume project-find-file) :exit t)
     ("g" (kbds "C-g"))
     ("j" ipretty-last-sexp)
@@ -433,7 +433,8 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("SPC m" man)
     ("SPC n" my-org-agenda)
     ("SPC o o" org-open-at-point)
-    ("SPC o t" (org-insert-time-stamp (current-time) t t))
+    ("SPC o T" (org-insert-time-stamp (current-time) t t))
+    ("SPC o t" (org-set-tags-command))
     ("SPC o i" org-toggle-inline-images)
     ("SPC p l" list-packages)
     ("SPC p s" helm-system-packages)
@@ -1236,30 +1237,6 @@ PREFIX forces the use of `find'."
   :init (setq ibuffer-default-display-maybe-show-predicates t)
   :bind  ("C-x b" . ibuffer))
 
-;;;; ido
-;; selection framework (used for file opening `C-x C-f' by me)
-(use-package ido
-  :demand
-  :init
-  (setq ido-enable-flex-matching t
-        ido-auto-merge-work-directories-length -1
-        ido-create-new-buffer 'always
-        ido-default-buffer-method 'selected-window
-        ido-max-prospects 32
-        ido-use-filename-at-point 'guess
-        ido-use-faces nil)
-
-  :bind ("C-x C-b" . ido-switch-buffer)
-
-  :config
-  (ido-mode 1)
-
-  (use-package flx-ido
-    ;; flx integration for ido
-    :quelpa (flx-ido :repo "lewang/flx" :fetcher github :files ("flx-ido.el"))
-    :config
-    (flx-ido-mode 1)))
-
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
 (use-package iedit
@@ -1504,7 +1481,10 @@ PREFIX forces the use of `find'."
     ;; display the agenda first
     (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
-             ((alltodo "")
+             ((tags-todo "+PRIORITY=\"A\"")
+              (tags "reminder")
+              (tags-todo "+PRIORITY=\"B\"")
+              (tags-todo "+PRIORITY=\"C\"")
               (agenda "")))))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
