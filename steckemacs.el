@@ -1467,6 +1467,7 @@ PREFIX forces the use of `find'."
     (setq org-agenda-todo-ignore-scheduled 'all) ;hide scheduled TODOs
     (setq org-agenda-dim-blocked-tasks t)
     (setq org-agenda-show-all-dates nil)
+    (setq org-agenda-prefix-format "%?-12t% s")
 
     :config
     ;; add state to the sorting strategy of todo
@@ -1481,11 +1482,11 @@ PREFIX forces the use of `find'."
     ;; display the agenda first
     (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
-             ((tags-todo "+PRIORITY=\"A\"")
-              (tags "reminder")
-              (tags-todo "+PRIORITY=\"B\"")
-              (tags-todo "+PRIORITY=\"C\"")
-              (agenda "")))))
+             ((tags-todo "+PRIORITY=\"A\"-DEADLINE>\"<today>\"|DEADLINE<=\"<today>\""
+                         ((org-agenda-overriding-header "Today")))
+              (tags-todo "+PRIORITY=\"B\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "Inbox")))
+              (tags-todo "+PRIORITY=\"C\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "Backlog")))
+              (tags "reminder" ((org-agenda-overriding-header "Reminders")))))))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
     (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
