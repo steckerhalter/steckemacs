@@ -1444,10 +1444,10 @@ PREFIX forces the use of `find'."
     :config
     (add-to-list 'org-capture-templates
                  '("p" "Protocol" entry (file "")
-                   "* %?[[%:link][%:description]] %U\n%i\n" :prepend t :immediate-finish t))
+                   "* TODO %?[[%:link][%:description]] %U\n%i\n" :prepend t :immediate-finish t))
     (add-to-list 'org-capture-templates
                  '("L" "Protocol Link" entry (file "")
-                   "* %?[[%:link][%:description]] %U\n" :prepend t :immediate-finish t)))
+                   "* TODO %?[[%:link][%:description]] %U\n" :prepend t :immediate-finish t)))
 
 ;;;;; org-protocol-capture-html
   (use-package org-protocol-capture-html
@@ -1483,10 +1483,11 @@ PREFIX forces the use of `find'."
     (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
              ((tags-todo "+PRIORITY=\"A\"-DEADLINE>\"<today>\"|DEADLINE<=\"<today>\""
-                         ((org-agenda-overriding-header "Today")))
-              (tags-todo "+PRIORITY=\"B\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "Inbox")))
-              (tags-todo "+PRIORITY=\"C\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "Backlog")))
-              (tags "reminder" ((org-agenda-overriding-header "Reminders")))))))
+                         ((org-agenda-overriding-header "today")))
+              (tags-todo "+PRIORITY=\"B\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "inbox")))
+              (tags-todo "+PRIORITY=\"C\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "backlog")))
+              (tags "reminder" ((org-agenda-overriding-header "reminders")))
+              (agenda "agenda")))))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
     (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
