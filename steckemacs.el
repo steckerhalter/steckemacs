@@ -1482,11 +1482,10 @@ PREFIX forces the use of `find'."
     ;; display the agenda first
     (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
-             ((tags-todo "+PRIORITY=\"A\"-DEADLINE>\"<today>\"|DEADLINE<=\"<today>\""
-                         ((org-agenda-overriding-header "today")))
-              (tags-todo "+PRIORITY=\"B\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "inbox")))
-              (tags-todo "+PRIORITY=\"C\"-DEADLINE>\"<today>\"" ((org-agenda-overriding-header "backlog")))
-              (tags "reminder" ((org-agenda-overriding-header "reminders")))
+             ((tags-todo "+PRIORITY=\"A\"-DEADLINE>=\"<tomorrow>\"|DEADLINE<\"<tomorrow>\"" ((org-agenda-overriding-header "today")))
+              (tags-todo "+PRIORITY=\"B\"-DEADLINE={.}" ((org-agenda-overriding-header "inbox")))
+              (tags-todo "+PRIORITY=\"C\"-DEADLINE={.}" ((org-agenda-overriding-header "backlog")))
+              (tags "+reminder-TODO"  ((org-agenda-overriding-header "reminders")))
               (agenda "agenda")))))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
