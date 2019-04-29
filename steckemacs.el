@@ -364,6 +364,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("M-r" highlight-symbol-prev)
     ("x" helm-M-x)
     ("/" undo)
+    ("%" (org-capture nil "s"))
     ;; mark
     ("t" (kbds "C-SPC"))
     ("M-t" easy-mark-sexp)
@@ -1482,7 +1483,7 @@ PREFIX forces the use of `find'."
     ;; display the agenda first
     (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
-             ((tags-todo "+PRIORITY=\"A\"-DEADLINE>=\"<tomorrow>\"|DEADLINE<\"<tomorrow>\"" ((org-agenda-overriding-header "today")))
+             ((tags-todo "+PRIORITY=\"A\"-DEADLINE>\"<now>\"|DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "today")))
               (tags-todo "+PRIORITY=\"B\"-DEADLINE={.}" ((org-agenda-overriding-header "inbox")))
               (tags-todo "+PRIORITY=\"C\"-DEADLINE={.}" ((org-agenda-overriding-header "backlog")))
               (tags "+reminder-TODO"  ((org-agenda-overriding-header "reminders")))
