@@ -32,7 +32,9 @@
 ;; disable the GNU ELPA
 (setq package-archives nil)
 ;; initialize the package system
-(unless package--initialized (package-initialize))
+(unless (and (boundp 'package--initialized) 
+	     package--initialized)
+  (package-initialize))
 (if (require 'quelpa nil t)
     (quelpa-self-upgrade)
   (with-temp-buffer
