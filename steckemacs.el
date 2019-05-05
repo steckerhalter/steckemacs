@@ -33,7 +33,7 @@
 (setq package-archives nil)
 ;; initialize the package system
 (unless (and (boundp 'package--initialized) 
-	     package--initialized)
+	         package--initialized)
   (package-initialize))
 (if (require 'quelpa nil t)
     (quelpa-self-upgrade)
@@ -366,10 +366,10 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("/" undo)
     ("c" (org-capture nil "s"))
     ;; mark
-    ("w" (kbds "C-SPC"))
-    ("M-w" easy-mark-sexp)
-    ("M-W" mark-whole-buffer)
-    ("W" (kbds "M-w"))
+    ("m" (kbds "C-SPC"))
+    ("M-m" easy-mark-sexp)
+    ("M-M" mark-whole-buffer)
+    ("M" (kbds "M-w"))
     ("n" (kbds "C-w"))
     ("N" org-cut-special)
     ("y" yank)
@@ -380,8 +380,8 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ;; windows
     ("=" default-text-scale-increase)
     ("+" default-text-scale-decrease)
-    ("," my-select-prev-window)
-    ("." my-select-next-window)
+    ("w" my-select-prev-window)
+    ("e" my-select-next-window)
     ;; misc
     (">" mc/mark-next-like-this)
     ("<" mc/mark-previous-like-this)
