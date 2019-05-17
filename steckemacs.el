@@ -279,6 +279,10 @@ buffer is not visiting a file."
             ((= prefix 4) (eww url))
             (t (browse-url url)))))
 
+  (defun my-capture ()
+    (interactive)
+    (org-capture nil "s"))
+
 ;;;; global key bindings
   :bind
   ("<f6>" . my-kill-buffer)
@@ -291,7 +295,7 @@ buffer is not visiting a file."
   ("S-<f4>" . delete-frame)
   ("<f5>" . delete-other-windows)
   ("S-<f5>" . delete-other-frames)
-  ("C-c c" . (org-capture nil "s")))
+  ("C-c c" . my-capture))
 
 ;; Make bindings that stick around.
 (use-package hydra
@@ -364,7 +368,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("M-o" highlight-symbol-prev)
     ("x" helm-M-x)
     ("/" undo)
-    ("c" (org-capture nil "s"))
+    ("c" my-capture :exit t)
     ;; mark
     ("m" (kbds "C-SPC"))
     ("M-m" easy-mark-sexp)
