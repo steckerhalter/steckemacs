@@ -283,6 +283,21 @@ buffer is not visiting a file."
     (interactive)
     (org-capture nil "s"))
 
+  (defun my-songs ()
+    (interactive)
+    (let ((songs (org-map-entries
+                  (lambda () (substring
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
+                  nil
+                  'region-start-level)))
+      (switch-to-buffer (get-buffer-create "Original Songs"))
+      (erase-buffer)
+      (dolist (line songs)
+        (insert line)
+        (newline))))
+
+
 ;;;; global key bindings
   :bind
   ("<f6>" . my-kill-buffer)
@@ -295,7 +310,9 @@ buffer is not visiting a file."
   ("S-<f4>" . delete-frame)
   ("<f5>" . delete-other-windows)
   ("S-<f5>" . delete-other-frames)
-  ("C-c c" . my-capture))
+  ("C-c c" . my-capture)
+  ("C-c m" . menu-bar-mode)
+  ("`" . wdired-mode))
 
 ;; Make bindings that stick around.
 (use-package hydra
