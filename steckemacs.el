@@ -1532,11 +1532,6 @@ PREFIX forces the use of `find'."
     :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
     :config (add-hook 'org-mode-hook 'org-bullets-mode))
 
-;;;;; org-emms
-  (use-package org-emms
-    :after org
-    :quelpa (org-emms :fetcher github :repo "jagrg/org-emms")))
-
 ;;;; outshine
 ;; outline with outshine outshines outline
 (use-package outshine
