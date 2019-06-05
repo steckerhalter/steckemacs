@@ -1530,7 +1530,7 @@ PREFIX forces the use of `find'."
   ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
     :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
-    :config (add-hook 'org-mode-hook 'org-bullets-mode))
+    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
