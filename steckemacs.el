@@ -1231,7 +1231,9 @@ PREFIX forces the use of `find'."
            isearch-mode-map ("M-i" . helm-swoop-from-isearch)
            :map
            helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))
-    :init (setq helm-swoop-speed-or-color t)))
+    :init
+    (setq helm-swoop-speed-or-color t)
+    (setq helm-swoop-pre-input-function (lambda ()))))
 
 ;;;; highlight-parentheses
 ;; highlight surrounding parentheses
