@@ -312,6 +312,7 @@ buffer is not visiting a file."
   ("S-<f5>" . delete-other-frames)
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
+  ("C-c g" . magit-status)
   ("`" . wdired-mode))
 
 ;; Make bindings that stick around.
@@ -1455,6 +1456,7 @@ PREFIX forces the use of `find'."
   (org-default-notes-file my-todo)
   (org-image-actual-width nil)
   (org-log-repeat nil)
+  (org-tags-exclude-from-inheritance '("song"))
   (org-blank-before-new-entry
    '((heading . nil) (plain-list-item . nil)))
 
