@@ -32,7 +32,7 @@
 ;; disable the GNU ELPA
 (setq package-archives nil)
 ;; initialize the package system
-(unless (and (boundp 'package--initialized) 
+(unless (and (boundp 'package--initialized)
 	         package--initialized)
   (package-initialize))
 (if (require 'quelpa nil t)
@@ -313,6 +313,7 @@ buffer is not visiting a file."
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c g" . magit-status)
+  ("C-c d" . ispell-change-dictionary)
   ("`" . wdired-mode))
 
 ;; Make bindings that stick around.
@@ -1433,6 +1434,8 @@ PREFIX forces the use of `find'."
 ;;  "Outline-based notes management and organizer"
 (use-package org
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
+  :bind (:map org-mode-map
+              ("C-u M-RET" . org-insert-heading-after-current))
   :custom
   (org-capture-templates
    '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
@@ -1497,6 +1500,7 @@ PREFIX forces the use of `find'."
     (setq org-agenda-dim-blocked-tasks t)
     (setq org-agenda-show-all-dates nil)
     (setq org-agenda-prefix-format "%?-12t% s")
+    (setq org-agenda-confirm-kill nil)
 
     :config
     ;; add state to the sorting strategy of todo
