@@ -297,6 +297,13 @@ buffer is not visiting a file."
         (insert line)
         (newline))))
 
+  (defun my-org-insert-time-stamp (&optional heading)
+    (interactive)
+    (when heading (org-insert-heading))
+    (let ((time (current-time))
+          (with-hm (not current-prefix-arg)))
+      (org-insert-time-stamp time with-hm t)))
+
 
 ;;;; global key bindings
   :bind
@@ -473,7 +480,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("SPC m" man)
     ("SPC n" my-org-agenda)
     ("SPC o o" org-open-at-point)
-    ("SPC o T" (org-insert-time-stamp (current-time) t t))
+    ("SPC o T" my-org-insert-timestamp)
     ("SPC o t" (org-set-tags-command))
     ("SPC o i" org-toggle-inline-images)
     ("SPC p l" list-packages)
@@ -487,7 +494,8 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("SPC R" helm-all-mark-rings)
     ("SPC s" helm-google-searx)
     ("SPC S" helm-google-google)
-    ("SPC t" (org-insert-time-stamp (current-time) t t))
+    ("SPC t" my-org-insert-time-stamp)
+    ("SPC T" (my-org-insert-time-stamp t))
     ("SPC u" my-browse-url-dwim)
     ("SPC v" visual-line-mode)
     ("SPC w" (lambda ()
