@@ -322,6 +322,7 @@ buffer is not visiting a file."
   ("C-c n" . my-org-agenda)
   ("C-c g" . magit-status)
   ("C-c d" . ispell-change-dictionary)
+  ("C-c t" . my-org-insert-time-stamp)
   ("`" . wdired-mode))
 
 ;; Make bindings that stick around.
