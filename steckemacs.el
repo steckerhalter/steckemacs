@@ -1456,6 +1456,7 @@ PREFIX forces the use of `find'."
      ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
      ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (org-startup-indented t)
+  (org-archive-mark-done t)
   (org-startup-with-inline-images t)
   (org-startup-truncated t)
   (org-startup-folded nil)
