@@ -299,7 +299,9 @@ buffer is not visiting a file."
 
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
-    (when heading (org-insert-heading))
+    (when heading
+      (org-insert-heading)
+      (org-id-get-create))
     (let ((time (current-time))
           (with-hm (not current-prefix-arg)))
       (org-insert-time-stamp time with-hm t)))
