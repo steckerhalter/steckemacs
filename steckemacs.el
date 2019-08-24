@@ -325,6 +325,7 @@ buffer is not visiting a file."
   ("C-c g" . magit-status)
   ("C-c d" . ispell-change-dictionary)
   ("C-c t" . my-org-insert-time-stamp)
+  ("C-z" . undo)
   ("`" . wdired-mode))
 
 ;; Make bindings that stick around.
