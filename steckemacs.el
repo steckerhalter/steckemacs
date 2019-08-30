@@ -334,6 +334,7 @@ buffer is not visiting a file."
   :bind
   ("M-SPC" . !/body)
   ("<menu>" . !/body)
+  ("<apps>" . !/body)
   :config
   (defun kbds (keys)
     "Simulate keyboard input.
