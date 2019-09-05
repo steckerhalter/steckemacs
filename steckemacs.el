@@ -1537,6 +1537,7 @@ PREFIX forces the use of `find'."
              ((tags-todo "+PRIORITY=\"A\"-DEADLINE>\"<now>\"|DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "today")))
               (tags-todo "+PRIORITY=\"B\"-DEADLINE={.}" ((org-agenda-overriding-header "inbox")))
               (tags-todo "+PRIORITY=\"C\"-DEADLINE={.}" ((org-agenda-overriding-header "backlog")))
+              (todo "WAIT" ((org-agenda-overriding-header "wait")))
               (tags "+reminder-TODO"  ((org-agenda-overriding-header "reminders")))
               (agenda "agenda")))))
 
