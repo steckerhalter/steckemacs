@@ -1456,7 +1456,7 @@ PREFIX forces the use of `find'."
    '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
      ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
      ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
-  (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "DONE")))
+  (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w!)" "DONE(d)")))
   (org-todo-keyword-faces '(("WAIT" . org-footnote)
                             ("NEXT" . org-warning)))
   (org-startup-indented t)
