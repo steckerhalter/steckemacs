@@ -1456,9 +1456,9 @@ PREFIX forces the use of `find'."
    '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
      ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
      ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
-  (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w!)" "DONE(d)")))
+  (org-todo-keywords '((sequence "TODO(t)" "OPEN(o)" "WAIT(w!)" "DONE(d)")))
   (org-todo-keyword-faces '(("WAIT" . org-footnote)
-                            ("NEXT" . org-warning)))
+                            ("OPEN" . org-warning)))
   (org-startup-indented t)
   (org-archive-mark-done t)
   (org-startup-with-inline-images t)
@@ -1534,11 +1534,12 @@ PREFIX forces the use of `find'."
     ;; display the agenda first
     (setq org-agenda-custom-commands
           '(("n" "Agenda and all TODO's"
-             ((tags-todo "+PRIORITY=\"A\"-DEADLINE>\"<now>\"|DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "today")))
-              (tags-todo "+PRIORITY=\"B\"-DEADLINE={.}" ((org-agenda-overriding-header "inbox")))
-              (tags-todo "+PRIORITY=\"C\"-DEADLINE={.}" ((org-agenda-overriding-header "backlog")))
-              (todo "WAIT" ((org-agenda-overriding-header "wait")))
-              (tags "+reminder-TODO"  ((org-agenda-overriding-header "reminders")))
+             ((tags-todo "DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+              (tags "+reminder+DEADLINE>\"<now>\|+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+              (tags-todo "-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+              (tags-todo "TODO={OPEN}+DEADLINE>\"<now>\"|TODO={OPEN}-DEADLINE={.}" ((org-agenda-overriding-header "open")))
+              (tags-todo "TODO={WAIT}+DEADLINE>\"<now>\"|TODO={WAIT}-DEADLINE={.}" ((org-agenda-overriding-header "wait")))
+              (tags-todo "DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))
               (agenda "agenda")))))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
