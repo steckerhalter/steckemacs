@@ -1454,7 +1454,7 @@ PREFIX forces the use of `find'."
   :custom
   (org-capture-templates
    '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
-     ("s" "Simple Task" entry (file "") "* TODO %?\n" :prepend t)
+     ("s" "Simple Task" entry (file+headline "" "capture") "* TODO %?\n")
      ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (org-todo-keywords '((sequence "TODO(t)" "OPEN(o)" "WAIT(w!)" "DONE(d)")))
   (org-todo-keyword-faces '(("WAIT" . org-footnote)
