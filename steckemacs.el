@@ -1494,11 +1494,11 @@ PREFIX forces the use of `find'."
     :demand
     :config
     (add-to-list 'org-capture-templates
-                 '("p" "Protocol" entry (file "")
-                   "* TODO %?[[%:link][%:description]] %U\n%i\n" :prepend t :immediate-finish t))
+                 '("p" "Protocol" entry (file+headline "" "capture")
+                   "* TODO %?[[%:link][%:description]] %U\n%i\n" :immediate-finish t))
     (add-to-list 'org-capture-templates
-                 '("L" "Protocol Link" entry (file "")
-                   "* TODO %?[[%:link][%:description]] %U\n" :prepend t :immediate-finish t)))
+                 '("L" "Protocol Link" entry (file+headline "" "capture")
+                   "* TODO %?[[%:link][%:description]] %U\n" :immediate-finish t)))
 
 ;;;;; org-protocol-capture-html
   (use-package org-protocol-capture-html
