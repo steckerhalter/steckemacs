@@ -484,6 +484,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
                           t))
     ("SPC m" man)
     ("SPC n" my-org-agenda)
+    ("SPC o a" org-archive-done-tasks)
     ("SPC o o" org-open-at-point)
     ("SPC o T" my-org-insert-timestamp)
     ("SPC o t" (org-set-tags-command))
@@ -1520,6 +1521,14 @@ PREFIX forces the use of `find'."
     (setq org-agenda-show-all-dates nil)
     (setq org-agenda-prefix-format "%?-12t% s")
     (setq org-agenda-confirm-kill nil)
+
+    (defun org-archive-done-tasks ()
+      (interactive)
+      (org-map-entries
+       (lambda ()
+         (org-archive-subtree)
+         (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
+       "/DONE" 'file))
 
     :config
     ;; add state to the sorting strategy of todo
