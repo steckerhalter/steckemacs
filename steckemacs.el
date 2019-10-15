@@ -29,29 +29,23 @@
 ;;; Code:
 
 ;;; initialization
-;; disable the GNU ELPA
-(setq package-archives nil)
-;; initialize the package system
-(unless (and (boundp 'package--initialized)
-	         package--initialized)
-  (package-initialize))
-(if (require 'quelpa nil t)
-    (quelpa-self-upgrade)
-  (with-temp-buffer
-    (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
-    (eval-buffer)))
-;; install use-package and the quelpa handler
-(quelpa '(quelpa-use-package :fetcher github :repo "quelpa/quelpa-use-package"))
-(setq use-package-expand-minimally t)
-(require 'quelpa-use-package)
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
+(package-install 'use-package)
+(use-package use-package-ensure
+  :config  (setq use-package-always-ensure t))
+(use-package quelpa-use-package)
 
 ;;; diminish
 ;; Diminished modes are minor modes with no modeline display
-(use-package diminish
-  :quelpa (diminish :fetcher github :repo myrjola/diminish.el))
+(use-package diminish)
 
 ;;; settings
 (use-package steckemacs-settings
+  :ensure nil
   :init
   ;; personal variables
   (defvar my-todo "~/Sync/notes/todo.org")
@@ -330,7 +324,6 @@ buffer is not visiting a file."
 
 ;; Make bindings that stick around.
 (use-package hydra
-  :quelpa (hydra :repo "abo-abo/hydra" :fetcher github)
   :bind
   ("M-SPC" . !/body)
   ("<menu>" . !/body)
@@ -523,6 +516,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
 ;;;; prog-mode
 ;; Generic major mode for programming
 (use-package prog-mode
+  :ensure nil
   :config
   (defun my-prog-mode-hook ()
     (setq show-trailing-whitespace 1)
@@ -580,12 +574,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     "Inserts a liquid quote tag"
     "tag: "
     "{% quote " _ " %}" \n
-    "{% endquote %}")
-  (define-skeleton my-package-def
-    "Inserts use-package definition"
-    "pkg: "
-    "(use-package " str \n
-    ":quelpa " (format "%s" (quelpa-expand-recipe str)) ")"))
+    "{% endquote %}"))
 
 ;;;; term
 ;; general command interpreter in a window stuff
@@ -610,6 +599,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
 ;;;; xwidget
 ;; api functions for xwidgets
 (use-package x-widget
+  :ensure nil
   :bind (:map xwidget-webkit-mode-map
               ("<mouse-4>" . xwidget-webkit-scroll-down)
               ("<mouse-5>" . xwidget-webkit-scroll-up)
@@ -620,23 +610,10 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
                                          (when (equal major-mode 'xwidget-webkit-mode)
                                            (xwidget-webkit-adjust-size-dispatch)))))
 
-;;;; add recipes that are required by some packages
-(add-to-list
- 'quelpa-melpa-recipe-stores
- '(;; eval-sexp-fu
-   (highlight :fetcher github :repo "steckerhalter/highlight.el")
-   ;; magit
-   (let-alist :fetcher url
-              :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/let-alist.el"
-              :version original)
-   ;; cider
-   (queue :fetcher github :repo "emacsmirror/queue")
-   (seq :fetcher github :repo "NicolasPetton/seq.el")
-   (spinner :fetcher github :repo "Malabarba/spinner.el")))
-
 ;;;; advice
 ;; An overloading mechanism for Emacs Lisp functions
 (use-package advice
+  :ensure nil
   :config
   (defadvice kill-region (before slick-cut activate compile)
     "When called interactively with no active region, kill a single
@@ -655,32 +632,24 @@ line instead."
 
 ;;;; ag
 ;; A front-end for ag ('the silver searcher'), the C ack replacement.
-(use-package ag
-  :quelpa (ag :repo "Wilfred/ag.el" :fetcher github))
+(use-package ag)
 
 ;;;; aggressive-indent
 (use-package aggressive-indent
-  :quelpa (aggressive-indent :repo "Malabarba/aggressive-indent-mode" :fetcher github)
   :config (global-aggressive-indent-mode 1))
 
 ;;;; anaconda-mode
 ;; Code navigation, documentation lookup and completion for Python
 (use-package anaconda-mode
-  :quelpa (anaconda-mode
-           :fetcher github
-           :repo "proofit404/anaconda-mode"
-           :files ("*.el" "*.py" "vendor/jedi/jedi" ("jsonrpc" "vendor/jsonrpc/jsonrpc/*.py")))
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'eldoc-mode)
 
   ;; A major mode for editing pip requirements files
-  (use-package pip-requirements
-    :quelpa (pip-requirements :repo "Wilfred/pip-requirements.el" :fetcher github))
+  (use-package pip-requirements)
 
   ;; Integrate pyenv with python-mode
   (use-package pyenv-mode
-    :quelpa (pyenv-mode :fetcher github :repo "proofit404/pyenv-mode")
     :init
 
     (defun projectile-pyenv-mode-set ()
@@ -698,17 +667,16 @@ line instead."
 ;;;; ansible-doc
 ;; Ansible documentation Minor Mode
 (use-package ansible-doc
-  :quelpa (ansible-doc :repo "lunaryorn/ansible-doc.el" :fetcher github)
   :config (add-hook 'yaml-mode-hook #'ansible-doc-mode))
 
 ;;;; apache-mode
 ;; major mode for editing Apache configuration files
-(use-package apache-mode
-  :quelpa (apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
+(use-package apache-mode)
 
 ;;;; appt
 ;; appointment notification functions
 (use-package appt
+  :ensure nil
   :init (setq
          appt-message-warning-time 30
          appt-display-interval 15
@@ -741,7 +709,6 @@ line instead."
 ;;;; back-button
 ;; Visual navigation through mark rings
 (use-package back-button
-  :quelpa (back-button :repo "rolandwalker/back-button" :fetcher github)
   :diminish
   :demand
   :config
@@ -759,11 +726,6 @@ line instead."
 ;;;; cider
 ;; Clojure Interactive Development Environment that Rocks
 (use-package cider
-  :quelpa (cider
-           :fetcher github
-           :repo "clojure-emacs/cider"
-           :files ("*.el" (:exclude ".dir-locals.el"))
-           :old-names (nrepl))
   :init
   (setq cider-popup-stacktraces nil)
   (setq cider-repl-popup-stacktraces nil)
@@ -773,7 +735,6 @@ line instead."
 ;;;; company
 ;; Modular text completion framework
 (use-package company
-  :quelpa (company :repo "company-mode/company-mode" :fetcher github)
   :diminish
 
   :init
@@ -817,28 +778,22 @@ line instead."
 
   ;; Usage based completion sorting
   (use-package company-statistics
-    :quelpa (company-statistics :repo "company-mode/company-statistics" :fetcher github)
     :hook ((emacs-lisp-mode lisp-interaction-mode) . my-company-elisp-setup)
     :config (company-statistics-mode)))
 
 ;;;; company-anaconda
 ;; Anaconda backend for company-mode
 (use-package company-anaconda
-  :quelpa (company-anaconda
-           :fetcher github
-           :repo "proofit404/company-anaconda")
   :config (add-to-list 'company-backends 'company-anaconda))
 
 ;;;; company-dict
 ;; A backend that emulates ac-source-dictionary
 (use-package company-dict
-  :quelpa (company-dict :repo "hlissner/emacs-company-dict" :fetcher github)
   :config (add-to-list 'company-backends 'company-dict))
 
 ;;;; company-quickhelp
 ;; Popup documentation for completion candidates
 (use-package company-quickhelp
-  :quelpa (company-quickhelp :fetcher github :repo "expez/company-quickhelp")
   :init
   (setq company-quickhelp-use-propertized-text t)
   (setq company-quickhelp-delay 1)
@@ -847,7 +802,6 @@ line instead."
 ;;;; company-web
 ;; Company version of ac-html, complete for web,html,emmet,jade,slim modes
 (use-package company-web
-  :quelpa (company-web :repo "osv/company-web" :fetcher github)
   :config
   (defun my-company-web ()
     (set (make-local-variable 'company-backends) '(company-web-html))
@@ -857,6 +811,7 @@ line instead."
 ;;;; custom
 ;; tools for declaring and initializing options
 (use-package custom
+  :ensure nil
   :init
   (setq
    ;; M-x customize should not cripple menu entries
@@ -866,20 +821,17 @@ line instead."
 
 ;;;; darkroom
 (use-package darkroom
-  :quelpa (darkroom :fetcher github :repo "joaotavora/darkroom")
   :bind ("S-<f11>" . darkroom-tentative-mode)
   :custom
   (darkroom-text-scale-increase 3)
   (darkroom-margins-if-failed-guess 0.1))
 
 ;;;; default-text-scale
-(use-package default-text-scale
-  :quelpa (default-text-scale :fetcher github :repo "purcell/default-text-scale"))
+(use-package default-text-scale)
 
 ;;;; deft
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
-  :quelpa (deft :url "https://jblevins.org/git/deft.git" :fetcher git)
   :bind  (:map deft-mode-map
                ("<f6>" . quit-window)
                ("C-g" . deft-filter-clear)
@@ -913,7 +865,6 @@ line instead."
 ;; Highlight uncommitted changes
 (use-package diff-hl
   :demand
-  :quelpa (diff-hl :fetcher github :repo "dgutov/diff-hl")
   :config
   (global-diff-hl-mode 1)
   (eval-after-load 'magit
@@ -922,6 +873,7 @@ line instead."
 ;;;; dired
 ;; directory-browsing commands
 (use-package dired
+  :ensure nil
   :demand
   :init
   (defun my-find-name-dired (pattern)
@@ -955,6 +907,7 @@ PREFIX forces the use of `find'."
 
   ;; dired+ adds some features to standard dired (like reusing buffers)
   (use-package dired+
+    :ensure nil
     :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
     :defer 1
     :init
@@ -966,13 +919,11 @@ PREFIX forces the use of `find'."
 
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
-(use-package discover-my-major
-  :quelpa (discover-my-major :fetcher git :url "https://framagit.org/steckerhalter/discover-my-major.git"))
+(use-package discover-my-major)
 
 ;;;; easy-kill
 ;; make marking and killing easier
 (use-package easy-kill
-  :quelpa (easy-kill :fetcher github :repo "leoliu/easy-kill")
   :init
   (global-set-key [remap kill-ring-save] 'easy-kill)
   (global-set-key [remap mark-sexp] 'easy-mark))
@@ -996,7 +947,6 @@ PREFIX forces the use of `find'."
 ;; jump to elisp definition (function, symbol etc.) and back, show doc
 (use-package elisp-slime-nav
   :demand
-  :quelpa (elisp-slime-nav :repo "purcell/elisp-slime-nav" :fetcher github)
   :bind
   ("<f1> <f1>" . elisp-slime-nav-describe-elisp-thing-at-point)
   :diminish
@@ -1005,8 +955,6 @@ PREFIX forces the use of `find'."
 ;;;; emms
 ;; Playlist mode for Emms
 (use-package emms
-  :quelpa (emms :url "https://git.savannah.gnu.org/git/emms.git"
-                :fetcher git :files ("lisp/*.el" "doc/emms.texinfo"))
   :bind
   ("<XF86AudioPlay>" . emms-pause)
   ("<XF86AudioPrev>" . emms-previous)
@@ -1016,6 +964,7 @@ PREFIX forces the use of `find'."
   ("S-<XF86AudioNext>" . emms-seek-forward)
   :config
   (use-package emms-setup
+    :ensure nil
     :custom (emms-player-list '(emms-player-mpv))
     :config
     (emms-standard)))
@@ -1023,7 +972,6 @@ PREFIX forces the use of `find'."
 ;;;; erc
 ;; Emacs ERC client settings
 (use-package erc
-  :quelpa (erc-hl-nicks :fetcher github :repo "leathekd/erc-hl-nicks")
   :config
   (add-hook 'erc-mode-hook (lambda ()
                              (erc-truncate-mode t)
@@ -1090,6 +1038,7 @@ PREFIX forces the use of `find'."
   :config
 
   (use-package em-alias
+    :ensure nil
     :config
     (eshell/alias "cs" "apt search $1")
     (eshell/alias "e" "find-file $1")
@@ -1102,12 +1051,10 @@ PREFIX forces the use of `find'."
     (eshell/alias "l" "ls -CF"))
 
   (use-package esh-help
-    :quelpa (esh-help :repo tom-tan/esh-help :fetcher github)
     :config (setup-esh-help-eldoc))
 
   ;; BASH completion for the shell buffer
   (use-package bash-completion
-    :quelpa (bash-completion :repo szermatt/emacs-bash-completion :fetcher github)
     :config
     (defun eshell-bash-completion ()
       (setq-local bash-completion-nospace t)
@@ -1116,12 +1063,12 @@ PREFIX forces the use of `find'."
                       (save-excursion (eshell-bol) (point)) (point))))))
     (setq eshell-default-completion-function 'eshell-bash-completion))
   (use-package em-smart
+    :ensure nil
     :hook (eshell-mode . eshell-smart-initialize)))
 
 ;;;; eval-sexp-fu
 ;; flash the region that is evaluated (visual feedback) in elisp
 (use-package eval-sexp-fu
-  :quelpa (eval-sexp-fu  :fetcher github :repo "hchbaw/eval-sexp-fu.el")
   :bind
   (:map lisp-interaction-mode-map
         ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
@@ -1154,6 +1101,7 @@ PREFIX forces the use of `find'."
 ;;;; frame
 ;; multi-frame management independent of window systems
 (use-package frame
+  :ensure nil
   :config
   ;; maximize emacs
   (modify-all-frames-parameters '((fullscreen . fullboth)))
@@ -1178,13 +1126,13 @@ PREFIX forces the use of `find'."
 ;;;; git-modes
 ;; Emacs major modes for various Git configuration files
 (use-package git-modes
-  :defer t
-  :quelpa (git-modes :fetcher github :repo "magit/git-modes"))
+  :after magit
+  :ensure nil
+  :defer t)
 
 ;;;; google-translate
 ;; Emacs interface to Google's translation service
 (use-package google-translate
-  :quelpa (google-translate :fetcher github :repo "atykhonov/google-translate")
   :init
   (setq google-translate-default-source-language "de")
   (setq google-translate-default-target-language "en"))
@@ -1192,14 +1140,12 @@ PREFIX forces the use of `find'."
 ;;;; grandshell-theme
 ;; Grand Shell color theme for Emacs > 24
 (use-package grandshell-theme
-  :quelpa (grandshell-theme :url "https://framagit.org/steckerhalter/grandshell-theme.git" :fetcher git)
   :config (load-theme 'grandshell t))
 
 ;;;; helm
 ;; fancy candidate selection framework
 (use-package helm
   :unless (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
-  :quelpa (helm :repo "emacs-helm/helm" :fetcher github :files ("*.el" "emacs-helm.sh"))
   :diminish
   :commands helm-mini
 
@@ -1222,25 +1168,20 @@ PREFIX forces the use of `find'."
 
   ;; Yet Another `describe-bindings' with `helm'.
   (use-package helm-descbinds
-    :quelpa (helm-descbinds :repo "emacs-helm/helm-descbinds" :fetcher github)
     :config (helm-descbinds-mode))
 
   ;; GNU GLOBAL helm interface
   (use-package helm-gtags
-    :quelpa (helm-gtags :repo "syohex/emacs-helm-gtags" :fetcher github :files ("helm-gtags.el"))
     :diminish
     :config (helm-gtags-mode 1))
 
   ;; Helm integration for Projectile
-  (use-package helm-projectile
-    :quelpa (helm-projectile :repo "bbatsov/helm-projectile" :fetcher github))
+  (use-package helm-projectile)
 
   ;; Helm UI wrapper for system package managers.
-  (use-package helm-system-packages
-    :quelpa (helm-system-packages :repo "emacs-helm/helm-system-packages" :fetcher github))
+  (use-package helm-system-packages)
 
-  (use-package helm-rg
-    :quelpa (helm-rg :fetcher github :repo "cosmicexplorer/helm-rg"))
+  (use-package helm-rg)
 
   ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
@@ -1256,8 +1197,6 @@ PREFIX forces the use of `find'."
 ;;;; highlight-parentheses
 ;; highlight surrounding parentheses
 (use-package highlight-parentheses
-  :quelpa (highlight-parentheses :repo "nschum/highlight-parentheses.el"
-                                 :fetcher github)
   :hook (prog-mode . highlight-parentheses-mode)
   :init
   (setq hl-paren-delay 0.2)
@@ -1271,7 +1210,6 @@ PREFIX forces the use of `find'."
 ;;;; highlight-symbol
 ;; automatic and manual symbol highlighting
 (use-package highlight-symbol
-  :quelpa (highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el")
   :diminish
   :hook (prog-mode . highlight-symbol-mode)
   :init
@@ -1285,7 +1223,6 @@ PREFIX forces the use of `find'."
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
 (use-package iedit
-  :quelpa (iedit :repo "victorhge/iedit" :fetcher github)
   :init
   (setq iedit-unmatched-lines-invisible t)
   (setq iedit-toggle-key-default nil))
@@ -1301,7 +1238,6 @@ PREFIX forces the use of `find'."
 ;;;; iflipb
 ;; interactively flip between recently visited buffers
 (use-package iflipb
-  :quelpa (iflipb :repo "jrosdahl/iflipb" :fetcher github)
 
   :init
   ;; wrap around list
@@ -1321,26 +1257,16 @@ PREFIX forces the use of `find'."
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
 (use-package ipretty
-  :quelpa (ipretty :fetcher git :url "https://framagit.org/steckerhalter/ipretty.git")
   :config (ipretty-mode t))
-
-;;;; js2-mode
-;; extended javascript mode
-(use-package js2-mode
-  :quelpa (js2-mode :repo "mooz/js2-mode" :fetcher github)
-  :mode "\\.js$"
-  :hook (js2-mode . flycheck-mode))
 
 ;;;; json-mode
 ;; syntax highlighting for `json'
 (use-package json-mode
-  :quelpa (json-mode :fetcher github :repo "joshwnj/json-mode")
   :mode "\\.json\\'")
 
 ;;;; logview
 ;; Major mode for viewing log files
 (use-package logview
-  :quelpa (logview :repo "doublep/logview" :fetcher github)
   :mode ("\\.log" . logview-mode)
   :config (setq logview-auto-revert-mode t))
 
@@ -1364,8 +1290,6 @@ PREFIX forces the use of `find'."
   (setq magit-wip-after-apply-mode 1)
   ;; Emacs Minor mode to automatically commit and push
   (use-package git-auto-commit-mode
-    :quelpa (git-auto-commit-mode :fetcher github
-                                  :repo "ryuslash/git-auto-commit-mode")
     :commands (gac-commit gac)
     :config
     (defun gac ()
@@ -1380,7 +1304,6 @@ PREFIX forces the use of `find'."
 ;;;; markdown-mode
 ;; Emacs Major mode for Markdown-formatted text files
 (use-package markdown-mode
-  :quelpa (markdown-mode :fetcher github :repo "jrblevin/markdown-mode")
   :bind (:map markdown-mode-map
               ("C-M-i" . markdown-shifttab)
               ("<backtab>" . markdown-promote)
@@ -1426,13 +1349,11 @@ PREFIX forces the use of `find'."
 
 ;;;; monky
 (use-package monky
-  :quelpa (monky :fetcher github :repo ananthakumaran/monky :files ("*.el" "*.info" "style"))
   :init (setq monky-process-type 'cmdserver))
 
 ;;;; multiple-cursors
 ;; allow editing with multiple cursors
 (use-package multiple-cursors
-  :quelpa (multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el")
   :init
   (setq mc/always-repeat-command t)
   (setq mc/always-run-for-all t)
@@ -1443,7 +1364,6 @@ PREFIX forces the use of `find'."
 ;;;; open-junk-file
 ;; Open a junk (memo) file to try-and-error
 (use-package open-junk-file
-  :quelpa (open-junk-file :repo "rubikitch/open-junk-file" :fetcher github)
   :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
 
 ;;;; org
@@ -1492,6 +1412,7 @@ PREFIX forces the use of `find'."
 
 ;;;;; org-protocol
   (use-package org-protocol
+    :ensure nil
     :demand
     :config
     (add-to-list 'org-capture-templates
@@ -1501,15 +1422,9 @@ PREFIX forces the use of `find'."
                  '("L" "Protocol Link" entry (file+headline "" "capture")
                    "* TODO %?[[%:link][%:description]] %U\n" :immediate-finish t)))
 
-;;;;; org-protocol-capture-html
-  (use-package org-protocol-capture-html
-    :quelpa (org-protocol-capture-html :fetcher github :repo "alphapapa/org-protocol-capture-html")
-    :config (add-to-list 'org-capture-templates
-                         '("w" "Web site" entry (file "")
-                           "* %a :website:\n\n%U %?\n\n%:initial" :immediate-finish t)))
-
 ;;;;; org-agenda
   (use-package org-agenda
+    :ensure nil
     :init
     (defun my-org-agenda () (interactive) (org-agenda nil "n"))
     (setq org-agenda-start-with-log-mode t)
@@ -1569,13 +1484,11 @@ PREFIX forces the use of `find'."
 ;;;;; org-bullets
   ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
-    :quelpa (org-bullets :fetcher github :repo "emacsorphanage/org-bullets")
     :config (add-hook 'org-mode-hook 'org-bullets-mode)))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
 (use-package outshine
-  :quelpa (outshine :fetcher github :repo "alphapapa/outshine")
   :diminish outline-minor-mode
   :commands outshine-hook-function
   :hook ((outline-minor-mode . outshine-mode)
@@ -1586,30 +1499,17 @@ PREFIX forces the use of `find'."
 ;;;; page-break-lines
 ;; Display ^L page breaks as tidy horizontal lines
 (use-package page-break-lines
-  :quelpa (page-break-lines :fetcher github :repo "purcell/page-break-lines")
   :diminish
   :config (global-page-break-lines-mode))
 
 ;;;; pdf-tools
 (use-package pdf-tools
-  :quelpa (pdf-tools
-           :fetcher github
-           :repo "politza/pdf-tools"
-           :files ("lisp/*.el"
-                   "README"
-                   ("build" "Makefile")
-                   ("build" "server")
-                   (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
   :magic ("%PDF" . pdf-view-mode))
 
 ;;;; php
 ;; Major mode for editing PHP code
 (use-package php-mode
-  :quelpa (php-mode
-           :repo "ejmr/php-mode"
-           :fetcher github
-           :files ("php-mode.el" "skeleton/*.el"))
   :mode "\\.module\\'"
   :init
   (setq php-mode-coding-style 'symfony2)
@@ -1628,7 +1528,6 @@ PREFIX forces the use of `find'."
 
   :config
   (use-package company-php
-    :quelpa (company-php :repo "xcwen/ac-php" :fetcher github :files ("company-php.el"))
     :config (add-to-list 'company-backends 'company-ac-php-backend)
     :bind (:map php-mode-map
                 ("M-." . ac-php-find-symbol-at-point)
@@ -1636,8 +1535,7 @@ PREFIX forces the use of `find'."
                 ("M-S-," . ac-php-location-stack-forward)
                 ("H-i d" . my-var_dump-die)))
 
-  (use-package php-eldoc
-    :quelpa (php-eldoc :repo "sabof/php-eldoc" :fetcher github :files ("*.el" "*.php")))
+  (use-package php-eldoc)
 
   (defun setup-php-mode ()
     (php-eldoc-enable))
@@ -1647,7 +1545,6 @@ PREFIX forces the use of `find'."
 ;;;; pos-tip
 ;; Show tooltip at point
 (use-package pos-tip
-  :quelpa (pos-tip :repo "syohex/pos-tip" :fetcher github :files ("pos-tip.el"))
   :config
   (defun my-show-help ()
     "Show docs for symbol at point or at beginning of list if not on a symbol.
@@ -1674,10 +1571,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; projectile
 ;; Manage and navigate projects in Emacs easily
 (use-package projectile
-  :quelpa (projectile
-           :repo "bbatsov/projectile"
-           :fetcher github
-           :files ("projectile.el"))
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
@@ -1691,26 +1584,18 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
 (use-package rainbow-mode
-  :quelpa (rainbow-mode :fetcher github :repo "emacsmirror/rainbow-mode")
   :diminish
   :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
 
 ;;;; robe
 ;; Code navigation, documentation lookup and completion for Ruby
 (use-package robe
-  :quelpa (robe
-           :repo "dgutov/robe"
-           :fetcher github
-           :files ("robe*.el" "company-robe.el" "lib"))
   :config
   (push 'company-robe company-backends)
   :hook (ruby-mode . robe-mode))
 
 ;;;; shell-switcher
 (use-package shell-switcher
-  :quelpa (shell-switcher :fetcher github
-                          :repo "DamienCassou/shell-switcher"
-                          :files ("rswitcher.el" "shell-switcher.el"))
   :demand
   :config (shell-switcher-mode 1))
 
@@ -1723,7 +1608,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; smart-mode-line
 ;; A color coded smart mode-line.
 (use-package smart-mode-line
-  :quelpa (smart-mode-line :repo "Bruce-Connor/smart-mode-line" :fetcher github)
 
   :init
   (setq sml/vc-mode-show-backend t)
@@ -1735,37 +1619,30 @@ Pass symbol-name to the function DOC-FUNCTION."
 
 ;;;; stylus-mode
 ;; Major mode for editing .jade files
-(use-package stylus-mode
-  :quelpa (stylus-mode :fetcher github :repo "brianc/jade-mode" :files ("stylus-mode.el")))
+(use-package stylus-mode)
 
 ;;;; systemd
 ;; Major mode for editing systemd units
-(use-package systemd
-  :quelpa (systemd :fetcher github :repo "holomorph/systemd-mode" :files (:defaults "*.txt")))
+(use-package systemd)
 
 ;;;; toml-mode
 ;; Major mode for editing toml files
-(use-package toml-mode
-  :quelpa (toml-mode :fetcher github :repo "dryman/toml-mode.el"))
+(use-package toml-mode)
 
 ;;;; tldr
-(use-package tldr
-  :quelpa (tldr :fetcher github :repo "kuanyui/tldr.el"))
+(use-package tldr)
 
 ;;;; yaml-mode
 ;; Major mode for editing YAML files
-(use-package yaml-mode
-  :quelpa (yaml-mode :repo "yoshiki/yaml-mode" :fetcher github))
+(use-package yaml-mode)
 
 ;;;; visual-regexp
 ;; A regexp/replace command for Emacs with interactive visual feedback
-(use-package visual-regexp
-  :quelpa (visual-regexp :repo "benma/visual-regexp.el" :fetcher github))
+(use-package visual-regexp)
 
 ;;;; vlf
 ;; View Large Files
 (use-package vlf
-  :quelpa (vlf :repo "m00natic/vlfi" :fetcher github :old-names (vlfi))
   :init
   (setq vlf-application 'dont-ask)   ;just do it
   (setq vlf-batch-size 8192))        ;a bit more text per batch please
@@ -1773,7 +1650,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; web-mode
 ;; major mode for editing web templates
 (use-package web-mode
-  :quelpa (web-mode :repo "fxbois/web-mode" :fetcher github)
   :mode ("\\.html?\\'"
          "\\.ejs?\\'")
   :config
@@ -1785,7 +1661,6 @@ Pass symbol-name to the function DOC-FUNCTION."
 
 ;;;; which-key
 (use-package which-key
-  :quelpa (which-key :repo justbur/emacs-which-key :fetcher github)
   :diminish
   :custom
   (which-key-show-docstrings 'docstring-only)
@@ -1794,11 +1669,9 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config (which-key-mode))
 
 ;;;; zenity-color-picker
-(use-package zenity-color-picker
-  :quelpa (zenity-color-picker :fetcher git :url "https://bitbucket.org/Soft/zenity-color-picker.el.git"))
+(use-package zenity-color-picker)
 
 ;; Zoom window like tmux
-(use-package zoom-window
-  :quelpa (zoom-window :fetcher github :repo "syohex/emacs-zoom-window"))
+(use-package zoom-window)
 
 ;;; steckemacs.el ends here
