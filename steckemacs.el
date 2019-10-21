@@ -369,6 +369,56 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   (defhydra ! (:color pink
                       :pre (!/state)
                       :post (!/state t))
+    "  a  BOL
+  A  indentation
+  f  EOL
+  o  up
+  i  down
+  j  back
+  ;  forward
+  d  page down
+  s  page up
+  h  delete
+  H  kill word
+  S  go to beginning
+  D  go to end
+  F  find files
+M-f  projectile find files
+  k  kill line
+  O  back-button backward
+  I  back-button forward
+M-o  prev symbol
+M-i  next symbol
+  x  helm-M-x
+  /  undo
+  c  capture
+  m  mark
+M-m  easy-mark-sexp
+M-M  mark-whole-buffer
+  M  mark line
+  n  kill region/line
+  N  org cut subtree
+  y  yank
+  Y  yank-pop
+  l  recenter
+  =  scale up
+  +  scale down
+  w  prev window
+  e  next window
+  >  mark next like
+  <  mark prev like
+  [  swoop
+  ]  isearch
+  '  shell switch
+  \"  new shell
+  b  helm-mini
+  B  switch to buffer
+M-b  scratch
+  9  eval list
+M-9  eval sexp
+  0  eval last sexp
+"
+    ("S-SPC" (setq hydra-is-helpful t))
     ;; edit
     ("a" (kbds "C-a"))
     ("A" (kbds "M-m"))
@@ -388,7 +438,6 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ("I" back-button-local-forward)
     ("M-i" highlight-symbol-next)
     ("S" (kbds "M-<"))
-    ("p" pophint:do-flexibly)
     ("O" back-button-local-backward)
     ("M-o" highlight-symbol-prev)
     ("x" helm-M-x)
