@@ -366,9 +366,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
       (set-face-background 'cursor "#ff5f87")
       (setq which-key-show-docstrings nil)))
 
-  (defhydra ! (:color pink
-                      :pre (!/state)
-                      :post (!/state t))
+  (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
     "  a  BOL
   A  indentation
   f  EOL
