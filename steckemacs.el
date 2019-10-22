@@ -444,7 +444,7 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g l_  magit log
     ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
     ("0" eval-last-sexp)
     ;; commands
-    ("SPC" save-buffer)
+    ("SPC SPC" save-buffer)
     ("." elisp-slime-nav-find-elisp-thing-at-point)
     ("," pop-tag-mark)
     ("SPC %" (insert "¯\\_(ツ)_/¯"))
