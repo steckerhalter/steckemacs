@@ -373,15 +373,15 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings      _b_  helm-mini
   _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
   _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry   _._  find thing
-  _i_  down          _w_  prev window                         _c_  capture         _,_  pop mark
+  _i_  down          _w_  prev window    ^^                   _c_  capture         _,_  pop mark
   _j_  back          _e_  next window    _>_  mc next
   _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf
-  _ö_  forward       _n_  kill region                       _M-f_  projectile ff
+  _ö_  forward       _n_  kill region    ^^                 _M-f_  projectile ff
   _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files
-  _s_  page up       _y_  yank           _\"_  new shell    _M-b_  scratch
-                     _Y_  yank-pop
+  _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch
+  ^^                 _Y_  yank-pop
   _O_  last pos      _/_  undo           _6_  edebug defun  _g p_  prev hunk
-  _I_  next pos                          _7_  toggle edebug _g n_  next hunk
+  _I_  next pos      ^^                  _7_  toggle edebug _g n_  next hunk
 _M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g g_  magit
 _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g l_  magit log
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g r_  revert hunk
