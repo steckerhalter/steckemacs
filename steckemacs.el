@@ -367,55 +367,29 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
       (setq which-key-show-docstrings nil)))
 
   (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
-    "  a  BOL
-  A  indentation
-  f  EOL
-  o  up
-  i  down
-  j  back
-  ;  forward
-  d  page down
-  s  page up
-  h  delete
-  H  kill word
-  S  go to beginning
-  D  go to end
-  F  find files
-M-f  projectile find files
-  k  kill line
-  O  back-button backward
-  I  back-button forward
-M-o  prev symbol
-M-i  next symbol
-  x  helm-M-x
-  /  undo
-  c  capture
-  m  mark
-M-m  easy-mark-sexp
-M-M  mark-whole-buffer
-  M  mark line
-  n  kill region/line
-  N  org cut subtree
-  y  yank
-  Y  yank-pop
-  l  recenter
-  =  scale up
-  +  scale down
-  w  prev window
-  e  next window
-  >  mark next like
-  <  mark prev like
-  [  swoop
-  ]  isearch
-  '  shell switch
-  \"  new shell
-  b  helm-mini
-  B  switch to buffer
-M-b  scratch
-  9  eval list
-M-9  eval sexp
-  0  eval last sexp
-"
+    "
+  ^^move                ^^edit              ^^misc
+  -------------------------------------------------------------
+  _a_  BOL           _h_  delete         _l_  recenter
+  _f_  EOL           _H_  kill word      _=_  scale up
+  _A_  to indent     _S_  beg of buffer  _+_  scale down
+  _o_  up            _D_  end of buffer  _w_  prev window
+  _i_  down          _F_  find files     _e_  next window
+  _j_  back        _M-f_  projectile ff  _>_  mark next like
+  _;_  forward       _k_  kill line      _<_  mark prev like
+  _ö_  forward       _n_  kill region    _c_  capture
+  _d_  page down     _N_  cut subtree    _x_  helm-M-x
+  _s_  page up       _y_  yank           _[_  swoop
+  _O_  last pos      _Y_  yank-pop       _]_  isearch
+  _I_  next pos      _/_  undo           _'_  shell switch
+_M-o_  prev symbol   _m_  mark           _\"_  new shell
+_M-i_  next symbol _M-m_  mark-sexp      _b_  helm-mini
+^^                 _M-M_  mark buffer    _B_  switch to buffer
+^^                   _M_  mark line    _M-b_  scratch
+^^^^                                     _9_  eval list
+^^^^                                   _M-9_  eval sexp
+^^^^                                     _0_  eval last sexp
+  "
     ("S-SPC" (setq hydra-is-helpful t))
     ;; edit
     ("a" (kbds "C-a"))
@@ -425,6 +399,7 @@ M-9  eval sexp
     ("i" (kbds "C-n"))
     ("j" (kbds "C-b"))
     (";" (kbds "C-f"))
+    ("ö" (kbds "C-f"))
     ("d" (kbds "C-v"))
     ("s" (kbds "M-v"))
     ("h" (kbds "C-d"))
@@ -459,8 +434,8 @@ M-9  eval sexp
     ("w" my-select-prev-window)
     ("e" my-select-next-window)
     ;; misc
-    (">" mc/mark-next-like-this)
-    ("<" mc/mark-previous-like-this)
+    (">" (kbds "C->"))
+    ("<" (kbds "C-<"))
     ("[" helm-swoop)
     ("]" (hydra-resume isearch-forward) :exit t)
     ("'" shell-switcher-switch-buffer :exit t)
