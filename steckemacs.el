@@ -379,13 +379,13 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _ö_  forward       _n_  kill region    ^^                 _M-f_  projectile ff
   _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files
   _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch
-  ^^                 _Y_  yank-pop
-  _O_  last pos      _/_  undo           _6_  edebug defun  _g p_  prev hunk
-  _I_  next pos      ^^                  _7_  toggle edebug _g n_  next hunk
-_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g g_  magit
-_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g l_  magit log
-  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g r_  revert hunk
-  _]_  isearch       _m_  mark           _8_  eval buffer
+  ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
+  _O_  last pos      _/_  undo           _6_  edebug defun
+  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk
+_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk
+_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit
+  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log
+  _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk
   "
     ("M-SPC" (setq hydra-is-helpful t))
     ;; edit
@@ -459,7 +459,7 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g l_  magit log
     ("SPC a m" mastodon-toot)
     ("SPC a h" hackernews)
     ("SPC a d" daemons)
-    ("SPC b r" revert-buffer)
+    ("C-b" revert-buffer)
     ("SPC b s" my-sudo-edit)
     ("SPC b i" (hydra-resume iedit-mode) :exit t)
     ("SPC c" customize-group)
