@@ -434,7 +434,7 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g l_  magit log
     (">" (kbds "C->"))
     ("<" (kbds "C-<"))
     ("[" helm-swoop)
-    ("]" (hydra-resume isearch-forward) :exit t)
+    ("]" isearch-forward :exit t)
     ("'" shell-switcher-switch-buffer :exit t)
     ("\"" shell-switcher-new-shell :exit t)
     ("b" helm-mini)
