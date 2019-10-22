@@ -326,6 +326,7 @@ buffer is not visiting a file."
 (use-package hydra
   :bind
   ("M-SPC" . !/body)
+  ("S-SPC" . !/body)
   ("<menu>" . !/body)
   ("<apps>" . !/body)
   :config
@@ -368,29 +369,25 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
 
   (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
     "
-  ^^move                ^^edit              ^^misc
-  -------------------------------------------------------------
-  _a_  BOL           _h_  delete         _l_  recenter
-  _f_  EOL           _H_  kill word      _=_  scale up
-  _A_  to indent     _S_  beg of buffer  _+_  scale down
-  _o_  up            _D_  end of buffer  _w_  prev window
-  _i_  down          _F_  find files     _e_  next window
-  _j_  back        _M-f_  projectile ff  _>_  mark next like
-  _;_  forward       _k_  kill line      _<_  mark prev like
-  _ö_  forward       _n_  kill region    _c_  capture
-  _d_  page down     _N_  cut subtree    _x_  helm-M-x
-  _s_  page up       _y_  yank           _[_  swoop
-  _O_  last pos      _Y_  yank-pop       _]_  isearch
-  _I_  next pos      _/_  undo           _'_  shell switch
-_M-o_  prev symbol   _m_  mark           _\"_  new shell
-_M-i_  next symbol _M-m_  mark-sexp      _b_  helm-mini
-^^                 _M-M_  mark buffer    _B_  switch to buffer
-^^                   _M_  mark line    _M-b_  scratch
-^^^^                                     _9_  eval list
-^^^^                                   _M-9_  eval sexp
-^^^^                                     _0_  eval last sexp
+  _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring       _x_  helm-M-x
+  _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings      _b_  helm-mini
+  _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
+  _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry   _._  find thing
+  _i_  down          _w_  prev window                         _c_  capture         _,_  pop mark
+  _j_  back          _e_  next window    _>_  mc next
+  _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf
+  _ö_  forward       _n_  kill region                       _M-f_  projectile ff
+  _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files
+  _s_  page up       _y_  yank           _\"_  new shell    _M-b_  scratch
+                     _Y_  yank-pop
+  _O_  last pos      _/_  undo           _6_  edebug defun  _g p_  prev hunk
+  _I_  next pos                          _7_  toggle edebug _g n_  next hunk
+_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g g_  magit
+_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g l_  magit log
+  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g r_  revert hunk
+  _]_  isearch       _m_  mark           _8_  eval buffer
   "
-    ("S-SPC" (setq hydra-is-helpful t))
+    ("M-SPC" (setq hydra-is-helpful t))
     ;; edit
     ("a" (kbds "C-a"))
     ("A" (kbds "M-m"))
@@ -447,9 +444,9 @@ _M-i_  next symbol _M-m_  mark-sexp      _b_  helm-mini
     ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
     ("0" eval-last-sexp)
     ;; commands
-    ("SPC SPC" save-buffer)
-    ("SPC ." elisp-slime-nav-find-elisp-thing-at-point)
-    ("SPC ," pop-tag-mark)
+    ("SPC" save-buffer)
+    ("." elisp-slime-nav-find-elisp-thing-at-point)
+    ("," pop-tag-mark)
     ("SPC %" (insert "¯\\_(ツ)_/¯"))
     ("SPC ;" (find-file my-todo))
     ("SPC /" helm-rg)
@@ -468,18 +465,15 @@ _M-i_  next symbol _M-m_  mark-sexp      _b_  helm-mini
     ("SPC c" customize-group)
     ("SPC C" zenity-cp-color-at-point-dwim)
     ("SPC d" (hydra-resume deft) :exit t)
-    ("SPC e e" edebug-defun)
-    ("SPC e b" eval-buffer)
-    ("SPC e d" toggle-debug-on-error)
-    ("SPC f" ff-helm-places)
-    ("SPC F b" ff-helm-bookmarks)
-    ("SPC F u" ff-paste-current-url)
-    ("SPC g" magit-status :exit t)
-    ("SPC G l" magit-log-all)
-    ("SPC G b" magit-blame)
-    ("SPC G r" diff-hl-revert-hunk)
-    ("SPC G p" diff-hl-previous-hunk)
-    ("SPC G n" diff-hl-next-hunk)
+    ("6" edebug-defun)
+    ("8" eval-buffer)
+    ("7" toggle-debug-on-error)
+    ("g g" magit-status :exit t)
+    ("g l" magit-log-all)
+    ("g b" magit-blame)
+    ("g r" diff-hl-revert-hunk)
+    ("g p" diff-hl-previous-hunk)
+    ("g n" diff-hl-next-hunk)
     ("SPC h a" helm-apropos)
     ("SPC h d" elisp-slime-nav-describe-elisp-thing-at-point)
     ("SPC h s" info-lookup-symbol)
@@ -511,20 +505,19 @@ _M-i_  next symbol _M-m_  mark-sexp      _b_  helm-mini
     ("SPC p p" helm-locate-library)
     ("SPC q" quelpa)
     ("SPC Q" quelpa-expand-recipe)
-    ("SPC r" helm-show-kill-ring)
-    ("SPC R" helm-all-mark-rings)
-    ("SPC s" helm-google-searx)
-    ("SPC S" helm-google-google)
-    ("SPC t" my-org-insert-time-stamp)
-    ("SPC T" (my-org-insert-time-stamp t))
+    ("r" helm-show-kill-ring)
+    ("R" helm-all-mark-rings)
+    ("t" my-org-insert-time-stamp)
+    ("T" (my-org-insert-time-stamp t))
     ("SPC u" my-browse-url-dwim)
-    ("SPC v" visual-line-mode)
+    ("v" visual-line-mode)
     ("SPC w" (lambda ()
                (interactive)
                (let ((which-key-show-docstrings 'docstring-only))
                  (which-key-show-major-mode))))
     ("SPC z" zoom-window-zoom)
-    ("M-SPC" nil :color blue)
+    ("<apps>" nil :color blue)
+    ("S-SPC" nil :color blue)
     ("<menu>" nil :color blue)))
 
 ;;; packages
