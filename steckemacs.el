@@ -380,11 +380,11 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files    _q y_  yank rectangle
   _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch       _q c_  copy rectangle
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
-  _O_  last pos      _/_  undo           _6_  edebug defun
-  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk
-_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk
-_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit
-  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log
+  _O_  last pos      _/_  undo           _6_  edebug defun  ^^                   _u u_  todo.org
+  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk     _u m_  music.org
+_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk     _u j_  journal.org
+_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit         _u 0_  agenda
+  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log     _u d_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk
   "
     ("M-SPC" (setq hydra-is-helpful t))
@@ -439,6 +439,7 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit
     ("u u" (find-file my-todo))
     ("u m" (find-file (expand-file-name "music.org" deft-directory)))
     ("u j" (find-file (expand-file-name "journal.org" deft-directory)))
+    ("u 0" my-org-agenda)
     ("u d" deft)
     ("v" visual-line-mode)
     ("w" my-select-prev-window)
@@ -499,7 +500,6 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit
                                   ".pdf")
                           t))
     ("SPC m" man)
-    ("SPC n" my-org-agenda)
     ("SPC o a" org-archive-done-tasks)
     ("SPC o o" org-open-at-point)
     ("SPC o T" my-org-insert-timestamp)
