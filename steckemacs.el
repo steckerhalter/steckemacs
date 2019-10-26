@@ -369,22 +369,22 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
 
   (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
     "
-  _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring       _x_  helm-M-x
-  _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings      _b_  helm-mini
+  _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring        _x_  helm-M-x        _C-f_  flyspell
+  _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini
   _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
-  _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry   _._  find thing
-  _i_  down          _w_  prev window    ^^                   _c_  capture         _,_  pop mark
+  _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing
+  _i_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark
   _j_  back          _e_  next window    _>_  mc next
-  _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf _q q_  rectangle mode
-  _ö_  forward       _n_  kill region    ^^                 _M-f_  projectile ff _q k_  kill rectangle
-  _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files    _q y_  yank rectangle
-  _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch       _q c_  copy rectangle
+  _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode
+  _ö_  forward       _n_  kill region    ^^                 _M-f_  projectile ff  _q k_  kill rectangle
+  _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle
+  _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
-  _O_  last pos      _/_  undo           _6_  edebug defun  ^^                   _u u_  agenda
-  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk     _u m_  music.org
-_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk     _u j_  journal.org
-_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit         _u 0_  todo.org
-  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log     _u d_  deft
+  _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda
+  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  music.org
+_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org
+_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit          _u 0_  todo.org
+  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk
   "
     ("M-SPC" (setq hydra-is-helpful t))
@@ -402,6 +402,8 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit        
     ("f" (kbds "C-e"))
     ("F" (hydra-resume helm-find-files) :exit t)
     ("M-f" (hydra-resume project-find-file) :exit t)
+    ("C-f" flyspell-mode)
+    ("C-F" flyspell-buffer)
     ("g g" magit-status :exit t)
     ("g l" magit-log-all)
     ("g b" magit-blame)
@@ -849,6 +851,7 @@ line instead."
 ;;;; deft
 ;; quickly browse, filter, and edit plain text notes
 (use-package deft
+  :demand
   :bind  (:map deft-mode-map
                ("<f6>" . quit-window)
                ("C-g" . deft-filter-clear)
