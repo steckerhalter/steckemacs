@@ -298,7 +298,11 @@ buffer is not visiting a file."
       (org-id-get-create))
     (let ((time (current-time))
           (with-hm (not current-prefix-arg)))
-      (org-insert-time-stamp time with-hm t)))
+      (org-insert-time-stamp time with-hm t))
+    (when heading
+      (forward-line 3)
+      (end-of-line)
+      (newline-and-indent)))
 
 
 ;;;; global key bindings
@@ -437,7 +441,7 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit        
     ("s" (kbds "M-v"))
     ("S" (kbds "M-<"))
     ("t" my-org-insert-time-stamp)
-    ("T" (my-org-insert-time-stamp t))
+    ("T" (my-org-insert-time-stamp t) :exit t)
     ("u u" my-org-agenda)
     ("u 0" (find-file my-todo))
     ("u m" (find-file (expand-file-name "music.org" deft-directory)))
