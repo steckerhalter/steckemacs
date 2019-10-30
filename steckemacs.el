@@ -81,7 +81,7 @@
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
-   custom-file (expand-file-name "custom-file.el" temporary-file-directory) ;don't pollute the init file and don't `load' the customs but keep them for reference...
+   custom-file (expand-file-name "custom-file.el" user-emacs-directory) ;don't pollute the init file and don't `load' the customs but keep them for reference...
    initial-buffer-choice my-todo)
 
   ;; default flags
