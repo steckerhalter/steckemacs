@@ -376,8 +376,8 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring        _x_  helm-M-x        _C-f_  flyspell
   _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini   C-u _C-f_  flyspell buf
   _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
-  _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing
-  _i_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark
+  _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing      _C C_  customize group
+  _i_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark        _C v_  customize var
   _j_  back          _e_  next window    _>_  mc next
   _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode
   _ö_  forward       _n_  kill region    ^^                 _M-f_  projectile ff  _q k_  kill rectangle
@@ -400,6 +400,8 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit        
     ("M-b" my-switch-to-scratch)
     ("C-b" revert-buffer)
     ("c" my-capture :exit t)
+    ("C C" customize-group)
+    ("C v" customize-variable)
     ("d" (kbds "C-v"))
     ("e" my-select-next-window)
     ("D" (kbds "M->"))
