@@ -324,7 +324,7 @@ buffer is not visiting a file."
   ("C-c d" . ispell-change-dictionary)
   ("C-c t" . my-org-insert-time-stamp)
   ("C-z" . undo)
-  ("`" . wdired-mode))
+  ("C-c w" . wdired-mode))
 
 ;; Make bindings that stick around.
 (use-package hydra
@@ -359,7 +359,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
     ;;   ("q" nil "quit"))
     `(let* ((prefix (prefix-numeric-value current-prefix-arg))
             (fnp (plist-get ',plist prefix)))
-       (funcall (or fnp ',fn))))
+       (call-interactively (or fnp ',fn))))
 
   (defun !/state (&optional exit)
     ;; TODO: add state to mode-line
@@ -374,7 +374,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
     "
   _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring        _x_  helm-M-x        _C-f_  flyspell
-  _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini
+  _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini   C-u _C-f_  flyspell buf
   _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
   _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing
   _i_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark
@@ -406,14 +406,15 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit        
     ("f" (kbds "C-e"))
     ("F" (hydra-resume helm-find-files) :exit t)
     ("M-f" (hydra-resume project-find-file) :exit t)
-    ("C-f" flyspell-mode)
-    ("C-F" flyspell-buffer)
+    ("C-f" (hydra-arg flyspell-mode
+                      4 flyspell-buffer))
     ("g g" magit-status :exit t)
     ("g l" magit-log-all)
     ("g b" magit-blame)
     ("g r" diff-hl-revert-hunk)
     ("g p" diff-hl-previous-hunk)
     ("g n" diff-hl-next-hunk)
+    ("g c" (customize-group 'magit t))
     ("h" (kbds "C-d"))
     ("H" (kbds "M-d"))
     ("i" (kbds "C-n"))
@@ -1301,6 +1302,7 @@ PREFIX forces the use of `find'."
   :demand
   :diminish magit-wip-after-apply-mode
   :init
+  (setq magit-no-confirm '(stage-all-changes))
   (setq magit-push-always-verify nil)
   (setq git-commit-finish-query-functions nil)
   (setq magit-save-some-buffers nil) ;don't ask to save buffers
