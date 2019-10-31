@@ -387,7 +387,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda
   _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  music.org
 _M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org
-_M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit          _u 0_  todo.org
+_M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit          _u 0_  todo.org
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk
   "
@@ -450,6 +450,8 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit        
     ("u m" (find-file (expand-file-name "music.org" deft-directory)))
     ("u j" (find-file (expand-file-name "journal.org" deft-directory)))
     ("u d" deft)
+    ("ü" helm-swoop)
+    ("C-ü" web-search)
     ("v" visual-line-mode)
     ("w" my-select-prev-window)
     ("x" helm-M-x)
@@ -457,17 +459,18 @@ _M-i_  next symbol _M-M_  mark buffer  _M-9_  eval sexp     _g g_  magit        
     ("Y" yank-pop)
     (";" (kbds "C-f"))
     ("/" undo)
+    ("-" undo)
     ("<backtab>" outshine-cycle-buffer)
     ("=" default-text-scale-increase)
     ("+" default-text-scale-decrease)
     (">" (kbds "C->"))
     ("<" (kbds "C-<"))
     ("[" helm-swoop)
+    ("C-[" web-search)
     ("]" isearch-forward :exit t)
     ("'" shell-switcher-switch-buffer :exit t)
     ("\"" shell-switcher-new-shell :exit t)
-    ("9" eval-sexp-fu-eval-sexp-inner-list)
-    ("M-9" eval-sexp-fu-eval-sexp-inner-sexp)
+    ("9" (hydra-arg eval-sexp-fu-eval-sexp-inner-list 4 eval-sexp-fu-eval-sexp-inner-sexp))
     ("0" eval-last-sexp)
     ("SPC SPC" save-buffer)
     ("." elisp-slime-nav-find-elisp-thing-at-point)
@@ -1131,7 +1134,7 @@ PREFIX forces the use of `find'."
   :ensure nil
   :config
   ;; maximize emacs
-  (modify-all-frames-parameters '((fullscreen . fullboth)))
+  (modify-all-frames-parameters '((fullscreen . maximized)))
 
   (defun my-after-make-frame (&optional frame)
     (with-selected-frame (or frame (selected-frame))
@@ -1686,6 +1689,12 @@ Pass symbol-name to the function DOC-FUNCTION."
   (defun setup-web-mode ()
     (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
   :hook (web-mode . setup-web-mode))
+
+;;;; web-search
+(use-package web-search
+  :config
+  (push '("Qwant" "https://www.qwant.com/?q=%s" "Search") web-search-providers)
+  (setq web-search-default-provider "Qwant"))
 
 ;;;; which-key
 (use-package which-key
