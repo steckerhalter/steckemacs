@@ -324,6 +324,7 @@ buffer is not visiting a file."
   ("C-c d" . ispell-change-dictionary)
   ("C-c t" . my-org-insert-time-stamp)
   ("C-z" . undo)
+  ("C-c s" . web-search)
   ("C-c w" . wdired-mode))
 
 ;; Make bindings that stick around.
