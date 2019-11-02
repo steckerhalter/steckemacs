@@ -392,8 +392,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk
   "
-    ("M-SPC" (setq hydra-is-helpful t))
-    ;; edit
+    ("<f1>" (setq hydra-is-helpful t))
     ("a" (kbds "C-a"))
     ("A" (kbds "M-m"))
     ("b" helm-mini)
