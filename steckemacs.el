@@ -506,11 +506,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("SPC I" ipretty-last-sexp-other-buffer)
     ("SPC j" dired-jump)
     ("SPC k" kill-emacs)
-    ("SPC l" (rename-file (org-latex-export-to-pdf nil t)
-                          (concat "~/ownCloud/chords/"
-                                  (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
-                                  ".pdf")
-                          t))
+    ("C-l" (rename-file (org-latex-export-to-pdf nil t)
+                        (concat "~/ownCloud/chords/"
+                                (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
+                                ".pdf")
+                        t))
     ("SPC m" man)
     ("SPC o a" org-archive-done-tasks)
     ("SPC o o" org-open-at-point)
@@ -715,17 +715,20 @@ line instead."
 
 ;;;; auctex
 ;; enhanced LaTeX mode
-(setq TeX-PDF-mode t)
-(setq TeX-parse-self t)
-(setq TeX-auto-save t)
-(setq TeX-save-query nil)
-(add-hook 'doc-view-mode-hook 'auto-revert-mode)
-(add-hook 'TeX-mode-hook
-          '(lambda ()
-             (define-key TeX-mode-map (kbd "<C-f8>")
-               (lambda ()
-                 (interactive)
-                 (TeX-command-menu "LaTeX")))))
+(use-package tex
+  :ensure auctex
+  :config
+  (setq TeX-PDF-mode t)
+  (setq TeX-parse-self t)
+  (setq TeX-auto-save t)
+  (setq TeX-save-query nil)
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+  (add-hook 'TeX-mode-hook
+            '(lambda ()
+               (define-key TeX-mode-map (kbd "<C-f8>")
+                 (lambda ()
+                   (interactive)
+                   (TeX-command-menu "LaTeX"))))))
 
 ;;;; autorevert
 ;; revert buffers when files on disk change
