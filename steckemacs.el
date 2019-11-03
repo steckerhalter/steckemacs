@@ -330,7 +330,6 @@ buffer is not visiting a file."
 ;; Make bindings that stick around.
 (use-package hydra
   :bind
-  ("M-SPC" . !/body)
   ("S-SPC" . !/body)
   ("<menu>" . !/body)
   ("<apps>" . !/body)
@@ -392,7 +391,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk
   "
-    ("<f1>" (setq hydra-is-helpful t))
+    ("M-SPC" (setq hydra-is-helpful t))
     ("a" (kbds "C-a"))
     ("A" (kbds "M-m"))
     ("b" helm-mini)
@@ -466,7 +465,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     (">" (kbds "C->"))
     ("<" (kbds "C-<"))
     ("[" helm-swoop)
-    ("C-[" web-search)
     ("]" isearch-forward :exit t)
     ("'" shell-switcher-switch-buffer :exit t)
     ("\"" shell-switcher-new-shell :exit t)
