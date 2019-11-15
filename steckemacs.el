@@ -1403,7 +1403,7 @@ PREFIX forces the use of `find'."
 (use-package org
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :bind (:map org-mode-map
-              ("C-u M-RET" . org-insert-heading-after-current))
+              ("C-c M-RET" . org-insert-heading-after-current))
   :custom
   (org-capture-templates
    '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
