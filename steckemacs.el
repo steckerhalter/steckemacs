@@ -322,7 +322,6 @@ buffer is not visiting a file."
   ("C-c n" . my-org-agenda)
   ("C-c g" . magit-status)
   ("C-c d" . ispell-change-dictionary)
-  ("C-c t" . my-org-insert-time-stamp)
   ("C-z" . undo)
   ("C-c s" . web-search)
   ("C-c w" . wdired-mode))
@@ -1403,7 +1402,8 @@ PREFIX forces the use of `find'."
 (use-package org
   :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
   :bind (:map org-mode-map
-              ("C-c M-RET" . org-insert-heading-after-current))
+              ("C-c M-RET" . org-insert-heading-after-current)
+              ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :custom
   (org-capture-templates
    '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
@@ -1457,6 +1457,10 @@ PREFIX forces the use of `find'."
 ;;;;; org-agenda
   (use-package org-agenda
     :ensure nil
+    :bind (:map org-agenda-mode-map
+                ("C-c t" . (lambda () (interactive)
+                             (org-agenda-todo 'done)
+                             (org-agenda-redo-all))))
     :init
     (defun my-org-agenda () (interactive) (org-agenda nil "n"))
     (setq org-agenda-start-with-log-mode t)
