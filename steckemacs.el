@@ -1215,7 +1215,6 @@ PREFIX forces the use of `find'."
 
   ;; Efficiently hopping squeezed lines powered by helm interface
   (use-package helm-swoop
-    :quelpa
     :bind (:map
            isearch-mode-map ("M-i" . helm-swoop-from-isearch)
            :map
@@ -1303,7 +1302,6 @@ PREFIX forces the use of `find'."
 ;;;; magit
 ;; Emacs interface to git
 (use-package magit
-  :quelpa
   :demand
   :diminish magit-wip-after-apply-mode
   :init
