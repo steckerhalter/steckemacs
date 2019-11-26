@@ -1447,10 +1447,10 @@ PREFIX forces the use of `find'."
     :config
     (add-to-list 'org-capture-templates
                  '("p" "Protocol" entry (file+headline "" "capture")
-                   "* TODO %?[[%:link][%:description]] %U\n%i\n" :immediate-finish t))
+                   "* TODO %?[[%:link][%:description]]\n%i\n" :immediate-finish t))
     (add-to-list 'org-capture-templates
                  '("L" "Protocol Link" entry (file+headline "" "capture")
-                   "* TODO %?[[%:link][%:description]] %U\n" :immediate-finish t)))
+                   "* TODO %?[[%:link][%:description]]\n" :immediate-finish t)))
 
 ;;;;; org-agenda
   (use-package org-agenda
