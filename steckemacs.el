@@ -250,6 +250,13 @@ buffer is not visiting a file."
      (concat "xdg-open " (shell-quote-argument
                           (expand-file-name default-directory)))))
 
+  (defun my-json-format ()
+    (interactive)
+    (switch-to-buffer (get-buffer-create "output.json"))
+    (yank)
+    (json-reformat-region (point-min) (point-max))
+    (json-mode))
+
   (defun my-browse-url-dwim ()
     "Browse url \"do what I mean\".
  Browse the url at point if there is one. Otherwise use the last
@@ -421,6 +428,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("M-i" highlight-symbol-next)
     ("I" back-button-local-forward)
     ("j" (kbds "C-b"))
+    ("J" my-json-format)
     ("k" (kbds "C-k"))
     ("l" recenter-top-bottom)
     ("C-l" (rename-file (org-latex-export-to-pdf nil t)
