@@ -428,7 +428,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("M-i" highlight-symbol-next)
     ("I" back-button-local-forward)
     ("j" (kbds "C-b"))
-    ("J" my-json-format)
+    ("C-j" my-json-format)
     ("k" (kbds "C-k"))
     ("l" recenter-top-bottom)
     ("C-l" (rename-file (org-latex-export-to-pdf nil t)
