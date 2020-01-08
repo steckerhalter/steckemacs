@@ -292,11 +292,14 @@ buffer is not visiting a file."
                           :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
-      (switch-to-buffer (get-buffer-create "Original Songs"))
+      (switch-to-buffer (get-buffer-create "Reto's Songs"))
       (erase-buffer)
+      (insert "# Reto's Songs\n\n")
       (dolist (line songs)
         (insert line)
-        (newline))))
+        (newline))
+      (markdown-mode)
+      (markdown-preview)))
 
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
