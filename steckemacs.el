@@ -1414,10 +1414,11 @@ PREFIX forces the use of `find'."
   :bind (:map org-mode-map
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
+  :init (defvar org-agenda-default "" "default agenda to be used")
   :custom
   (org-capture-templates
-   '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
-     ("s" "Simple Task" entry (file+headline "" "capture") "* TODO %?\n")
+   `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
+     ("s" "home" entry (file+headline ,org-agenda-default "capture") "* TODO %?\n")
      ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (org-todo-keywords '((sequence "TODO(t)" "PICK(p)" "WAIT(w!)" "DONE(d)")))
   (org-todo-keyword-faces '(("WAIT" . org-footnote)
