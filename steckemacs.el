@@ -459,7 +459,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("S" (kbds "M-<"))
     ("t" my-org-insert-time-stamp)
     ("T" (my-org-insert-time-stamp t) :exit t)
-    ("u u" my-org-agenda)
+    ("u u" (my-org-agenda "n"))
+    ("u w" (my-org-agenda "w"))
     ("u o" (find-file my-todo))
     ("u m" (find-file (expand-file-name "music.org" deft-directory)))
     ("u j" (find-file (expand-file-name "journal.org" deft-directory)))
@@ -1471,7 +1472,7 @@ PREFIX forces the use of `find'."
                              (org-agenda-todo 'done)
                              (org-agenda-redo-all))))
     :init
-    (defun my-org-agenda () (interactive) (org-agenda nil "n"))
+    (defun my-org-agenda (key) (interactive) (org-agenda nil key))
     (setq org-agenda-start-with-log-mode t)
     (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
     (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
@@ -1502,14 +1503,18 @@ PREFIX forces the use of `find'."
 
     ;; display the agenda first
     (setq org-agenda-custom-commands
-          '(("n" "Agenda and all TODO's"
-             ((tags-todo "DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
-              (tags "+reminder+DEADLINE>\"<now>\|+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
-              (tags-todo "-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
-              (tags-todo "TODO={PICK}+DEADLINE>\"<now>\"|TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-              (tags-todo "TODO={WAIT}+DEADLINE>\"<now>\"|TODO={WAIT}-DEADLINE={.}" ((org-agenda-overriding-header "wait")))
-              (tags-todo "DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))
-              (agenda "agenda")))))
+          '(("n" "@home"
+             ((tags-todo "@home+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+              (tags "@home+reminder+DEADLINE>\"<now>\|@home+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+              (tags-todo "@home-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+              (tags-todo "@home+TODO={PICK}+DEADLINE>\"<now>\"|@home+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+              (tags-todo "@home+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+            ("w" "@work"
+             ((tags-todo "@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+              (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+              (tags-todo "@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+              (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+              (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
     (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
