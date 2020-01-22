@@ -282,7 +282,9 @@ buffer is not visiting a file."
 
   (defun my-capture ()
     (interactive)
-    (org-capture nil "s"))
+    (if current-prefix-arg
+        (org-capture nil (cadr org-capture-default))
+      (org-capture nil (car org-capture-default))))
 
   (defun my-songs ()
     (interactive)
@@ -1206,6 +1208,7 @@ PREFIX forces the use of `find'."
   (require 'helm-config)
   (helm-mode 1)
   (add-to-list 'helm-completing-read-handlers-alist '(dired-create-directory))
+  (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-bulk-action))
   (add-to-list 'helm-boring-buffer-regexp-list ":.*")
 
   ;; Yet Another `describe-bindings' with `helm'.
@@ -1260,6 +1263,18 @@ PREFIX forces the use of `find'."
 (use-package ibuffer
   :init (setq ibuffer-default-display-maybe-show-predicates t)
   :bind  ("C-x b" . ibuffer))
+
+;;;; ido
+(use-package ido
+  :init
+  (setq ido-enable-flex-matching t
+        ido-auto-merge-work-directories-length -1
+        ido-create-new-buffer 'always
+        ido-use-filename-at-point 'guess
+        ido-default-buffer-method 'selected-window)
+  :config
+  (ido-mode 1)
+  (put 'ido-exit-minibuffer 'disabled nil))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
@@ -1415,10 +1430,11 @@ PREFIX forces the use of `find'."
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
-  (defvar org-agenda-default "" "default agenda to be used")
+  (defvar org-capture-default '("s" "w") "default capture template to be used")
   (setq org-capture-templates
-        `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
-          ("s" "home" entry (file+headline ,org-agenda-default "capture") "* TODO %?\n")
+        '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
+          ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
+          ("w" "work" entry (file+headline "work.org" "capture") "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "PICK(p)" "WAIT(w!)" "DONE(d)")))
   (setq org-todo-keyword-faces '(("WAIT" . org-footnote)
