@@ -1430,7 +1430,8 @@ PREFIX forces the use of `find'."
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
-  (defvar org-capture-default '("s" "w") "default capture template to be used")
+  (defvar org-capture-default '("s" "w") "default capture template to be used.
+Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
   (setq org-capture-templates
         '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
