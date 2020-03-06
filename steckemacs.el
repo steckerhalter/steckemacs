@@ -620,7 +620,15 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     "Inserts a liquid quote tag"
     "tag: "
     "{% quote " _ " %}" \n
-    "{% endquote %}"))
+    "{% endquote %}")
+  (define-skeleton audio
+    "Inserts a liquid tag"
+    "file: "
+    "#+ATTR_HTML: :controls controls :preload none :loop true" \n
+    "#+BEGIN_audio" \n
+    "#+HTML: <source src=\"" str "\" type=\"audio/ogg\">" \n
+    "[[" str "]]" \n
+    "#+END_audio"))
 
 ;;;; term
 ;; general command interpreter in a window stuff
