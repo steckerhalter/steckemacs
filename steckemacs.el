@@ -37,7 +37,13 @@
 (package-install 'use-package)
 (use-package use-package-ensure
   :config  (setq use-package-always-ensure t))
-(use-package quelpa-use-package)
+
+(unless (package-installed-p 'quelpa)
+  (with-temp-buffer
+    (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
+    (eval-buffer)
+    (quelpa-self-upgrade)))
+(use-package quelpa-use-package :quelpa)
 
 ;;; diminish
 ;; Diminished modes are minor modes with no modeline display
@@ -1655,6 +1661,8 @@ Pass symbol-name to the function DOC-FUNCTION."
   :diminish
   :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
 
+;;;; restclient
+(use-package ob-restclient)
 ;;;; robe
 ;; Code navigation, documentation lookup and completion for Ruby
 (use-package robe
