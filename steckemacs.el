@@ -317,7 +317,7 @@ buffer is not visiting a file."
     (interactive)
     (find-file "~/Sync/notes/music.org")
     (let ((org-export-select-tags '("demo"))
-          (org-export-with-latex nil)
+          (org-export-with-latex t)
           (org-export-with-todo-keywords nil)
           (org-export-with-section-numbers nil)
           (org-export-with-tags nil)
@@ -326,6 +326,7 @@ buffer is not visiting a file."
                   (netrc-credentials "ftp.legtux.org"))))
       (org-html-export-to-html)
       (copy-file "~/Sync/notes/music.html" "~/Sync/music/index.html" t)
+      (copy-directory "~/Sync/notes/ltximg" "~/Sync/music/ltximg" nil t t)
       (shell-command
        (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/Sync/music /retonom/music; bye\""))))
 
