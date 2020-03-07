@@ -43,7 +43,11 @@
     (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
     (eval-buffer)
     (quelpa-self-upgrade)))
-(use-package quelpa-use-package :quelpa)
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
 
 ;;; diminish
 ;; Diminished modes are minor modes with no modeline display
@@ -308,6 +312,28 @@ buffer is not visiting a file."
         (newline))
       (markdown-mode)
       (markdown-preview)))
+
+  (defun my-music ()
+    (interactive)
+    (find-file "~/Sync/notes/music.org")
+    (let ((org-export-select-tags '("demo"))
+          (org-export-with-latex nil)
+          (org-export-with-todo-keywords nil)
+          (org-export-with-section-numbers nil)
+          (org-export-with-tags nil)
+          (org-export-with-toc t)
+          (auth (let ((netrc-file "~/.netrc"))
+                  (netrc-credentials "ftp.legtux.org"))))
+      (org-html-export-to-html)
+      (copy-file "~/Sync/notes/music.html" "~/Sync/music/index.html" t)
+      (shell-command
+       (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/Sync/music /retonom/music; bye\""))))
+
+  (defun music-after-save-hook ()
+    (when buffer-file-name
+      (when (numberp (string-match "music\.org$" buffer-file-name))
+        (my-music))))
+  (add-hook 'after-save-hook 'music-after-save-hook)
 
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
@@ -622,7 +648,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     "{% quote " _ " %}" \n
     "{% endquote %}")
   (define-skeleton audio
-    "Inserts a liquid tag"
+    "Insert html audio"
     "file: "
     "#+ATTR_HTML: :controls controls :preload none :loop true" \n
     "#+BEGIN_audio" \n
@@ -671,7 +697,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :config
   (defadvice kill-region (before slick-cut activate compile)
     "When called interactively with no active region, kill a single
-line instead."
+       line instead."
     (interactive
      (if mark-active (list (region-beginning) (region-end))
        (list (line-beginning-position)
@@ -936,7 +962,7 @@ line instead."
   :init
   (defun my-find-name-dired (pattern)
     "Find files in `default-directory' using `rg' if available.
-PREFIX forces the use of `find'."
+       PREFIX forces the use of `find'."
     (interactive "sFind-name (filename wildcard): ")
     (if (and (not current-prefix-arg) (executable-find "rg"))
         (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
@@ -1445,7 +1471,7 @@ PREFIX forces the use of `find'."
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
-Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
+       Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
   (setq org-capture-templates
         '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
@@ -1604,9 +1630,9 @@ Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
         (progn
           (goto-char end)
           (insert "));")
-          (goto-char start)
-          (insert "die(var_dump("))
-      (insert "die(var_dump());")))
+    (goto-char start)
+    (insert "die(var_dump("))
+  (insert "die(var_dump());")))
 
   :config
   (use-package company-php
