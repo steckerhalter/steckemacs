@@ -326,7 +326,7 @@ buffer is not visiting a file."
                   (netrc-credentials "ftp.legtux.org"))))
       (org-html-export-to-html)
       (copy-file "~/Sync/notes/music.html" "~/Sync/music/index.html" t)
-      (copy-directory "~/Sync/notes/ltximg" "~/Sync/music/ltximg" nil t t)
+      (shell-command "rsync -q ~/Sync/notes/ltximg" "~/Sync/music/ltximg")
       (shell-command
        (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/Sync/music /retonom/music; bye\""))))
 
