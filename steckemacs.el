@@ -313,6 +313,13 @@ buffer is not visiting a file."
       (markdown-mode)
       (markdown-preview)))
 
+  (setq org-publish-project-alist
+        '(("music"
+           :publishing-function org-html-publish-to-html
+           :base-directory "~/Sync/music"
+           :publishing-directory "~/Sync/music"
+           :section-numbers nil)))
+
   (defun my-music ()
     (interactive)
     (find-file "~/Sync/notes/music.org")
