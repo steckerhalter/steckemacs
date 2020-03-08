@@ -332,7 +332,7 @@ buffer is not visiting a file."
 
   (defun music-after-save-hook ()
     (when buffer-file-name
-      (when (numberp (string-match "music\.org$" buffer-file-name))
+      (when (and current-prefix-arg (numberp (string-match "music\.org$" buffer-file-name)))
         (my-music))))
   (add-hook 'after-save-hook 'music-after-save-hook)
 
