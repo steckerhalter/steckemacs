@@ -460,7 +460,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("C-j" my-json-format)
     ("k" (kbds "C-k"))
     ("l" recenter-top-bottom)
-    ("C-l" (rename-file (org-latex-export-to-pdf nil t)
+    ("C-l" (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil))
                         (concat "~/ownCloud/chords/"
                                 (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
                                 ".pdf")
@@ -1468,6 +1468,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
            :publishing-function org-html-publish-to-html
            :base-directory "~/Sync/music"
            :publishing-directory "~/Sync/music"
+           :with-toc t
            :section-numbers nil)))
   (setq org-capture-templates
         '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
