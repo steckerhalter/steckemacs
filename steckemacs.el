@@ -641,7 +641,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     "#+ATTR_HTML: :controls controls :preload none :loop true" \n
     "#+BEGIN_audio" \n
     "#+HTML: <source src=\"" str "\" type=\"audio/ogg\">" \n
-    "[[" str "]]" \n
+    "#+HTML: <a href=\"" str "\">" str "</a>" \n
     "#+END_audio"))
 
 ;;;; term
