@@ -313,13 +313,6 @@ buffer is not visiting a file."
       (markdown-mode)
       (markdown-preview)))
 
-  (setq org-publish-project-alist
-        '(("music"
-           :publishing-function org-html-publish-to-html
-           :base-directory "~/Sync/music"
-           :publishing-directory "~/Sync/music"
-           :section-numbers nil)))
-
   (defun publish-music ()
     (interactive)
     (let ((auth (let ((netrc-file "~/.netrc"))
@@ -1469,6 +1462,13 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
        Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
+
+  (setq org-publish-project-alist
+        '(("music"
+           :publishing-function org-html-publish-to-html
+           :base-directory "~/Sync/music"
+           :publishing-directory "~/Sync/music"
+           :section-numbers nil)))
   (setq org-capture-templates
         '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
