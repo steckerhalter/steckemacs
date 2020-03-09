@@ -330,15 +330,11 @@ buffer is not visiting a file."
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
     (when heading
-      (org-insert-heading)
-      (org-id-get-create))
+      (org-insert-heading))
     (let ((time (current-time))
           (with-hm (not current-prefix-arg)))
-      (org-insert-time-stamp time with-hm t))
-    (when heading
-      (forward-line 3)
-      (end-of-line)
-      (newline-and-indent)))
+      (org-insert-time-stamp time with-hm t)
+      (insert " ")))
 
 
 ;;;; global key bindings
