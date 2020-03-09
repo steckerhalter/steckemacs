@@ -415,7 +415,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
 
   (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
     "
-  _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring        _x_  helm-M-x        _C-f_  flyspell
+  _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring        _x_  M-x             _C-f_  flyspell
   _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini   C-u _C-f_  flyspell buf
   _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
   _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing      _C C_  customize group
@@ -427,7 +427,7 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
   _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda
-  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  music.org
+  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  demos.org
 _M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org
 _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit          _u o_  todo.org
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
@@ -447,7 +447,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("e" my-select-next-window)
     ("D" (kbds "M->"))
     ("f" (kbds "C-e"))
-    ("F" (hydra-resume helm-find-files) :exit t)
+    ("F" find-file)
     ("M-f" (hydra-resume project-find-file) :exit t)
     ("C-f" (hydra-arg flyspell-mode
                       4 flyspell-buffer))
@@ -495,7 +495,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("u u" (my-org-agenda "n"))
     ("u w" (my-org-agenda "w"))
     ("u o" (find-file my-todo))
-    ("u m" (find-file (expand-file-name "music.org" deft-directory)))
+    ("u m" (find-file "~/Sync/music/demos.org"))
     ("u j" (find-file (expand-file-name "journal.org" deft-directory)))
     ("u d" deft)
     ("u a" org-archive-done-tasks)
@@ -503,7 +503,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("C-ü" web-search)
     ("v" visual-line-mode)
     ("w" my-select-prev-window)
-    ("x" helm-M-x)
+    ("x" execute-extended-command)
     ("y" yank)
     ("Y" yank-pop)
     (";" (kbds "C-f"))
@@ -977,10 +977,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq dired-deletion-confirmer (lambda (x) t))
   :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
   :config
-  ;; make rename use ido and not helm
-  (put 'dired-do-rename 'ido 'find-file)
-  ;; make copy use ido and not helm
-  (put 'dired-do-copy 'ido 'find-file)
 
   ;; Rename files editing their names in dired buffers
   (use-package wdired
@@ -1241,14 +1237,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
   (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  :bind ("M-x" . helm-M-x)
-
   :config
   (require 'helm-config)
-  (helm-mode 1)
-  (add-to-list 'helm-completing-read-handlers-alist '(dired-create-directory))
-  (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-bulk-action))
-  (add-to-list 'helm-boring-buffer-regexp-list ":.*")
 
   ;; Yet Another `describe-bindings' with `helm'.
   (use-package helm-descbinds
@@ -1307,6 +1297,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 (use-package ido
   :init
   (setq ido-enable-flex-matching t
+        ido-everywhere t
         ido-auto-merge-work-directories-length -1
         ido-create-new-buffer 'always
         ido-use-filename-at-point 'guess
@@ -1314,6 +1305,13 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :config
   (ido-mode 1)
   (put 'ido-exit-minibuffer 'disabled nil))
+
+;;;; ido-completing-read+
+(use-package ido-completing-read+
+  :config
+  (ido-ubiquitous-mode 1)
+  (use-package amx
+    :config (amx-mode 1)))
 
 ;;;; iedit
 ;; change multiple occurences of word-at-point (compress display to show all of them)
@@ -1681,7 +1679,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
-  (setq projectile-completion-system 'helm)
+  (setq projectile-completion-system 'ido)
   (setq projectile-enable-caching t)
   (setq projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
