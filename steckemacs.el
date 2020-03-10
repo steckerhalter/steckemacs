@@ -330,7 +330,7 @@ buffer is not visiting a file."
       (when (and buffer-file-name
                  current-prefix-arg
                  (member (file-name-nondirectory buffer-file-name) matches))
-        (my-music))))
+        (publish-music))))
   (add-hook 'after-save-hook 'my-after-save-hook)
 
   (defun my-org-insert-time-stamp (&optional heading)
