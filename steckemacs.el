@@ -321,11 +321,17 @@ buffer is not visiting a file."
       (shell-command
        (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/Sync/music /retonom/music; bye\""))))
 
-  (defun music-after-save-hook ()
-    (when buffer-file-name
-      (when (and current-prefix-arg (numberp (string-match "music\.org$" buffer-file-name)))
+  (defun my-after-save-hook ()
+    (let ((matches '("songs.org"
+                     "demos.org"
+                     "raw.org"
+                     "setup.org"
+                     "index.org")))
+      (when (and buffer-file-name
+                 current-prefix-arg
+                 (member (file-name-nondirectory buffer-file-name) matches))
         (my-music))))
-  (add-hook 'after-save-hook 'music-after-save-hook)
+  (add-hook 'after-save-hook 'my-after-save-hook)
 
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
@@ -809,20 +815,12 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :diminish
 
   :init
-  (setq company-idle-delay nil)
+  (setq company-idle-delay 0.3)
   (setq company-tooltip-limit 20)
   (setq company-minimum-prefix-length 2)
 
   :config
-  (company-tng-configure-default)       ;TAB selects candidates
-
-  ;; use TAB to trigger completion ----------------------------------------------
-  ;; https://github.com/company-mode/company-mode/issues/94#issuecomment-40884387
-  (define-key company-mode-map [remap indent-for-tab-command]
-    'company-indent-for-tab-command)
-
   (setq tab-always-indent 'complete)
-
   (defvar completion-at-point-functions-saved nil)
 
   (defun company-indent-for-tab-command (&optional arg)
