@@ -644,11 +644,12 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (define-skeleton audio
     "Insert html audio"
     "file: "
-    "#+ATTR_HTML: :controls controls :preload none :loop true" \n
-    "#+BEGIN_audio" \n
-    "#+HTML: <source src=\"" str "\" type=\"audio/ogg\">" \n
-    "#+HTML: <a href=\"" str "\">" str "</a>" \n
-    "#+END_audio"))
+    "#+BEGIN_EXPORT html" \n
+    "<audio controls=\"controls\" preload=\"none\" loop=\"true\">" \n
+    "<source src=\"" str "\" type=\"audio/ogg\">" \n
+    "<a href=\"" str "\">" str "</a>" \n
+    "</audio>" \n
+    "#+END_EXPORT" \n))
 
 ;;;; term
 ;; general command interpreter in a window stuff
@@ -1462,6 +1463,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
            :publishing-function org-html-publish-to-html
            :base-directory "~/Sync/music"
            :publishing-directory "~/Sync/music"
+           :with-title nil
            :with-toc t
            :section-numbers nil)))
   (setq org-capture-templates
