@@ -83,11 +83,11 @@
    mouse-autoselect-window -.1            ;window focus follows the mouse pointer
    mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
    indicate-buffer-boundaries 'left       ;fringe markers (on the left side)
-   split-height-threshold 110             ;more readily split horziontally
    enable-recursive-minibuffers t         ;whatever...
    show-paren-delay 0                     ;show the paren immediately
    load-prefer-newer t                    ;prefer newer .el instead of the .elc
-   split-width-threshold 160              ;split horizontally only if less than 160 columns
+   split-height-threshold 110             ;more readily split horziontally
+   split-width-threshold 110              ;split horizontally only if less than 160 columns
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
@@ -1624,8 +1624,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
         (progn
           (goto-char end)
           (insert "));")
-    (goto-char start)
-    (insert "die(var_dump("))
+        (goto-char start)
+        (insert "die(var_dump("))
   (insert "die(var_dump());")))
 
   :config
@@ -1768,6 +1768,9 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config
   (push '("Qwant" "https://www.qwant.com/?q=%s" "Search") web-search-providers)
   (setq web-search-default-provider "Qwant"))
+
+;;;; writeroom-mode
+(use-package writeroom-mode)
 
 ;;;; which-key
 (use-package which-key
