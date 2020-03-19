@@ -416,8 +416,8 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing      _C C_  customize group
   _i_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark        _C v_  customize var
   _j_  back          _e_  next window    _>_  mc next
-  _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode
-  _ö_  forward       _n_  kill region    ^^                 _M-f_  projectile ff  _q k_  kill rectangle
+  _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode  _p p_  projectile switch
+  _ö_  forward       _n_  kill region    ^^^^                                     _q k_  kill rectangle  _p f_  projectile ff
   _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle
   _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
@@ -443,7 +443,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("D" (kbds "M->"))
     ("f" (kbds "C-e"))
     ("F" find-file)
-    ("M-f" (hydra-resume project-find-file) :exit t)
     ("C-f" (hydra-arg flyspell-mode
                       4 flyspell-buffer))
     ("g g" magit-status :exit t)
@@ -477,6 +476,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("O" back-button-local-backward)
     ("M-o" highlight-symbol-prev)
     ("ö" (kbds "C-f"))
+    ("p p" projectile-switch-project)
+    ("p f" (hydra-resume project-find-file) :exit t)
+    ("p u" projectile-switch-to-buffer)
+    ("p a" projectile-ag)
     ("q q" rectangle-mark-mode)
     ("q k" kill-rectangle)
     ("q y" yank-rectangle)
