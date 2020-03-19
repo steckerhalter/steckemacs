@@ -1462,6 +1462,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
        Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
+  (defvar my-work-folder "~/work")
 
   (setq org-publish-project-alist
         '(("music"
@@ -1472,9 +1473,9 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
            :with-toc t
            :section-numbers nil)))
   (setq org-capture-templates
-        '(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
+        `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
-          ("w" "work" entry (file+headline "work.org" "capture") "* TODO %?\n")
+          ("w" "work" entry (file+headline ,(expand-file-name "./notes/work.org" my-work-folder) "capture") "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "PICK(p)" "WAIT(w!)" "DONE(d)")))
   (setq org-todo-keyword-faces '(("WAIT" . org-footnote)
