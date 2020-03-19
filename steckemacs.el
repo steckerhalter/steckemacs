@@ -86,8 +86,8 @@
    enable-recursive-minibuffers t         ;whatever...
    show-paren-delay 0                     ;show the paren immediately
    load-prefer-newer t                    ;prefer newer .el instead of the .elc
-   split-height-threshold 110             ;more readily split horziontally
-   split-width-threshold 110              ;split horizontally only if less than 160 columns
+   split-height-threshold 140             ;more readily split horziontally
+   split-width-threshold 140              ;split horizontally only if less than 160 columns
    gc-cons-percentage 0.3                 ;increase garbage collection limit
    safe-local-variable-values '((engine . django))
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
@@ -792,6 +792,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
+
+;;;; balanced-windows
+(use-package balanced-windows
+  :config
+  (balanced-windows-mode))
 
 ;;;; browse-url
 (use-package browse-url
