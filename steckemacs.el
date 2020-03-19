@@ -1561,11 +1561,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ;; display the agenda first
     (setq org-agenda-custom-commands
           '(("n" "@home"
-             ((tags-todo "@home+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
-              (tags "@home+reminder+DEADLINE>\"<now>\|@home+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
-              (tags-todo "@home-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
-              (tags-todo "@home+TODO={PICK}+DEADLINE>\"<now>\"|@home+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-              (tags-todo "@home+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+             ((tags-todo "-@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+              (tags "-@work+reminder+DEADLINE>\"<now>\|-@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+              (tags-todo "-@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+              (tags-todo "-@work+TODO={PICK}+DEADLINE>\"<now>\"|-@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+              (tags-todo "-@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
             ("w" "@work"
              ((tags-todo "@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
               (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
