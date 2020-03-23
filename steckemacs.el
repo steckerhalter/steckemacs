@@ -1478,7 +1478,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
-          ("w" "work" entry (file+headline ,(expand-file-name "./notes/work.org" my-work-folder) "capture") "* TODO %?\n")
+          ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "PICK(p)" "WAIT(w!)" "DONE(d)")))
   (setq org-todo-keyword-faces '(("WAIT" . org-footnote)
