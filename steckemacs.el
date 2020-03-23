@@ -418,8 +418,8 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _j_  back          _e_  next window    _>_  mc next
   _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode  _p p_  projectile switch
   _ö_  forward       _n_  kill region    ^^^^                                     _q k_  kill rectangle  _p f_  projectile ff
-  _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle
-  _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect
+  _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle  _p u_  projectile switch to buffer
+  _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect       _p a_  projectile ag
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
   _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda
   _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  demos.org
@@ -479,7 +479,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("p p" projectile-switch-project)
     ("p f" (hydra-resume project-find-file) :exit t)
     ("p u" projectile-switch-to-buffer)
-    ("p a" projectile-ag)
+    ("p a" (hydra-resume projectile-ag) :exit t)
     ("q q" rectangle-mark-mode)
     ("q k" kill-rectangle)
     ("q y" yank-rectangle)
