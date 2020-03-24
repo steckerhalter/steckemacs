@@ -1477,7 +1477,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
            :section-numbers nil)))
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
-          ("s" "home" entry (file+headline "todo.org" "capture") "* TODO %?\n")
+          ("s" "home" entry (file "todo.org") "* TODO %?\n")
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "PICK(p)" "WAIT(w!)" "DONE(d)")))
@@ -1519,10 +1519,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     :demand
     :config
     (add-to-list 'org-capture-templates
-                 '("p" "Protocol" entry (file+headline "" "capture")
+                 '("p" "Protocol" entry (file "")
                    "* TODO %?[[%:link][%:description]]\n%i\n" :immediate-finish t))
     (add-to-list 'org-capture-templates
-                 '("L" "Protocol Link" entry (file+headline "" "capture")
+                 '("L" "Protocol Link" entry (file "")
                    "* TODO %?[[%:link][%:description]]\n" :immediate-finish t)))
 
 ;;;;; org-agenda
