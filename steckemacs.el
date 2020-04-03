@@ -1543,6 +1543,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     (setq org-agenda-show-all-dates nil)
     (setq org-agenda-prefix-format "%?-12t% s")
     (setq org-agenda-confirm-kill nil)
+    (setq org-tags-match-list-sublevels nil)
 
     (defun org-archive-done-tasks ()
       (interactive)
