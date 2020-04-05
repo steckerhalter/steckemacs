@@ -1506,7 +1506,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
              :publishing-function org-publish-attachment
              :base-directory "~/Sync/yoga"
              :publishing-directory "~/retonom/yoga"
-             :base-extension "jpg\\|png\\|css"))))
+             :base-extension "jpg\\|jpeg\\|png\\|css"))))
 
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
