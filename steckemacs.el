@@ -313,13 +313,23 @@ buffer is not visiting a file."
       (markdown-mode)
       (markdown-preview)))
 
-  (defun publish-music ()
+  (defun yoga ()
     (interactive)
+    (org-publish "yoga")
+    (when current-prefix-arg
+      (sync "yoga")))
+
+  (defun music ()
+    (interactive)
+    (org-publish "music")
+    (when current-prefix-arg
+      (sync "music")))
+
+  (defun sync (dir)
     (let ((auth (let ((netrc-file "~/.netrc"))
                   (netrc-credentials "ftp.legtux.org"))))
-      (org-publish "music")
       (shell-command
-       (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/Sync/music /retonom/music; bye\""))))
+       (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/retonom/" dir " /retonom/" dir "; bye\""))))
 
   (defun my-after-save-hook ()
     (let ((matches '("songs.org"
@@ -1467,14 +1477,37 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
        Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
   (defvar my-work-folder "~/work")
 
-  (setq org-publish-project-alist
-        '(("music"
-           :publishing-function org-html-publish-to-html
-           :base-directory "~/Sync/music"
-           :publishing-directory "~/Sync/music"
-           :with-title nil
-           :with-toc t
-           :section-numbers nil)))
+  (let ((source-dir "~/Sync/music")
+        (dest-dir "~/retonom/music"))
+    (setq org-publish-project-alist
+          `(("music" :components ("music-org" "music-files"))
+            ("music-org"
+             :publishing-function org-html-publish-to-html
+             :base-directory "~/Sync/music"
+             :publishing-directory "~/retonom/music"
+             :with-title nil
+             :with-toc t
+             :section-numbers nil)
+            ("music-files"
+             :publishing-function org-publish-attachment
+             :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|png\\|css"
+             :base-directory "~/Sync/music"
+             :publishing-directory "~/retonom/music"
+             :recursive t)
+            ("yoga" :components ("yoga-org" "yoga-files"))
+            ("yoga-org"
+             :publishing-function org-html-publish-to-html
+             :base-directory "~/Sync/yoga"
+             :publishing-directory "~/retonom/yoga"
+             :with-title nil
+             :with-toc t
+             :section-numbers nil)
+            ("yoga-files"
+             :publishing-function org-publish-attachment
+             :base-directory "~/Sync/yoga"
+             :publishing-directory "~/retonom/yoga"
+             :base-extension "jpg\\|png\\|css"))))
+
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("s" "home" entry (file "todo.org") "* TODO %?\n")
@@ -1634,9 +1667,9 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
         (progn
           (goto-char end)
           (insert "));")
-        (goto-char start)
-        (insert "die(var_dump("))
-  (insert "die(var_dump());")))
+            (goto-char start)
+            (insert "die(var_dump("))
+          (insert "die(var_dump());")))
 
   :config
   (use-package company-php
