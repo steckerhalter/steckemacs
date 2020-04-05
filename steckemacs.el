@@ -1477,36 +1477,34 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
        Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
   (defvar my-work-folder "~/work")
 
-  (let ((source-dir "~/Sync/music")
-        (dest-dir "~/retonom/music"))
-    (setq org-publish-project-alist
-          `(("music" :components ("music-org" "music-files"))
-            ("music-org"
-             :publishing-function org-html-publish-to-html
-             :base-directory "~/Sync/music"
-             :publishing-directory "~/retonom/music"
-             :with-title nil
-             :with-toc t
-             :section-numbers nil)
-            ("music-files"
-             :publishing-function org-publish-attachment
-             :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|png\\|css"
-             :base-directory "~/Sync/music"
-             :publishing-directory "~/retonom/music"
-             :recursive t)
-            ("yoga" :components ("yoga-org" "yoga-files"))
-            ("yoga-org"
-             :publishing-function org-html-publish-to-html
-             :base-directory "~/Sync/yoga"
-             :publishing-directory "~/retonom/yoga"
-             :with-title nil
-             :with-toc t
-             :section-numbers nil)
-            ("yoga-files"
-             :publishing-function org-publish-attachment
-             :base-directory "~/Sync/yoga"
-             :publishing-directory "~/retonom/yoga"
-             :base-extension "jpg\\|jpeg\\|png\\|css"))))
+  (setq org-publish-project-alist
+        `(("music" :components ("music-org" "music-files"))
+          ("music-org"
+           :publishing-function org-html-publish-to-html
+           :base-directory "~/Sync/music"
+           :publishing-directory "~/retonom/music"
+           :with-title nil
+           :with-toc t
+           :section-numbers nil)
+          ("music-files"
+           :publishing-function org-publish-attachment
+           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|png\\|jpg\\|jpeg\\|css"
+           :base-directory "~/Sync/music"
+           :publishing-directory "~/retonom/music"
+           :recursive t)
+          ("yoga" :components ("yoga-org" "yoga-files"))
+          ("yoga-org"
+           :publishing-function org-html-publish-to-html
+           :base-directory "~/Sync/yoga"
+           :publishing-directory "~/retonom/yoga"
+           :with-title nil
+           :with-toc t
+           :section-numbers nil)
+          ("yoga-files"
+           :publishing-function org-publish-attachment
+           :base-directory "~/Sync/yoga"
+           :publishing-directory "~/retonom/yoga"
+           :base-extension "jpg\\|jpeg\\|png\\|css")))
 
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
