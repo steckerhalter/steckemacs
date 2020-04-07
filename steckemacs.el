@@ -313,19 +313,14 @@ buffer is not visiting a file."
       (markdown-mode)
       (markdown-preview)))
 
-  (defun yoga ()
+  (defun retonom ()
     (interactive)
-    (org-publish "yoga")
+    (org-publish "web")
     (when current-prefix-arg
-      (sync "yoga")))
+      (sync-retonom)))
 
-  (defun music ()
+  (defun sync-retonom (&optional dir)
     (interactive)
-    (org-publish "music")
-    (when current-prefix-arg
-      (sync "music")))
-
-  (defun sync (dir)
     (let ((auth (let ((netrc-file "~/.netrc"))
                   (netrc-credentials "ftp.legtux.org"))))
       (shell-command
@@ -1478,33 +1473,23 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (defvar my-work-folder "~/work")
 
   (setq org-publish-project-alist
-        `(("music" :components ("music-org" "music-files"))
-          ("music-org"
+        '(("web" :components ("web-org" "web-files"))
+          ("web-org"
            :publishing-function org-html-publish-to-html
-           :base-directory "~/Sync/music"
-           :publishing-directory "~/retonom/music"
+           :base-directory "~/Sync/web"
+           :publishing-directory "~/retonom"
+           :recursive t
+           :exclude "setup.org"
            :with-title nil
            :with-toc t
            :section-numbers nil)
-          ("music-files"
+          ("web-files"
            :publishing-function org-publish-attachment
-           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|png\\|jpg\\|jpeg\\|css"
-           :base-directory "~/Sync/music"
-           :publishing-directory "~/retonom/music"
-           :recursive t)
-          ("yoga" :components ("yoga-org" "yoga-files"))
-          ("yoga-org"
-           :publishing-function org-html-publish-to-html
-           :base-directory "~/Sync/yoga"
-           :publishing-directory "~/retonom/yoga"
-           :with-title nil
-           :with-toc t
-           :section-numbers nil)
-          ("yoga-files"
-           :publishing-function org-publish-attachment
-           :base-directory "~/Sync/yoga"
-           :publishing-directory "~/retonom/yoga"
-           :base-extension "jpg\\|jpeg\\|png\\|css")))
+           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
+           :include (".htaccess")
+           :base-directory "~/Sync/web"
+           :publishing-directory "~/retonom"
+           :recursive t)))
 
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
@@ -1665,9 +1650,9 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
         (progn
           (goto-char end)
           (insert "));")
-            (goto-char start)
-            (insert "die(var_dump("))
-          (insert "die(var_dump());")))
+        (goto-char start)
+        (insert "die(var_dump("))
+  (insert "die(var_dump());")))
 
   :config
   (use-package company-php
