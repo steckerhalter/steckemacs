@@ -426,9 +426,9 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle  _p u_  projectile switch to buffer
   _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect       _p a_  projectile ag
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
-  _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda
-  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  demos.org
-_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org
+  _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda          _u s_  songs.org
+  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  demos.org       _u W_  work.org
+_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org     _u w_  work agenda
 _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit          _u o_  todo.org
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk    _u a_  org archive done
@@ -497,8 +497,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("T" (my-org-insert-time-stamp t) :exit t)
     ("u u" (my-org-agenda "n"))
     ("u w" (my-org-agenda "w"))
+    ("u W" (find-file (expand-file-name "./notes/work.org" my-work-folder)))
     ("u o" (find-file my-todo))
     ("u m" (find-file "~/Sync/music/demos.org"))
+    ("u s" (find-file "~/Sync/music/songs.org"))
     ("u j" (find-file (expand-file-name "journal.org" deft-directory)))
     ("u d" deft)
     ("u a" org-archive-done-tasks)
@@ -653,7 +655,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     "Insert html audio"
     "file: "
     "#+BEGIN_EXPORT html" \n
-    "<audio controls=\"controls\" preload=\"none\" loop=\"true\">" \n
+    "<audio controls=\"controls\" preload=\"none\">" \n
     "<source src=\"" str "\" type=\"audio/ogg\">" \n
     "<a href=\"" str "\">" str "</a>" \n
     "</audio>" \n
