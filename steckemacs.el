@@ -309,6 +309,7 @@ buffer is not visiting a file."
       (insert "# Reto's Songs\n\n")
       (dolist (line songs)
         (insert line)
+        (insert "  ")
         (newline))
       (markdown-mode)
       (markdown-preview)))
@@ -1436,7 +1437,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq markdown-wiki-link-fontify-missing t)
   (setq markdown-wiki-link-alias-first nil)
   (setq markdown-indent-on-enter 'indent-and-new-item)
-  (setq markdown-command "pandoc -c http://benjam.info/panam/styling.css --from markdown_github -t html5 --mathjax --highlight-style pygments --standalone")
+  (setq markdown-command "pandoc -c http://benjam.info/panam/styling.css --from gfm -t html5 --mathjax --highlight-style pygments --metadata title=' ' --standalone")
 
   :hook (markdown-mode . visual-line-mode)
   :config
