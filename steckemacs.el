@@ -364,6 +364,7 @@ buffer is not visiting a file."
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c n" . my-org-agenda)
+  ("C-c a" . org-agenda)
   ("C-c g" . magit-status)
   ("C-c d" . ispell-change-dictionary)
   ("C-z" . undo)
@@ -1488,7 +1489,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
            :section-numbers nil)
           ("web-files"
            :publishing-function org-publish-attachment
-           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
+           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|aac\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
            :include (".htaccess")
            :base-directory "~/Sync/web"
            :publishing-directory "~/retonom"
