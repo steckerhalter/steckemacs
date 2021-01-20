@@ -657,8 +657,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     "Insert html audio"
     "file: "
     "#+BEGIN_EXPORT html" \n
-    "<audio controls=\"controls\" preload=\"none\">" \n
-    "<source src=\"" str "\" type=\"audio/ogg\">" \n
+    "<audio controls=\"controls\" preload=\"none\" src=\"" str "\">" \n
     "<a href=\"" str "\">" str "</a>" \n
     "</audio>" \n
     "#+END_EXPORT" \n))
@@ -704,7 +703,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :config
   (defadvice kill-region (before slick-cut activate compile)
     "When called interactively with no active region, kill a single
-       line instead."
+  line instead."
     (interactive
      (if mark-active (list (region-beginning) (region-end))
        (list (line-beginning-position)
@@ -741,7 +740,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 
     (defun projectile-pyenv-mode-set ()
       "Set pyenv version matching project name.
-       Version must be already installed."
+  Version must be already installed."
       (let ((name (projectile-project-name)))
         (if (member name (pyenv-mode-versions))
             (pyenv-mode-set name)
@@ -966,7 +965,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :init
   (defun my-find-name-dired (pattern)
     "Find files in `default-directory' using `rg' if available.
-       PREFIX forces the use of `find'."
+  PREFIX forces the use of `find'."
     (interactive "sFind-name (filename wildcard): ")
     (if (and (not current-prefix-arg) (executable-find "rg"))
         (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
@@ -1473,7 +1472,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
-       Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
+  Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
   (defvar my-work-folder "~/work")
 
   (setq org-publish-project-alist
@@ -1522,6 +1521,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-default-notes-file my-todo)
   (setq org-image-actual-width nil)
   (setq org-log-repeat nil)
+  (setq org-clock-idle-time 10)
   (setq org-tags-exclude-from-inheritance '("song"))
   (setq org-blank-before-new-entry
         '((heading . nil) (plain-list-item . nil)))
