@@ -300,8 +300,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
+                              (org-element-property
+                               :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -351,6 +351,7 @@ buffer is not visiting a file."
 
 ;;;; global key bindings
   :bind
+  ("<f10>" . save-buffer)
   ("<f6>" . my-kill-buffer)
   ("<f7>" . my-toggle-window-split)
   ("C-8" . my-split-window)
