@@ -1523,6 +1523,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-image-actual-width nil)
   (setq org-log-repeat nil)
   (setq org-clock-idle-time 10)
+  (setq org-clock-x11idle-program-name "xprintidle")
   (setq org-tags-exclude-from-inheritance '("song"))
   (setq org-blank-before-new-entry
         '((heading . nil) (plain-list-item . nil)))
