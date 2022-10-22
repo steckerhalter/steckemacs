@@ -430,10 +430,10 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
   _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect       _p a_  projectile ag
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
   _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda          _u s_  songs.org
-  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u m_  demos.org       _u W_  work.org
-_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org     _u w_  work agenda
+  _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u d_  demos.org
+_M-o_  prev symbol _M-m_  mark-sexp      _9_  eval list     _g n_  next hunk      _u j_  journal.org
 _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit          _u o_  todo.org
-  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u d_  deft
+  _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u e_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk    _u a_  org archive done
   "
     ("M-SPC" (setq hydra-is-helpful t))
@@ -499,13 +499,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("t" my-org-insert-time-stamp)
     ("T" (my-org-insert-time-stamp t) :exit t)
     ("u u" (my-org-agenda "n"))
-    ("u w" (my-org-agenda "w"))
-    ("u W" (find-file (expand-file-name "./notes/work.org" my-work-folder)))
     ("u o" (find-file my-todo))
-    ("u m" (find-file "~/Sync/music/demos.org"))
+    ("u d" (find-file "~/Sync/music/demos.org"))
     ("u s" (find-file "~/Sync/music/songs.org"))
     ("u j" (find-file (expand-file-name "journal.org" deft-directory)))
-    ("u d" deft)
+    ("u e" deft)
     ("u a" org-archive-done-tasks)
     ("ü" helm-swoop)
     ("C-ü" web-search)
@@ -942,7 +940,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
                 "\\|^# .*$" ;; md titles
                 "\\)"))
   (setq deft-separator " ")
-  (setq deft-directory "~/Sync/notes")
+  (setq deft-directory "~/Sync")
   (setq deft-file-naming-rules nil)
   (setq deft-recursive t)
   (setq deft-default-extension "org")
@@ -1467,7 +1465,9 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 ;;;; org
 ;;  "Outline-based notes management and organizer"
 (use-package org
-  :hook (org-mode . (lambda () (setq-local company-idle-delay 0.3)))
+  :hook (org-mode . (lambda ()
+                      (setq-local company-idle-delay 0.3)
+                      (setq-local electric-pair-mode nil)))
   :bind (:map org-mode-map
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
@@ -1530,10 +1530,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
-  (add-to-list 'org-structure-template-alist
-               '("E" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC\n"))
-  (add-to-list 'org-structure-template-alist
-               '("S" "#+BEGIN_SRC shell-script\n?\n#+END_SRC\n"))
+
+;;;;; org-tempo
+
+  (use-package org-tempo
+    :ensure nil)
 
 ;;;;; org-protocol
   (use-package org-protocol
