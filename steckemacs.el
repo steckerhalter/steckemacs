@@ -470,7 +470,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("k" (kbds "C-k"))
     ("l" recenter-top-bottom)
     ("C-l" (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil))
-                        (concat "~/ownCloud/chords/"
+                        (concat "~/Nextcloud/chords/"
                                 (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
                                 ".pdf")
                         t))
