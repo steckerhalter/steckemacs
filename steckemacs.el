@@ -375,7 +375,6 @@ buffer is not visiting a file."
 ;; Make bindings that stick around.
 (use-package hydra
   :bind
-  ("S-SPC" . !/body)
   ("<menu>" . !/body)
   ("<apps>" . !/body)
   :config
@@ -469,7 +468,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("C-j" my-json-format)
     ("k" (kbds "C-k"))
     ("l" recenter-top-bottom)
-    ("C-l" (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil))
+    ("C-l" (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
                         (concat "~/Nextcloud/chords/"
                                 (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
                                 ".pdf")
@@ -1821,3 +1820,4 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package zoom-window)
 
 ;;; steckemacs.el ends here
+(put 'downcase-region 'disabled nil)
