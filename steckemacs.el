@@ -158,6 +158,12 @@
   (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
 
 ;;;; personal functions
+  (defun export-song () (interactive)
+         (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
+                      (concat "~/Nextcloud/chords/"
+                              (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
+                              ".pdf")
+                      t))
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
 
@@ -300,8 +306,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                              (org-element-property
-                               :title (org-element-at-point)) 0 -13))
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -365,6 +371,7 @@ buffer is not visiting a file."
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c n" . my-org-agenda)
+  ("C-c e" . export-song)
   ("C-c a" . org-agenda)
   ("C-c g" . magit-status)
   ("C-c d" . ispell-change-dictionary)
@@ -468,11 +475,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("C-j" my-json-format)
     ("k" (kbds "C-k"))
     ("l" recenter-top-bottom)
-    ("C-l" (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
-                        (concat "~/Nextcloud/chords/"
-                                (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
-                                ".pdf")
-                        t))
+    ("C-l" export-song)
     ("m" (kbds "C-SPC"))
     ("M-m" easy-mark-sexp)
     ("M-M" mark-whole-buffer)
