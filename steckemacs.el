@@ -377,13 +377,15 @@ buffer is not visiting a file."
   ("C-c d" . ispell-change-dictionary)
   ("C-z" . undo)
   ("C-c s" . web-search)
-  ("C-c w" . wdired-mode))
+  ("C-c v" . visual-line-mode)
+  ("C-c w" . wdired-mode)
+  ("C-c b" . helm-mini))
 
 ;; Make bindings that stick around.
 (use-package hydra
   :bind
   ("<menu>" . !/body)
-  ("<apps>" . !/body)
+  ("C-c h" . !/body)
   :config
   (defun kbds (keys)
     "Simulate keyboard input.
