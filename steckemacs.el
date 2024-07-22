@@ -379,7 +379,8 @@ buffer is not visiting a file."
   ("C-c s" . web-search)
   ("C-c v" . visual-line-mode)
   ("C-c w" . wdired-mode)
-  ("C-c b" . helm-mini))
+  ("C-x b" . helm-mini)
+  ("C-c r" . revert-buffer))
 
 ;; Make bindings that stick around.
 (use-package hydra
@@ -1298,7 +1299,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 ;;;; ibuffer
 (use-package ibuffer
   :init (setq ibuffer-default-display-maybe-show-predicates t)
-  :bind  ("C-x b" . ibuffer))
+  :bind  ("C-x C-b" . ibuffer))
 
 ;;;; ido
 (use-package ido
