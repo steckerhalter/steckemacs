@@ -333,6 +333,13 @@ buffer is not visiting a file."
       (shell-command
        (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/retonom/" dir " /retonom/" dir "; bye\""))))
 
+  (defun kkadw-sync (&optional dir)
+    (interactive)
+    (let ((auth (let ((netrc-file "~/.netrc"))
+                  (netrc-credentials "legtux.org"))))
+      (shell-command
+       (concat "lftp -e \"open legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --exclude-glob=.git/* --verbose ~/projects/linktree" dir " /kkadw" dir "; bye\""))))
+
   (defun my-after-save-hook ()
     (let ((matches '("songs.org"
                      "demos.org"
@@ -1548,10 +1555,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     :config
     (add-to-list 'org-capture-templates
                  '("p" "Protocol" entry (file "")
-                   "* TODO %?[[%:link][%:description]]\n%i\n" :immediate-finish t))
+                   "* TODO %?[[%:link][%:description]]\n%i\n" :prepend t :immediate-finish t))
     (add-to-list 'org-capture-templates
                  '("L" "Protocol Link" entry (file "")
-                   "* TODO %?[[%:link][%:description]]\n" :immediate-finish t)))
+                   "* TODO %?[[%:link][%:description]]\n" :prepend t :immediate-finish t)))
 
 ;;;;; org-agenda
   (use-package org-agenda
