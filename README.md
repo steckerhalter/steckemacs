@@ -1,10 +1,8 @@
-# steckemacs.el
-
-[![Build Status](https://travis-ci.org/steckerhalter/steckemacs.el.svg?branch=master)](https://travis-ci.org/steckerhalter/steckemacs.el)
+# steckemacs
 
 **steckEmacs** is an init file for Emacs.
 
-![screenshot](https://raw.github.com/steckerhalter/steckemacs.el/master/screenshot.png "screen shot")
+![screenshot](https://raw.github.com/steckerhalter/steckemacs/master/screenshot.png "screen shot")
 
 it uses:
 
@@ -17,8 +15,8 @@ it uses:
 **Emacs 24.4 ist required at least**
 
     cd ~
-    git clone https://github.com/steckerhalter/steckemacs.el.git
-    ln -s steckemacs.el/steckemacs.el .emacs
+    git clone https://github.com/steckerhalter/steckemacs.git
+    ln -s steckemacs/steckemacs.el .emacs
 
 ## Usage
 
