@@ -164,6 +164,8 @@
                               (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
                               ".pdf")
                       t))
+  (defun my-todo-buffer () (interactive)
+         (find-file my-todo))
   (defun my-switch-to-scratch () (interactive)
          (switch-to-buffer "*scratch*"))
 
@@ -382,12 +384,12 @@ buffer is not visiting a file."
   ("C-c a" . org-agenda)
   ("C-c g" . magit-status)
   ("C-c d" . ispell-change-dictionary)
-  ("C-z" . undo)
   ("C-c s" . web-search)
   ("C-c v" . visual-line-mode)
   ("C-c w" . wdired-mode)
   ("C-x b" . helm-mini)
-  ("C-c r" . revert-buffer))
+  ("C-c r" . revert-buffer)
+  ("C-c t" . my-todo-buffer))
 
 ;; Make bindings that stick around.
 (use-package hydra
