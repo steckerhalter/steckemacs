@@ -383,13 +383,14 @@ buffer is not visiting a file."
   ("C-c e" . export-song)
   ("C-c a" . org-agenda)
   ("C-c g" . magit-status)
-  ("C-c d" . ispell-change-dictionary)
+  ("C-c D" . ispell-change-dictionary)
   ("C-c s" . web-search)
   ("C-c v" . visual-line-mode)
   ("C-c w" . wdired-mode)
   ("C-x b" . helm-mini)
   ("C-c r" . revert-buffer)
-  ("C-c t" . my-todo-buffer))
+  ("C-c t" . my-todo-buffer)
+  ("C-c d" . org-archive-done-tasks))
 
 ;; Make bindings that stick around.
 (use-package hydra
