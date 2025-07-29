@@ -397,6 +397,7 @@ buffer is not visiting a file."
   :bind
   ("<menu>" . !/body)
   ("C-c h" . !/body)
+  ("M-SPC" . !/body)
   :config
   (defun kbds (keys)
     "Simulate keyboard input.
@@ -437,16 +438,16 @@ PLIST are pairs of the numerical argument and function, for example to call `fin
 
   (defhydra ! (:color pink :pre (!/state) :post (!/state t) :hint nil)
     "
-  _a_  BOL           _h_  delete         _l_  recenter        _r_  kill ring        _x_  M-x             _C-f_  flyspell
-  _f_  EOL           _H_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini   C-u _C-f_  flyspell buf
+  _0_  BOL           _x_  delete         _l_  recenter        _r_  kill ring        _x_  M-x             _C-f_  flyspell
+  _9_  EOL           _X_  kill word      _=_  scale up        _R_  mark rings       _b_  helm-mini   C-u _C-f_  flyspell buf
   _A_  to indent     _S_  beg of buffer  _+_  scale down      _t_  timestamp
-  _o_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing      _C C_  customize group
-  _i_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark        _C v_  customize var
-  _j_  back          _e_  next window    _>_  mc next
-  _;_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode  _p p_  projectile switch
-  _ö_  forward       _n_  kill region    ^^^^                                     _q k_  kill rectangle  _p f_  projectile ff
-  _d_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle  _p u_  projectile switch to buffer
-  _s_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect       _p a_  projectile ag
+  _k_  up            _D_  end of buffer  _v_  visual line     _T_  journal entry    _._  find thing      _C C_  customize group
+  _j_  down          _w_  prev window    ^^                   _c_  capture          _,_  pop mark        _C v_  customize var
+  _h_  back          _e_  next window    _>_  mc next
+  _l_  forward       _k_  kill line      _<_  mc prev         _B_  switch to buf  _q q_  rectangle mode  _p p_  projectile switch
+                     _n_  kill region    ^^^^                                     _q k_  kill rectangle  _p f_  projectile ff
+  _i_  page down     _N_  cut subtree    _'_  shell switch    _F_  find files     _q y_  yank rectangle  _p u_  projectile switch to buffer
+  _o_  page up       _y_  yank           _\"_  new shell     _M-b_  scratch        _q c_  copy rect       _p a_  projectile ag
   ^^                 _Y_  yank-pop       ^^                 _C-b_  revert buffer
   _O_  last pos      _/_  undo           _6_  edebug defun  ^^                    _u u_  agenda          _u s_  songs.org
   _I_  next pos      ^^                  _7_  toggle edebug _g p_  prev hunk      _u d_  demos.org
@@ -455,8 +456,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   _[_  swoop         _M_  mark line      _0_  eval l. sexp  _g l_  magit log      _u e_  deft
   _]_  isearch       _m_  mark           _8_  eval buffer   _g r_  revert hunk    _u a_  org archive done
   "
-    ("M-SPC" (setq hydra-is-helpful t))
-    ("a" (kbds "C-a"))
+    ("<f1>" (setq hydra-is-helpful t))
+    ("0" (kbds "C-a"))
     ("A" (kbds "M-m"))
     ("b" helm-mini)
     ("B" (switch-to-buffer nil))
@@ -465,10 +466,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("c" my-capture :exit t)
     ("C C" customize-group)
     ("C v" customize-variable)
-    ("d" (kbds "C-v"))
+    ("i" (kbds "C-v"))
     ("e" my-select-next-window)
     ("D" (kbds "M->"))
-    ("f" (kbds "C-e"))
+    ("9" (kbds "C-e"))
     ("F" find-file)
     ("C-f" (hydra-arg flyspell-mode
                       4 flyspell-buffer))
@@ -479,15 +480,14 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("g p" diff-hl-previous-hunk)
     ("g n" diff-hl-next-hunk)
     ("g c" (customize-group 'magit t))
-    ("h" (kbds "C-d"))
-    ("H" (kbds "M-d"))
-    ("i" (kbds "C-n"))
+    ("x" (kbds "C-d"))
+    ("X" (kbds "M-d"))
+    ("j" (kbds "C-n"))
     ("M-i" highlight-symbol-next)
     ("I" back-button-local-forward)
-    ("j" (kbds "C-b"))
+    ("h" (kbds "C-b"))
     ("C-j" my-json-format)
     ("k" (kbds "C-k"))
-    ("l" recenter-top-bottom)
     ("C-l" export-song)
     ("m" (kbds "C-SPC"))
     ("M-m" easy-mark-sexp)
@@ -495,10 +495,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("M" (kbds "M-w"))
     ("n" (kbds "C-w"))
     ("N" org-cut-special)
-    ("o" (kbds "C-p"))
+    ("k" (kbds "C-p"))
     ("O" back-button-local-backward)
     ("M-o" highlight-symbol-prev)
-    ("ö" (kbds "C-f"))
+    ("l" (kbds "C-f"))
     ("p p" projectile-switch-project)
     ("p f" (hydra-resume project-find-file) :exit t)
     ("p u" projectile-switch-to-buffer)
@@ -509,7 +509,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("q c" copy-rectangle-as-kill)
     ("r" helm-show-kill-ring)
     ("R" helm-all-mark-rings)
-    ("s" (kbds "M-v"))
+    ("o" (kbds "M-v"))
     ("S" (kbds "M-<"))
     ("t" my-org-insert-time-stamp)
     ("T" (my-org-insert-time-stamp t) :exit t)
@@ -524,7 +524,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("C-ü" web-search)
     ("v" visual-line-mode)
     ("w" my-select-prev-window)
-    ("x" execute-extended-command)
     ("y" yank)
     ("Y" yank-pop)
     (";" (kbds "C-f"))
@@ -540,7 +539,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     ("'" shell-switcher-switch-buffer :exit t)
     ("\"" shell-switcher-new-shell :exit t)
     ("9" (hydra-arg eval-sexp-fu-eval-sexp-inner-list 4 eval-sexp-fu-eval-sexp-inner-sexp))
-    ("0" eval-last-sexp)
     ("SPC" save-buffer)
     ("." elisp-slime-nav-find-elisp-thing-at-point)
     ("," pop-tag-mark)
