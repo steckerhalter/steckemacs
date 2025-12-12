@@ -1639,7 +1639,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
       "Export current Org buffer to EPUB using ox-epub, then convert to AZW3 using ebook-convert."
       (interactive)
       ;; 1. Export to EPUB (to a temporary file first)
-      (let* ((epub-file (org-export-to-file 'epub (make-temp-name "temp") nil nil nil nil nil))
+      (let* ((epub-file (org-epub-export-to-epub))
              (output-file-base (file-name-sans-extension (buffer-file-name)))
              (azw3-file (concat output-file-base ".azw3"))
              (convert-command (format "ebook-convert %s %s"
@@ -1651,11 +1651,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
               (message "Converting EPUB to AZW3...")
               (shell-command convert-command)
               ;; Delete the temporary EPUB file
-              (delete-file epub-file)
               (message "Exported to AZW3 file: %s" azw3-file))
           (error "EPUB export failed, cannot convert to AZW3"))))
-
-
     ;; Define a new backend derived from 'epub specifically for the AZW3 action
     ;; This function handles loading dependencies properly
     (org-export-define-derived-backend 'azw3 'epub
