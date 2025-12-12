@@ -1864,4 +1864,4 @@ Pass symbol-name to the function DOC-FUNCTION."
 (use-package zoom-window)
 
 ;;; steckemacs.el ends here
-(put 'downcase-region 'disabled nil)
+
