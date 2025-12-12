@@ -1513,9 +1513,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
           ("s" "home" entry (file "todo.org") "* TODO %?\n")
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "PICK(p)" "WAIT(w!)" "DONE(d)")))
-  (setq org-todo-keyword-faces '(("WAIT" . org-footnote)
-                                 ("PICK" . org-warning)))
+  (setq org-todo-keywords '((sequence "TODO(t)" "DO(o)" "DONE(d)")))
+  (setq org-todo-keyword-faces '(("DO" . org-warning)))
   (setq org-startup-indented t)
   (setq org-archive-mark-done t)
   (setq org-startup-with-inline-images t)
@@ -1632,7 +1631,38 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 ;;;;; org-bullets
   ;; Show bullets in org-mode as UTF-8 characters
   (use-package org-bullets
-    :config (add-hook 'org-mode-hook 'org-bullets-mode)))
+    :config (add-hook 'org-mode-hook 'org-bullets-mode))
+;;;;; ox-epub
+  (use-package ox-epub
+    :config
+    (defun org-epub-to-azw3-export-to-file (&optional async scope command)
+      "Export current Org buffer to EPUB using ox-epub, then convert to AZW3 using ebook-convert."
+      (interactive)
+      ;; 1. Export to EPUB (to a temporary file first)
+      (let* ((epub-file (org-export-to-file 'epub (file-temp-name "temp") nil nil nil nil nil))
+             (output-file-base (file-path-sans-extension (buffer-file-name)))
+             (azw3-file (concat output-file-base ".azw3"))
+             (convert-command (format "ebook-convert %s %s"
+                                      (shell-quote-argument epub-file)
+                                      (shell-quote-argument azw3-file))))
+        (if (file-exists-p epub-file)
+            ;; 2. Convert EPUB to AZW3 using ebook-convert
+            (progn
+              (message "Converting EPUB to AZW3...")
+              (shell-command convert-command)
+              ;; Delete the temporary EPUB file
+              (delete-file epub-file)
+              (message "Exported to AZW3 file: %s" azw3-file))
+          (error "EPUB export failed, cannot convert to AZW3"))))
+
+
+    ;; Define a new backend derived from 'epub specifically for the AZW3 action
+    ;; This function handles loading dependencies properly
+    (org-export-define-derived-backend 'azw3 'epub
+      :menu-entry
+      ;; Format: (KEY DESCRIPTION EXPORT-FUNCTION &optional MENU-PATH FEATURE)
+      '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
+    ))
 
 ;;;; outshine
 ;; outline with outshine outshines outline
