@@ -1635,12 +1635,12 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 ;;;;; ox-epub
   (use-package ox-epub
     :config
-    (defun org-epub-to-azw3-export-to-file (&optional async scope command)
+    (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
       "Export current Org buffer to EPUB using ox-epub, then convert to AZW3 using ebook-convert."
       (interactive)
       ;; 1. Export to EPUB (to a temporary file first)
-      (let* ((epub-file (org-export-to-file 'epub (file-temp-name "temp") nil nil nil nil nil))
-             (output-file-base (file-path-sans-extension (buffer-file-name)))
+      (let* ((epub-file (org-export-to-file 'epub (make-temp-name "temp") nil nil nil nil nil))
+             (output-file-base (file-name-sans-extension (buffer-file-name)))
              (azw3-file (concat output-file-base ".azw3"))
              (convert-command (format "ebook-convert %s %s"
                                       (shell-quote-argument epub-file)
