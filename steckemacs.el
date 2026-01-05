@@ -1642,6 +1642,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
       (let* ((epub-file (org-epub-export-to-epub))
              (output-file-base (file-name-sans-extension (buffer-file-name)))
              (azw3-file (concat output-file-base ".azw3"))
+             (kindle-path "/run/user/1000/gvfs/mtp:host=Amazon_Kindle_Paperwhite_GN433X11525600D1/Internal Storage/documents/")
              (convert-command (format "ebook-convert %s %s"
                                       (shell-quote-argument epub-file)
                                       (shell-quote-argument azw3-file))))
@@ -1650,8 +1651,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
             (progn
               (message "Converting EPUB to AZW3...")
               (shell-command convert-command)
-              ;; Delete the temporary EPUB file
-              (message "Exported to AZW3 file: %s" azw3-file))
+              (message "Exported to AZW3 file: %s" azw3-file)
+              (shell-command (format "gio copy %s %s"
+                                     (shell-quote-argument azw3-file)
+                                     (shell-quote-argument kindle-path)))
+              (message "Copied file to kindle at: %s" kindle-path))
           (error "EPUB export failed, cannot convert to AZW3"))))
     ;; Define a new backend derived from 'epub specifically for the AZW3 action
     ;; This function handles loading dependencies properly
