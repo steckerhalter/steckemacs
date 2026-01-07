@@ -1643,7 +1643,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
              (output-file-base (file-name-sans-extension (buffer-file-name)))
              (azw3-file (concat output-file-base ".azw3"))
              (kindle-path "/run/user/1000/gvfs/mtp:host=Amazon_Kindle_Paperwhite_GN433X11525600D1/Internal Storage/documents/")
-             (convert-command (format "ebook-convert %s %s"
+             (convert-command (format "ebook-convert %s %s --linearize-tables"
                                       (shell-quote-argument epub-file)
                                       (shell-quote-argument azw3-file))))
         (if (file-exists-p epub-file)
