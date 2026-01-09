@@ -1537,8 +1537,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-clock-idle-time 10)
   (setq org-clock-x11idle-program-name "xprintidle")
   (setq org-tags-exclude-from-inheritance '("song"))
-  (setq org-blank-before-new-entry
-        '((heading . nil) (plain-list-item . nil)))
+  (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
+  (setq org-plain-list-ordered-item-terminator ?\))
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
