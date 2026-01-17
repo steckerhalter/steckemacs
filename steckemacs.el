@@ -360,9 +360,9 @@ buffer is not visiting a file."
       (org-insert-heading))
     (let ((time (current-time))
           (with-hm (not current-prefix-arg)))
-      (org-insert-time-stamp time with-hm t)
-      (insert " ")))
-
+      (if (equal current-prefix-arg '(16))
+          (insert (format-time-string "%I:%M " time))
+        (org-insert-time-stamp time with-hm nil nil " "))))
 
 ;;;; global key bindings
   :bind
@@ -1483,6 +1483,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
                       (setq-local electric-pair-mode nil)))
   :bind (:map org-mode-map
               ("C-c M-RET" . org-insert-heading-after-current)
+              ("C-c !" . my-org-insert-time-stamp)
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
