@@ -308,8 +308,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
+                              (org-element-property
+                               :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -362,7 +362,7 @@ buffer is not visiting a file."
           (with-hm (not current-prefix-arg)))
       (if (equal current-prefix-arg '(16))
           (insert (format-time-string "%I:%M " time))
-        (org-insert-time-stamp time with-hm nil nil " "))))
+        (org-insert-time-stamp time with-hm t nil " "))))
 
 ;;;; global key bindings
   :bind
