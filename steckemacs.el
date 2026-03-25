@@ -1397,6 +1397,10 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :config
   (setq magit-wip-after-save-mode 1)
   (setq magit-wip-after-apply-mode 1)
+  (defun magit-push-after-commit ()
+    "Automatically push to upstream after a commit is finished."
+    (magit-push-current-to-upstream nil))
+  (add-hook 'git-commit-post-finish-hook #'magit-push-after-commit)
   ;; Emacs Minor mode to automatically commit and push
   (use-package git-auto-commit-mode
     :commands (gac-commit gac)
@@ -1516,6 +1520,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "DO(o)" "DONE(d)")))
   (setq org-todo-keyword-faces '(("DO" . org-warning)))
+  (setq org-use-fast-todo-selection 'auto)
   (setq org-startup-indented t)
   (setq org-archive-mark-done t)
   (setq org-startup-with-inline-images t)
