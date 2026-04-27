@@ -1508,7 +1508,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
           ("p" "Playlist" entry
-           (file "")
+           (file "todo.org")
            "* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n"
            :immediate-finish t
            :jump-to-captured nil
