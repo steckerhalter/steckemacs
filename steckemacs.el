@@ -355,42 +355,6 @@ buffer is not visiting a file."
         (publish-music))))
   (add-hook 'after-save-hook 'my-after-save-hook)
 
-  (defun my-org-insert-time-stamp (&optional heading)
-    (interactive)
-    (when heading
-      (org-insert-heading))
-    (let ((time (current-time))
-          (with-hm (not current-prefix-arg)))
-      (if (equal current-prefix-arg '(16))
-          (insert (format-time-string "%I:%M " time))
-        (org-insert-time-stamp time with-hm t nil " "))))
-
-  (defun my/org-schedule-by-hour (hour)
-    "Schedules the current task for today at the specified HOUR (1-24)."
-    (interactive "sHour (1-24) or [Enter] to clear: ")
-    (let* ((marker (or (get-text-property (point) 'org-marker) (point-marker))))
-      (with-current-buffer (marker-buffer marker)
-        (save-excursion
-          (goto-char (marker-position marker))
-          (if (string= hour "")
-              (org-schedule t) ; Clears the schedule if input is empty
-            (let ((timestamp (format-time-string
-                              (format "%%Y-%%m-%%d %02d:00" (string-to-number hour)))))
-              (org-schedule nil timestamp)))))
-      (when (derived-mode-p 'org-agenda-mode)
-        (org-agenda-redo))))
-
-  (defun my/org-capture-get-hour-timestamp ()
-    "Prompt for an hour (1-24) and return a today-at-hour timestamp."
-    (let ((hour (read-string "Hour (1-24): ")))
-      (if (string-empty-p hour)
-          ""
-        (format-time-string (format "<%%Y-%%m-%%d %02d:00>" (string-to-number hour))))))
-
-  (global-set-key (kbd "C-c P") (lambda () (interactive) (org-capture nil "p")))
-  (add-to-list 'org-speed-commands '("T" . my/org-schedule-by-hour))
-  (global-set-key (kbd "C-c p") (lambda () (interactive) (org-agenda nil "p")))
-
 ;;;; global key bindings
   :bind
   ("<f10>" . save-buffer)
@@ -1581,8 +1545,65 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-plain-list-ordered-item-terminator ?\))
   (setq org-cycle-hide-drawers t)
 
+  (defun my-org-insert-time-stamp (&optional heading)
+    (interactive)
+    (when heading
+      (org-insert-heading))
+    (let ((time (current-time))
+          (with-hm (not current-prefix-arg)))
+      (if (equal current-prefix-arg '(16))
+          (insert (format-time-string "%I:%M " time))
+        (org-insert-time-stamp time with-hm t nil " "))))
+
+  (defun org-archive-done-tasks ()
+    (interactive)
+    (org-map-entries
+     (lambda ()
+       (org-archive-subtree)
+       (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
+     "/DONE" 'file))
+
+  (defun my/org-playlist-toggle (hour)
+    "Universal Playlist Toggle: 1-24=Hour, Empty=Now, Scheduled=Clear."
+    (interactive "sHour (1-24) or [Enter] for Now/Clear: ")
+    (let* ((marker (or (get-text-property (point) 'org-marker)
+                       (get-text-property (point) 'org-hd-marker)
+                       (point-marker)))
+           (buffer (marker-buffer marker))
+           (pos (marker-position marker)))
+      (with-current-buffer buffer
+        (save-excursion
+          (goto-char pos)
+          (let ((has-schedule (org-get-scheduled-time (point))))
+            (cond
+             ;; 1. If already scheduled -> Move to Backlog (Clear)
+             (has-schedule
+              (org-schedule '(4))
+              (message "Removed from Playlist -> Backlog."))
+             ;; 2. If not scheduled and specific hour provided
+             ((not (string-empty-p hour))
+              (let ((timestamp (format-time-string
+                                (format "%%Y-%%m-%%d %02d:00" (string-to-number hour)))))
+                (org-schedule nil timestamp)
+                (message "Scheduled for %s:00." hour)))
+             ;; 3. If not scheduled and Enter pressed -> NOW
+             (t
+              (org-schedule nil (format-time-string "%Y-%m-%d %H:%M"))
+              (message "Scheduled for NOW."))))))
+      ;; Refresh the Agenda view if that's where we are
+      (when (derived-mode-p 'org-agenda-mode)
+        (org-agenda-redo))))
+
+  (defun my/org-capture-get-hour-timestamp ()
+    "Prompt for an hour (1-24) and return a today-at-hour timestamp."
+    (let ((hour (read-string "Hour (1-24): ")))
+      (if (string-empty-p hour)
+          ""
+        (format-time-string (format "<%%Y-%%m-%%d %02d:00>" (string-to-number hour))))))
+
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
+  (add-to-list 'org-speed-commands '("T" . my/org-playlist-toggle))
 
 ;;;;; org-tempo
 
@@ -1604,10 +1625,13 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 ;;;;; org-agenda
   (use-package org-agenda
     :ensure nil
-    :bind (:map org-agenda-mode-map
-                ("C-c t" . (lambda () (interactive)
-                             (org-agenda-todo 'done)
-                             (org-agenda-redo-all))))
+    :bind (("C-c P" . (lambda () (interactive) (org-capture nil "p")))
+           ("C-c p" . (lambda () (interactive) (org-agenda nil "p")))
+           :map org-agenda-mode-map
+           ("C-c t" . (lambda () (interactive)
+                        (org-agenda-todo 'done)
+                        (org-agenda-redo-all)))
+           ("T" . my/org-playlist-toggle))
     :init
     (defun my-org-agenda (key) (interactive) (org-agenda nil key))
     (setq org-agenda-start-with-log-mode t)
@@ -1620,14 +1644,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     (setq org-agenda-prefix-format "%?-12t% s")
     (setq org-agenda-confirm-kill nil)
     (setq org-tags-match-list-sublevels nil)
-
-    (defun org-archive-done-tasks ()
-      (interactive)
-      (org-map-entries
-       (lambda ()
-         (org-archive-subtree)
-         (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
-       "/DONE" 'file))
 
     :config
     ;; add state to the sorting strategy of todo
