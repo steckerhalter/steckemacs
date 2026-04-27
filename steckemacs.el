@@ -365,27 +365,30 @@ buffer is not visiting a file."
           (insert (format-time-string "%I:%M " time))
         (org-insert-time-stamp time with-hm t nil " "))))
 
-  (defun my/org-set-today-order (pos)
-    "Sets the POSITION property and adds :today: tag quickly."
-    (interactive "sOrder: ")
-    (let ((marker (org-get-at-bol 'org-hd-marker)))
-      (if marker
-          ;; If in Agenda, go to the source file
-          (with-current-buffer (marker-buffer marker)
-            (save-excursion
-              (goto-char (marker-position marker))
-              (org-set-property "POSITION" pos)
-              (org-toggle-tag "today" 'on)))
-        ;; If in a normal Org file
-        (org-set-property "POSITION" pos)
-        (org-toggle-tag "today" 'on)))
-    ;; Refresh Agenda view if we are in it
-    (when (derived-mode-p 'org-agenda-mode)
-      (org-agenda-redo)))
-  ;; For standard Org files (at the beginning of a headline)
-  (define-key org-mode-map (kbd "T") 'my/org-set-today-order)
-  ;; For the Agenda buffer
-  (define-key org-agenda-mode-map (kbd "T") 'my/org-set-today-order)
+  (defun my/org-schedule-by-hour (hour)
+    "Schedules the current task for today at the specified HOUR (1-24)."
+    (interactive "sHour (1-24) or [Enter] to clear: ")
+    (let* ((marker (or (get-text-property (point) 'org-marker) (point-marker))))
+      (with-current-buffer (marker-buffer marker)
+        (save-excursion
+          (goto-char (marker-position marker))
+          (if (string= hour "")
+              (org-schedule t) ; Clears the schedule if input is empty
+            (let ((timestamp (format-time-string
+                              (format "%%Y-%%m-%%d %02d:00" (string-to-number hour)))))
+              (org-schedule nil timestamp)))))
+      (when (derived-mode-p 'org-agenda-mode)
+        (org-agenda-redo))))
+
+  (defun my/org-capture-get-hour-timestamp ()
+    "Prompt for an hour (1-24) and return a today-at-hour timestamp."
+    (let ((hour (read-string "Hour (1-24): ")))
+      (if (string-empty-p hour)
+          ""
+        (format-time-string (format "<%%Y-%%m-%%d %02d:00>" (string-to-number hour))))))
+
+  (global-set-key (kbd "C-c P") (lambda () (interactive) (org-capture nil "p")))
+  (add-to-list 'org-speed-commands '("T" . my/org-schedule-by-hour))
   (global-set-key (kbd "C-c p") (lambda () (interactive) (org-agenda nil "p")))
 
 ;;;; global key bindings
@@ -1540,6 +1543,12 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
+          ("p" "Playlist" entry
+           (file "")
+           "* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n"
+           :immediate-finish t
+           :jump-to-captured nil
+           :prepend t)
           ("s" "home" entry (file "todo.org") "* TODO %?\n")
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
@@ -1645,30 +1654,15 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
               (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
               (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
             ("p" "Daily Planner"
-             ((tags "today"
-                    ((org-agenda-overriding-header " [!] MY DAILY PLAYLIST (Ordered) ")
-                     (org-agenda-prefix-format " [%(or (org-entry-get nil \"POSITION\") \"-\")] ")
-                     (org-agenda-sorting-strategy '(user-defined-up))
-                     (org-agenda-cmp-user-defined
-                      (lambda (a b)
-                        (let* ((m-a (get-text-property 0 'org-hd-marker a))
-                               (m-b (get-text-property 0 'org-hd-marker b))
-                               (get-pos (lambda (m)
-                                          (if m
-                                              (with-current-buffer (marker-buffer m)
-                                                (string-to-number (or (org-entry-get (marker-position m) "POSITION") "999")))
-                                            999)))
-                               (pa (funcall get-pos m-a))
-                               (pb (funcall get-pos m-b)))
-                          (cond ((< pa pb) -1)
-                                ((> pa pb) 1)
-                                (t nil)))))))
-              (tags-todo "-today/!TODO|DO"
-                         ((org-agenda-overriding-header " [?] UNASSIGNED BACKLOG (Available Now) ")
-                          (org-agenda-prefix-format " [ ] ")
-                          (org-agenda-sorting-strategy '(todo-state-up priority-down))
+             ((agenda ""
+                      ((org-agenda-span 'day)
+                       (org-agenda-overriding-header " [!] TODAY'S TIME-SLOTTED PLAYLIST ")
+                       ;; This hides the "Backlog" items that happen to have deadlines
+                       (org-agenda-entry-types '(:scheduled))))
+              (tags-todo "SCHEDULED=\"\"/!TODO|DO"
+                         ((org-agenda-overriding-header " [?] UNASSIGNED BACKLOG ")
                           (org-agenda-skip-function
-                           '(org-agenda-skip-entry-if 'scheduled 'future 'deadline 'future))))))
+                           '(org-agenda-skip-entry-if 'deadline 'future))))))
             ))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
