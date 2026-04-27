@@ -309,8 +309,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                              (org-element-property
-                               :title (org-element-at-point)) 0 -13))
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -365,6 +365,29 @@ buffer is not visiting a file."
           (insert (format-time-string "%I:%M " time))
         (org-insert-time-stamp time with-hm t nil " "))))
 
+  (defun my/org-set-today-order (pos)
+    "Sets the POSITION property and adds :today: tag quickly."
+    (interactive "sOrder: ")
+    (let ((marker (org-get-at-bol 'org-hd-marker)))
+      (if marker
+          ;; If in Agenda, go to the source file
+          (with-current-buffer (marker-buffer marker)
+            (save-excursion
+              (goto-char (marker-position marker))
+              (org-set-property "POSITION" pos)
+              (org-toggle-tag "today" 'on)))
+        ;; If in a normal Org file
+        (org-set-property "POSITION" pos)
+        (org-toggle-tag "today" 'on)))
+    ;; Refresh Agenda view if we are in it
+    (when (derived-mode-p 'org-agenda-mode)
+      (org-agenda-redo)))
+  ;; For standard Org files (at the beginning of a headline)
+  (define-key org-mode-map (kbd "T") 'my/org-set-today-order)
+  ;; For the Agenda buffer
+  (define-key org-agenda-mode-map (kbd "T") 'my/org-set-today-order)
+  (global-set-key (kbd "C-c p") (lambda () (interactive) (org-agenda nil "p")))
+
 ;;;; global key bindings
   :bind
   ("<f10>" . save-buffer)
@@ -381,6 +404,7 @@ buffer is not visiting a file."
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c n" . my-org-agenda)
+  ("C-c l" . org-store-link)
   ("C-c e" . export-song)
   ("C-c a" . org-agenda)
   ("C-c g" . magit-status)
@@ -1546,6 +1570,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-tags-exclude-from-inheritance '("song"))
   (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
   (setq org-plain-list-ordered-item-terminator ?\))
+  (setq org-cycle-hide-drawers t)
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
@@ -1618,7 +1643,31 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
               (tags-todo "@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
               (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
               (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-              (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))))
+              (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+            ("p" "Daily Planner"
+             ((tags "today"
+                    ((org-agenda-overriding-header " [!] MY DAILY PLAYLIST (Ordered) ")
+                     (org-agenda-sorting-strategy '(user-defined-up))
+                     (org-agenda-cmp-user-defined
+                      (lambda (a b)
+                        (let* ((m-a (get-text-property 0 'org-hd-marker a))
+                               (m-b (get-text-property 0 'org-hd-marker b))
+                               (get-pos (lambda (m)
+                                          (if m
+                                              (with-current-buffer (marker-buffer m)
+                                                (string-to-number (or (org-entry-get (marker-position m) "POSITION") "999")))
+                                            999)))
+                               (pa (funcall get-pos m-a))
+                               (pb (funcall get-pos m-b)))
+                          (cond ((< pa pb) -1)
+                                ((> pa pb) 1)
+                                (t nil)))))))
+              (tags-todo "-today/!TODO|DO"
+                         ((org-agenda-overriding-header " [?] UNASSIGNED BACKLOG (Available Now) ")
+                          (org-agenda-sorting-strategy '(todo-state-up priority-down))
+                          (org-agenda-skip-function
+                           '(org-agenda-skip-entry-if 'scheduled 'future 'deadline 'future))))))
+            ))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
     (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
