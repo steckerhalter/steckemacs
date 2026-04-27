@@ -1647,6 +1647,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
             ("p" "Daily Planner"
              ((tags "today"
                     ((org-agenda-overriding-header " [!] MY DAILY PLAYLIST (Ordered) ")
+                     (org-agenda-prefix-format " [%(or (org-entry-get nil \"POSITION\") \"-\")] ")
                      (org-agenda-sorting-strategy '(user-defined-up))
                      (org-agenda-cmp-user-defined
                       (lambda (a b)
@@ -1664,6 +1665,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
                                 (t nil)))))))
               (tags-todo "-today/!TODO|DO"
                          ((org-agenda-overriding-header " [?] UNASSIGNED BACKLOG (Available Now) ")
+                          (org-agenda-prefix-format " [ ] ")
                           (org-agenda-sorting-strategy '(todo-state-up priority-down))
                           (org-agenda-skip-function
                            '(org-agenda-skip-entry-if 'scheduled 'future 'deadline 'future))))))
