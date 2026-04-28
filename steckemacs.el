@@ -1507,12 +1507,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 
   (setq org-capture-templates
         `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
-          ("p" "Playlist" entry
-           (file "todo.org")
-           "* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n"
-           :jump-to-captured t
-           :immediate-finish t
-           :prepend t)
+          ("p" "Playlist" entry (file "todo.org") "* TODO %?\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :prepend t)
           ("s" "home" entry (file "todo.org") "* TODO %?\n")
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
@@ -1582,24 +1577,22 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
       (if brackets (concat "<" time-str ">") time-str)))
 
   (defun my/org-playlist-toggle (arg)
-    "T: Clear schedule (Backlog).
-C-u T: Set/Change time (14, 1430, 14:45)."
+    "T: Clear schedule. C-u T: Fast-set time for today."
     (interactive "P")
-    (let* ((marker (or (get-text-property (point) 'org-marker)
+    (let* ((marker (or (get-text-property (point) 'org-marker) 
                        (get-text-property (point) 'org-hd-marker)))
            (buffer (if marker (marker-buffer marker) (current-buffer)))
            (pos (if marker (marker-position marker) (point))))
       (with-current-buffer buffer
         (save-excursion
           (goto-char pos)
-          ;; Now, 'arg' (C-u) triggers the prompt, no-arg triggers the removal
           (if (not arg)
-              (progn
-                (org-schedule '(4))
-                (message "Cleared -> Backlog."))
-            (let ((hour (read-string "Reschedule to (14, 1430, 14:45): ")))
+              ;; T -> Just clear it
+              (progn (org-schedule '(4)) (message "Cleared -> Backlog."))
+            ;; C-u T -> Quick time prompt for today
+            (let ((hour (read-string "Today at (14, 1430, 14:45): ")))
               (org-schedule nil (my/org-process-time-input hour))
-              (message "Playlist updated."))))))
+              (message "Scheduled for today."))))))
     (when (derived-mode-p 'org-agenda-mode)
       (org-agenda-redo)))
 
