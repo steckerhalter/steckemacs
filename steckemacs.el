@@ -1563,10 +1563,26 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
        (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
      "/DONE" 'file))
 
+  (defun my/org-format-playlist-time (input &optional brackets)
+    "Convert input (1-24 or empty) into a date-time string.
+If BRACKETS is non-nil, wrap in < > for capture templates."
+    (let* ((trimmed (org-trim (or input "")))
+           (hour-str (if (string-empty-p trimmed)
+                         (format-time-string "%H:%M")
+                       (format "%02d:00" (string-to-number trimmed))))
+           ;; Note: %a adds the day of the week (e.g., Tue)
+           (time-str (format-time-string (concat "%Y-%m-%d %a " hour-str))))
+      (if brackets
+          (concat "<" time-str ">")
+        time-str)))
+
+  (defun my/org-capture-get-hour-timestamp ()
+    "Prompt for an hour and return a bracketed Org timestamp string."
+    (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
+      (my/org-format-playlist-time hour t)))
+
   (defun my/org-playlist-toggle (arg)
-    "T on unscheduled: Prompt for hour (Enter=Now).
-   T on scheduled: Remove schedule.
-   C-u T on scheduled: Prompt for new hour."
+    "T: Set/Change time. C-u T: Clear schedule (Backlog)."
     (interactive "P")
     (let* ((marker (or (get-text-property (point) 'org-marker) 
                        (get-text-property (point) 'org-hd-marker)))
@@ -1575,38 +1591,15 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
       (with-current-buffer buffer
         (save-excursion
           (goto-char pos)
-          (let ((has-schedule (org-get-scheduled-time (point))))
-            (cond
-             ;; 1. IF SCHEDULED: Default to REMOVE unless C-u is used
-             (has-schedule
-              (if arg
-                  ;; C-u T: Change the time
-                  (let ((hour (read-string "New Hour (1-24) or [Enter] for Now: ")))
-                    (if (string-empty-p hour)
-                        (org-schedule nil (format-time-string "%Y-%m-%d %H:%M"))
-                      (org-schedule nil (format-time-string (format "%%Y-%%m-%%d %02d:00" (string-to-number hour))))))
-                ;; Just T: Clear it
+          (if arg
+              (progn
                 (org-schedule '(4))
-                (message "Schedule cleared -> Backlog.")))
-
-             ;; 2. IF NOT SCHEDULED: T prompts for hour
-             (t
-              (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
-                (if (string-empty-p hour)
-                    (org-schedule nil (format-time-string "%Y-%m-%d %H:%M"))
-                  (org-schedule nil (format-time-string (format "%%Y-%%m-%%d %02d:00" (string-to-number hour))))))
-              (message "Scheduled."))))))
+                (message "Schedule cleared -> Backlog."))
+            (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
+              (org-schedule nil (my/org-format-playlist-time hour))
+              (message "Playlist updated.")))))
       (when (derived-mode-p 'org-agenda-mode)
         (org-agenda-redo))))
-
-  (defun my/org-capture-get-hour-timestamp ()
-    "Prompt for an hour. 1-24 = that hour, Empty = NOW. Returns Org timestamp."
-    (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
-      (if (string-empty-p hour)
-          ;; If empty, return full timestamp with current minute
-          (format-time-string "<%Y-%m-%d %a %H:%M>")
-        ;; If hour provided, return today at that specific hour
-        (format-time-string (format "<%%Y-%%m-%%d %%a %02d:00>" (string-to-number hour))))))
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
