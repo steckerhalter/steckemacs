@@ -1477,10 +1477,12 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   :hook (org-mode . (lambda ()
                       (setq-local company-idle-delay 0.3)
                       (setq-local electric-pair-mode nil)))
-  :bind (:map org-mode-map
-              ("C-c M-RET" . org-insert-heading-after-current)
-              ("C-c !" . my-org-insert-time-stamp)
-              ("C-c t" . (lambda () (interactive) (org-todo 'done))))
+  :bind (("C-c P" . (lambda () (interactive) (org-capture nil "p")))
+         ("C-c p" . (lambda () (interactive) (org-agenda nil "p")))
+         :map org-mode-map
+         ("C-c M-RET" . org-insert-heading-after-current)
+         ("C-c !" . my-org-insert-time-stamp)
+         ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
   Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
@@ -1528,7 +1530,6 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (setq org-refile-use-outline-path 'file)
   (setq org-html-postamble nil)
   (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-speed-commands-user '(("S" . org-schedule)))
   (setq org-directory "~/Sync/notes")
   (setq org-default-notes-file my-todo)
   (setq org-image-actual-width nil)
@@ -1603,7 +1604,12 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
-  (add-to-list 'org-speed-commands '("T" . my/org-playlist-toggle))
+  (let ((list '(("T" . my/org-playlist-toggle)
+                ("S" . org-schedule))))
+    (if (boundp 'org-speed-commands)
+        (setq 'org-speed-commands list)
+      (setq org-speed-commands-user list))))
+
 
 ;;;;; org-tempo
 
@@ -1625,13 +1631,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 ;;;;; org-agenda
   (use-package org-agenda
     :ensure nil
-    :bind (("C-c P" . (lambda () (interactive) (org-capture nil "p")))
-           ("C-c p" . (lambda () (interactive) (org-agenda nil "p")))
-           :map org-agenda-mode-map
-           ("C-c t" . (lambda () (interactive)
-                        (org-agenda-todo 'done)
-                        (org-agenda-redo-all)))
-           ("T" . my/org-playlist-toggle))
+    :bind (:map org-agenda-mode-map
+                ("C-c t" . (lambda () (interactive)
+                             (org-agenda-todo 'done)
+                             (org-agenda-redo-all)))
+                ("T" . my/org-playlist-toggle))
     :init
     (defun my-org-agenda (key) (interactive) (org-agenda nil key))
     (setq org-agenda-start-with-log-mode t)
