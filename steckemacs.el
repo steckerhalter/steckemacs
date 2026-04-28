@@ -1680,12 +1680,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
              ((agenda ""
                       ((org-agenda-span 'day)
                        (org-agenda-overriding-header " [!] PLAYLIST ")
-                       ;; This hides the "Backlog" items that happen to have deadlines
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                        (org-agenda-entry-types '(:scheduled :deadline))))
               (tags-todo "SCHEDULED=\"\"/!TODO"
                          ((org-agenda-overriding-header " [?] BACKLOG ")
-                          (org-agenda-skip-function
-                           '(org-agenda-skip-entry-if 'deadline 'future))))))
+                          (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'future))))))
             ))
 
     ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
