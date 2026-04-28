@@ -1563,28 +1563,28 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
        (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
      "/DONE" 'file))
 
-  (defun my/org-format-playlist-time (input &optional brackets)
-    "Convert input (1-24 or empty) into a date-time string.
-If BRACKETS is non-nil, wrap in < > for capture templates."
+  (defun my/org-process-time-input (input &optional brackets)
+    "Handles 14 (14:00), 1430 (14:30), or [Enter] (Now). No relative dates."
     (let* ((trimmed (org-trim (or input "")))
-           (hour-str (if (string-empty-p trimmed)
-                         (format-time-string "%H:%M")
-                       (format "%02d:00" (string-to-number trimmed))))
-           ;; Note: %a adds the day of the week (e.g., Tue)
+           (hour-str (cond
+                      ;; 1. Empty -> Current HH:MM
+                      ((string-empty-p trimmed)
+                       (format-time-string "%H:%M"))
+                      ;; 2. 1 or 2 digits (e.g., 14) -> 14:00
+                      ((string-match "^\\([0-9]\\{1,2\\}\\)$" trimmed)
+                       (format "%02d:00" (string-to-number trimmed)))
+                      ;; 3. 4 digits (e.g., 1430) -> 14:30
+                      ((string-match "^\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)$" trimmed)
+                       (concat (substring trimmed 0 2) ":" (substring trimmed 2 4)))
+                      ;; 4. Fallback: use input as-is (e.g., 14:45)
+                      (t trimmed)))
            (time-str (format-time-string (concat "%Y-%m-%d %a " hour-str))))
-      (if brackets
-          (concat "<" time-str ">")
-        time-str)))
-
-  (defun my/org-capture-get-hour-timestamp ()
-    "Prompt for an hour and return a bracketed Org timestamp string."
-    (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
-      (my/org-format-playlist-time hour t)))
+      (if brackets (concat "<" time-str ">") time-str)))
 
   (defun my/org-playlist-toggle (arg)
-    "T: Set/Change time. C-u T: Clear schedule (Backlog)."
+    "T: Set/Change time. C-u T: Remove schedule."
     (interactive "P")
-    (let* ((marker (or (get-text-property (point) 'org-marker) 
+    (let* ((marker (or (get-text-property (point) 'org-marker)
                        (get-text-property (point) 'org-hd-marker)))
            (buffer (if marker (marker-buffer marker) (current-buffer)))
            (pos (if marker (marker-position marker) (point))))
@@ -1592,14 +1592,16 @@ If BRACKETS is non-nil, wrap in < > for capture templates."
         (save-excursion
           (goto-char pos)
           (if arg
-              (progn
-                (org-schedule '(4))
-                (message "Schedule cleared -> Backlog."))
-            (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
-              (org-schedule nil (my/org-format-playlist-time hour))
+              (progn (org-schedule '(4)) (message "Cleared -> Backlog."))
+            (let ((hour (read-string "Hour (14, 1430, 14:45): ")))
+              (org-schedule nil (my/org-process-time-input hour))
               (message "Playlist updated.")))))
-      (when (derived-mode-p 'org-agenda-mode)
-        (org-agenda-redo))))
+      (when (derived-mode-p 'org-agenda-mode) (org-agenda-redo))))
+
+  (defun my/org-capture-get-hour-timestamp ()
+    "Prompt for hour and return bracketed Org timestamp."
+    (let ((input (read-string "Hour (14, 1430, 14:45) [Enter=Now]: ")))
+      (my/org-process-time-input input t)))
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
