@@ -1681,7 +1681,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
                       ((org-agenda-span 'day)
                        (org-agenda-overriding-header " [!] PLAYLIST ")
                        ;; This hides the "Backlog" items that happen to have deadlines
-                       (org-agenda-entry-types '(:scheduled))))
+                       (org-agenda-entry-types '(:scheduled :deadline))))
               (tags-todo "SCHEDULED=\"\"/!TODO"
                          ((org-agenda-overriding-header " [?] BACKLOG ")
                           (org-agenda-skip-function
