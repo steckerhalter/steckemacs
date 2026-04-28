@@ -1564,29 +1564,40 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
      "/DONE" 'file))
 
   (defun my/org-playlist-toggle (arg)
-    "T: Prompt for hour (Enter=Now) to set/change.
-C-u T: Remove schedule (Backlog)."
+    "T on unscheduled: Prompt for hour (Enter=Now).
+   T on scheduled: Remove schedule.
+   C-u T on scheduled: Prompt for new hour."
     (interactive "P")
-    (let* ((marker (or (get-text-property (point) 'org-marker)
+    (let* ((marker (or (get-text-property (point) 'org-marker) 
                        (get-text-property (point) 'org-hd-marker)))
            (buffer (if marker (marker-buffer marker) (current-buffer)))
            (pos (if marker (marker-position marker) (point))))
       (with-current-buffer buffer
         (save-excursion
           (goto-char pos)
-          (if arg
-              ;; 1. C-u T: Clear it (Backlog)
-              (progn
+          (let ((has-schedule (org-get-scheduled-time (point))))
+            (cond
+             ;; 1. IF SCHEDULED: Default to REMOVE unless C-u is used
+             (has-schedule
+              (if arg
+                  ;; C-u T: Change the time
+                  (let ((hour (read-string "New Hour (1-24) or [Enter] for Now: ")))
+                    (if (string-empty-p hour)
+                        (org-schedule nil (format-time-string "%Y-%m-%d %H:%M"))
+                      (org-schedule nil (format-time-string (format "%%Y-%%m-%%d %02d:00" (string-to-number hour))))))
+                ;; Just T: Clear it
                 (org-schedule '(4))
-                (message "Schedule cleared -> Backlog."))
-            ;; 2. Just T: Set or Change the time
-            (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
-              (if (string-empty-p hour)
-                  (org-schedule nil (format-time-string "%Y-%m-%d %H:%M"))
-                (org-schedule nil (format-time-string (format "%%Y-%%m-%%d %02d:00" (string-to-number hour)))))
+                (message "Schedule cleared -> Backlog.")))
+
+             ;; 2. IF NOT SCHEDULED: T prompts for hour
+             (t
+              (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
+                (if (string-empty-p hour)
+                    (org-schedule nil (format-time-string "%Y-%m-%d %H:%M"))
+                  (org-schedule nil (format-time-string (format "%%Y-%%m-%%d %02d:00" (string-to-number hour))))))
               (message "Scheduled."))))))
-    (when (derived-mode-p 'org-agenda-mode)
-      (org-agenda-redo)))
+      (when (derived-mode-p 'org-agenda-mode)
+        (org-agenda-redo))))
 
   (defun my/org-capture-get-hour-timestamp ()
     "Prompt for an hour. 1-24 = that hour, Empty = NOW. Returns Org timestamp."
