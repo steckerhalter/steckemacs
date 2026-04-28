@@ -1516,7 +1516,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
           ("s" "home" entry (file "todo.org") "* TODO %?\n")
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "DO(o)" "DONE(d)")))
+  (setq org-todo-keywords '((sequence "TODO(t)" "DONE(d)")))
   (setq org-todo-keyword-faces '(("DO" . org-warning)))
   (setq org-use-fast-todo-selection 'auto)
   (setq org-startup-indented t)
@@ -1672,11 +1672,11 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
             ("p" "Daily Planner"
              ((agenda ""
                       ((org-agenda-span 'day)
-                       (org-agenda-overriding-header " [!] TODAY'S TIME-SLOTTED PLAYLIST ")
+                       (org-agenda-overriding-header " [!] PLAYLIST ")
                        ;; This hides the "Backlog" items that happen to have deadlines
                        (org-agenda-entry-types '(:scheduled))))
-              (tags-todo "SCHEDULED=\"\"/!TODO|DO"
-                         ((org-agenda-overriding-header " [?] UNASSIGNED BACKLOG ")
+              (tags-todo "SCHEDULED=\"\"/!TODO"
+                         ((org-agenda-overriding-header " [?] BACKLOG ")
                           (org-agenda-skip-function
                            '(org-agenda-skip-entry-if 'deadline 'future))))))
             ))
