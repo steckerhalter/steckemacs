@@ -1582,7 +1582,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
       (if brackets (concat "<" time-str ">") time-str)))
 
   (defun my/org-playlist-toggle (arg)
-    "T: Set/Change time. C-u T: Remove schedule."
+    "T: Clear schedule (Backlog).
+C-u T: Set/Change time (14, 1430, 14:45)."
     (interactive "P")
     (let* ((marker (or (get-text-property (point) 'org-marker)
                        (get-text-property (point) 'org-hd-marker)))
@@ -1591,12 +1592,16 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
       (with-current-buffer buffer
         (save-excursion
           (goto-char pos)
-          (if arg
-              (progn (org-schedule '(4)) (message "Cleared -> Backlog."))
-            (let ((hour (read-string "Hour (14, 1430, 14:45): ")))
+          ;; Now, 'arg' (C-u) triggers the prompt, no-arg triggers the removal
+          (if (not arg)
+              (progn
+                (org-schedule '(4))
+                (message "Cleared -> Backlog."))
+            (let ((hour (read-string "Reschedule to (14, 1430, 14:45): ")))
               (org-schedule nil (my/org-process-time-input hour))
-              (message "Playlist updated.")))))
-      (when (derived-mode-p 'org-agenda-mode) (org-agenda-redo))))
+              (message "Playlist updated."))))))
+    (when (derived-mode-p 'org-agenda-mode)
+      (org-agenda-redo)))
 
   (defun my/org-capture-get-hour-timestamp ()
     "Prompt for hour and return bracketed Org timestamp."
