@@ -1510,8 +1510,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
           ("p" "Playlist" entry
            (file "todo.org")
            "* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n"
+           :jump-to-captured t
            :immediate-finish t
-           :jump-to-captured nil
            :prepend t)
           ("s" "home" entry (file "todo.org") "* TODO %?\n")
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
