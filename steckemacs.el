@@ -1598,13 +1598,15 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
               (message "Scheduled."))))))
       (when (derived-mode-p 'org-agenda-mode)
         (org-agenda-redo))))
-  
+
   (defun my/org-capture-get-hour-timestamp ()
-    "Prompt for an hour (1-24) and return a today-at-hour timestamp."
-    (let ((hour (read-string "Hour (1-24): ")))
+    "Prompt for an hour. 1-24 = that hour, Empty = NOW. Returns Org timestamp."
+    (let ((hour (read-string "Hour (1-24) or [Enter] for Now: ")))
       (if (string-empty-p hour)
-          ""
-        (format-time-string (format "<%%Y-%%m-%%d %02d:00>" (string-to-number hour))))))
+          ;; If empty, return full timestamp with current minute
+          (format-time-string "<%Y-%m-%d %a %H:%M>")
+        ;; If hour provided, return today at that specific hour
+        (format-time-string (format "<%%Y-%%m-%%d %%a %02d:00>" (string-to-number hour))))))
 
   :config
   (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
