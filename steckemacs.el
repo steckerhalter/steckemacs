@@ -1402,7 +1402,7 @@ buffer is not visiting a file."
   (let ((list '(("T" . my/org-playlist-toggle)
                 ("S" . org-schedule))))
     (if (boundp 'org-speed-commands)
-        (setq org-speed-commands list)
+        (setq org-speed-commands (append list org-speed-commands))
       (setq org-speed-commands-user list))))
 
 
