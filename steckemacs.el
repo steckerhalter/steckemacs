@@ -360,11 +360,11 @@ buffer is not visiting a file."
   ("M--" . save-buffer)
   ("M-1" . delete-other-windows)
   ("M-2" . split-window-vertically)
+  ("M-3" . my-split-window)
   ("M-@" . split-window-horizontally)
   ("M-4" . delete-window)
   ("M-6" . my-kill-buffer)
   ("M-7" . my-toggle-window-split)
-  ("M-8" . my-split-window)
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c n" . my-org-agenda)
@@ -1610,82 +1610,83 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
 
 ;;;;; org-tempo
 
-  (use-package org-tempo
-    :ensure nil)
+(use-package org-tempo
+  :ensure nil)
 
 ;;;;; org-protocol
-  (use-package org-protocol
-    :ensure nil
-    :demand
-    :config
-    (add-to-list 'org-capture-templates
-                 '("p" "Protocol" entry (file "")
-                   "* TODO %?[[%:link][%:description]]\n%i\n" :prepend t :immediate-finish t))
-    (add-to-list 'org-capture-templates
-                 '("L" "Protocol Link" entry (file "")
-                   "* TODO %?[[%:link][%:description]]\n" :prepend t :immediate-finish t)))
+(use-package org-protocol
+  :ensure nil
+  :demand
+  :config
+  (add-to-list 'org-capture-templates
+               '("p" "Protocol" entry (file "")
+                 "* TODO %?[[%:link][%:description]]\n%i\n" :prepend t :immediate-finish t))
+  (add-to-list 'org-capture-templates
+               '("L" "Protocol Link" entry (file "")
+                 "* TODO %?[[%:link][%:description]]\n" :prepend t :immediate-finish t)))
 
 ;;;;; org-agenda
-  (use-package org-agenda
-    :ensure nil
-    :bind (:map org-agenda-mode-map
-                ("C-c t" . (lambda () (interactive)
-                             (org-agenda-todo 'done)
-                             (org-agenda-redo-all)))
-                ("T" . my/org-playlist-toggle))
-    :init
-    (defun my-org-agenda (key) (interactive) (org-agenda nil key))
-    (setq org-agenda-start-with-log-mode t)
-    (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
-    (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
-    (setq org-agenda-dim-blocked-tasks t)
-    (setq org-agenda-todo-ignore-scheduled 'all) ;hide scheduled TODOs
-    (setq org-agenda-dim-blocked-tasks t)
-    (setq org-agenda-show-all-dates nil)
-    (setq org-agenda-prefix-format "%?-12t% s")
-    (setq org-agenda-confirm-kill nil)
-    (setq org-tags-match-list-sublevels nil)
+(use-package org-agenda
+  :ensure nil
+  :bind (:map org-agenda-mode-map
+              ("C-c t" . (lambda () (interactive)
+                           (org-agenda-todo 'done)
+                           (org-agenda-redo-all)))
+              ("T" . my/org-playlist-toggle))
+  :init
+  (defun my-org-agenda (key) (interactive) (org-agenda nil key))
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
+  (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-agenda-todo-ignore-scheduled 'all) ;hide scheduled TODOs
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-agenda-show-all-dates nil)
+  (setq org-agenda-prefix-format "%?-12t% s")
+  (setq org-agenda-confirm-kill nil)
+  (setq org-tags-match-list-sublevels nil)
 
-    :config
-    ;; add state to the sorting strategy of todo
-    (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
+  :config
+  ;; add state to the sorting strategy of todo
+  (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
 
-    ;; create the file for the agendas if it doesn't exist
-    (let ((agendas "~/.agenda_files"))
-      (unless (file-readable-p agendas)
-        (with-temp-file agendas nil))
-      (setq org-agenda-files agendas))
+  ;; create the file for the agendas if it doesn't exist
+  (let ((agendas "~/.agenda_files"))
+    (unless (file-readable-p agendas)
+      (with-temp-file agendas nil))
+    (setq org-agenda-files agendas))
 
-    ;; display the agenda first
-    (setq org-agenda-custom-commands
-          '(("n" "@home"
-             ((tags-todo "-@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
-              (tags-todo "-@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
-              (tags "-@work+reminder+DEADLINE>\"<now>\|-@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
-              (tags-todo "-@work+TODO={PICK}+DEADLINE>\"<now>\"|-@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-              (tags-todo "-@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
-            ("w" "@work"
-             ((tags-todo "@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
-              (tags-todo "@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
-              (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
-              (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-              (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
-            ("p" "Daily Planner"
-             ((agenda ""
-                      ((org-agenda-span 'day)
-                       (org-agenda-overriding-header " [!] PLAYLIST ")
-                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                       (org-agenda-entry-types '(:scheduled :deadline))))
-              (tags-todo "SCHEDULED=\"\"/!TODO"
-                         ((org-agenda-overriding-header " [?] BACKLOG ")
-                          (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'future))))))
-            ))
+  ;; display the agenda first
+  (setq org-agenda-custom-commands
+        '(("n" "@home"
+           ((tags-todo "-@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+            (tags-todo "-@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+            (tags "-@work+reminder+DEADLINE>\"<now>\|-@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+            (tags-todo "-@work+TODO={PICK}+DEADLINE>\"<now>\"|-@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+            (tags-todo "-@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+          ("w" "@work"
+           ((tags-todo "@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+            (tags-todo "@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+            (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+            (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+            (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+          ("p" "Daily Planner"
+           ((agenda ""
+                    ((org-agenda-span 'day)
+                     (org-agenda-overriding-header " [!] PLAYLIST ")
+                     (org-agenda-day-view t)
+                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))
+                                        ;(org-agenda-entry-types '(:scheduled :deadline))))
+            (tags-todo "SCHEDULED=\"\"/!TODO"
+                       ((org-agenda-overriding-header " [?] BACKLOG ")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'future))))))
+          ))
 
-    ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
-    (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
-    (defun my-org-mode-hook ()
-      (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
-    (add-hook 'org-mode-hook 'my-org-mode-hook))
+  ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
+  (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
+  (defun my-org-mode-hook ()
+    (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
+  (add-hook 'org-mode-hook 'my-org-mode-hook))
 
   (use-package notifications
     :config
