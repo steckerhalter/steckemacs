@@ -1088,6 +1088,8 @@ buffer is not visiting a file."
 (use-package highlight-symbol
   :diminish
   :hook (prog-mode . highlight-symbol-mode)
+  :bind (("M-o" . highlight-symbol-prev)
+         ("M-i" . highlight-symbol-next))
   :init
   (setq highlight-symbol-on-navigation-p t))
 
