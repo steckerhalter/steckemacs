@@ -1195,6 +1195,13 @@ buffer is not visiting a file."
   :config
   (setq magit-wip-after-save-mode 1)
   (setq magit-wip-after-apply-mode 1)
+
+  ;; prevent take over of my global bindings
+  (define-key magit-mode-map (kbd "M-1") nil)
+  (define-key magit-mode-map (kbd "M-2") nil)
+  (define-key magit-mode-map (kbd "M-3") nil)
+  (define-key magit-mode-map (kbd "M-4") nil)
+
   (defun magit-push-after-commit ()
     "Automatically push to upstream after a commit is finished."
     (magit-push-current-to-upstream nil))
