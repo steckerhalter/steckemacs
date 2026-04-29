@@ -156,7 +156,7 @@
     (with-selected-frame (or frame (selected-frame))
       (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
       (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
-  (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
+  ;; (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
 
 ;;;; personal functions
   (defun export-song () (interactive)
