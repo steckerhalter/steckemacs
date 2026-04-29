@@ -357,11 +357,15 @@ buffer is not visiting a file."
 
 ;;;; prepare keys
 
-  (define-key global-map (kbd "M-3") nil)
+  (dolist (n (number-sequence 0 9))
+    (global-unset-key (kbd (format "M-%d" n)))
+    (global-unset-key (kbd (format "C-%d" n))))
 
 ;;;; global key bindings
   :bind
   ("M-0" . save-buffer)
+  ("M-2 k" . helm-show-kill-ring)
+  ("M-2 m" . helm-all-mark-rings)
   ("M-3 o" . delete-other-windows)
   ("M-3 v" . split-window-vertically)
   ("M-3 m" . my-split-window)
@@ -371,8 +375,6 @@ buffer is not visiting a file."
   ("M-3 t" . my-toggle-window-split)
   ("M-4" . helm-mini)
   ("M-9" . other-window)
-  ("C-1" . helm-show-kill-ring)
-  ("C-2" . helm-all-mark-rings)
   ("C-3" . helm-swoop)
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
