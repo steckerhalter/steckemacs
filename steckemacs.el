@@ -357,14 +357,14 @@ buffer is not visiting a file."
 
 ;;;; global key bindings
   :bind
-  ("M-0" . save-buffer)
+  ("M--" . save-buffer)
+  ("M-1" . delete-other-windows)
+  ("M-2" . split-window-vertically)
+  ("M-@" . split-window-horizontally)
+  ("M-4" . delete-window)
   ("M-6" . my-kill-buffer)
   ("M-7" . my-toggle-window-split)
   ("M-8" . my-split-window)
-  ("M-2" . split-window-vertically)
-  ("M-3" . split-window-horizontally)
-  ("M-4" . delete-window)
-  ("M-9" . delete-other-windows)
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c n" . my-org-agenda)
@@ -1349,8 +1349,8 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
                                 "*Deft*"
                                 ":.*"))
 
-  :bind (("<f8>" . iflipb-next-buffer)
-         ("<f9>" . iflipb-previous-buffer)))
+  :bind (("M-8" . iflipb-next-buffer)
+         ("M-9" . iflipb-previous-buffer)))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
