@@ -355,17 +355,25 @@ buffer is not visiting a file."
         (publish-music))))
   (add-hook 'after-save-hook 'my-after-save-hook)
 
+;;;; prepare keys
+
+  (define-key global-map (kbd "M-3") nil)
+
 ;;;; global key bindings
   :bind
-  ("M--" . save-buffer)
-  ("M-0" . other-window)
-  ("M-1" . delete-other-windows)
-  ("M-2" . split-window-vertically)
-  ("M-3" . my-split-window)
-  ("M-@" . split-window-horizontally)
-  ("M-4" . delete-window)
-  ("M-6" . my-kill-buffer)
-  ("M-7" . my-toggle-window-split)
+  ("M-0" . save-buffer)
+  ("M-3 o" . delete-other-windows)
+  ("M-3 v" . split-window-vertically)
+  ("M-3 m" . my-split-window)
+  ("M-3 h" . split-window-horizontally)
+  ("M-3 d" . delete-window)
+  ("M-3 k" . my-kill-buffer)
+  ("M-3 t" . my-toggle-window-split)
+  ("M-4" . helm-mini)
+  ("M-9" . other-window)
+  ("C-1" . helm-show-kill-ring)
+  ("C-2" . helm-all-mark-rings)
+  ("C-3" . helm-swoop)
   ("C-c c" . my-capture)
   ("C-c m" . menu-bar-mode)
   ("C-c n" . my-org-agenda)
@@ -380,7 +388,8 @@ buffer is not visiting a file."
   ("C-x b" . helm-mini)
   ("C-c r" . revert-buffer)
   ("C-c t" . my-todo-buffer)
-  ("C-c d" . org-archive-done-tasks))
+  ("C-c d" . org-archive-done-tasks)
+  )
 
 ;;; packages
 ;;;; paren
@@ -1150,7 +1159,7 @@ buffer is not visiting a file."
                                 ":.*"))
 
   :bind (("M-8" . iflipb-next-buffer)
-         ("M-9" . iflipb-previous-buffer)))
+         ("M--" . iflipb-previous-buffer)))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
@@ -1305,9 +1314,8 @@ buffer is not visiting a file."
            :recursive t)))
 
   (setq org-capture-templates
-        `(("t" "Task" entry (file "") "* TODO %?\n %a\n" :prepend t)
-          ("p" "Playlist" entry (file "todo.org") "* TODO %?\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :prepend t)
-          ("s" "home" entry (file "todo.org") "* TODO %?\n")
+        `(("p" "Playlist" entry (file "todo.org") "* TODO %?\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :prepend t)
+          ("s" "home" entry (file "todo.org") "* TODO %?\n" :prepend t)
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "DONE(d)")))
