@@ -358,6 +358,7 @@ buffer is not visiting a file."
 ;;;; global key bindings
   :bind
   ("M--" . save-buffer)
+  ("M-0" . other-window)
   ("M-1" . delete-other-windows)
   ("M-2" . split-window-vertically)
   ("M-3" . my-split-window)
@@ -1577,7 +1578,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (defun my/org-playlist-toggle (arg)
     "T: Clear schedule. C-u T: Fast-set time for today."
     (interactive "P")
-    (let* ((marker (or (get-text-property (point) 'org-marker) 
+    (let* ((marker (or (get-text-property (point) 'org-marker)
                        (get-text-property (point) 'org-hd-marker)))
            (buffer (if marker (marker-buffer marker) (current-buffer)))
            (pos (if marker (marker-position marker) (point))))
@@ -1604,7 +1605,7 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
   (let ((list '(("T" . my/org-playlist-toggle)
                 ("S" . org-schedule))))
     (if (boundp 'org-speed-commands)
-        (setq 'org-speed-commands list)
+        (setq org-speed-commands list)
       (setq org-speed-commands-user list))))
 
 
@@ -1688,51 +1689,51 @@ _M-i_  next symbol _M-M_  mark buf   C-u _9_  eval sexp     _g g_  magit        
     (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
   (add-hook 'org-mode-hook 'my-org-mode-hook))
 
-  (use-package notifications
-    :config
-    (defun my-appt-disp-window-function (min-to-app new-time msg)
-      (if (string-equal system-type "windows-nt")
-          (shell-command (format "msg /server:localhost rhu \"In %s min: %s\"" min-to-app msg))
-        (notifications-notify :title (format "In %s min" min-to-app) :body msg)))
-    (setq appt-disp-window-function 'my-appt-disp-window-function)
-    (setq appt-delete-window-function (lambda (&rest args))))
+(use-package notifications
+  :config
+  (defun my-appt-disp-window-function (min-to-app new-time msg)
+    (if (string-equal system-type "windows-nt")
+        (shell-command (format "msg /server:localhost rhu \"In %s min: %s\"" min-to-app msg))
+      (notifications-notify :title (format "In %s min" min-to-app) :body msg)))
+  (setq appt-disp-window-function 'my-appt-disp-window-function)
+  (setq appt-delete-window-function (lambda (&rest args))))
 
 ;;;;; org-bullets
-  ;; Show bullets in org-mode as UTF-8 characters
-  (use-package org-bullets
-    :config (add-hook 'org-mode-hook 'org-bullets-mode))
+;; Show bullets in org-mode as UTF-8 characters
+(use-package org-bullets
+  :config (add-hook 'org-mode-hook 'org-bullets-mode))
 ;;;;; ox-epub
-  (use-package ox-epub
-    :config
-    (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
-      "Export current Org buffer to EPUB using ox-epub, then convert to AZW3 using ebook-convert."
-      (interactive)
-      ;; 1. Export to EPUB (to a temporary file first)
-      (let* ((epub-file (org-epub-export-to-epub))
-             (output-file-base (file-name-sans-extension (buffer-file-name)))
-             (azw3-file (concat output-file-base ".azw3"))
-             (kindle-path "/run/user/1000/gvfs/mtp:host=Amazon_Kindle_Paperwhite_GN433X11525600D1/Internal Storage/documents/")
-             (convert-command (format "ebook-convert %s %s --linearize-tables"
-                                      (shell-quote-argument epub-file)
-                                      (shell-quote-argument azw3-file))))
-        (if (file-exists-p epub-file)
-            ;; 2. Convert EPUB to AZW3 using ebook-convert
-            (progn
-              (message "Converting EPUB to AZW3...")
-              (shell-command convert-command)
-              (message "Exported to AZW3 file: %s" azw3-file)
-              (shell-command (format "gio copy %s %s"
-                                     (shell-quote-argument azw3-file)
-                                     (shell-quote-argument kindle-path)))
-              (message "Copied file to kindle at: %s" kindle-path))
-          (error "EPUB export failed, cannot convert to AZW3"))))
-    ;; Define a new backend derived from 'epub specifically for the AZW3 action
-    ;; This function handles loading dependencies properly
-    (org-export-define-derived-backend 'azw3 'epub
-      :menu-entry
-      ;; Format: (KEY DESCRIPTION EXPORT-FUNCTION &optional MENU-PATH FEATURE)
-      '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
-    ))
+(use-package ox-epub
+  :config
+  (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
+    "Export current Org buffer to EPUB using ox-epub, then convert to AZW3 using ebook-convert."
+    (interactive)
+    ;; 1. Export to EPUB (to a temporary file first)
+    (let* ((epub-file (org-epub-export-to-epub))
+           (output-file-base (file-name-sans-extension (buffer-file-name)))
+           (azw3-file (concat output-file-base ".azw3"))
+           (kindle-path "/run/user/1000/gvfs/mtp:host=Amazon_Kindle_Paperwhite_GN433X11525600D1/Internal Storage/documents/")
+           (convert-command (format "ebook-convert %s %s --linearize-tables"
+                                    (shell-quote-argument epub-file)
+                                    (shell-quote-argument azw3-file))))
+      (if (file-exists-p epub-file)
+          ;; 2. Convert EPUB to AZW3 using ebook-convert
+          (progn
+            (message "Converting EPUB to AZW3...")
+            (shell-command convert-command)
+            (message "Exported to AZW3 file: %s" azw3-file)
+            (shell-command (format "gio copy %s %s"
+                                   (shell-quote-argument azw3-file)
+                                   (shell-quote-argument kindle-path)))
+            (message "Copied file to kindle at: %s" kindle-path))
+        (error "EPUB export failed, cannot convert to AZW3"))))
+  ;; Define a new backend derived from 'epub specifically for the AZW3 action
+  ;; This function handles loading dependencies properly
+  (org-export-define-derived-backend 'azw3 'epub
+    :menu-entry
+    ;; Format: (KEY DESCRIPTION EXPORT-FUNCTION &optional MENU-PATH FEATURE)
+    '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
+  )
 
 ;;;; outshine
 ;; outline with outshine outshines outline
