@@ -375,7 +375,7 @@ buffer is not visiting a file."
   ;; in buffer ---------------------------------------------------------
   ("C-0" . back-button-local-backward)
   ("C-9" . back-button-local-forward)
-  ("C-4" . helm-swoop)
+  ("M-4" . helm-swoop)
   ("M-2 k" . helm-show-kill-ring)
   ("M-2 m" . helm-all-mark-rings)
   ("M-2 r" . diff-hl-revert-hunk)
@@ -393,7 +393,7 @@ buffer is not visiting a file."
   ("M-3 t" . my-toggle-window-split)
   ("M-3 m" . menu-bar-mode)
   ;; -------------------------------------------------------------------
-  ("M-4" . helm-mini)
+  ("C-4" . helm-mini)
   ;; org-mode ----------------------------------------------------------
   ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
   ("M-5 c" . my-capture)
