@@ -363,39 +363,48 @@ buffer is not visiting a file."
 
 ;;;; global key bindings
   :bind
+  ("M-n" . (lambda () (interactive )(next-line 1 t)))
+  ("M-p" . (lambda () (interactive )(previous-line 1 t)))
   ("M-0" . save-buffer)
+  ;; buffer ------------------------------------------------------------
+  ("M-7" . (lambda () (interactive) (switch-to-buffer nil)))
+  ("M-1 s" . my-switch-to-scratch)
+  ("M-1 t" . my-todo-buffer)
+  ("M-1 r" . revert-buffer)
+  ("M-1 k" . my-kill-buffer)
+  ;; in buffer ---------------------------------------------------------
+  ("C-0" . back-button-local-backward)
+  ("C-9" . back-button-local-forward)
+  ("C-4" . helm-swoop)
   ("M-2 k" . helm-show-kill-ring)
   ("M-2 m" . helm-all-mark-rings)
   ("M-2 r" . diff-hl-revert-hunk)
   ("M-2 s" . shell-switcher-new-shell)
+  ("M-2 v" . visual-line-mode)
+  ("M-2 d" . ispell-change-dictionary)
+  ("M-2 g" . magit-status)
+  ;; windows/ui --------------------------------------------------------
+  ("M-9" . other-window)
   ("M-3 o" . delete-other-windows)
   ("M-3 v" . split-window-vertically)
-  ("M-3 m" . my-split-window)
+  ("M-3 s" . my-split-window)
   ("M-3 h" . split-window-horizontally)
   ("M-3 d" . delete-window)
-  ("M-3 k" . my-kill-buffer)
   ("M-3 t" . my-toggle-window-split)
+  ("M-3 m" . menu-bar-mode)
+  ;; -------------------------------------------------------------------
   ("M-4" . helm-mini)
-  ("M-7" . (lambda () (interactive) (switch-to-buffer nil)))
-  ("M-9" . other-window)
-  ("C-0" . back-button-local-backward)
-  ("C-9" . back-button-local-forward)
-  ("C-4" . helm-swoop)
-  ("C-c c" . my-capture)
-  ("C-c m" . menu-bar-mode)
-  ("C-c n" . my-org-agenda)
-  ("C-c l" . org-store-link)
+  ;; org-mode ----------------------------------------------------------
+  ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
+  ("M-5 c" . my-capture)
+  ("M-5 d" . org-archive-done-tasks)
+  ("M-5 P" . (lambda () (interactive) (org-capture nil "p")))
+  ("M-5 s" . org-store-link)
+  ("M-5 t" . org-copy-subtree)
+  ("M-5 a" . org-agenda)
+  ;; -------------------------------------------------------------------
   ("C-c e" . export-song)
-  ("C-c a" . org-agenda)
-  ("C-c g" . magit-status)
-  ("C-c D" . ispell-change-dictionary)
   ("C-c s" . web-search)
-  ("C-c v" . visual-line-mode)
-  ("C-c w" . wdired-mode)
-  ("C-x b" . helm-mini)
-  ("C-c r" . revert-buffer)
-  ("C-c t" . my-todo-buffer)
-  ("C-c d" . org-archive-done-tasks)
   )
 
 ;;; packages
@@ -1297,12 +1306,10 @@ buffer is not visiting a file."
   :hook (org-mode . (lambda ()
                       (setq-local company-idle-delay 0.3)
                       (setq-local electric-pair-mode nil)))
-  :bind (("C-c P" . (lambda () (interactive) (org-capture nil "p")))
-         ("C-c p" . (lambda () (interactive) (org-agenda nil "p")))
-         :map org-mode-map
-         ("C-c M-RET" . org-insert-heading-after-current)
-         ("C-c !" . my-org-insert-time-stamp)
-         ("C-c t" . (lambda () (interactive) (org-todo 'done))))
+  :bind (:map org-mode-map
+              ("C-c M-RET" . org-insert-heading-after-current)
+              ("C-c !" . my-org-insert-time-stamp)
+              ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
   Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
