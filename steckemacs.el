@@ -309,8 +309,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
+                              (org-element-property
+                               :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -392,6 +392,7 @@ buffer is not visiting a file."
   ("M-3 d" . delete-window)
   ("M-3 t" . my-toggle-window-split)
   ("M-3 m" . menu-bar-mode)
+  ("M-3 k" . kill-emacs)
   ;; -------------------------------------------------------------------
   ("C-4" . helm-mini)
   ;; org-mode ----------------------------------------------------------
@@ -1404,7 +1405,8 @@ buffer is not visiting a file."
       (if brackets (concat "<" time-str ">") time-str)))
 
   (defun my/org-playlist-toggle (arg)
-    "T: Clear schedule. C-u T: Fast-set time for today."
+    "T: If scheduled, clear it. If NOT scheduled, prompt for time today.
+C-u T: Always prompt for time today."
     (interactive "P")
     (let* ((marker (or (get-text-property (point) 'org-marker)
                        (get-text-property (point) 'org-hd-marker)))
@@ -1413,15 +1415,24 @@ buffer is not visiting a file."
       (with-current-buffer buffer
         (save-excursion
           (goto-char pos)
-          (if (not arg)
-              ;; T -> Just clear it
-              (progn (org-schedule '(4)) (message "Cleared -> Backlog."))
-            ;; C-u T -> Quick time prompt for today
-            (let ((hour (read-string "Today at (14, 1430, 14:45): ")))
-              (org-schedule nil (my/org-process-time-input hour))
-              (message "Scheduled for today."))))))
-    (when (derived-mode-p 'org-agenda-mode)
-      (org-agenda-redo)))
+          (let ((is-scheduled (org-get-scheduled-time (point))))
+            (cond
+             ;; 1. C-u T (Egal was ist: Zeit setzen)
+             (arg
+              (let ((hour (read-string "Today at (14, 1430, 14:45): ")))
+                (org-schedule nil (my/org-process-time-input hour))
+                (message "Scheduled for today.")))
+             ;; 2. Task hat bereits ein Datum -> Löschen (Backlog)
+             (is-scheduled
+              (org-schedule '(4))
+              (message "Cleared -> Backlog."))
+             ;; 3. Task hat KEIN Datum -> Heute einplanen (Playlist)
+             (t
+              (let ((hour (read-string "Today at (14, 1430, 14:45) [Enter=Now]: ")))
+                (org-schedule nil (my/org-process-time-input hour))
+                (message "Added to Playlist for today.")))))))
+      (when (derived-mode-p 'org-agenda-mode)
+        (org-agenda-redo))))
 
   (defun my/org-capture-get-hour-timestamp ()
     "Prompt for hour and return bracketed Org timestamp."
