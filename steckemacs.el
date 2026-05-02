@@ -1530,11 +1530,12 @@ C-u T: Always prompt for time today."
 
 (use-package notifications
   :config
-  (defun my-appt-disp-window-function (min-to-app new-time msg)
+  (defun my-apapt-disp-window-function (min-to-app new-time msg)
     (if (string-equal system-type "windows-nt")
         (shell-command (format "msg /server:localhost rhu \"In %s min: %s\"" min-to-app msg))
       (notifications-notify :title (format "In %s min" min-to-app) :body msg)))
-  (setq appt-disp-window-function 'my-appt-disp-window-function)
+  ;; don't use this unless we use windows
+  ;; (setq appt-disp-window-function 'my-appt-disp-window-function)
   (setq appt-delete-window-function (lambda (&rest args))))
 
 ;;;;; org-bullets
