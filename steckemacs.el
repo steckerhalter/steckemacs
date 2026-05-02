@@ -368,6 +368,8 @@ buffer is not visiting a file."
   ("M-0" . save-buffer)
   ;; buffer ------------------------------------------------------------
   ("M-7" . (lambda () (interactive) (switch-to-buffer nil)))
+  ("M-8" . iflipb-next-buffer)
+  ("M--" . iflipb-previous-buffer)
   ("M-1 s" . my-switch-to-scratch)
   ("M-1 t" . my-todo-buffer)
   ("M-1 r" . revert-buffer)
@@ -1173,10 +1175,7 @@ buffer is not visiting a file."
                                 "*Completions*"
                                 "*anaconda-mode*"
                                 "*Deft*"
-                                ":.*"))
-
-  :bind (("M-8" . iflipb-next-buffer)
-         ("M--" . iflipb-previous-buffer)))
+                                ":.*")))
 
 ;;;; ipretty
 ;; pretty-print the result elisp expressions
