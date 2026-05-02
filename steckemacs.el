@@ -1485,6 +1485,8 @@ C-u T: Always prompt for time today."
   (setq org-agenda-prefix-format "%?-12t% s")
   (setq org-agenda-confirm-kill nil)
   (setq org-tags-match-list-sublevels nil)
+  (setq org-agenda-span 2)
+  (setq org-deadline-warning-days 1)
 
   :config
   ;; add state to the sorting strategy of todo
@@ -1516,7 +1518,6 @@ C-u T: Always prompt for time today."
                      (org-agenda-overriding-header " [!] PLAYLIST ")
                      (org-agenda-day-view t)
                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))
-                                        ;(org-agenda-entry-types '(:scheduled :deadline))))
             (tags-todo "SCHEDULED=\"\"/!TODO"
                        ((org-agenda-overriding-header " [?] BACKLOG ")
                         (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'future))))))
@@ -1761,11 +1762,9 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; which-key
 (use-package which-key
   :diminish
-  :custom
-  (which-key-show-docstrings 'docstring-only)
-  (which-key-max-description-length nil)
-  (which-key-side-window-max-height 0.75)
-  :config (which-key-mode))
+  :config
+  (which-key-setup-minibuffer)
+  (which-key-mode))
 
 ;;;; zenity-color-picker
 (use-package zenity-color-picker)
