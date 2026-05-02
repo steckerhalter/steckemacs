@@ -309,8 +309,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                              (org-element-property
-                               :title (org-element-at-point)) 0 -13))
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -396,10 +396,10 @@ buffer is not visiting a file."
   ;; -------------------------------------------------------------------
   ("C-4" . helm-mini)
   ;; org-mode ----------------------------------------------------------
+  ("C-2" . (lambda () (interactive) (org-capture nil "P")))
   ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
   ("M-5 c" . my-capture)
   ("M-5 d" . org-archive-done-tasks)
-  ("M-5 P" . (lambda () (interactive) (org-capture nil "p")))
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
   ("M-5 a" . org-agenda)
@@ -1336,7 +1336,7 @@ buffer is not visiting a file."
            :recursive t)))
 
   (setq org-capture-templates
-        `(("p" "Playlist" entry (file "todo.org") "* TODO %?\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :prepend t)
+        `(("P" "Playlist" entry (file "todo.org") "* TODO %?\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :prepend t)
           ("s" "home" entry (file "todo.org") "* TODO %?\n" :prepend t)
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
