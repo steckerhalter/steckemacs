@@ -367,6 +367,7 @@ buffer is not visiting a file."
   ("M-p" . (lambda () (interactive )(previous-line 1 t)))
   ("M-0" . save-buffer)
   ;; buffer ------------------------------------------------------------
+  ("C-5" . magit-status)
   ("M-7" . (lambda () (interactive) (switch-to-buffer nil)))
   ("M-8" . iflipb-next-buffer)
   ("M--" . iflipb-previous-buffer)
@@ -385,7 +386,6 @@ buffer is not visiting a file."
   ("M-2 s" . shell-switcher-new-shell)
   ("M-2 v" . visual-line-mode)
   ("M-2 d" . ispell-change-dictionary)
-  ("M-2 g" . magit-status)
   ;; windows/ui --------------------------------------------------------
   ("M-9" . other-window)
   ("M-3 o" . delete-other-windows)
