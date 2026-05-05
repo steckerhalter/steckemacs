@@ -309,8 +309,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
+                              (org-element-property
+                               :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -361,7 +361,7 @@ buffer is not visiting a file."
     (global-unset-key (kbd (format "M-%d" n)))
     (global-unset-key (kbd (format "C-%d" n))))
 
-;;;; global key bindings
+;;;; global keys (gkeys)
   :bind
   ("M-n" . (lambda () (interactive )(next-line 1 t)))
   ("M-p" . (lambda () (interactive )(previous-line 1 t)))
@@ -373,6 +373,7 @@ buffer is not visiting a file."
   ("M-1 s" . my-switch-to-scratch)
   ("M-1 t" . my-todo-buffer)
   ("M-1 r" . revert-buffer)
+  ("M-1 e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
   ("M-1 k" . my-kill-buffer)
   ;; in buffer ---------------------------------------------------------
   ("C-0" . back-button-local-backward)
@@ -573,9 +574,7 @@ buffer is not visiting a file."
             (pyenv-mode-set name)
           (pyenv-mode-set "system"))))
 
-    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
-
-    :config (pyenv-mode 1)))
+    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
 
 ;;;; ansible-doc
 ;; Ansible documentation Minor Mode
