@@ -399,9 +399,9 @@ buffer is not visiting a file."
   ;; -------------------------------------------------------------------
   ("C-4" . helm-mini)
   ;; org-mode ----------------------------------------------------------
+  ("C-1" . my-capture)
   ("C-2" . (lambda () (interactive) (org-capture nil "P")))
   ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
-  ("M-5 c" . my-capture)
   ("M-5 d" . org-archive-done-tasks)
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
@@ -1334,7 +1334,7 @@ buffer is not visiting a file."
            :recursive t)))
 
   (setq org-capture-templates
-        `(("P" "Playlist" entry (file "todo.org") "* TODO %?\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :prepend t)
+        `(("P" "Playlist" entry (file "todo.org")"* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :immediate-finish t :prepend t)
           ("s" "home" entry (file "todo.org") "* TODO %?\n" :prepend t)
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
