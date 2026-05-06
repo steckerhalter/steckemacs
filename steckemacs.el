@@ -575,7 +575,7 @@ buffer is not visiting a file."
             (pyenv-mode-set name)
           (pyenv-mode-set "system"))))
 
-    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
+    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)))
 
 ;;;; ansible-doc
 ;; Ansible documentation Minor Mode
