@@ -301,6 +301,7 @@ buffer is not visiting a file."
 
   (defun my-capture ()
     (interactive)
+    (raise-frame)
     (if current-prefix-arg
         (org-capture nil (cadr org-capture-default))
       (org-capture nil (car org-capture-default))))
@@ -309,8 +310,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                              (org-element-property
-                               :title (org-element-at-point)) 0 -13))
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
