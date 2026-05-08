@@ -299,12 +299,12 @@ buffer is not visiting a file."
             ((= prefix 4) (eww url))
             (t (browse-url url)))))
 
-  (defun my-capture ()
+  (defun my-capture (&optional playlist)
     (interactive)
     (raise-frame)
-    (if current-prefix-arg
-        (org-capture nil (cadr org-capture-default))
-      (org-capture nil (car org-capture-default))))
+    (if playlist
+        (org-capture nil "P")
+      (org-capture nil "s")))
 
   (defun my-songs ()
     (interactive)
@@ -401,7 +401,7 @@ buffer is not visiting a file."
   ("C-4" . helm-mini)
   ;; org-mode ----------------------------------------------------------
   ("C-1" . my-capture)
-  ("C-2" . (lambda () (interactive) (org-capture nil "P")))
+  ("C-2" . (lambda () (interactive) (my-capture t)))
   ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
   ("M-5 d" . org-archive-done-tasks)
   ("M-5 s" . org-store-link)
