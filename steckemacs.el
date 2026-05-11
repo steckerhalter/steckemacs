@@ -1346,7 +1346,11 @@ buffer is not visiting a file."
           ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
           ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
   (setq org-todo-keywords '((sequence "TODO(t)" "DONE(d)")))
-  (setq org-todo-keyword-faces '(("DO" . org-warning)))
+
+  (setq org-tag-alist '(("einkauf" . ?e)
+                        ("brocki" . ?b)
+                        ("wichtig" . ?w)))
+
   (setq org-use-fast-todo-selection 'auto)
   (setq org-startup-indented t)
   (setq org-archive-mark-done t)
