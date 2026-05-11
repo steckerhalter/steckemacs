@@ -356,6 +356,10 @@ buffer is not visiting a file."
         (publish-music))))
   (add-hook 'after-save-hook 'my-after-save-hook)
 
+  (defun jump-to-id (id)
+    "Springt zur angegebenen CUSTOM_ID in der aktuellen oder in Agenda-Dateien."
+    (org-link-open-from-string (format "[[#%s]]" id)))
+
 ;;;; prepare keys
 
   (dolist (n (number-sequence 0 9))
@@ -407,6 +411,8 @@ buffer is not visiting a file."
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
   ("M-5 a" . org-agenda)
+  ("M-5 g" . (lambda () (interactive) (jump-to-id "gott")))
+  ("M-5 k" . (lambda () (interactive) (jump-to-id "kinder")))
   ;; -------------------------------------------------------------------
   ("C-c e" . export-song)
   ("C-c s" . web-search)
