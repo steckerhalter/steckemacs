@@ -324,6 +324,13 @@ buffer is not visiting a file."
       (markdown-mode)
       (markdown-preview)))
 
+  (defun notes-publish ()
+    (interactive)
+    (org-publish "notes")
+    (let ((auth (nth 0(auth-source-search :host "legtux.org"))))
+      (shell-command
+       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /retonom/notes; bye\""))))
+
   (defun retonom ()
     (interactive)
     (org-publish "web")
@@ -1338,7 +1345,16 @@ buffer is not visiting a file."
            :include (".htaccess")
            :base-directory "~/Sync/web"
            :publishing-directory "~/retonom"
-           :recursive t)))
+           :recursive t)
+          ("notes"
+           :publishing-function org-html-publish-to-html
+           :base-directory "~/Sync/notes"
+           :publishing-directory "~/web/notes"
+           :recursive t
+           :with-title nil
+           :with-toc t
+           :section-numbers nil)
+          ))
 
   (setq org-capture-templates
         `(("P" "Playlist" entry (file "todo.org")"* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :immediate-finish t :prepend t)
