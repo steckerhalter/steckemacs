@@ -329,7 +329,7 @@ buffer is not visiting a file."
     (org-publish "notes")
     (let ((auth (nth 0(auth-source-search :host "legtux.org"))))
       (shell-command
-       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /retonom/notes; bye\""))))
+       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /spefica/notes; bye\""))))
 
   (defun retonom ()
     (interactive)
@@ -643,11 +643,6 @@ buffer is not visiting a file."
   :config
   (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
   (back-button-mode 1))
-
-;;;; balanced-windows
-(use-package balanced-windows
-  :config
-  (balanced-windows-mode))
 
 ;;;; browse-url
 (use-package browse-url
