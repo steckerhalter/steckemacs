@@ -633,6 +633,7 @@ buffer is not visiting a file."
   :diminish auto-revert-mode
   :config
   ;; auto revert buffers when changed on disk
+  (setq auto-revert-interval 1)
   (global-auto-revert-mode 1))
 
 ;;;; back-button
