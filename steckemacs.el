@@ -1361,7 +1361,8 @@ buffer is not visiting a file."
 
   (setq org-tag-alist '(("einkauf" . ?e)
                         ("brocki" . ?b)
-                        ("wichtig" . ?w)))
+                        ("wichtig" . ?w)
+                        ("alarm" . ?a)))
 
   (setq org-use-fast-todo-selection 'auto)
   (setq org-startup-indented t)
