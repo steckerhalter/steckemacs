@@ -329,7 +329,7 @@ buffer is not visiting a file."
     (org-publish "notes")
     (let ((auth (nth 0(auth-source-search :host "legtux.org"))))
       (shell-command
-       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /spefica/notes; bye\""))))
+       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /spefica; bye\""))))
 
   (defun retonom ()
     (interactive)
@@ -1342,7 +1342,8 @@ buffer is not visiting a file."
            :base-directory "~/Sync/web"
            :publishing-directory "~/retonom"
            :recursive t)
-          ("notes"
+          ("notes" :components ("notes-org" "notes-files"))
+          ("notes-org"
            :publishing-function org-html-publish-to-html
            :base-directory "~/Sync/notes"
            :publishing-directory "~/web/notes"
@@ -1350,6 +1351,13 @@ buffer is not visiting a file."
            :with-title nil
            :with-toc t
            :section-numbers nil)
+          ("notes-files"
+           :publishing-function org-publish-attachment
+           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|aac\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
+           :include (".htaccess")
+           :base-directory "~/Sync/notes"
+           :publishing-directory "~/web/notes"
+           :recursive t)
           ))
 
   (setq org-capture-templates
