@@ -326,10 +326,10 @@ buffer is not visiting a file."
 
   (defun notes-publish ()
     (interactive)
-    (org-publish "notes")
+    (org-publish-project "notes")
     (let ((auth (nth 0(auth-source-search :host "legtux.org"))))
       (shell-command
-       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /spefica; bye\""))))
+       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /retonom/notes; bye\""))))
 
   (defun retonom ()
     (interactive)
@@ -389,8 +389,10 @@ buffer is not visiting a file."
   ("M-1 e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
   ("M-1 k" . my-kill-buffer)
   ;; in buffer ---------------------------------------------------------
-  ("C-0" . back-button-local-backward)
-  ("C-9" . back-button-local-forward)
+  ("M-o" . back-button-local-backward)
+  ("M-i" . back-button-local-forward)
+  ("C-0" . highlight-symbol-prev)
+  ("C-9" . highlight-symbol-next)
   ("M-4" . helm-swoop)
   ("M-2 k" . helm-show-kill-ring)
   ("M-2 m" . helm-all-mark-rings)
@@ -400,10 +402,7 @@ buffer is not visiting a file."
   ("M-2 d" . ispell-change-dictionary)
   ;; windows/ui --------------------------------------------------------
   ("M-9" . other-window)
-  ("M-3 o" . delete-other-windows)
-  ("M-3 v" . split-window-vertically)
   ("M-3 s" . my-split-window)
-  ("M-3 h" . split-window-horizontally)
   ("M-3 d" . delete-window)
   ("M-3 t" . my-toggle-window-split)
   ("M-3 m" . menu-bar-mode)
@@ -1125,8 +1124,6 @@ buffer is not visiting a file."
 (use-package highlight-symbol
   :diminish
   :hook (prog-mode . highlight-symbol-mode)
-  :bind (("M-o" . highlight-symbol-prev)
-         ("M-i" . highlight-symbol-next))
   :init
   (setq highlight-symbol-on-navigation-p t))
 
@@ -1347,9 +1344,9 @@ buffer is not visiting a file."
            :publishing-function org-html-publish-to-html
            :base-directory "~/Sync/notes"
            :publishing-directory "~/web/notes"
-           :recursive t
            :with-title nil
            :with-toc t
+           :html-head-extra "<style>#content { max-width: 100% !important; margin: 5% !important; }</style>"
            :section-numbers nil)
           ("notes-files"
            :publishing-function org-publish-attachment
