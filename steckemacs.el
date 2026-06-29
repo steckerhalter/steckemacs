@@ -388,6 +388,7 @@ buffer is not visiting a file."
   ("M-1 r" . revert-buffer)
   ("M-1 e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
   ("M-1 k" . my-kill-buffer)
+  ("M-1 f" . flyspell-mode)
   ;; in buffer ---------------------------------------------------------
   ("M-o" . back-button-local-backward)
   ("M-i" . back-button-local-forward)
@@ -625,6 +626,11 @@ buffer is not visiting a file."
                            (lambda ()
                              (interactive)
                              (TeX-command-menu "LaTeX"))))))
+
+;;;; auto-dictionary
+(use-package auto-dictionary
+  :config
+  (add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
 
 ;;;; autorevert
 ;; revert buffers when files on disk change
