@@ -375,6 +375,14 @@ buffer is not visiting a file."
 
 ;;;; global keys (gkeys)
   :bind
+  ;; umlauts on the en layout ------------------------------------------
+  ("s-;" . (lambda () (interactive) (insert "ö")))
+  ("s-'" . (lambda () (interactive) (insert "ä")))
+  ("s-[" . (lambda () (interactive) (insert "ü")))
+  ("s-:" . (lambda () (interactive) (insert "Ö")))
+  ("s-\"" . (lambda () (interactive) (insert "Ä")))
+  ("S-{" . (lambda () (interactive) (insert "Ü")))
+  ;; general keys ------------------------------------------------------
   ("M-n" . (lambda () (interactive )(next-line 1 t)))
   ("M-p" . (lambda () (interactive )(previous-line 1 t)))
   ("M-0" . save-buffer)
