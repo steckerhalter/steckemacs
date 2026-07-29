@@ -1329,6 +1329,7 @@ buffer is not visiting a file."
   :bind (:map org-mode-map
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c !" . my-org-insert-time-stamp)
+              ("C-c 1" . my-org-insert-time-stamp)
               ("C-c t" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
