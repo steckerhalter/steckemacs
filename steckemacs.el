@@ -426,7 +426,7 @@ buffer is not visiting a file."
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
   ("M-5 a" . org-agenda)
-  ("M-5 g" . (lambda () (interactive) (jump-to-id "gott")))
+  ("M-5 g" . (lambda () (interactive) (jump-to-id "tagebuch")))
   ("M-5 k" . (lambda () (interactive) (jump-to-id "kinder")))
   ;; -------------------------------------------------------------------
   ("C-c e" . export-song)
