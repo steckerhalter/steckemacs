@@ -1361,7 +1361,7 @@ buffer is not visiting a file."
            :publishing-directory "~/web/notes"
            :with-title nil
            :with-toc t
-           :html-head-extra "<style>#content { max-width: 100% !important; margin: 5% !important; }</style>"
+           :html-head-extra "<style>#content { max-width: 100% !important; margin: 5% !important; img { width: 100%; height: auto; }}</style>"
            :section-numbers nil)
           ("notes-files"
            :publishing-function org-publish-attachment
