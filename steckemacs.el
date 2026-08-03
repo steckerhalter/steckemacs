@@ -310,8 +310,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
+                              (org-element-property
+                               :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -381,7 +381,7 @@ buffer is not visiting a file."
   ("s-[" . (lambda () (interactive) (insert "ü")))
   ("s-:" . (lambda () (interactive) (insert "Ö")))
   ("s-\"" . (lambda () (interactive) (insert "Ä")))
-  ("S-{" . (lambda () (interactive) (insert "Ü")))
+  ("s-{" . (lambda () (interactive) (insert "Ü")))
   ;; general keys ------------------------------------------------------
   ("M-n" . (lambda () (interactive )(next-line 1 t)))
   ("M-p" . (lambda () (interactive )(previous-line 1 t)))
