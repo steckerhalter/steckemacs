@@ -1411,6 +1411,7 @@ buffer is not visiting a file."
   (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
   (setq org-plain-list-ordered-item-terminator ?\))
   (setq org-cycle-hide-drawers t)
+  (setq org-reverse-note-order t)
 
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
