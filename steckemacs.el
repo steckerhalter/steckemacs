@@ -828,26 +828,13 @@ buffer is not visiting a file."
   (setq dired-no-confirm
         '(byte-compile chgrp chmod chown copy delete load move symlink))
   (setq dired-deletion-confirmer (lambda (x) t))
-  :bind (:map dired-mode-map ("`" . dired-toggle-read-only))
-  :config
+  :bind (:map dired-mode-map ("`" . dired-toggle-read-only)))
 
-  ;; Rename files editing their names in dired buffers
-  (use-package wdired
-    :init
-    ;; allow changing of file permissions
-    (setq wdired-allow-to-change-permissions t))
-
-  ;; dired+ adds some features to standard dired (like reusing buffers)
-  (use-package dired+
-    :ensure nil
-    :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
-    :defer 1
-    :init
-    (setq diredp-hide-details-initially-flag nil)
-    (setq diredp-hide-details-propagate-flag nil)
-
-    :config
-    (diredp-toggle-find-file-reuse-dir 1)))
+;; Rename files editing their names in dired buffers
+(use-package wdired
+  :init
+  ;; allow changing of file permissions
+  (setq wdired-allow-to-change-permissions t))
 
 ;;;; discover-my-major
 ;; discover key bindings and their meaning for the current Emacs major mode
