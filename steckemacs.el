@@ -434,118 +434,6 @@ buffer is not visiting a file."
   )
 
 ;;; packages
-;;;; paren
-;; highlight matching paren
-(use-package paren
-  :config
-  ;;visualize ( and )
-  (show-paren-mode t))
-
-;;;; prog-mode
-;; Generic major mode for programming
-(use-package prog-mode
-  :ensure nil
-  :config
-  (defun my-prog-mode-hook ()
-    (setq show-trailing-whitespace 1)
-    (prettify-symbols-mode 1))
-  :hook (prog-mode . my-prog-mode-hook))
-
-;;;; recentf
-;; setup a menu of recently opened files
-(use-package recentf
-  :config
-  (setq recentf-save-file (expand-file-name "~/.recentf"))
-  (recentf-mode 1))
-
-;;;; savehist
-;; Save minibuffer history
-(use-package savehist
-  :config
-  (setq savehist-additional-variables
-        '(kill-ring
-          mark-ring
-          global-mark-ring
-          search-ring
-          regexp-search-ring
-          extended-command-history))
-  (savehist-mode 1))
-
-;;;; saveplace
-;; automatically save place in files
-(use-package saveplace
-  :config (setq-default save-place t))
-
-;;;; sgml
-;; SGML- and HTML-editing modes
-(use-package sgml-mode
-  :config
-  (setq sgml-basic-offset 4)
-  (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode))
-
-;;;; shr
-;; Simple HTML Renderer
-(use-package shr
-  ;; don't use proportional fonts
-  :config (setq shr-use-fonts nil))
-
-;;;; skeleton
-;; Lisp language extension for writing statement skeletons
-(use-package skeleton
-  :config
-  (define-skeleton liquid-tag
-    "Inserts a liquid tag"
-    "tag: "
-    "{% " str " " _ " %}" \n
-    "{% end" str " %}")
-  (define-skeleton liquid-quote
-    "Inserts a liquid quote tag"
-    "tag: "
-    "{% quote " _ " %}" \n
-    "{% endquote %}")
-  (define-skeleton audio
-    "Insert html audio"
-    "file: "
-    "#+BEGIN_EXPORT html" \n
-    "<audio controls=\"controls\" preload=\"none\" src=\"" str "\">" \n
-    "<a href=\"" str "\">" str "</a>" \n
-    "</audio>" \n
-    "#+END_EXPORT" \n))
-
-;;;; term
-;; general command interpreter in a window stuff
-(use-package term
-  :config
-  (defun my-term-setup ()
-    (interactive)
-    (define-key term-raw-map (kbd "C-y") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-p") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-n") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-s") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-r") 'term-send-raw)
-    (define-key term-raw-map (kbd "M-d") (lambda () (interactive) (term-send-raw-string "\ed")))
-    (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
-    (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
-    (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
-    (define-key term-raw-map (kbd "C-S-y") 'term-paste)
-    (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
-    (define-key term-raw-map (kbd "C-]") nil))
-  (add-hook 'term-mode-hook 'my-term-setup t))
-
-;;;; xwidget
-;; api functions for xwidgets
-(use-package x-widget
-  :ensure nil
-  :bind (:map xwidget-webkit-mode-map
-              ("<mouse-4>" . xwidget-webkit-scroll-down)
-              ("<mouse-5>" . xwidget-webkit-scroll-up)
-              ("<up>" . xwidget-webkit-scroll-down)
-              ("<down>" . xwidget-webkit-scroll-up)
-              ("M-w" . xwidget-webkit-copy-selection-as-kill))
-  :hook (window-configuration-change . (lambda ()
-                                         (when (equal major-mode 'xwidget-webkit-mode)
-                                           (xwidget-webkit-adjust-size-dispatch)))))
-
 ;;;; advice
 ;; An overloading mechanism for Emacs Lisp functions
 (use-package advice
@@ -1623,6 +1511,12 @@ C-u T: Always prompt for time today."
   :diminish
   :config (global-page-break-lines-mode))
 
+;;;; paren
+;; highlight matching paren
+(use-package paren
+  :config
+  ;;visualize ( and )
+  (show-paren-mode t))
 ;;;; pdf-tools
 (use-package pdf-tools
   :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
@@ -1685,10 +1579,19 @@ Pass symbol-name to the function DOC-FUNCTION."
         (message "No documentation for %s" symbol))))
   ;; define key to show help in lisp-modes
   (define-key lisp-mode-shared-map (kbd "C-c C-d")
-    (lambda ()
-      (interactive)
-      (my-show-help))))
+              (lambda ()
+                (interactive)
+                (my-show-help))))
 
+;;;; prog-mode
+;; Generic major mode for programming
+(use-package prog-mode
+  :ensure nil
+  :config
+  (defun my-prog-mode-hook ()
+    (setq show-trailing-whitespace 1)
+    (prettify-symbols-mode 1))
+  :hook (prog-mode . my-prog-mode-hook))
 ;;;; projectile
 ;; Manage and navigate projects in Emacs easily
 (use-package projectile
@@ -1708,6 +1611,12 @@ Pass symbol-name to the function DOC-FUNCTION."
   :diminish
   :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
 
+;;;; recentf
+;; setup a menu of recently opened files
+(use-package recentf
+  :config
+  (setq recentf-save-file (expand-file-name "~/.recentf"))
+  (recentf-mode 1))
 ;;;; restclient
 (use-package ob-restclient)
 ;;;; robe
@@ -1717,16 +1626,64 @@ Pass symbol-name to the function DOC-FUNCTION."
   (push 'company-robe company-backends)
   :hook (ruby-mode . robe-mode))
 
+;;;; savehist
+;; Save minibuffer history
+(use-package savehist
+  :config
+  (setq savehist-additional-variables
+        '(kill-ring
+          mark-ring
+          global-mark-ring
+          search-ring
+          regexp-search-ring
+          extended-command-history))
+  (savehist-mode 1))
+
+;;;; saveplace
+;; automatically save place in files
+(use-package saveplace
+  :config (setq-default save-place t))
+
+;;;; sgml
+;; SGML- and HTML-editing modes
+(use-package sgml-mode
+  :config
+  (setq sgml-basic-offset 4)
+  (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode))
+
+;;;; shr
+;; Simple HTML Renderer
+(use-package shr
+  ;; don't use proportional fonts
+  :config
+  (setq shr-use-fonts nil)
+  (setq shr-color-visible-luminance-min 60))
+;;;; skeleton
+;; Lisp language extension for writing statement skeletons
+(use-package skeleton
+  :config
+  (define-skeleton liquid-tag
+    "Inserts a liquid tag"
+    "tag: "
+    "{% " str " " _ " %}" \n
+    "{% end" str " %}")
+  (define-skeleton liquid-quote
+    "Inserts a liquid quote tag"
+    "tag: "
+    "{% quote " _ " %}" \n
+    "{% endquote %}")
+  (define-skeleton audio
+    "Insert html audio"
+    "file: "
+    "#+BEGIN_EXPORT html" \n
+    "<audio controls=\"controls\" preload=\"none\" src=\"" str "\">" \n
+    "<a href=\"" str "\">" str "</a>" \n
+    "</audio>" \n
+    "#+END_EXPORT" \n))
 ;;;; shell-switcher
 (use-package shell-switcher
   :demand
   :config (shell-switcher-mode 1))
-
-;;;; shr
-(use-package shr
-  :custom
-  ;; increase contrast between similar colors
-  (shr-color-visible-luminance-min 60))
 
 ;;;; smart-mode-line
 ;; A color coded smart mode-line.
@@ -1748,6 +1705,24 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;; Major mode for editing systemd units
 (use-package systemd)
 
+;;;; term
+(use-package term
+  :config
+  (defun my-term-setup ()
+    (interactive)
+    (define-key term-raw-map (kbd "C-y") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-p") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-n") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-s") 'term-send-raw)
+    (define-key term-raw-map (kbd "C-r") 'term-send-raw)
+    (define-key term-raw-map (kbd "M-d") (lambda () (interactive) (term-send-raw-string "\ed")))
+    (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
+    (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
+    (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
+    (define-key term-raw-map (kbd "C-S-y") 'term-paste)
+    (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
+    (define-key term-raw-map (kbd "C-]") nil))
+  (add-hook 'term-mode-hook 'my-term-setup t))
 ;;;; toml-mode
 ;; Major mode for editing toml files
 (use-package toml-mode)
@@ -1798,6 +1773,19 @@ Pass symbol-name to the function DOC-FUNCTION."
   (which-key-setup-minibuffer)
   (which-key-mode))
 
+;;;; xwidget
+;; api functions for xwidgets
+(use-package x-widget
+  :ensure nil
+  :bind (:map xwidget-webkit-mode-map
+              ("<mouse-4>" . xwidget-webkit-scroll-down)
+              ("<mouse-5>" . xwidget-webkit-scroll-up)
+              ("<up>" . xwidget-webkit-scroll-down)
+              ("<down>" . xwidget-webkit-scroll-up)
+              ("M-w" . xwidget-webkit-copy-selection-as-kill))
+  :hook (window-configuration-change . (lambda ()
+                                         (when (equal major-mode 'xwidget-webkit-mode)
+                                           (xwidget-webkit-adjust-size-dispatch)))))
 ;;;; zenity-color-picker
 (use-package zenity-color-picker)
 
