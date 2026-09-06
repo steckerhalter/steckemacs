@@ -310,8 +310,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                              (org-element-property
-                               :title (org-element-at-point)) 0 -13))
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -366,6 +366,13 @@ buffer is not visiting a file."
   (defun jump-to-id (id)
     "Springt zur angegebenen CUSTOM_ID in der aktuellen oder in Agenda-Dateien."
     (org-link-open-from-string (format "[[#%s]]" id)))
+
+  (defun journal (&optional arg)
+    (interactive "p")
+    (jump-to-id "tagebuch")
+    (org-end-of-meta-data t)
+    (when (equal arg 4)
+      (org-insert-heading nil nil 2)))
 
 ;;;; prepare keys
 
@@ -426,7 +433,7 @@ buffer is not visiting a file."
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
   ("M-5 a" . org-agenda)
-  ("M-5 g" . (lambda () (interactive) (jump-to-id "tagebuch")))
+  ("M-5 g" . journal)
   ("M-5 k" . (lambda () (interactive) (jump-to-id "kinder")))
   ;; -------------------------------------------------------------------
   ("C-c e" . export-song)
