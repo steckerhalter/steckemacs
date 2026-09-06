@@ -1,4 +1,4 @@
-;;; steckemacs.el --- steckemacs emacs configuration
+;;; steckemacs.el --- steckemacs emacs configuration  -*- lexical-binding: t; -*-
 
 ;; Copyright 2018, Steckerhalter
 
@@ -310,8 +310,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
+                              (org-element-property
+                               :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -409,7 +409,7 @@ buffer is not visiting a file."
   ("M-i" . back-button-local-forward)
   ("C-0" . highlight-symbol-prev)
   ("C-9" . highlight-symbol-next)
-  ("M-4" . helm-swoop)
+  ("M-4" . helm-occur)
   ("M-2 k" . helm-show-kill-ring)
   ("M-2 m" . helm-all-mark-rings)
   ("M-2 r" . diff-hl-revert-hunk)
@@ -972,13 +972,6 @@ buffer is not visiting a file."
   (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
   (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  :config
-  (require 'helm-config)
-
-  ;; Yet Another `describe-bindings' with `helm'.
-  (use-package helm-descbinds
-    :config (helm-descbinds-mode))
-
   ;; GNU GLOBAL helm interface
   (use-package helm-gtags
     :diminish
@@ -990,17 +983,7 @@ buffer is not visiting a file."
   ;; Helm UI wrapper for system package managers.
   (use-package helm-system-packages)
 
-  (use-package helm-rg)
-
-  ;; Efficiently hopping squeezed lines powered by helm interface
-  (use-package helm-swoop
-    :bind (:map
-           isearch-mode-map ("M-i" . helm-swoop-from-isearch)
-           :map
-           helm-swoop-map ("M-i" . helm-multi-swoop-all-from-helm-swoop))
-    :init
-    (setq helm-swoop-speed-or-color t)
-    (setq helm-swoop-pre-input-function (lambda ()))))
+  (use-package helm-rg))
 
 ;;;; highlight-parentheses
 ;; highlight surrounding parentheses
@@ -1609,10 +1592,7 @@ Pass symbol-name to the function DOC-FUNCTION."
   (setq projectile-switch-project-action 'projectile-dired)
   (setq projectile-completion-system 'ido)
   (setq projectile-enable-caching t)
-  (setq projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
-
-  :config
-  (projectile-global-mode 1))
+  (setq projectile-mode-line '(:eval (format " <%s>" (projectile-project-name)))))
 
 ;;;; rainbow-mode
 ;; Colorize color names in buffers
@@ -1705,10 +1685,6 @@ Pass symbol-name to the function DOC-FUNCTION."
   :config
   (sml/setup)
   (sml/apply-theme 'automatic))
-
-;;;; stylus-mode
-;; Major mode for editing .jade files
-(use-package stylus-mode)
 
 ;;;; systemd
 ;; Major mode for editing systemd units
