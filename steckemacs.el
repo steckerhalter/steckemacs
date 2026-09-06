@@ -1294,6 +1294,8 @@ buffer is not visiting a file."
   (setq org-plain-list-ordered-item-terminator ?\))
   (setq org-cycle-hide-drawers t)
   (setq org-reverse-note-order t)
+  (setq org-refile-targets '((nil :maxlevel . 3)))
+  (setq org-refile-use-outline-path t)
 
   (defun my-org-insert-time-stamp (&optional heading)
     (interactive)
