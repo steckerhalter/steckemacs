@@ -1249,6 +1249,7 @@ buffer is not visiting a file."
                         ("wichtig" . ?w)
                         ("alarm" . ?a)
                         ("amazon" . ?z)
+                        ("backlog" . ?l)
                         ))
 
   (setq org-use-fast-todo-selection 'auto)
@@ -1529,9 +1530,9 @@ C-u T: Always prompt for time today."
         (progn
           (goto-char end)
           (insert "));")
-        (goto-char start)
-        (insert "die(var_dump("))
-  (insert "die(var_dump());")))
+           (goto-char start)
+           (insert "die(var_dump("))
+          (insert "die(var_dump());")))
 
   :config
   (use-package company-php
