@@ -421,10 +421,14 @@ buffer is not visiting a file."
   ("M-2 v" . visual-line-mode)
   ("M-2 d" . ispell-change-dictionary)
   ;; windows/ui --------------------------------------------------------
+  ("<f2>" . split-window-vertically)
+  ("<f3>" . split-window-horizontally)
+  ("<f4>" . delete-window)
+  ("<f5>" . delete-other-windows)
+  ("<f6>" . kill-buffer)
+  ("<f7>" . my-toggle-window-split)
   ("M-9" . other-window)
   ("M-3 s" . my-split-window)
-  ("M-3 d" . delete-window)
-  ("M-3 t" . my-toggle-window-split)
   ("M-3 m" . menu-bar-mode)
   ("M-3 k" . kill-emacs)
   ;; -------------------------------------------------------------------
@@ -438,7 +442,7 @@ buffer is not visiting a file."
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
   ("M-5 a" . org-agenda)
-  ("M-5 g" . journal)
+  ("<f8>" . journal)
   ("M-5 k" . (lambda () (interactive) (jump-to-id "kinder")))
   ;; -------------------------------------------------------------------
   ("C-c e" . export-song)
