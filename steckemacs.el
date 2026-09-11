@@ -93,7 +93,11 @@
    switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
    custom-file (expand-file-name "custom-file.el" user-emacs-directory) ;don't pollute the init file and don't `load' the customs but keep them for reference...
    long-line-threshold nil              ;disable new behavior starting with Emacs 29
-   initial-buffer-choice my-todo)
+   initial-buffer-choice my-todo
+   undo-limit 67108864                  ; 64 MB
+   undo-strong-limit 100663296          ; 96 MB
+   undo-outer-limit 1006632960          ; 1 GB
+   )
 
   ;; default flags
   (setq-default
@@ -1429,12 +1433,14 @@ C-u T: Always prompt for time today."
           ("p" "Daily Planner"
            ((agenda ""
                     ((org-agenda-span 'day)
-                     (org-agenda-overriding-header " [!] PLAYLIST ")
-                     (org-agenda-day-view t)
                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))
-            (tags-todo "SCHEDULED=\"\"/!TODO"
-                       ((org-agenda-overriding-header " [?] BACKLOG ")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'future))))))
+            ;; Abschnitt 2: Ungeplante Tasks OHNE das "backlog"-Tag (Inbox)
+            (tags-todo "SCHEDULED=\"\"&DEADLINE=\"\"-backlog/!TODO"
+                       ((org-agenda-overriding-header "")))
+            ;; Abschnitt 3: Nur Tasks mit dem Tag "backlog"
+            (tags "SCHEDULED=\"\"&DEADLINE=\"\"backlog/!TODO"
+                  ((org-agenda-overriding-header "")))
+            ))
           ))
 
   ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
