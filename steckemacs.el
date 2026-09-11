@@ -1438,7 +1438,7 @@ C-u T: Always prompt for time today."
             (tags-todo "SCHEDULED=\"\"&DEADLINE=\"\"-backlog/!TODO"
                        ((org-agenda-overriding-header "")))
             ;; Abschnitt 3: Nur Tasks mit dem Tag "backlog"
-            (tags "SCHEDULED=\"\"&DEADLINE=\"\"backlog/!TODO"
+            (tags "SCHEDULED=\"\"&DEADLINE=\"\"+backlog/!TODO"
                   ((org-agenda-overriding-header "")))
             ))
           ))
