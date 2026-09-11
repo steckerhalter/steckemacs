@@ -429,6 +429,7 @@ buffer is not visiting a file."
   ("C-1" . my-capture)
   ("C-2" . (lambda () (interactive) (my-capture t)))
   ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
+  ("C-c a" . org-agenda)
   ("M-5 d" . org-archive-done-tasks)
   ("M-5 s" . org-store-link)
   ("M-5 t" . org-copy-subtree)
