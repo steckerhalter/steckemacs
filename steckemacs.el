@@ -1251,7 +1251,6 @@ buffer is not visiting a file."
 
   (setq org-tag-alist '(("einkauf" . ?e)
                         ("brocki" . ?b)
-                        ("wichtig" . ?w)
                         ("alarm" . ?a)
                         ("amazon" . ?z)
                         ("backlog" . ?l)
