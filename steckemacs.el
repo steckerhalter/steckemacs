@@ -425,7 +425,7 @@ buffer is not visiting a file."
   ("<f3>" . split-window-horizontally)
   ("<f4>" . delete-window)
   ("<f5>" . delete-other-windows)
-  ("<f6>" . kill-buffer)
+  ("<f6>" . my-kill-buffer)
   ("<f7>" . my-toggle-window-split)
   ("M-9" . other-window)
   ("M-3 s" . my-split-window)
