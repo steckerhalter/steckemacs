@@ -1199,7 +1199,9 @@ buffer is not visiting a file."
 (use-package org
   :hook (org-mode . (lambda ()
                       (setq-local company-idle-delay 0.3)
-                      (setq-local electric-pair-mode nil)))
+                      (setq-local electric-pair-mode nil)
+                      (visual-line-mode)
+                      ))
   :bind (:map org-mode-map
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c !" . my-org-insert-time-stamp)
