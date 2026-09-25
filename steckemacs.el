@@ -1311,12 +1311,11 @@ buffer is not visiting a file."
      "/DONE" 'file))
 
   (defun my/org-process-time-input (input &optional brackets)
-    "Handles 14 (14:00), 1430 (14:30), or [Enter] (Now). No relative dates."
+    "Handles 14 (14:00), 1430 (14:30), or [Enter] (Today). No relative dates."
     (let* ((trimmed (org-trim (or input "")))
            (hour-str (cond
-                      ;; 1. Empty -> Current HH:MM
-                      ((string-empty-p trimmed)
-                       (format-time-string "%H:%M"))
+                      ;; 1. Empty -> no time
+                      ((string-empty-p trimmed) "")
                       ;; 2. 1 or 2 digits (e.g., 14) -> 14:00
                       ((string-match "^\\([0-9]\\{1,2\\}\\)$" trimmed)
                        (format "%02d:00" (string-to-number trimmed)))
@@ -1352,7 +1351,7 @@ C-u T: Always prompt for time today."
               (message "Cleared -> Backlog."))
              ;; 3. Task hat KEIN Datum -> Heute einplanen (Playlist)
              (t
-              (let ((hour (read-string "Today at (14, 1430, 14:45) [Enter=Now]: ")))
+              (let ((hour (read-string "Today at (14, 1430, 14:45) [Enter=Today]: ")))
                 (org-schedule nil (my/org-process-time-input hour))
                 (message "Added to Playlist for today.")))))))
       (when (derived-mode-p 'org-agenda-mode)
