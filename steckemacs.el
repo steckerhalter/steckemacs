@@ -97,6 +97,9 @@
    undo-limit 67108864                  ; 64 MB
    undo-strong-limit 100663296          ; 96 MB
    undo-outer-limit 1006632960          ; 1 GB
+   treesit-language-source-alist
+   '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
    )
 
   ;; default flags
