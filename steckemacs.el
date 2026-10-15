@@ -383,6 +383,7 @@ buffer is not visiting a file."
 
 ;;;; prepare keys
 
+  (global-unset-key (kbd "<f1>"))
   (dolist (n (number-sequence 0 9))
     (global-unset-key (kbd (format "M-%d" n)))
     (global-unset-key (kbd (format "C-%d" n))))
@@ -402,28 +403,29 @@ buffer is not visiting a file."
   ("M-0" . save-buffer)
   ;; buffer ------------------------------------------------------------
   ("C-5" . magit-status)
-  ("M-7" . (lambda () (interactive) (switch-to-buffer nil)))
-  ("M-8" . iflipb-next-buffer)
-  ("M--" . iflipb-previous-buffer)
+  ("M--" . (lambda () (interactive) (switch-to-buffer nil)))
+  ("M-7" . iflipb-next-buffer)
+  ("M-8" . iflipb-previous-buffer)
   ("M-1 s" . my-switch-to-scratch)
-  ("M-1 t" . my-todo-buffer)
-  ("M-1 r" . revert-buffer)
-  ("M-1 e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
-  ("M-1 k" . my-kill-buffer)
-  ("M-1 f" . flyspell-mode)
+  ("C-c t" . my-todo-buffer)
+  ("C-c r" . revert-buffer)
+  ("C-c e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
+  ("C-c k" . my-kill-buffer)
+  ("C-c f" . flyspell-mode)
   ;; in buffer ---------------------------------------------------------
-  ("M-o" . highlight-symbol-prev)
-  ("M-i" . highlight-symbol-next)
-  ("C-0" . back-button-local-backward)
-  ("C-9" . back-button-local-forward)
-  ("M-4" . helm-occur)
-  ("C-8" . helm-projectile-ag)
-  ("M-2 k" . helm-show-kill-ring)
-  ("M-2 m" . helm-all-mark-rings)
-  ("M-2 r" . diff-hl-revert-hunk)
-  ("M-2 s" . shell-switcher-new-shell)
-  ("M-2 v" . visual-line-mode)
-  ("M-2 d" . ispell-change-dictionary)
+  ("C-0" . highlight-symbol-prev)
+  ("C-9" . highlight-symbol-next)
+  ("M-o" . back-button-local-backward)
+  ("M-i" . back-button-local-forward)
+  ("<f1>" . helm-occur)
+  ("S-<f1>" . helm-projectile-ag)
+  ("C-<f1>" . helm-show-kill-ring)
+  ("M-<f1>" . helm-all-mark-rings)
+  ("C-c h" . diff-hl-show-hunk)
+  ("C-c H" . diff-hl-revert-hunk)
+  ("C-c s" . shell-switcher-new-shell)
+  ("C-c v" . visual-line-mode)
+  ("C-c D" . ispell-change-dictionary)
   ;; windows/ui --------------------------------------------------------
   ("<f2>" . split-window-vertically)
   ("<f3>" . split-window-horizontally)
@@ -432,9 +434,9 @@ buffer is not visiting a file."
   ("<f6>" . my-kill-buffer)
   ("<f7>" . my-toggle-window-split)
   ("M-9" . other-window)
-  ("M-3 s" . my-split-window)
-  ("M-3 m" . menu-bar-mode)
-  ("M-3 k" . kill-emacs)
+  ("S-<f7>" . my-split-window)
+  ("C-c m" . menu-bar-mode)
+  ("C-c K" . kill-emacs)
   ;; -------------------------------------------------------------------
   ("C-4" . helm-mini)
   ;; org-mode ----------------------------------------------------------
@@ -442,15 +444,13 @@ buffer is not visiting a file."
   ("C-2" . (lambda () (interactive) (my-capture t)))
   ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
   ("C-c a" . org-agenda)
-  ("M-5 d" . org-archive-done-tasks)
-  ("M-5 s" . org-store-link)
-  ("M-5 t" . org-copy-subtree)
-  ("M-5 a" . org-agenda)
+  ("C-c d" . org-archive-done-tasks)
+  ("C-c l" . org-store-link)
+  ("C-c c" . org-copy-subtree)
   ("<f8>" . journal)
-  ("M-5 k" . (lambda () (interactive) (jump-to-id "kinder")))
+  ("S-<f8>" . (lambda () (interactive) (jump-to-id "kinder")))
   ;; -------------------------------------------------------------------
-  ("C-c e" . export-song)
-  ("C-c s" . web-search)
+  ("C-c w" . web-search)
   )
 
 ;;; packages
@@ -1762,8 +1762,7 @@ Pass symbol-name to the function DOC-FUNCTION."
 ;;;; web-search
 (use-package web-search
   :config
-  (push '("Qwant" "https://www.qwant.com/?q=%s" "Search") web-search-providers)
-  (setq web-search-default-provider "Qwant"))
+  (setq web-search-default-provider "Google"))
 
 ;;;; writeroom-mode
 (use-package writeroom-mode)
