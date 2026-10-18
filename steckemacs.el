@@ -1210,7 +1210,7 @@ buffer is not visiting a file."
               ("C-c M-RET" . org-insert-heading-after-current)
               ("C-c !" . my-org-insert-time-stamp)
               ("C-c 1" . my-org-insert-time-stamp)
-              ("C-c t" . (lambda () (interactive) (org-todo 'done))))
+              ("M-4" . (lambda () (interactive) (org-todo 'done))))
   :init
   (defvar org-capture-default '("s" "w") "default capture template to be used.
   Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
