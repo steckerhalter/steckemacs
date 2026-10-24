@@ -412,6 +412,7 @@ buffer is not visiting a file."
   ("C-c e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
   ("C-c k" . my-kill-buffer)
   ("C-c f" . flyspell-mode)
+  ("C-c 0" . erase-buffer)
   ;; in buffer ---------------------------------------------------------
   ("C-0" . highlight-symbol-prev)
   ("C-9" . highlight-symbol-next)
@@ -731,6 +732,16 @@ buffer is not visiting a file."
       (find-dired
        default-directory
        (concat find-name-arg " " (shell-quote-argument pattern)))))
+
+  (defun my-dired-ediff-marked-files ()
+    (interactive)
+    (let ((files (dired-get-marked-files nil nil)))
+      (if (= (length files) 2)
+          (ediff-files (nth 0 files) (nth 1 files))
+        (user-error "Please mark exactly 2 files"))))
+
+  ;; Bind it to a key in dired-mode, for example 'E'
+  (define-key dired-mode-map (kbd "E") #'my-dired-ediff-marked-files)
 
   (setq dired-auto-revert-buffer t)
   (setq dired-no-confirm
@@ -1396,9 +1407,9 @@ C-u T: Always prompt for time today."
 (use-package org-agenda
   :ensure nil
   :bind (:map org-agenda-mode-map
-              ("C-c t" . (lambda () (interactive)
-                           (org-agenda-todo 'done)
-                           (org-agenda-redo-all)))
+              ("M-4" . (lambda () (interactive)
+                         (org-agenda-todo 'done)
+                         (org-agenda-redo-all)))
               ("T" . my/org-playlist-toggle))
   :init
   (defun my-org-agenda (key) (interactive) (org-agenda nil key))
