@@ -1277,6 +1277,7 @@ buffer is not visiting a file."
                         ("amazon" . ?z)
                         ("backlog" . ?l)
                         ("song" . ?s)
+                        ("god". ?g)
                         ))
 
   (setq org-use-fast-todo-selection 'auto)
