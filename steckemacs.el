@@ -760,6 +760,9 @@ buffer is not visiting a file."
 ;; discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major)
 
+;;;; easylist-mode
+(quelpa '(easylist-mode :repo "steckerhalter/easylist-mode" :fetcher github))
+
 ;;;; easy-kill
 ;; make marking and killing easier
 (use-package easy-kill
