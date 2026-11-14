@@ -318,8 +318,8 @@ buffer is not visiting a file."
     (interactive)
     (let ((songs (org-map-entries
                   (lambda () (substring
-                              (org-element-property
-                               :title (org-element-at-point)) 0 -13))
+                         (org-element-property
+                          :title (org-element-at-point)) 0 -13))
                   nil
                   'region-start-level)))
       (switch-to-buffer (get-buffer-create "Reto's Songs"))
@@ -381,6 +381,20 @@ buffer is not visiting a file."
     (org-end-of-meta-data t)
     (when (equal arg 4)
       (org-insert-heading nil nil 2)))
+
+  (defvar my/kdeconnect-device-name "Pixel 6a"
+    "Name of the target device in KDE Connect.")
+
+  (defun my/kdeconnect-send-region (start end)
+    "Send the selected text region to the paired KDE Connect device."
+    (interactive "r")
+    (if (use-region-p)
+        (let ((text (buffer-substring-no-properties start end)))
+          (call-process "kdeconnect-cli" nil 0 nil
+                        "--name" my/kdeconnect-device-name
+                        "--send-keys" text)
+          (message "Sent %d chars to %s" (length text) my/kdeconnect-device-name))
+      (user-error "No active region selected")))
 
 ;;;; prepare keys
 
@@ -1100,6 +1114,8 @@ buffer is not visiting a file."
 (use-package json-mode
   :mode "\\.json\\'")
 
+;;;; kde-connect-mode
+(quelpa '(kde-connect-mode :fetcher github :repo "steckerhalter/kde-connect-mode"))
 ;;;; logview
 ;; Major mode for viewing log files
 (use-package logview
@@ -1520,6 +1536,10 @@ C-u T: Always prompt for time today."
     '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
   )
 
+;;;; org-babel
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)))
 ;;;; outshine
 ;; outline with outshine outshines outline
 (use-package outshine
