@@ -1347,7 +1347,6 @@
 (require 'writeroom-mode)
 
 ;;;; which-key
-(quelpa '(which-key :fetcher github :repo "justbur/emacs-which-key"))
 (require 'which-key)
 (which-key-setup-minibuffer)
 (which-key-mode)

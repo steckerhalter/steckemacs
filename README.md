@@ -13,7 +13,7 @@ it uses:
 
 ## Setup
 
-**Emacs 24.4 ist required at least**
+**Emacs 30.1 ist required at least**
 
     cd ~
     git clone https://github.com/steckerhalter/steckemacs.git
