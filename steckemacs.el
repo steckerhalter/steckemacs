@@ -1,8 +1,8 @@
 ;;; steckemacs.el --- steckemacs emacs configuration  -*- lexical-binding: t; -*-
 
-;; Copyright 2018, Steckerhalter
+;; Copyright 2026, Reto Hubmann
 
-;; Author: steckerhalter
+;; Author: Reto Hubmann (@steckerhalter)
 ;; Keywords: emacs configuration init
 ;; URL: https://framagit.org/steckerhalter/steckemacs.el
 
@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-;;; initialization & quelpa bootstrap
+;;; initialization
 (require 'package)
 (package-initialize)
 
@@ -41,103 +41,98 @@
 (setq quelpa-checkout-melpa-p nil)
 
 ;;; settings
+;; load custom user code
+(when (file-readable-p "~/.user.el")
+  (load "~/.user.el"))
+
+;;;; startup & core Behavior
 (defvar my-todo "~/Sync/notes/todo.org")
+(setq inhibit-startup-message t)
+(setq initial-buffer-choice my-todo)
+(setq custom-file (expand-file-name "custom-file.el" user-emacs-directory))
+(put 'narrow-to-region 'disabled nil)
+(put 'erase-buffer 'disabled nil)
 
-;; global flags
-(setq
- inhibit-startup-message t
- backup-directory-alist `((".*" . ,temporary-file-directory))
- auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
- require-final-newline t
- column-number-mode t
- default-major-mode 'text-mode
- mouse-yank-at-point t
- history-length 250
- locale-coding-system 'utf-8
- tab-always-indent 'complete
- confirm-nonexistent-file-or-buffer nil
- vc-follow-symlinks t
- recentf-max-saved-items 5000
- eval-expression-print-length nil
- eval-expression-print-level nil
- send-mail-function 'sendmail-send-it
- kill-ring-max 5000
- mark-ring-max 5000
- mouse-autoselect-window -.1
- mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
- indicate-buffer-boundaries 'left
- enable-recursive-minibuffers t
- show-paren-delay 0
- load-prefer-newer t
- split-height-threshold 140
- split-width-threshold 140
- gc-cons-percentage 0.3
- safe-local-variable-values '((engine . django))
- switch-to-buffer-preserve-window-point t
- custom-file (expand-file-name "custom-file.el" user-emacs-directory)
- long-line-threshold nil
- initial-buffer-choice my-todo
- undo-limit 67108864
- undo-strong-limit 100663296
- undo-outer-limit 1006632960
- delete-by-moving-to-trash t
- treesit-language-source-alist
- '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-   (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
+;;;; files, backups & auto-saving
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq recentf-max-saved-items 5000)
+(setq confirm-nonexistent-file-or-buffer nil)
+(setq vc-follow-symlinks t)
+(setq delete-by-moving-to-trash t)
+;; don't ask to kill buffers
+(setq kill-buffer-query-functions
+      (remq 'process-kill-buffer-query-function
+            kill-buffer-query-functions))
 
-;; default flags
+;;;; editing, indentation & completion
+(setq require-final-newline t)
+(setq default-major-mode 'text-mode)
+(setq tab-always-indent 'complete)
+(setq safe-local-variable-values '((engine . django)))
 (setq-default
  tab-width 4
  indent-tabs-mode nil
  c-basic-offset 4
  c-hungry-delete-key t)
 
+;;;; ui, windows & mouse behavior
+(setq column-number-mode t)
+(setq mouse-yank-at-point t)
+(setq mouse-autoselect-window -.1)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))))
+(setq indicate-buffer-boundaries 'left)
+(setq show-paren-delay 0)
+(setq split-height-threshold 140)
+(setq split-width-threshold 140)
+(setq switch-to-buffer-preserve-window-point t)
 ;; disable full yes or no answers, y and n suffices
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-;; load custom user code
-(when (file-readable-p "~/.user.el")
-  (load "~/.user.el"))
-
 ;; display time in mode-line
 (setq display-time-24hr-format t)
 (setq display-time-default-load-average nil)
 (setq display-time-use-mail-icon t)
 (display-time)
-
-;; encoding
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-language-environment "UTF-8")
-(prefer-coding-system 'utf-8)
-
-;; disable some global modes
 (blink-cursor-mode -1)
 (when (display-graphic-p)
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1))
-
-;; narrow to region enabled by default
-(put 'narrow-to-region 'disabled nil)
-(put 'erase-buffer 'disabled nil)
-
-;; don't ask to kill buffers
-(setq kill-buffer-query-functions
-      (remq 'process-kill-buffer-query-function
-            kill-buffer-query-functions))
-
-;; default font
 (defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120))
 (apply 'set-face-attribute my-font-attributes)
 
-;;; key bindings & personal functions
+;;;; history, rings & undo limits
+(setq history-length 250)
+(setq eval-expression-print-length nil)
+(setq eval-expression-print-level nil)
+(setq kill-ring-max 5000)
+(setq mark-ring-max 5000)
+(setq undo-limit 67108864)
+(setq undo-strong-limit 100663296)
+(setq undo-outer-limit 1006632960)
+
+;;;; system, environment & performance
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
+(setq locale-coding-system 'utf-8)
+(setq send-mail-function 'sendmail-send-it)
+(setq enable-recursive-minibuffers t)
+(setq load-prefer-newer t)
+(setq gc-cons-percentage 0.3)
+(setq long-line-threshold nil)
+(setq treesit-language-source-alist
+      '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
+
+;;; key bindings
 (global-unset-key (kbd "<f1>"))
 (dolist (n (number-sequence 0 9))
   (global-unset-key (kbd (format "M-%d" n)))
   (global-unset-key (kbd (format "C-%d" n))))
 
-;; umlauts on en layout
+;;;; umlauts on en layout
 (global-set-key (kbd "s-;") (lambda () (interactive) (insert "ö")))
 (global-set-key (kbd "s-'") (lambda () (interactive) (insert "ä")))
 (global-set-key (kbd "s-[") (lambda () (interactive) (insert "ü")))
@@ -145,55 +140,67 @@
 (global-set-key (kbd "s-\"") (lambda () (interactive) (insert "Ä")))
 (global-set-key (kbd "s-{") (lambda () (interactive) (insert "Ü")))
 
-;; general keys
+;;;; movement & navigation
 (global-set-key (kbd "M-n") (lambda () (interactive) (next-line 1 t)))
 (global-set-key (kbd "M-p") (lambda () (interactive) (previous-line 1 t)))
-(global-set-key (kbd "M-0") 'save-buffer)
-(global-set-key (kbd "C-5") 'magit-status)
-(global-set-key (kbd "<f7>") (lambda () (interactive) (switch-to-buffer nil)))
-(global-set-key (kbd "M-7") 'iflipb-next-buffer)
-(global-set-key (kbd "M-8") 'iflipb-previous-buffer)
-(global-set-key (kbd "C-c s") 'my-switch-to-scratch)
-(global-set-key (kbd "C-c t") 'my-todo-buffer)
-(global-set-key (kbd "C-c r") 'revert-buffer)
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
-(global-set-key (kbd "C-c k") 'my-kill-buffer)
-(global-set-key (kbd "C-c f") 'flyspell-mode)
-(global-set-key (kbd "C-c c") 'kde-connect-scratchpad)
-(global-set-key (kbd "C-c 0") 'erase-buffer)
-(global-set-key (kbd "C-0") 'highlight-symbol-prev)
-(global-set-key (kbd "C-9") 'highlight-symbol-next)
 (global-set-key (kbd "M-o") 'back-button-local-backward)
 (global-set-key (kbd "M-i") 'back-button-local-forward)
-(global-set-key (kbd "<f1>") 'helm-occur)
-(global-set-key (kbd "S-<f1>") 'helm-projectile-ag)
-(global-set-key (kbd "C-<f1>") 'helm-show-kill-ring)
-(global-set-key (kbd "M-<f1>") 'helm-all-mark-rings)
-(global-set-key (kbd "C-c h") 'diff-hl-show-hunk)
-(global-set-key (kbd "C-c H") 'diff-hl-revert-hunk)
-(global-set-key (kbd "C-c S") 'shell-switcher-switch-buffer)
-(global-set-key (kbd "C-c v") 'visual-line-mode)
-(global-set-key (kbd "C-c D") 'ispell-change-dictionary)
+
+;;;; window management
 (global-set-key (kbd "<f2>") 'split-window-vertically)
 (global-set-key (kbd "<f3>") 'split-window-horizontally)
 (global-set-key (kbd "<f4>") 'delete-window)
 (global-set-key (kbd "<f5>") 'delete-other-windows)
-(global-set-key (kbd "<f6>") 'my-kill-buffer)
+(global-set-key (kbd "<f7>") (lambda () (interactive) (switch-to-buffer nil)))
 (global-set-key (kbd "M-<f7>") 'my-toggle-window-split)
-(global-set-key (kbd "M-9") 'other-window)
 (global-set-key (kbd "S-<f7>") 'my-split-window)
-(global-set-key (kbd "C-c m") 'menu-bar-mode)
+(global-set-key (kbd "M-9") 'other-window)
+
+;;;; buffer, file & session management
+(global-set-key (kbd "M-0") 'save-buffer)
+(global-set-key (kbd "M-7") 'iflipb-next-buffer)
+(global-set-key (kbd "M-8") 'iflipb-previous-buffer)
+(global-set-key (kbd "<f6>") 'my-kill-buffer)
+(global-set-key (kbd "C-c k") 'my-kill-buffer)
+(global-set-key (kbd "C-c 0") 'erase-buffer)
+(global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-c K") 'kill-emacs)
+
+;;;; helm & search
+(global-set-key (kbd "<f1>") 'helm-occur)
+(global-set-key (kbd "S-<f1>") 'helm-projectile-ag)
+(global-set-key (kbd "C-<f1>") 'helm-show-kill-ring)
+(global-set-key (kbd "M-<f1>") 'helm-all-mark-rings)
 (global-set-key (kbd "C-4") 'helm-mini)
+(global-set-key (kbd "C-0") 'highlight-symbol-prev)
+(global-set-key (kbd "C-9") 'highlight-symbol-next)
+(global-set-key (kbd "C-c w") 'web-search)
+
+;;;; org-mode, notes & agenda
 (global-set-key (kbd "C-1") 'my-capture)
 (global-set-key (kbd "C-2") (lambda () (interactive) (my-capture t)))
 (global-set-key (kbd "C-3") (lambda () (interactive) (org-agenda nil "p")))
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "<f8>") 'journal)
 (global-set-key (kbd "S-<f8>") (lambda () (interactive) (jump-to-id "kinder")))
-(global-set-key (kbd "C-c w") 'web-search)
 
-;;;; personal functions
+;;;; git & version control
+(global-set-key (kbd "C-5") 'magit-status)
+(global-set-key (kbd "C-c h") 'diff-hl-show-hunk)
+(global-set-key (kbd "C-c H") 'diff-hl-revert-hunk)
+
+;;;; custom shortcuts, utilities & modes (`C-c` Prefixes)
+(global-set-key (kbd "C-c s") 'my-switch-to-scratch)
+(global-set-key (kbd "C-c t") 'my-todo-buffer)
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
+(global-set-key (kbd "C-c f") 'flyspell-mode)
+(global-set-key (kbd "C-c c") 'kde-connect-scratchpad)
+(global-set-key (kbd "C-c S") 'shell-switcher-switch-buffer)
+(global-set-key (kbd "C-c v") 'visual-line-mode)
+(global-set-key (kbd "C-c D") 'ispell-change-dictionary)
+(global-set-key (kbd "C-c m") 'menu-bar-mode)
+
+;;; personal functions
 (defun export-song () (interactive)
        (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
                     (concat "~/Nextcloud/chords/"
@@ -363,9 +370,6 @@
   (org-end-of-meta-data t)
   (when (equal arg 4) (org-insert-heading nil nil 2)))
 
-;;; individual package configurations
-
-;; advice
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
@@ -380,23 +384,24 @@
         (bury-buffer)
       ad-do-it)))
 
-;; aggressive-indent
+;;; package configurations
+;;;; aggressive-indent
 (quelpa '(aggressive-indent :fetcher github :repo "Malabarba/aggressive-indent-mode"))
 (require 'aggressive-indent)
 (global-aggressive-indent-mode 1)
 
-;; apache-mode
+;;;; apache-mode
 (quelpa '(apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
 (require 'apache-mode)
 
-;; appt
+;;;; appt
 (setq appt-message-warning-time 30
       appt-display-interval 15
       appt-display-mode-line t
       appt-display-format 'window)
 (appt-activate 1)
 
-;; auctex
+;;;; auctex
 (package-install 'auctex)
 (require 'tex)
 (setq TeX-PDF-mode t
@@ -409,32 +414,32 @@
             (define-key TeX-mode-map (kbd "<C-f8>")
                         (lambda () (interactive) (TeX-command-menu "LaTeX")))))
 
-;; autorevert
+;;;; autorevert
 (require 'autorevert)
 (setq auto-revert-interval 1)
 (global-auto-revert-mode 1)
 
-;; back-button
+;;;; back-button
 (quelpa '(back-button :fetcher github :repo "rolandwalker/back-button"))
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
 (back-button-mode 1)
 
-;; browse-url
+;;;; browse-url
 (require 'browse-url)
 (defun my-browse-url-file (&optional file)
   (interactive)
   (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
     (browse-url-of-file file)))
 
-;; cider
+;;;; cider
 (quelpa '(cider :fetcher github :repo "clojure-emacs/cider"))
 (setq cider-popup-stacktraces nil
       cider-repl-popup-stacktraces nil
       cider-repl-pop-to-buffer-on-connect t
       cider-repl-use-clojure-font-lock t)
 
-;; company
+;;;; company
 (quelpa '(company :fetcher github :repo "company-mode/company-mode"))
 (require 'company)
 (setq company-idle-delay 0.3
@@ -470,7 +475,7 @@
 (add-hook 'lisp-interaction-mode-hook 'my-company-elisp-setup)
 (company-statistics-mode 1)
 
-;; company backends & quickhelp
+;;;; company backends & quickhelp
 (eval-after-load 'company
   '(progn
      (quelpa '(company-quickhelp :fetcher github :repo "company-mode/company-quickhelp"))
@@ -479,11 +484,11 @@
 	   company-quickhelp-delay 1)
      (company-quickhelp-mode 1)))
 
-;; custom
+;;;; custom
 (setq custom-unlispify-menu-entries nil
       custom-unlispify-tag-names nil)
 
-;; deft
+;;;; deft
 (quelpa '(deft :fetcher github :repo "jrblevin/deft"))
 (require 'deft)
 (define-key deft-mode-map (kbd "<f6>") 'quit-window)
@@ -511,14 +516,14 @@
       deft-extensions '("org")
       deft-auto-save-interval 0)
 
-;; diff-hl
+;;;; diff-hl
 (quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
 (require 'diff-hl)
 (global-diff-hl-mode 1)
 (eval-after-load 'magit
   '(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
-;; dired & wdired
+;;;; dired & wdired
 (require 'dired)
 (defun my-find-name-dired (pattern)
   (interactive "sFind-name (filename wildcard): ")
@@ -545,36 +550,36 @@
 (require 'wdired)
 (setq wdired-allow-to-change-permissions t)
 
-;; discover-my-major
+;;;; discover-my-major
 (quelpa '(discover-my-major :fetcher git :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 (require 'discover-my-major)
 
-;; easylist-mode
+;;;; easylist-mode
 (quelpa '(easylist-mode :repo "steckerhalter/easylist-mode" :fetcher github))
 (require 'easylist-mode)
 
-;; easy-kill
+;;;; easy-kill
 (quelpa '(easy-kill :fetcher github :repo "leoliu/easy-kill"))
 (require 'easy-kill)
 (global-set-key [remap kill-ring-save] 'easy-kill)
 (global-set-key [remap mark-sexp] 'easy-mark)
 
-;; eldoc
+;;;; eldoc
 (require 'eldoc)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
 
-;; elec-pair
+;;;; elec-pair
 (electric-pair-mode 1)
 
-;; elisp-slime-nav
+;;;; elisp-slime-nav
 (quelpa '(elisp-slime-nav :fetcher github :repo "purcell/elisp-slime-nav"))
 (require 'elisp-slime-nav)
 (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'lisp-interaction-mode-hook 'elisp-slime-nav-mode)
 
-;; emms
+;;;; emms
 (quelpa '(emms :fetcher github :repo "emacs-straight/emms"))
 (require 'emms)
 (global-set-key (kbd "<XF86AudioPlay>") 'emms-pause)
@@ -587,7 +592,7 @@
 (setq emms-player-list '(emms-player-mpv))
 (emms-standard)
 
-;; erc
+;;;; erc
 (require 'erc)
 (add-hook 'erc-mode-hook (lambda ()
                            (erc-truncate-mode t)
@@ -616,7 +621,7 @@
       (switch-to-buffer (car (erc-buffer-list)))
     (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
 
-;; eshell
+;;;; eshell
 (require 'eshell)
 (add-hook 'eshell-mode-hook (lambda ()
                               (my-eshell-setup)
@@ -647,11 +652,11 @@
                   (save-excursion (eshell-bol) (point)) (point))))))
 (setq eshell-default-completion-function 'eshell-bash-completion)
 
-;; eww
+;;;; eww
 (require 'eww)
 (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
-;; flymake
+;;;; flymake
 (require 'flymake)
 (add-hook 'php-mode-hook 'flymake-mode-on)
 (add-hook 'sh-mode-hook 'flymake-mode-on)
@@ -661,11 +666,11 @@
 (add-hook 'lisp-interaction-mode-hook 'flymake-mode-on)
 (flymake-mode-on)
 
-;; flyspell
+;;;; flyspell
 (require 'flyspell)
 (setq flyspell-auto-correct-binding [nil])
 
-;; frame
+;;;; frame
 (require 'frame)
 (modify-all-frames-parameters '((fullscreen . maximized)))
 
@@ -684,15 +689,15 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;; git-modes
+;;;; git-modes
 (quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
 (eval-after-load 'magit '(require 'git-modes))
 
-;; grandshell-theme
+;;;; grandshell-theme
 (quelpa '(grandshell-theme :fetcher git :url "https://framagit.org/steckerhalter/grandshell-theme"))
 (load-theme 'grandshell t)
 
-;; helm
+;;;; helm
 (quelpa '(helm :fetcher github :repo "emacs-helm/helm"))
 (require 'helm)
 (setq async-bytecomp-allowed-packages nil)
@@ -710,18 +715,18 @@
 (quelpa '(helm-system-packages :fetcher github :repo "emacsmirror/helm-system-packages"))
 (require 'helm-system-packages)
 
-;; highlight-symbol
+;;;; highlight-symbol
 (quelpa '(highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el"))
 (require 'highlight-symbol)
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 (setq highlight-symbol-on-navigation-p t)
 
-;; ibuffer
+;;;; ibuffer
 (require 'ibuffer)
 (setq ibuffer-default-display-maybe-show-predicates t)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; ido
+;;;; ido
 (require 'ido)
 (setq ido-enable-flex-matching t
       ido-everywhere t
@@ -732,7 +737,7 @@
 (ido-mode 1)
 (put 'ido-exit-minibuffer 'disabled nil)
 
-;; ido-completing-read+
+;;;; ido-completing-read+
 (quelpa '(ido-completing-read+ :fetcher github :repo "emacsmirror/ido-completing-read-plus"))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
@@ -741,16 +746,16 @@
 (require 'amx)
 (amx-mode 1)
 
-;; iedit
+;;;; iedit
 (quelpa '(iedit :fetcher github :repo "victorhge/iedit"))
 (require 'iedit)
 (setq iedit-unmatched-lines-invisible t
       iedit-toggle-key-default nil)
 
-;; ielm
+;;;; ielm
 (add-hook 'inferior-emacs-lisp-mode-hook (lambda () (turn-on-eldoc-mode)))
 
-;; iflipb
+;;;; iflipb
 (quelpa '(iflipb :fetcher github :repo "jrosdahl/iflipb"))
 (require 'iflipb)
 (setq iflipb-wrap-around t
@@ -762,16 +767,16 @@
                               "*Deft*"
                               ":.*"))
 
-;; ipretty
+;;;; ipretty
 (quelpa '(ipretty :fetcher github :repo "emacsmirror/ipretty"))
 (require 'ipretty)
 (ipretty-mode t)
 
-;; kde-connect-mode
+;;;; kde-connect-mode
 (quelpa '(kde-connect-mode :fetcher github :repo "steckerhalter/kde-connect-mode"))
 (require 'kde-connect-mode)
 
-;; magit
+;;;; magit
 (quelpa '(magit :fetcher github :repo "magit/magit"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
@@ -793,11 +798,11 @@
   (magit-push-current-to-upstream nil))
 (add-hook 'git-commit-post-finish-hook #'magit-push-after-commit)
 
-;; man
+;;;; man
 (require 'man)
 (setq Man-notify-method 'aggressive)
 
-;; markdown-mode
+;;;; markdown-mode
 (quelpa '(markdown-mode :fetcher github :repo "jrblevin/markdown-mode"))
 (require 'markdown-mode)
 (define-key markdown-mode-map (kbd "C-M-i") 'markdown-shifttab)
@@ -835,12 +840,12 @@
 (add-hook 'markdown-mode-hook 'visual-line-mode)
 (advice-add 'markdown-convert-wiki-link-to-filename :around 'my-markdown-convert-wiki-link)
 
-;; monky
+;;;; monky
 (quelpa '(monky :fetcher github :repo "ananthakumaran/monky"))
 (require 'monky)
 (setq monky-process-type 'cmdserver)
 
-;; multiple-cursors
+;;;; multiple-cursors
 (quelpa '(multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el"))
 (require 'multiple-cursors)
 (setq mc/always-repeat-command t
@@ -849,12 +854,12 @@
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-?") 'mc/mark-all-like-this)
 
-;; open-junk-file
+;;;; open-junk-file
 (quelpa '(open-junk-file :fetcher github :repo "emacsmirror/open-junk-file"))
 (require 'open-junk-file)
 (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S.")
 
-;; org
+;;;; org
 (require 'org)
 (add-hook 'org-mode-hook (lambda ()
                            (setq-local company-idle-delay 0.3)
@@ -1012,10 +1017,10 @@
       (setq org-speed-commands (append list org-speed-commands))
     (setq org-speed-commands-user list)))
 
-;; org-tempo
+;;;; org-tempo
 (require 'org-tempo)
 
-;; org-protocol
+;;;; org-protocol
 (require 'org-protocol)
 (add-to-list 'org-capture-templates
              '("p" "Protocol" entry (file "")
@@ -1024,7 +1029,7 @@
              '("L" "Protocol Link" entry (file "")
                "* TODO %?[[%:link][%:description]]\n" :prepend t :immediate-finish t))
 
-;; org-agenda
+;;;; org-agenda
 (require 'org-agenda)
 (define-key org-agenda-mode-map (kbd "M-4") (lambda () (interactive)
                                               (org-agenda-todo 'done)
@@ -1076,19 +1081,19 @@
   (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
 (add-hook 'org-mode-hook 'my-org-mode-hook)
 
-;; notifications
+;;;; notifications
 (require 'notifications)
 (defun my-appt-disp-window-function (min-to-app new-time msg)
   (notifications-notify :title (format "In %s min" min-to-app) :body msg))
 (setq appt-disp-window-function 'my-appt-disp-window-function)
 (setq appt-delete-window-function (lambda (&rest args)))
 
-;; org-bullets
+;;;; org-bullets
 (quelpa '(org-bullets :fetcher github :repo "sabof/org-bullets"))
 (require 'org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
-;; ox-epub
+;;;; ox-epub
 (quelpa '(ox-epub :fetcher github :repo "ofosos/ox-epub"))
 (require 'ox-epub)
 (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
@@ -1114,34 +1119,34 @@
 (org-export-define-derived-backend 'azw3 'epub
                                    :menu-entry '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
 
-;; org-babel
+;;;; org-babel
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((shell . t)))
 
-;; outshine
+;;;; outshine
 (quelpa '(outshine :fetcher github :repo "alphapapa/outshine"))
 (require 'outshine)
 (add-hook 'outline-minor-mode-hook #'outshine-mode)
 (add-hook 'emacs-lisp-mode-hook #'outline-minor-mode)
 (setq outshine-imenu-show-headlines-p nil)
 
-;; page-break-lines
+;;;; page-break-lines
 (quelpa '(page-break-lines :fetcher github :repo "purcell/page-break-lines"))
 (require 'page-break-lines)
 (global-page-break-lines-mode)
 
-;; paren
+;;;; paren
 (require 'paren)
 (show-paren-mode t)
 
-;; pdf-tools
+;;;; pdf-tools
 (quelpa '(pdf-tools :fetcher github :repo "vedang/pdf-tools"))
 (require 'pdf-tools)
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
 
-;; php-mode
+;;;; php-mode
 (quelpa '(php-mode :fetcher github :repo "emacs-php/php-mode"))
 (require 'php-mode)
 (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
@@ -1166,7 +1171,7 @@
 (define-key php-mode-map (kbd "M-S-,") 'ac-php-location-stack-forward)
 (define-key php-mode-map (kbd "H-i d") 'my-var_dump-die)
 
-;; pos-tip
+;;;; pos-tip
 (quelpa '(pos-tip :fetcher github :repo "emacsmirror/pos-tip"))
 (require 'pos-tip)
 (defun my-show-help ()
@@ -1189,14 +1194,14 @@
               (interactive)
               (my-show-help)))
 
-;; prog-mode
+;;;; prog-mode
 (require 'prog-mode)
 (defun my-prog-mode-hook ()
   (setq show-trailing-whitespace 1)
   (prettify-symbols-mode 1))
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
-;; projectile
+;;;; projectile
 (quelpa '(projectile :fetcher github :repo "bbatsov/projectile"))
 (require 'projectile)
 (setq projectile-switch-project-action 'projectile-dired
@@ -1204,7 +1209,7 @@
       projectile-enable-caching t
       projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
-;; python
+;;;; python
 (quelpa '(pip-requirements :fetcher github :repo "Wilfred/pip-requirements.el"))
 (quelpa '(pyenv-mode :fetcher github :repo "pythonic-emacs/pyenv-mode"))
 
@@ -1219,7 +1224,7 @@
       (pyenv-mode-set "system"))))
 (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
 
-;; rainbow-mode
+;;;; rainbow-mode
 (quelpa '(rainbow-mode :fetcher github :repo "emacsmirror/rainbow-mode"))
 (require 'rainbow-mode)
 (add-hook 'css-mode-hook 'rainbow-mode)
@@ -1228,15 +1233,15 @@
 (add-hook 'emacs-lisp-mode-hook 'rainbow-mode)
 (add-hook 'text-mode-hook 'rainbow-mode)
 
-;; recentf
+;;;; recentf
 (require 'recentf)
 (setq recentf-save-file (expand-file-name "~/.recentf"))
 (recentf-mode 1)
 
-;; restclient
+;;;; restclient
 (quelpa '(restclient :fetcher github :repo "pashky/restclient.el"))
 
-;; savehist
+;;;; savehist
 (require 'savehist)
 (setq savehist-additional-variables
       '(kill-ring
@@ -1247,21 +1252,21 @@
         extended-command-history))
 (savehist-mode 1)
 
-;; saveplace
+;;;; saveplace
 (require 'saveplace)
 (setq-default save-place t)
 
-;; sgml
+;;;; sgml
 (require 'sgml-mode)
 (setq sgml-basic-offset 4)
 (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode)
 
-;; shr
+;;;; shr
 (require 'shr)
 (setq shr-use-fonts nil
       shr-color-visible-luminance-min 60)
 
-;; skeleton
+;;;; skeleton
 (require 'skeleton)
 (define-skeleton liquid-tag
   "Inserts a liquid tag"
@@ -1282,12 +1287,12 @@
   "</audio>" \n
   "#+END_EXPORT" \n)
 
-;; shell-switcher
+;;;; shell-switcher
 (quelpa '(shell-switcher :fetcher github :repo "DamienCassou/shell-switcher"))
 (require 'shell-switcher)
 (shell-switcher-mode 1)
 
-;; smart-mode-line
+;;;; smart-mode-line
 (quelpa '(smart-mode-line :fetcher github :repo "malabarba/smart-mode-line"))
 (require 'smart-mode-line)
 (setq sml/vc-mode-show-backend t
@@ -1295,7 +1300,7 @@
 (sml/setup)
 (sml/apply-theme 'automatic)
 
-;; term
+;;;; term
 (require 'term)
 (defun my-term-setup ()
   (interactive)
@@ -1313,19 +1318,19 @@
   (define-key term-raw-map (kbd "C-]") nil))
 (add-hook 'term-mode-hook 'my-term-setup t)
 
-;; tldr
+;;;; tldr
 (quelpa '(tldr :fetcher github :repo "kuanyui/tldr.el"))
 (require 'tldr)
 
-;; yaml-mode
+;;;; yaml-mode
 (quelpa '(yaml-mode :fetcher github :repo "yoshiki/yaml-mode"))
 (require 'yaml-mode)
 
-;; visual-regexp
+;;;; visual-regexp
 (quelpa '(visual-regexp :fetcher github :repo "benma/visual-regexp.el"))
 (require 'visual-regexp)
 
-;; web-mode
+;;;; web-mode
 (quelpa '(web-mode :fetcher github :repo "fxbois/web-mode"))
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -1334,17 +1339,17 @@
       web-mode-enable-engine-detection t)
 (add-hook 'web-mode-hook (lambda () (set (make-local-variable 'electric-pair-mode) nil)))
 
-;; writeroom-mode
+;;;; writeroom-mode
 (quelpa '(writeroom-mode :fetcher github :repo "joostkremers/writeroom-mode"))
 (require 'writeroom-mode)
 
-;; which-key
+;;;; which-key
 (quelpa '(which-key :fetcher github :repo "justbur/emacs-which-key"))
 (require 'which-key)
 (which-key-setup-minibuffer)
 (which-key-mode)
 
-;; xwidget
+;;;; xwidget
 (require 'xwidget)
 (define-key xwidget-webkit-mode-map (kbd "<mouse-4>") 'xwidget-webkit-scroll-down)
 (define-key xwidget-webkit-mode-map (kbd "<mouse-5>") 'xwidget-webkit-scroll-up)
