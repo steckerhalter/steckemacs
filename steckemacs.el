@@ -50,6 +50,8 @@
 (setq inhibit-startup-message t)
 (setq initial-buffer-choice my-todo)
 (setq custom-file (expand-file-name "custom-file.el" user-emacs-directory))
+;; Automatically handle file-local variables without prompting
+(setq enable-local-variables :safe)
 (put 'narrow-to-region 'disabled nil)
 (put 'erase-buffer 'disabled nil)
 
@@ -94,10 +96,10 @@
 (setq display-time-use-mail-icon t)
 (display-time)
 (blink-cursor-mode -1)
-(when (display-graphic-p)
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1))
+;; Disable UI elements globally for all future frames (ideal for daemon mode)
+(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
+(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 (defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120))
 (apply 'set-face-attribute my-font-attributes)
 
