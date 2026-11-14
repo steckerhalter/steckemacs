@@ -119,6 +119,7 @@
 
 ;; narrow to region enabled by default
 (put 'narrow-to-region 'disabled nil)
+(put 'erase-buffer 'disabled nil)
 
 ;; don't ask to kill buffers
 (setq kill-buffer-query-functions
@@ -148,15 +149,16 @@
 (global-set-key (kbd "M-p") (lambda () (interactive) (previous-line 1 t)))
 (global-set-key (kbd "M-0") 'save-buffer)
 (global-set-key (kbd "C-5") 'magit-status)
-(global-set-key (kbd "M--") (lambda () (interactive) (switch-to-buffer nil)))
+(global-set-key (kbd "<f7>") (lambda () (interactive) (switch-to-buffer nil)))
 (global-set-key (kbd "M-7") 'iflipb-next-buffer)
 (global-set-key (kbd "M-8") 'iflipb-previous-buffer)
-(global-set-key (kbd "M-1 s") 'my-switch-to-scratch)
+(global-set-key (kbd "C-c s") 'my-switch-to-scratch)
 (global-set-key (kbd "C-c t") 'my-todo-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
 (global-set-key (kbd "C-c k") 'my-kill-buffer)
 (global-set-key (kbd "C-c f") 'flyspell-mode)
+(global-set-key (kbd "C-c c") 'kde-connect-scratchpad)
 (global-set-key (kbd "C-c 0") 'erase-buffer)
 (global-set-key (kbd "C-0") 'highlight-symbol-prev)
 (global-set-key (kbd "C-9") 'highlight-symbol-next)
@@ -168,7 +170,7 @@
 (global-set-key (kbd "M-<f1>") 'helm-all-mark-rings)
 (global-set-key (kbd "C-c h") 'diff-hl-show-hunk)
 (global-set-key (kbd "C-c H") 'diff-hl-revert-hunk)
-(global-set-key (kbd "C-c s") 'shell-switcher-new-shell)
+(global-set-key (kbd "C-c S") 'shell-switcher-switch-buffer)
 (global-set-key (kbd "C-c v") 'visual-line-mode)
 (global-set-key (kbd "C-c D") 'ispell-change-dictionary)
 (global-set-key (kbd "<f2>") 'split-window-vertically)
@@ -176,7 +178,7 @@
 (global-set-key (kbd "<f4>") 'delete-window)
 (global-set-key (kbd "<f5>") 'delete-other-windows)
 (global-set-key (kbd "<f6>") 'my-kill-buffer)
-(global-set-key (kbd "<f7>") 'my-toggle-window-split)
+(global-set-key (kbd "M-<f7>") 'my-toggle-window-split)
 (global-set-key (kbd "M-9") 'other-window)
 (global-set-key (kbd "S-<f7>") 'my-split-window)
 (global-set-key (kbd "C-c m") 'menu-bar-mode)
@@ -186,9 +188,6 @@
 (global-set-key (kbd "C-2") (lambda () (interactive) (my-capture t)))
 (global-set-key (kbd "C-3") (lambda () (interactive) (org-agenda nil "p")))
 (global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c d") 'org-archive-done-tasks)
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c c") 'org-copy-subtree)
 (global-set-key (kbd "<f8>") 'journal)
 (global-set-key (kbd "S-<f8>") (lambda () (interactive) (jump-to-id "kinder")))
 (global-set-key (kbd "C-c w") 'web-search)
@@ -362,19 +361,6 @@
   (jump-to-id "tagebuch")
   (org-end-of-meta-data t)
   (when (equal arg 4) (org-insert-heading nil nil 2)))
-
-(defvar my/kdeconnect-device-name "Pixel 6a"
-  "Name of the target device in KDE Connect.")
-
-(defun my/kdeconnect-send-region (start end)
-  (interactive "r")
-  (if (use-region-p)
-      (let ((text (buffer-substring-no-properties start end)))
-        (call-process "kdeconnect-cli" nil 0 nil
-                      "--name" my/kdeconnect-device-name
-                      "--send-keys" text)
-        (message "Sent %d chars to %s" (length text) my/kdeconnect-device-name))
-    (user-error "No active region selected")))
 
 ;;; individual package configurations
 
@@ -727,8 +713,6 @@
                   (save-excursion (eshell-bol) (point)) (point))))))
 (setq eshell-default-completion-function 'eshell-bash-completion)
 
-(add-hook 'eshell-mode-hook 'eshell-smart-initialize)
-
 ;; eval-sexp-fu
 (quelpa '(eval-sexp-fu :fetcher github :repo "Fuco1/eval-sexp-fu"))
 (require 'eval-sexp-fu)
@@ -999,6 +983,9 @@
 (define-key org-mode-map (kbd "C-c M-RET") 'org-insert-heading-after-current)
 (define-key org-mode-map (kbd "C-c !") 'my-org-insert-time-stamp)
 (define-key org-mode-map (kbd "C-c 1") 'my-org-insert-time-stamp)
+(define-key org-mode-map (kbd "C-c d") 'org-archive-done-tasks)
+(define-key org-mode-map (kbd "C-c l") 'org-store-link)
+(define-key org-mode-map (kbd "C-c c") 'org-copy-subtree)
 (define-key org-mode-map (kbd "M-4") (lambda () (interactive) (org-todo 'done)))
 
 (defvar org-capture-default '("s" "w"))
@@ -1514,3 +1501,4 @@
 
 (provide 'steckemacs)
 ;;; steckemacs.el ends here
+(put 'erase-buffer 'disabled nil)
