@@ -380,10 +380,6 @@
         (bury-buffer)
       ad-do-it)))
 
-;; ag
-(quelpa '(ag :fetcher github :repo "Wilfred/ag"))
-(require 'ag)
-
 ;; aggressive-indent
 (quelpa '(aggressive-indent :fetcher github :repo "Malabarba/aggressive-indent-mode"))
 (require 'aggressive-indent)
