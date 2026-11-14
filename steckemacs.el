@@ -1347,9 +1347,8 @@
 (require 'writeroom-mode)
 
 ;;;; which-key
-(require 'which-key)
 (which-key-setup-minibuffer)
-(which-key-mode)
+(which-key-mode 1)
 
 ;;;; xwidget
 (require 'xwidget)
