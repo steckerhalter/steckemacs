@@ -127,6 +127,7 @@
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
 
 ;;; key bindings
+;;;; free keys for usage
 (global-unset-key (kbd "<f1>"))
 (dolist (n (number-sequence 0 9))
   (global-unset-key (kbd (format "M-%d" n)))
@@ -200,7 +201,7 @@
 (global-set-key (kbd "C-c D") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c m") 'menu-bar-mode)
 
-;;; personal functions
+;;; functions
 (defun export-song () (interactive)
        (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
                     (concat "~/Nextcloud/chords/"
