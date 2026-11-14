@@ -474,10 +474,10 @@
 (eval-after-load 'company
   '(progn
      (quelpa '(company-quickhelp :fetcher github :repo "company-mode/company-quickhelp"))
-(require 'company-quickhelp)
-(setq company-quickhelp-use-propertized-text t
-      company-quickhelp-delay 1)
-(company-quickhelp-mode 1)
+     (require 'company-quickhelp)
+     (setq company-quickhelp-use-propertized-text t
+	   company-quickhelp-delay 1)
+     (company-quickhelp-mode 1)))
 
 ;; custom
 (setq custom-unlispify-menu-entries nil
