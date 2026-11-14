@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 
-;; Emacs configuration that tries to fetch and compile everything necessary with my package manager `quelpa' directly from the source repos
+;; Emacs configuration that fetches and compiles packages directly from source repos via `quelpa'.
 ;; To make it easier to navigate the init file, `outshine' is used for org-mode-like folding: use `C-M-i' to cycle
 
 ;;; Requirements:
@@ -28,1806 +28,1488 @@
 
 ;;; Code:
 
-;;; initialization
+;;; initialization & quelpa bootstrap
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
-(when (not package-archive-contents)
-  (package-refresh-contents))
-(package-install 'use-package)
-(use-package use-package-ensure
-  :config  (setq use-package-always-ensure t))
 
 (unless (package-installed-p 'quelpa)
   (with-temp-buffer
     (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
     (eval-buffer)
     (quelpa-self-upgrade)))
-(quelpa
- '(quelpa-use-package
-   :fetcher git
-   :url "https://github.com/quelpa/quelpa-use-package.git"))
-(require 'quelpa-use-package)
-
-;;; diminish
-;; Diminished modes are minor modes with no modeline display
-(use-package diminish)
+(require 'quelpa)
 
 ;;; settings
-(use-package steckemacs-settings
-  :ensure nil
-  :init
-  ;; personal variables
-  (defvar my-todo "~/Sync/notes/todo.org")
+(defvar my-todo "~/Sync/notes/todo.org")
 
-  ;;global flags
-  (setq
-   inhibit-startup-message t
-   backup-directory-alist `((".*" . ,temporary-file-directory)) ;don't clutter my fs and put backups into tmp
-   auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-   require-final-newline t                ;auto add newline at the end of file
-   column-number-mode t                   ;show the column number
-   default-major-mode 'text-mode          ;use text mode per default
-   mouse-yank-at-point t                  ;middle click with the mouse yanks at point
-   history-length 250                     ;default is 30
-   locale-coding-system 'utf-8            ;utf-8 is default
-   tab-always-indent 'complete            ;try to complete before identing
-   confirm-nonexistent-file-or-buffer nil ;don't ask to create a buffer
-   vc-follow-symlinks t                   ;follow symlinks automatically
-   recentf-max-saved-items 5000           ;save up to 5000 recent files
-   eval-expression-print-length nil       ;do not truncate printed expressions
-   eval-expression-print-level nil        ;print nested expressions
-   send-mail-function 'sendmail-send-it
-   kill-ring-max 5000                     ;truncate kill ring after 5000 entries
-   mark-ring-max 5000                     ;truncate mark ring after 5000 entries
-   mouse-autoselect-window -.1            ;window focus follows the mouse pointer
-   mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
-   indicate-buffer-boundaries 'left       ;fringe markers (on the left side)
-   enable-recursive-minibuffers t         ;whatever...
-   show-paren-delay 0                     ;show the paren immediately
-   load-prefer-newer t                    ;prefer newer .el instead of the .elc
-   split-height-threshold 140             ;more readily split horziontally
-   split-width-threshold 140              ;split horizontally only if less than 160 columns
-   gc-cons-percentage 0.3                 ;increase garbage collection limit
-   safe-local-variable-values '((engine . django))
-   switch-to-buffer-preserve-window-point t ;this allows operating on the same buffer in diff. positions
-   custom-file (expand-file-name "custom-file.el" user-emacs-directory) ;don't pollute the init file and don't `load' the customs but keep them for reference...
-   long-line-threshold nil              ;disable new behavior starting with Emacs 29
-   initial-buffer-choice my-todo
-   undo-limit 67108864                  ; 64 MB
-   undo-strong-limit 100663296          ; 96 MB
-   undo-outer-limit 1006632960          ; 1 GB
-   delete-by-moving-to-trash t
-   treesit-language-source-alist
-   '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
-   )
+;; global flags
+(setq
+ inhibit-startup-message t
+ backup-directory-alist `((".*" . ,temporary-file-directory))
+ auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+ require-final-newline t
+ column-number-mode t
+ default-major-mode 'text-mode
+ mouse-yank-at-point t
+ history-length 250
+ locale-coding-system 'utf-8
+ tab-always-indent 'complete
+ confirm-nonexistent-file-or-buffer nil
+ vc-follow-symlinks t
+ recentf-max-saved-items 5000
+ eval-expression-print-length nil
+ eval-expression-print-level nil
+ send-mail-function 'sendmail-send-it
+ kill-ring-max 5000
+ mark-ring-max 5000
+ mouse-autoselect-window -.1
+ mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
+ indicate-buffer-boundaries 'left
+ enable-recursive-minibuffers t
+ show-paren-delay 0
+ load-prefer-newer t
+ split-height-threshold 140
+ split-width-threshold 140
+ gc-cons-percentage 0.3
+ safe-local-variable-values '((engine . django))
+ switch-to-buffer-preserve-window-point t
+ custom-file (expand-file-name "custom-file.el" user-emacs-directory)
+ long-line-threshold nil
+ initial-buffer-choice my-todo
+ undo-limit 67108864
+ undo-strong-limit 100663296
+ undo-outer-limit 1006632960
+ delete-by-moving-to-trash t
+ treesit-language-source-alist
+ '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
+   (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
 
-  ;; default flags
-  (setq-default
-   tab-width 4
-   indent-tabs-mode nil                   ;use spaces instead of tabs
-   c-basic-offset 4                       ;"tab" with in c-related modes
-   c-hungry-delete-key t)                 ;delete more than one space
+;; default flags
+(setq-default
+ tab-width 4
+ indent-tabs-mode nil
+ c-basic-offset 4
+ c-hungry-delete-key t)
 
-  ;; disable full `yes' or `no' answers, `y' and `n' suffices
-  (defalias 'yes-or-no-p 'y-or-n-p)
+;; disable full yes or no answers, y and n suffices
+(defalias 'yes-or-no-p 'y-or-n-p)
 
-  (provide 'steckemacs-settings)
+;; load custom user code
+(when (file-readable-p "~/.user.el")
+  (load "~/.user.el"))
 
-  :config
+;; display time in mode-line
+(setq display-time-24hr-format t)
+(setq display-time-default-load-average nil)
+(setq display-time-use-mail-icon t)
+(display-time)
 
-  ;; load custom user code
-  (when (file-readable-p "~/.user.el")
-    (load "~/.user.el"))
+;; encoding
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
 
-  ;; display the time in the mode-line
-  (setq display-time-24hr-format t)
-  (setq display-time-default-load-average nil)
-  (setq display-time-use-mail-icon t)
-  (display-time)
+;; disable some global modes
+(blink-cursor-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 
-  ;; encoding
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-language-environment "UTF-8")
-  (prefer-coding-system 'utf-8)
+;; narrow to region enabled by default
+(put 'narrow-to-region 'disabled nil)
 
-  ;; disable some global modes
-  (blink-cursor-mode -1)       ;no cursor blinking
-  (menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
+;; don't ask to kill buffers
+(setq kill-buffer-query-functions
+      (remq 'process-kill-buffer-query-function
+            kill-buffer-query-functions))
 
-  ;; narrow to region should be enabled by default
-  (put 'narrow-to-region 'disabled nil)
+;; default font
+(defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120))
+(apply 'set-face-attribute my-font-attributes)
 
-  ;; don't ask to kill buffers
-  (setq kill-buffer-query-functions
-        (remq 'process-kill-buffer-query-function
-              kill-buffer-query-functions))
+;;; key bindings & personal functions
+(global-unset-key (kbd "<f1>"))
+(dolist (n (number-sequence 0 9))
+  (global-unset-key (kbd (format "M-%d" n)))
+  (global-unset-key (kbd (format "C-%d" n))))
 
-  ;; default font
-  (defvar my-font-attributes '(default nil :family "fixed" :width semi-condensed :height 120))
-  ;; (defvar my-font-attributes '(default nil :family "DejaVu Sans Mono" :height 90))
-  ;; (defvar my-font-attributes '(default nil :family "Anonymous Pro" :height 90))
-  (apply 'set-face-attribute  my-font-attributes))
+;; umlauts on en layout
+(global-set-key (kbd "s-;") (lambda () (interactive) (insert "ö")))
+(global-set-key (kbd "s-'") (lambda () (interactive) (insert "ä")))
+(global-set-key (kbd "s-[") (lambda () (interactive) (insert "ü")))
+(global-set-key (kbd "s-:") (lambda () (interactive) (insert "Ö")))
+(global-set-key (kbd "s-\"") (lambda () (interactive) (insert "Ä")))
+(global-set-key (kbd "s-{") (lambda () (interactive) (insert "Ü")))
 
-;;; key bindings
-(use-package bind-key
-  ;; A simple way to manage personal keybindings, provided by `use-package'
-  :init
-  ;; If non-nil, extract docstrings from lambdas, closures and keymaps if possible.
-  (setq bind-key-describe-special-forms t)
-
-  (defun my-keyboard-translations (&optional frame)
-    (with-selected-frame (or frame (selected-frame))
-      (define-key input-decode-map (kbd "C-h") (kbd "<backspace>"))
-      (define-key input-decode-map (kbd "M-h") (kbd "<M-backspace>"))))
-  ;; (add-to-list 'after-make-frame-functions 'my-keyboard-translations)
+;; general keys
+(global-set-key (kbd "M-n") (lambda () (interactive) (next-line 1 t)))
+(global-set-key (kbd "M-p") (lambda () (interactive) (previous-line 1 t)))
+(global-set-key (kbd "M-0") 'save-buffer)
+(global-set-key (kbd "C-5") 'magit-status)
+(global-set-key (kbd "M--") (lambda () (interactive) (switch-to-buffer nil)))
+(global-set-key (kbd "M-7") 'iflipb-next-buffer)
+(global-set-key (kbd "M-8") 'iflipb-previous-buffer)
+(global-set-key (kbd "M-1 s") 'my-switch-to-scratch)
+(global-set-key (kbd "C-c t") 'my-todo-buffer)
+(global-set-key (kbd "C-c r") 'revert-buffer)
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
+(global-set-key (kbd "C-c k") 'my-kill-buffer)
+(global-set-key (kbd "C-c f") 'flyspell-mode)
+(global-set-key (kbd "C-c 0") 'erase-buffer)
+(global-set-key (kbd "C-0") 'highlight-symbol-prev)
+(global-set-key (kbd "C-9") 'highlight-symbol-next)
+(global-set-key (kbd "M-o") 'back-button-local-backward)
+(global-set-key (kbd "M-i") 'back-button-local-forward)
+(global-set-key (kbd "<f1>") 'helm-occur)
+(global-set-key (kbd "S-<f1>") 'helm-projectile-ag)
+(global-set-key (kbd "C-<f1>") 'helm-show-kill-ring)
+(global-set-key (kbd "M-<f1>") 'helm-all-mark-rings)
+(global-set-key (kbd "C-c h") 'diff-hl-show-hunk)
+(global-set-key (kbd "C-c H") 'diff-hl-revert-hunk)
+(global-set-key (kbd "C-c s") 'shell-switcher-new-shell)
+(global-set-key (kbd "C-c v") 'visual-line-mode)
+(global-set-key (kbd "C-c D") 'ispell-change-dictionary)
+(global-set-key (kbd "<f2>") 'split-window-vertically)
+(global-set-key (kbd "<f3>") 'split-window-horizontally)
+(global-set-key (kbd "<f4>") 'delete-window)
+(global-set-key (kbd "<f5>") 'delete-other-windows)
+(global-set-key (kbd "<f6>") 'my-kill-buffer)
+(global-set-key (kbd "<f7>") 'my-toggle-window-split)
+(global-set-key (kbd "M-9") 'other-window)
+(global-set-key (kbd "S-<f7>") 'my-split-window)
+(global-set-key (kbd "C-c m") 'menu-bar-mode)
+(global-set-key (kbd "C-c K") 'kill-emacs)
+(global-set-key (kbd "C-4") 'helm-mini)
+(global-set-key (kbd "C-1") 'my-capture)
+(global-set-key (kbd "C-2") (lambda () (interactive) (my-capture t)))
+(global-set-key (kbd "C-3") (lambda () (interactive) (org-agenda nil "p")))
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c d") 'org-archive-done-tasks)
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c c") 'org-copy-subtree)
+(global-set-key (kbd "<f8>") 'journal)
+(global-set-key (kbd "S-<f8>") (lambda () (interactive) (jump-to-id "kinder")))
+(global-set-key (kbd "C-c w") 'web-search)
 
 ;;;; personal functions
-  (defun export-song () (interactive)
-         (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
-                      (concat "~/Nextcloud/chords/"
-                              (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
-                              ".pdf")
-                      t))
-  (defun my-todo-buffer () (interactive)
-         (find-file my-todo))
-  (defun my-switch-to-scratch () (interactive)
-         (switch-to-buffer "*scratch*"))
+(defun export-song () (interactive)
+       (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
+                    (concat "~/Nextcloud/chords/"
+                            (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
+                            ".pdf")
+                    t))
+(defun my-todo-buffer () (interactive)
+       (find-file my-todo))
+(defun my-switch-to-scratch () (interactive)
+       (switch-to-buffer "*scratch*"))
+(defun my-kill-buffer () (interactive)
+       (kill-buffer (buffer-name)))
+(defun my-select-prev-window () (interactive)
+       (select-window (previous-window)))
+(defun my-select-next-window () (interactive)
+       (select-window (next-window)))
+(defun my-indent-whole-buffer () (interactive)
+       (indent-region (point-min) (point-max)))
 
-  (defun my-kill-buffer () (interactive)
-         (kill-buffer (buffer-name)))
+(defun my-split-window()
+  "Split window to see recent buffer."
+  (interactive)
+  (if (eq last-command 'my-split-window)
+      (progn
+        (jump-to-register :my-split-window)
+        (setq this-command 'my-unsplit-window))
+    (window-configuration-to-register :my-split-window)
+    (switch-to-buffer-other-window nil)))
 
-  (defun my-select-prev-window () (interactive)
-         (select-window (previous-window)))
+(defmacro my-package-desc (info-type library)
+  `(,(intern (format "package-desc-%s" info-type))
+    (with-temp-buffer
+      (insert-file-contents-literally (find-library-name (format "%s" ,library)))
+      (package-buffer-info))))
 
-  (defun my-select-next-window () (interactive)
-         (select-window (next-window)))
+(defun my-insert-package-desc-summary ()
+  (interactive)
+  (let* ((name (thing-at-point 'symbol t))
+         (summary (my-package-desc summary name)))
+    (back-to-indentation)
+    (open-line 1)
+    (insert (format ";; %s" summary))))
 
-  (defun my-indent-whole-buffer () (interactive)
-         (indent-region (point-min) (point-max)))
+(defun my-show-file-name ()
+  "Show full path in minibuffer."
+  (interactive)
+  (message (buffer-file-name))
+  (kill-new (file-truename buffer-file-name)))
 
-  (defun my-split-window()
-    "Split the window to see the most recent buffer in the other window.
-Call a second time to restore the original window configuration."
-    (interactive)
-    (if (eq last-command 'my-split-window)
-        (progn
-          (jump-to-register :my-split-window)
-          (setq this-command 'my-unsplit-window))
-      (window-configuration-to-register :my-split-window)
-      (switch-to-buffer-other-window nil)))
+(defun my-toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges) (car next-win-edges))
+                                     (<= (cadr this-win-edges) (cadr next-win-edges)))))
+             (splitter (if (= (car this-win-edges) (car (window-edges (next-window))))
+                           'split-window-horizontally
+                         'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 
-  (defmacro my-package-desc (info-type library)
-    `(,(intern (format "package-desc-%s" info-type))
-      (with-temp-buffer
-        (insert-file-contents-literally (find-library-name (format "%s" ,library)))
-        (package-buffer-info))))
+(defun my-url-insert-file-contents (url)
+  (interactive "sURL: ")
+  (url-insert-file-contents url))
 
-  (defun my-insert-package-desc-summary ()
-    (interactive)
-    (let* ((name (thing-at-point 'symbol t))
-           (summary (my-package-desc summary name)))
-      (back-to-indentation)
-      (open-line 1)
-      (insert (format ";; %s" summary))))
+(defun my-sudo-edit (&optional arg)
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
-  (defun my-show-file-name ()
-    "Show the full path file name in the minibuffer."
-    (interactive)
-    (message (buffer-file-name))
-    (kill-new (file-truename buffer-file-name)))
+(defun my-timestamp ()
+  (interactive)
+  (let ((timestring (if current-prefix-arg "%H:%M" "%a %d.%m.%y %H:%M")))
+    (insert (format-time-string timestring))))
 
-  (defun my-toggle-window-split ()
-    (interactive)
-    (if (= (count-windows) 2)
-        (let* ((this-win-buffer (window-buffer))
-               (next-win-buffer (window-buffer (next-window)))
-               (this-win-edges (window-edges (selected-window)))
-               (next-win-edges (window-edges (next-window)))
-               (this-win-2nd (not (and (<= (car this-win-edges)
-                                           (car next-win-edges))
-                                       (<= (cadr this-win-edges)
-                                           (cadr next-win-edges)))))
-               (splitter
-                (if (= (car this-win-edges)
-                       (car (window-edges (next-window))))
-                    'split-window-horizontally
-                  'split-window-vertically)))
-          (delete-other-windows)
-          (let ((first-win (selected-window)))
-            (funcall splitter)
-            (if this-win-2nd (other-window 1))
-            (set-window-buffer (selected-window) this-win-buffer)
-            (set-window-buffer (next-window) next-win-buffer)
-            (select-window first-win)
-            (if this-win-2nd (other-window 1))))))
+(defun my-xdg-open-dir ()
+  (interactive)
+  (shell-command (concat "xdg-open " (shell-quote-argument (expand-file-name default-directory)))))
 
-  (defun my-url-insert-file-contents (url)
-    "Prompt for URL and insert file contents at point."
-    (interactive "sURL: ")
-    (url-insert-file-contents url))
+(defun my-json-format ()
+  (interactive)
+  (switch-to-buffer (get-buffer-create "output.json"))
+  (yank)
+  (json-reformat-region (point-min) (point-max))
+  (json-mode))
 
-  (defun my-sudo-edit (&optional arg)
-    "Edit currently visited file as root.
+(defun my-browse-url-dwim ()
+  (interactive)
+  (require 'ffap)
+  (let* ((input (or (shr-url-at-point nil)
+                    (url-get-url-at-point)
+                    (when (eq major-mode 'org-mode)
+                      (org-element-property :raw-link (org-element-lineage (org-element-context) '(link) t)))
+                    (current-kill 0 t)))
+         (url (if (string-match-p ffap-url-regexp input) input (read-string "URL: ")))
+         (prefix (prefix-numeric-value current-prefix-arg)))
+    (cond ((= prefix 0) (xwidget-webkit-browse-url url))
+          ((= prefix 4) (eww url))
+          (t (browse-url url)))))
 
-With a prefix ARG prompt for a file to visit.
-Will also prompt for a file to visit if current
-buffer is not visiting a file."
-    (interactive "P")
-    (if (or arg (not buffer-file-name))
-        (find-file (concat "/sudo:root@localhost:"
-                           (ido-read-file-name "Find file(as root): ")))
-      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+(defun my-capture (&optional playlist)
+  (interactive)
+  (raise-frame)
+  (if playlist (org-capture nil "P") (org-capture nil "s")))
 
-  (defun my-timestamp ()
-    (interactive)
-    (let ((timestring (if current-prefix-arg
-                          "%H:%M"
-                        "%a %d.%m.%y %H:%M")))
-      (insert (format-time-string timestring))))
+(defun my-songs ()
+  (interactive)
+  (let ((songs (org-map-entries
+                (lambda () (substring (org-element-property :title (org-element-at-point)) 0 -13))
+                nil 'region-start-level)))
+    (switch-to-buffer (get-buffer-create "Reto's Songs"))
+    (erase-buffer)
+    (insert "# Reto's Songs\n\n")
+    (dolist (line songs)
+      (insert line)
+      (insert "  ")
+      (newline))
+    (markdown-mode)
+    (markdown-preview)))
 
-  (defun my-xdg-open-dir ()
-    "Open directory in default external program."
-    (interactive)
+(defun notes-publish ()
+  (interactive)
+  (org-publish-project "notes")
+  (let ((auth (nth 0 (auth-source-search :host "legtux.org"))))
     (shell-command
-     (concat "xdg-open " (shell-quote-argument
-                          (expand-file-name default-directory)))))
+     (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /retonom/notes; bye\""))))
 
-  (defun my-json-format ()
-    (interactive)
-    (switch-to-buffer (get-buffer-create "output.json"))
-    (yank)
-    (json-reformat-region (point-min) (point-max))
-    (json-mode))
+(defun retonom ()
+  (interactive)
+  (org-publish "web")
+  (when current-prefix-arg (sync-retonom)))
 
-  (defun my-browse-url-dwim ()
-    "Browse url \"do what I mean\".
- Browse the url at point if there is one. Otherwise use the last
- kill-ring item if it is an url. Browse with desktop browser by
- default. With prefix argument use `eww', with `digit-argument' 0
- use `xwidget'."
-    (interactive)
-    (require 'ffap)
-    (let* ((input (or
-                   (shr-url-at-point nil)
-                   (url-get-url-at-point)
-                   (when (eq major-mode 'org-mode)
-                     (org-element-property
-                      :raw-link (org-element-lineage (org-element-context) '(link) t)))
-                   (current-kill 0 t)))
-           (url (if (string-match-p ffap-url-regexp input)
-                    input
-                  (read-string "URL: ")))
-           (prefix (prefix-numeric-value current-prefix-arg)))
-      (cond ((= prefix 0) (xwidget-webkit-browse-url url))
-            ((= prefix 4) (eww url))
-            (t (browse-url url)))))
+(defun sync-retonom (&optional dir)
+  (interactive)
+  (let ((auth (let ((netrc-file "~/.netrc")) (netrc-credentials "ftp.legtux.org"))))
+    (shell-command
+     (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/retonom/" dir " /retonom/" dir "; bye\""))))
 
-  (defun my-capture (&optional playlist)
-    (interactive)
-    (raise-frame)
-    (if playlist
-        (org-capture nil "P")
-      (org-capture nil "s")))
+(defun kkadw-sync (&optional dir)
+  (interactive)
+  (let ((auth (let ((netrc-file "~/.netrc")) (netrc-credentials "legtux.org"))))
+    (shell-command
+     (concat "lftp -e \"open legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --exclude-glob=.git/* --verbose ~/projects/linktree" dir " /kkadw" dir "; bye\""))))
 
-  (defun my-songs ()
-    (interactive)
-    (let ((songs (org-map-entries
-                  (lambda () (substring
-                         (org-element-property
-                          :title (org-element-at-point)) 0 -13))
-                  nil
-                  'region-start-level)))
-      (switch-to-buffer (get-buffer-create "Reto's Songs"))
-      (erase-buffer)
-      (insert "# Reto's Songs\n\n")
-      (dolist (line songs)
-        (insert line)
-        (insert "  ")
-        (newline))
-      (markdown-mode)
-      (markdown-preview)))
+(defun my-after-save-hook ()
+  (let ((matches '("songs.org" "demos.org" "raw.org" "setup.org" "index.org")))
+    (when (and buffer-file-name current-prefix-arg (member (file-name-nondirectory buffer-file-name) matches))
+      (publish-music))))
+(add-hook 'after-save-hook 'my-after-save-hook)
 
-  (defun notes-publish ()
-    (interactive)
-    (org-publish-project "notes")
-    (let ((auth (nth 0(auth-source-search :host "legtux.org"))))
-      (shell-command
-       (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --exclude-glob=.git/* --verbose ~/web/notes /retonom/notes; bye\""))))
+(defun jump-to-id (id)
+  (org-link-open-from-string (format "[[#%s]]" id)))
 
-  (defun retonom ()
-    (interactive)
-    (org-publish "web")
-    (when current-prefix-arg
-      (sync-retonom)))
+(defun journal (&optional arg)
+  (interactive "p")
+  (jump-to-id "tagebuch")
+  (org-end-of-meta-data t)
+  (when (equal arg 4) (org-insert-heading nil nil 2)))
 
-  (defun sync-retonom (&optional dir)
-    (interactive)
-    (let ((auth (let ((netrc-file "~/.netrc"))
-                  (netrc-credentials "ftp.legtux.org"))))
-      (shell-command
-       (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/retonom/" dir " /retonom/" dir "; bye\""))))
+(defvar my/kdeconnect-device-name "Pixel 6a"
+  "Name of the target device in KDE Connect.")
 
-  (defun kkadw-sync (&optional dir)
-    (interactive)
-    (let ((auth (let ((netrc-file "~/.netrc"))
-                  (netrc-credentials "legtux.org"))))
-      (shell-command
-       (concat "lftp -e \"open legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --exclude-glob=.git/* --verbose ~/projects/linktree" dir " /kkadw" dir "; bye\""))))
+(defun my/kdeconnect-send-region (start end)
+  (interactive "r")
+  (if (use-region-p)
+      (let ((text (buffer-substring-no-properties start end)))
+        (call-process "kdeconnect-cli" nil 0 nil
+                      "--name" my/kdeconnect-device-name
+                      "--send-keys" text)
+        (message "Sent %d chars to %s" (length text) my/kdeconnect-device-name))
+    (user-error "No active region selected")))
 
-  (defun my-after-save-hook ()
-    (let ((matches '("songs.org"
-                     "demos.org"
-                     "raw.org"
-                     "setup.org"
-                     "index.org")))
-      (when (and buffer-file-name
-                 current-prefix-arg
-                 (member (file-name-nondirectory buffer-file-name) matches))
-        (publish-music))))
-  (add-hook 'after-save-hook 'my-after-save-hook)
+;;; individual package configurations
 
-  (defun jump-to-id (id)
-    "Springt zur angegebenen CUSTOM_ID in der aktuellen oder in Agenda-Dateien."
-    (org-link-open-from-string (format "[[#%s]]" id)))
+;; advice
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
 
-  (defun journal (&optional arg)
-    (interactive "p")
-    (jump-to-id "tagebuch")
-    (org-end-of-meta-data t)
-    (when (equal arg 4)
-      (org-insert-heading nil nil 2)))
+(defadvice kill-buffer (around kill-buffer-around-advice activate)
+  "Don't really kill *scratch* but only bury it."
+  (let ((buffer-to-kill (ad-get-arg 0)))
+    (if (equal buffer-to-kill "*scratch*")
+        (bury-buffer)
+      ad-do-it)))
 
-  (defvar my/kdeconnect-device-name "Pixel 6a"
-    "Name of the target device in KDE Connect.")
+;; ag
+(quelpa '(ag :fetcher github :repo "Wilfred/ag"))
+(require 'ag)
 
-  (defun my/kdeconnect-send-region (start end)
-    "Send the selected text region to the paired KDE Connect device."
-    (interactive "r")
-    (if (use-region-p)
-        (let ((text (buffer-substring-no-properties start end)))
-          (call-process "kdeconnect-cli" nil 0 nil
-                        "--name" my/kdeconnect-device-name
-                        "--send-keys" text)
-          (message "Sent %d chars to %s" (length text) my/kdeconnect-device-name))
-      (user-error "No active region selected")))
+;; aggressive-indent
+(quelpa '(aggressive-indent :fetcher github :repo "Malabarba/aggressive-indent-mode"))
+(require 'aggressive-indent)
+(global-aggressive-indent-mode 1)
 
-;;;; prepare keys
+;; anaconda-mode
+(quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode"))
+(quelpa '(pip-requirements :fetcher github :repo "pydanny/pip-requirements.el"))
+(quelpa '(pyenv-mode :fetcher github :repo "pyenv-mode/pyenv-mode"))
 
-  (global-unset-key (kbd "<f1>"))
-  (dolist (n (number-sequence 0 9))
-    (global-unset-key (kbd (format "M-%d" n)))
-    (global-unset-key (kbd (format "C-%d" n))))
+(require 'anaconda-mode)
+(add-hook 'python-mode-hook 'anaconda-mode)
+(add-hook 'python-mode-hook 'eldoc-mode)
 
-;;;; global keys (gkeys)
-  :bind
-  ;; umlauts on the en layout ------------------------------------------
-  ("s-;" . (lambda () (interactive) (insert "ö")))
-  ("s-'" . (lambda () (interactive) (insert "ä")))
-  ("s-[" . (lambda () (interactive) (insert "ü")))
-  ("s-:" . (lambda () (interactive) (insert "Ö")))
-  ("s-\"" . (lambda () (interactive) (insert "Ä")))
-  ("s-{" . (lambda () (interactive) (insert "Ü")))
-  ;; general keys ------------------------------------------------------
-  ("M-n" . (lambda () (interactive )(next-line 1 t)))
-  ("M-p" . (lambda () (interactive )(previous-line 1 t)))
-  ("M-0" . save-buffer)
-  ;; buffer ------------------------------------------------------------
-  ("C-5" . magit-status)
-  ("M--" . (lambda () (interactive) (switch-to-buffer nil)))
-  ("M-7" . iflipb-next-buffer)
-  ("M-8" . iflipb-previous-buffer)
-  ("M-1 s" . my-switch-to-scratch)
-  ("C-c t" . my-todo-buffer)
-  ("C-c r" . revert-buffer)
-  ("C-c e" . (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
-  ("C-c k" . my-kill-buffer)
-  ("C-c f" . flyspell-mode)
-  ("C-c 0" . erase-buffer)
-  ;; in buffer ---------------------------------------------------------
-  ("C-0" . highlight-symbol-prev)
-  ("C-9" . highlight-symbol-next)
-  ("M-o" . back-button-local-backward)
-  ("M-i" . back-button-local-forward)
-  ("<f1>" . helm-occur)
-  ("S-<f1>" . helm-projectile-ag)
-  ("C-<f1>" . helm-show-kill-ring)
-  ("M-<f1>" . helm-all-mark-rings)
-  ("C-c h" . diff-hl-show-hunk)
-  ("C-c H" . diff-hl-revert-hunk)
-  ("C-c s" . shell-switcher-new-shell)
-  ("C-c v" . visual-line-mode)
-  ("C-c D" . ispell-change-dictionary)
-  ;; windows/ui --------------------------------------------------------
-  ("<f2>" . split-window-vertically)
-  ("<f3>" . split-window-horizontally)
-  ("<f4>" . delete-window)
-  ("<f5>" . delete-other-windows)
-  ("<f6>" . my-kill-buffer)
-  ("<f7>" . my-toggle-window-split)
-  ("M-9" . other-window)
-  ("S-<f7>" . my-split-window)
-  ("C-c m" . menu-bar-mode)
-  ("C-c K" . kill-emacs)
-  ;; -------------------------------------------------------------------
-  ("C-4" . helm-mini)
-  ;; org-mode ----------------------------------------------------------
-  ("C-1" . my-capture)
-  ("C-2" . (lambda () (interactive) (my-capture t)))
-  ("C-3" . (lambda () (interactive) (org-agenda nil "p")))
-  ("C-c a" . org-agenda)
-  ("C-c d" . org-archive-done-tasks)
-  ("C-c l" . org-store-link)
-  ("C-c c" . org-copy-subtree)
-  ("<f8>" . journal)
-  ("S-<f8>" . (lambda () (interactive) (jump-to-id "kinder")))
-  ;; -------------------------------------------------------------------
-  ("C-c w" . web-search)
-  )
+(require 'pip-requirements)
+(require 'pyenv-mode)
+(defun projectile-pyenv-mode-set ()
+  (let ((name (projectile-project-name)))
+    (if (member name (pyenv-mode-versions))
+        (pyenv-mode-set name)
+      (pyenv-mode-set "system"))))
+(add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
 
-;;; packages
-;;;; advice
-;; An overloading mechanism for Emacs Lisp functions
-(use-package advice
-  :ensure nil
-  :config
-  (defadvice kill-region (before slick-cut activate compile)
-    "When called interactively with no active region, kill a single
-  line instead."
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
+;; ansible-doc
+(quelpa '(ansible-doc :fetcher github :repo "towolf/ansible-doc"))
+(require 'ansible-doc)
+(add-hook 'yaml-mode-hook #'ansible-doc-mode)
 
-  (defadvice kill-buffer (around kill-buffer-around-advice activate)
-    "Don't really kill *scratch* but only bury it."
-    (let ((buffer-to-kill (ad-get-arg 0)))
-      (if (equal buffer-to-kill "*scratch*")
-          (bury-buffer)
-        ad-do-it))))
+;; apache-mode
+(quelpa '(apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
+(require 'apache-mode)
 
-;;;; ag
-;; A front-end for ag ('the silver searcher'), the C ack replacement.
-(use-package ag)
+;; appt
+(setq appt-message-warning-time 30
+      appt-display-interval 15
+      appt-display-mode-line t
+      appt-display-format 'window)
+(appt-activate 1)
 
-;;;; aggressive-indent
-(use-package aggressive-indent
-  :config (global-aggressive-indent-mode 1))
+;; auctex
+(quelpa '(auctex :fetcher github :repo "auctex/auctex"))
+(require 'tex)
+(setq TeX-PDF-mode t
+      TeX-parse-self t
+      TeX-auto-save t
+      TeX-save-query nil)
+(add-hook 'doc-view-mode-hook 'auto-revert-mode)
+(add-hook 'TeX-mode-hook
+          (lambda ()
+            (define-key TeX-mode-map (kbd "<C-f8>")
+                        (lambda () (interactive) (TeX-command-menu "LaTeX")))))
 
-;;;; anaconda-mode
-;; Code navigation, documentation lookup and completion for Python
-(use-package anaconda-mode
-  :config
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook 'eldoc-mode)
+;; auto-dictionary
+(quelpa '(auto-dictionary :fetcher github :repo "Goziu/auto-dictionary"))
+(require 'auto-dictionary)
+(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1)))
 
-  ;; A major mode for editing pip requirements files
-  (use-package pip-requirements)
+;; autorevert
+(require 'autorevert)
+(quelpa '(diminish :fetcher github :repo "myrjola/diminish"))
+(diminish 'auto-revert-mode)
+(setq auto-revert-interval 1)
+(global-auto-revert-mode 1)
 
-  ;; Integrate pyenv with python-mode
-  (use-package pyenv-mode
-    :init
+;; back-button
+(quelpa '(back-button :fetcher github :repo "rolandwalker/back-button"))
+(require 'back-button)
+(diminish 'back-button-mode)
+(setq back-button-local-keystrokes nil)
+(back-button-mode 1)
 
-    (defun projectile-pyenv-mode-set ()
-      "Set pyenv version matching project name.
-  Version must be already installed."
-      (let ((name (projectile-project-name)))
-        (if (member name (pyenv-mode-versions))
-            (pyenv-mode-set name)
-          (pyenv-mode-set "system"))))
+;; browse-url
+(require 'browse-url)
+(defun my-browse-url-file (&optional file)
+  (interactive)
+  (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
+    (browse-url-of-file file)))
 
-    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)))
+;; cider
+(quelpa '(cider :fetcher github :repo "clojure-emacs/cider"))
+(setq cider-popup-stacktraces nil
+      cider-repl-popup-stacktraces nil
+      cider-repl-pop-to-buffer-on-connect t
+      cider-repl-use-clojure-font-lock t)
 
-;;;; ansible-doc
-;; Ansible documentation Minor Mode
-(use-package ansible-doc
-  :config (add-hook 'yaml-mode-hook #'ansible-doc-mode))
+;; company
+(quelpa '(company :fetcher github :repo "company-mode/company-mode"))
+(require 'company)
+(diminish 'company-mode)
+(setq company-idle-delay 0.3
+      company-tooltip-limit 20
+      company-minimum-prefix-length 2)
+(setq tab-always-indent 'complete)
+(defvar completion-at-point-functions-saved nil)
 
-;;;; apache-mode
-;; major mode for editing Apache configuration files
-(use-package apache-mode)
+(defun company-indent-for-tab-command (&optional arg)
+  (interactive "P")
+  (let ((completion-at-point-functions completion-at-point-functions)
+        (completion-at-point-functions '(company-complete-common-wrapper)))
+    (indent-for-tab-command arg)))
 
-;;;; appt
-;; appointment notification functions
-(use-package appt
-  :ensure nil
-  :init (setq
-         appt-message-warning-time 30
-         appt-display-interval 15
-         appt-display-mode-line t             ;show in the modeline
-         appt-display-format 'window)
-  :config (appt-activate 1))
+(defun company-complete-common-wrapper ()
+  (let ((completion-at-point-functions completion-at-point-functions-saved))
+    (company-complete-common)))
 
-;;;; auctex
-;; enhanced LaTeX mode
-(use-package tex
-  :ensure auctex
-  :config
-  (setq TeX-PDF-mode t)
-  (setq TeX-parse-self t)
-  (setq TeX-auto-save t)
-  (setq TeX-save-query nil)
-  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
-  (add-hook 'TeX-mode-hook
-            '(lambda ()
-               (define-key TeX-mode-map (kbd "<C-f8>")
-                           (lambda ()
-                             (interactive)
-                             (TeX-command-menu "LaTeX"))))))
+(global-company-mode 1)
+(add-to-list 'company-backends 'company-dabbrev t)
+(add-to-list 'company-backends 'company-ispell t)
+(add-to-list 'company-backends 'company-files t)
+(add-to-list 'company-begin-commands 'outshine-self-insert-command)
+(setq company-backends (remove 'company-ropemacs company-backends))
 
-;;;; auto-dictionary
-(use-package auto-dictionary
-  :config
-  (add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
+(defun my-company-elisp-setup ()
+  (set (make-local-variable 'company-backends)
+       '((company-capf :with company-dabbrev-code))))
 
-;;;; autorevert
-;; revert buffers when files on disk change
-(use-package autorevert
-  :diminish auto-revert-mode
-  :config
-  ;; auto revert buffers when changed on disk
-  (setq auto-revert-interval 1)
-  (global-auto-revert-mode 1))
+(quelpa '(company-statistics :fetcher github :repo "company-mode/company-statistics"))
+(require 'company-statistics)
+(add-hook 'emacs-lisp-mode-hook 'my-company-elisp-setup)
+(add-hook 'lisp-interaction-mode-hook 'my-company-elisp-setup)
+(company-statistics-mode 1)
 
-;;;; back-button
-;; Visual navigation through mark rings
-(use-package back-button
-  :diminish
-  :demand
-  :config
-  (setq back-button-local-keystrokes nil) ;don't overwrite C-x SPC binding
-  (back-button-mode 1))
+;; company backends & quickhelp
+(eval-after-load 'company
+  '(progn
+     (quelpa '(company-anaconda :fetcher github :repo "proofit404/company-anaconda"))
+     (require 'company-anaconda)
+     (add-to-list 'company-backends 'company-anaconda)
+     (quelpa '(company-dict :fetcher github :repo "ahyatt/company-dict"))
+     (require 'company-dict)
+     (add-to-list 'company-backends 'company-dict)))
 
-;;;; browse-url
-(use-package browse-url
-  :preface
-  (defun my-browse-url-file (&optional file)
-    (interactive)
-    (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
-      (browse-url-of-file file))))
+(quelpa '(company-quickhelp :fetcher github :repo "syohex/emacs-company-quickhelp"))
+(require 'company-quickhelp)
+(setq company-quickhelp-use-propertized-text t
+      company-quickhelp-delay 1)
+(company-quickhelp-mode 1)
 
-;;;; cider
-;; Clojure Interactive Development Environment that Rocks
-(use-package cider
-  :init
-  (setq cider-popup-stacktraces nil)
-  (setq cider-repl-popup-stacktraces nil)
-  (setq cider-repl-pop-to-buffer-on-connect t)
-  (setq cider-repl-use-clojure-font-lock t))
+(quelpa '(company-web :fetcher github :repo "proofit404/company-web"))
+(require 'company-web)
+(defun my-company-web ()
+  (set (make-local-variable 'company-backends) '(company-web-html))
+  (company-mode t))
+(add-hook 'web-mode-hook #'my-company-web)
 
-;;;; company
-;; Modular text completion framework
-(use-package company
-  :diminish
+;; custom
+(setq custom-unlispify-menu-entries nil
+      custom-unlispify-tag-names nil)
 
-  :init
-  (setq company-idle-delay 0.3)
-  (setq company-tooltip-limit 20)
-  (setq company-minimum-prefix-length 2)
+;; darkroom
+(quelpa '(darkroom :fetcher github :repo "joostkremers/darkroom"))
+(require 'darkroom)
+(global-set-key (kbd "S-<f11>") 'darkroom-tentative-mode)
+(setq darkroom-text-scale-increase 3
+      darkroom-margins-if-failed-guess 0.1)
 
-  :config
-  (setq tab-always-indent 'complete)
-  (defvar completion-at-point-functions-saved nil)
+;; default-text-scale
+(quelpa '(default-text-scale :fetcher github :repo "bking/default-text-scale"))
+(require 'default-text-scale)
 
-  (defun company-indent-for-tab-command (&optional arg)
-    (interactive "P")
-    (let ((completion-at-point-functions-saved completion-at-point-functions)
-          (completion-at-point-functions '(company-complete-common-wrapper)))
-      (indent-for-tab-command arg)))
+;; deft
+(quelpa '(deft :fetcher github :repo "jrblevin/deft"))
+(require 'deft)
+(define-key deft-mode-map (kbd "<f6>") 'quit-window)
+(define-key deft-mode-map (kbd "C-g") 'deft-filter-clear)
+(define-key deft-mode-map (kbd "C-c C-c") 'deft-refresh)
+(define-key deft-mode-map (kbd "<M-return>") 'deft-new-file)
 
-  (defun company-complete-common-wrapper ()
-    (let ((completion-at-point-functions completion-at-point-functions-saved))
-      (company-complete-common)))
-  ;; ----------------------------------------------------------------------------
+(defun deft-print-header () (deft-set-mode-name))
+(defun deft-set-mode-name ()
+  (let* ((name (if deft-incremental-search "Deft" "Deft/R"))
+         (filter (deft-whole-filter-regexp))
+         (sep (unless (string= "" filter) "/")))
+    (setq mode-name (concat name sep filter))))
+(setq deft-strip-summary-regexp
+      (concat "\\("
+              "[\n\t]"
+              "\\|^#\\+[[:upper:]_]+:.*$"
+              "\\|^# .*$"
+              "\\)"))
+(setq deft-separator " "
+      deft-directory "~/Sync"
+      deft-file-naming-rules nil
+      deft-recursive t
+      deft-default-extension "org"
+      deft-extensions '("org")
+      deft-auto-save-interval 0)
 
-  (global-company-mode 1)
-  (add-to-list 'company-backends 'company-dabbrev t)
-  (add-to-list 'company-backends 'company-ispell t)
-  (add-to-list 'company-backends 'company-files t)
-  (add-to-list 'company-begin-commands 'outshine-self-insert-command)
-  (setq company-backends (remove 'company-ropemacs company-backends))
+;; diff-hl
+(quelpa '(diff-hl :fetcher github :repo "dgutov/diff-hl"))
+(require 'diff-hl)
+(global-diff-hl-mode 1)
+(eval-after-load 'magit
+  '(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
-  (defun my-company-elisp-setup ()
-    (set (make-local-variable 'company-backends)
-         '((company-capf :with company-dabbrev-code))))
+;; dired & wdired
+(require 'dired)
+(defun my-find-name-dired (pattern)
+  (interactive "sFind-name (filename wildcard): ")
+  (if (and (not current-prefix-arg) (executable-find "rg"))
+      (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
+            (find-ls-option (cons "" "-dilsb")))
+        (find-dired default-directory ""))
+    (find-dired default-directory (concat find-name-arg " " (shell-quote-argument pattern)))))
 
-  ;; Usage based completion sorting
-  (use-package company-statistics
-    :hook ((emacs-lisp-mode lisp-interaction-mode) . my-company-elisp-setup)
-    :config (company-statistics-mode)))
+(defun my-dired-ediff-marked-files ()
+  (interactive)
+  (let ((files (dired-get-marked-files nil nil)))
+    (if (= (length files) 2)
+        (ediff-files (nth 0 files) (nth 1 files))
+      (user-error "Please mark exactly 2 files"))))
 
-;;;; company-anaconda
-;; Anaconda backend for company-mode
-(use-package company-anaconda
-  :config (add-to-list 'company-backends 'company-anaconda))
+(define-key dired-mode-map (kbd "E") #'my-dired-ediff-marked-files)
+(define-key dired-mode-map (kbd "`") #'dired-toggle-read-only)
 
-;;;; company-dict
-;; A backend that emulates ac-source-dictionary
-(use-package company-dict
-  :config (add-to-list 'company-backends 'company-dict))
+(setq dired-auto-revert-buffer t
+      dired-no-confirm '(byte-compile chgrp chmod chown copy delete load move symlink)
+      dired-deletion-confirmer (lambda (x) t))
 
-;;;; company-quickhelp
-;; Popup documentation for completion candidates
-(use-package company-quickhelp
-  :init
-  (setq company-quickhelp-use-propertized-text t)
-  (setq company-quickhelp-delay 1)
-  :config (company-quickhelp-mode 1))
+(require 'wdired)
+(setq wdired-allow-to-change-permissions t)
 
-;;;; company-web
-;; Company version of ac-html, complete for web,html,emmet,jade,slim modes
-(use-package company-web
-  :config
-  (defun my-company-web ()
-    (set (make-local-variable 'company-backends) '(company-web-html))
-    (company-mode t))
-  :hook (web-mode . my-company-web))
+;; discover-my-major
+(quelpa '(discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
+(require 'discover-my-major)
 
-;;;; custom
-;; tools for declaring and initializing options
-(use-package custom
-  :ensure nil
-  :init
-  (setq
-   ;; M-x customize should not cripple menu entries
-   custom-unlispify-menu-entries nil
-   ;;M-x customize should not cripple tags
-   custom-unlispify-tag-names nil))
-
-;;;; darkroom
-(use-package darkroom
-  :bind ("S-<f11>" . darkroom-tentative-mode)
-  :custom
-  (darkroom-text-scale-increase 3)
-  (darkroom-margins-if-failed-guess 0.1))
-
-;;;; default-text-scale
-(use-package default-text-scale)
-
-;;;; deft
-;; quickly browse, filter, and edit plain text notes
-(use-package deft
-  :demand
-  :bind  (:map deft-mode-map
-               ("<f6>" . quit-window)
-               ("C-g" . deft-filter-clear)
-               ("C-c C-c" . deft-refresh)
-               ("<M-return>" . deft-new-file))
-  :commands (deft)
-  :config
-  ;; display filter in mode-line instead of header
-  (defun deft-print-header () (deft-set-mode-name))
-  (defun deft-set-mode-name ()
-    "Set the mode line text based on search mode and add the filter."
-    (let* ((name (if deft-incremental-search "Deft" "Deft/R"))
-           (filter (deft-whole-filter-regexp))
-           (sep (unless (string= "" filter) "/")))
-      (setq mode-name (concat name sep filter))))
-  (setq deft-strip-summary-regexp
-        (concat "\\("
-                "[\n\t]" ;; blank
-                "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
-                "\\|^# .*$" ;; md titles
-                "\\)"))
-  (setq deft-separator " ")
-  (setq deft-directory "~/Sync")
-  (setq deft-file-naming-rules nil)
-  (setq deft-recursive t)
-  (setq deft-default-extension "org")
-  (setq deft-extensions '("org"))
-  (setq deft-auto-save-interval 0))
-
-;;;; diff-hl
-;; Highlight uncommitted changes
-(use-package diff-hl
-  :demand
-  :config
-  (global-diff-hl-mode 1)
-  (eval-after-load 'magit
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
-
-;;;; dired
-;; directory-browsing commands
-(use-package dired
-  :ensure nil
-  :demand
-  :init
-  (defun my-find-name-dired (pattern)
-    "Find files in `default-directory' using `rg' if available.
-  PREFIX forces the use of `find'."
-    (interactive "sFind-name (filename wildcard): ")
-    (if (and (not current-prefix-arg) (executable-find "rg"))
-        (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
-              (find-ls-option (cons "" "-dilsb")))
-          (find-dired default-directory ""))
-      (find-dired
-       default-directory
-       (concat find-name-arg " " (shell-quote-argument pattern)))))
-
-  (defun my-dired-ediff-marked-files ()
-    (interactive)
-    (let ((files (dired-get-marked-files nil nil)))
-      (if (= (length files) 2)
-          (ediff-files (nth 0 files) (nth 1 files))
-        (user-error "Please mark exactly 2 files"))))
-
-  ;; Bind it to a key in dired-mode, for example 'E'
-  (define-key dired-mode-map (kbd "E") #'my-dired-ediff-marked-files)
-
-  (setq dired-auto-revert-buffer t)
-  (setq dired-no-confirm
-        '(byte-compile chgrp chmod chown copy delete load move symlink))
-  (setq dired-deletion-confirmer (lambda (x) t))
-  :bind (:map dired-mode-map ("`" . dired-toggle-read-only)))
-
-;; Rename files editing their names in dired buffers
-(use-package wdired
-  :init
-  ;; allow changing of file permissions
-  (setq wdired-allow-to-change-permissions t))
-
-;;;; discover-my-major
-;; discover key bindings and their meaning for the current Emacs major mode
-(use-package discover-my-major)
-
-;;;; easylist-mode
+;; easylist-mode
 (quelpa '(easylist-mode :repo "steckerhalter/easylist-mode" :fetcher github))
+(require 'easylist-mode)
 
-;;;; easy-kill
-;; make marking and killing easier
-(use-package easy-kill
-  :init
-  (global-set-key [remap kill-ring-save] 'easy-kill)
-  (global-set-key [remap mark-sexp] 'easy-mark))
+;; easy-kill
+(quelpa '(easy-kill :fetcher github :repo "leoliu/easy-kill"))
+(require 'easy-kill)
+(global-set-key [remap kill-ring-save] 'easy-kill)
+(global-set-key [remap mark-sexp] 'easy-mark)
 
-;;;; eldoc
-;; display information about a function or variable in the the echo area
-(use-package eldoc
-  :diminish
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode))
+;; eldoc
+(require 'eldoc)
+(diminish 'eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
 
-;;;; elec-pair
-;; Automatic parenthesis pairing
-(use-package elec-pair
-  :config
-  ;;auto pair brackets, parens etc.
-  (electric-pair-mode 1))
+;; elec-pair
+(electric-pair-mode 1)
 
-;;;; elisp-slime-nav
-;; jump to elisp definition (function, symbol etc.) and back, show doc
-(use-package elisp-slime-nav
-  :demand
-  :bind
-  ("<f1> <f1>" . elisp-slime-nav-describe-elisp-thing-at-point)
-  :diminish
-  :hook ((emacs-lisp-mode ielm-mode lisp-interaction-mode) . elisp-slime-nav-mode))
+;; elisp-slime-nav
+(quelpa '(elisp-slime-nav :fetcher github :repo "purcell/elisp-slime-nav"))
+(require 'elisp-slime-nav)
+(diminish 'elisp-slime-nav-mode)
+(add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
+(add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
+(add-hook 'lisp-interaction-mode-hook 'elisp-slime-nav-mode)
 
-;;;; emms
-;; Playlist mode for Emms
-(use-package emms
-  :bind
-  ("<XF86AudioPlay>" . emms-pause)
-  ("<XF86AudioPrev>" . emms-previous)
-  ("<XF86AudioNext>" . emms-next)
-  ("S-<XF86AudioPause>" . emms-toggle-repeat-track)
-  ("S-<XF86AudioPrev>" . emms-seek-backward)
-  ("S-<XF86AudioNext>" . emms-seek-forward)
-  :config
-  (use-package emms-setup
-    :ensure nil
-    :custom (emms-player-list '(emms-player-mpv))
-    :config
-    (emms-standard)))
+;; emms
+(quelpa '(emms :fetcher github :repo "emacs-straight/emms"))
+(require 'emms)
+(global-set-key (kbd "<XF86AudioPlay>") 'emms-pause)
+(global-set-key (kbd "<XF86AudioPrev>") 'emms-previous)
+(global-set-key (kbd "<XF86AudioNext>") 'emms-next)
+(global-set-key (kbd "S-<XF86AudioPause>") 'emms-toggle-repeat-track)
+(global-set-key (kbd "S-<XF86AudioPrev>") 'emms-seek-backward)
+(global-set-key (kbd "S-<XF86AudioNext>") 'emms-seek-forward)
+(require 'emms-setup)
+(setq emms-player-list '(emms-player-mpv))
+(emms-standard)
 
-;;;; erc
-;; Emacs ERC client settings
-(use-package erc
-  :config
-  (add-hook 'erc-mode-hook (lambda ()
-                             (erc-truncate-mode t)
-                             (erc-fill-disable)
-                             (set (make-local-variable 'scroll-conservatively) 1000)
-                             (visual-line-mode)))
-  (setq erc-timestamp-format "%H:%M "
-        erc-fill-prefix "      "
-        erc-insert-timestamp-function 'erc-insert-timestamp-left)
-  (setq erc-interpret-mirc-color t)
-  (setq erc-kill-buffer-on-part t)
-  (setq erc-kill-server-buffer-on-quit t)
-  (setq erc-kill-queries-on-quit t)
-  (setq erc-kill-server-buffer-on-quit t)
-  (setq erc-server-send-ping-interval 45)
-  (setq erc-server-send-ping-timeout 180)
-  (setq erc-server-reconnect-timeout 60)
-  (setq erc-join-buffer 'window-noselect)
-  (erc-track-mode t)
-  (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                  "324" "329" "332" "333" "353" "477"))
-  (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+;; erc
+(require 'erc)
+(add-hook 'erc-mode-hook (lambda ()
+                           (erc-truncate-mode t)
+                           (erc-fill-disable)
+                           (set (make-local-variable 'scroll-conservatively) 1000)
+                           (visual-line-mode)))
+(setq erc-timestamp-format "%H:%M "
+      erc-fill-prefix "      "
+      erc-insert-timestamp-function 'erc-insert-timestamp-left
+      erc-interpret-mirc-color t
+      erc-kill-buffer-on-part t
+      erc-kill-server-buffer-on-quit t
+      erc-kill-queries-on-quit t
+      erc-server-send-ping-interval 45
+      erc-server-send-ping-timeout 180
+      erc-server-reconnect-timeout 60
+      erc-join-buffer 'window-noselect)
+(erc-track-mode t)
+(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                "324" "329" "332" "333" "353" "477"))
+(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 
-  ;; ------ template for .user.el
-  ;; (setq erc-prompt-for-nickserv-password nil)
-  ;; (setq erc-server "hostname"
-  ;;       erc-port 7000
-  ;;       erc-nick "user"
-  ;;       erc-user-full-name "user"
-  ;;       erc-email-userid "user"
-  ;;       erc-password "user:pw"
-  ;;       )
+(defun my-erc-connect ()
+  (interactive)
+  (if (erc-buffer-list)
+      (switch-to-buffer (car (erc-buffer-list)))
+    (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password)))
 
-  (defun my-erc-connect ()
-    "Connect with ERC or open the last active buffer."
-    (interactive)
-    (if (erc-buffer-list)
-        (switch-to-buffer (car (erc-buffer-list)))
-      (erc-tls :server erc-server :port erc-port :nick erc-nick :full-name erc-user-full-name :password erc-password))))
+;; eshell
+(require 'eshell)
+(add-hook 'eshell-mode-hook (lambda ()
+                              (my-eshell-setup)
+                              (eldoc-mode 1)))
+(setq eshell-save-history-on-exit t
+      eshell-destroy-buffer-when-process-dies t
+      eshell-where-to-jump 'begin
+      eshell-hist-ignoredups t
+      eshell-history-size 10000)
 
-;;;; eshell
-(use-package eshell
-  :demand
-  :hook ((eshell-mode . my-eshell-setup)
-         (eshell-mode . eldoc-mode))
-  :init
-  (setq eshell-save-history-on-exit t)
-  (setq eshell-destroy-buffer-when-process-dies t)
-  (setq eshell-where-to-jump 'begin)
-  (setq eshell-hist-ignoredups t)
-  (setq eshell-history-size 10000)
+(defun eshell/g (&rest args)
+  (magit-status (pop args) nil)
+  (eshell/echo))
 
-  (defun eshell/g (&rest args)
-    (magit-status (pop args) nil)
-    (eshell/echo))   ;; The echo command suppresses output
+(defun my-eshell-setup ()
+  (define-key eshell-mode-map (kbd "C-c p") 'helm-eshell-prompts)
+  (define-key eshell-mode-map (kbd "M-r") 'helm-eshell-history)
+  (setq-local eldoc-idle-delay 3)
+  (setenv "PAGER" "cat")
+  (setenv "EDITOR" "emacsclient"))
 
-  (defun my-eshell-setup ()
-    (bind-key "C-c p" 'helm-eshell-prompts eshell-mode-map)
-    (bind-key "M-r" 'helm-eshell-history eshell-mode-map)
-    (setq-local eldoc-idle-delay 3)
-    (setenv "PAGER" "cat")
-    (setenv "EDITOR" "emacsclient"))
+(quelpa '(esh-help :fetcher github :repo "emacsorphanage/esh-help"))
+(require 'esh-help)
+(setup-esh-help-eldoc)
 
-  :config
+(quelpa '(bash-completion :fetcher github :repo "szermatt/emacs-bash-completion"))
+(require 'bash-completion)
+(defun eshell-bash-completion ()
+  (setq-local bash-completion-nospace t)
+  (while (pcomplete-here
+          (nth 2 (bash-completion-dynamic-complete-nocomint
+                  (save-excursion (eshell-bol) (point)) (point))))))
+(setq eshell-default-completion-function 'eshell-bash-completion)
 
-  (use-package em-alias
-    :ensure nil
-    :config
-    (eshell/alias "cs" "apt search $1")
-    (eshell/alias "e" "find-file $1")
-    (eshell/alias "eo" "find-file-other-window $1")
-    (eshell/alias "gd" "magit-diff-unstaged")
-    (eshell/alias "gds" "magit-diff-staged")
-    (eshell/alias "d" "dired $1")
-    (eshell/alias "ll" "ls -l")
-    (eshell/alias "la" "ls -A")
-    (eshell/alias "l" "ls -CF"))
+(add-hook 'eshell-mode-hook 'eshell-smart-initialize)
 
-  (use-package esh-help
-    :config (setup-esh-help-eldoc))
+;; eval-sexp-fu
+(quelpa '(eval-sexp-fu :fetcher github :repo "Fuco1/eval-sexp-fu"))
+(require 'eval-sexp-fu)
+(define-key lisp-interaction-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
+(define-key lisp-interaction-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
+(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
+(define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
+(setq eval-sexp-fu-flash-duration 0.4)
+(turn-on-eval-sexp-fu-flash-mode)
 
-  ;; BASH completion for the shell buffer
-  (use-package bash-completion
-    :config
-    (defun eshell-bash-completion ()
-      (setq-local bash-completion-nospace t)
-      (while (pcomplete-here
-              (nth 2 (bash-completion-dynamic-complete-nocomint
-                      (save-excursion (eshell-bol) (point)) (point))))))
-    (setq eshell-default-completion-function 'eshell-bash-completion))
-  (use-package em-smart
-    :ensure nil
-    :hook (eshell-mode . eshell-smart-initialize)))
+;; eww
+(require 'eww)
+(setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
-;;;; eval-sexp-fu
-;; flash the region that is evaluated (visual feedback) in elisp
-(use-package eval-sexp-fu
-  :bind
-  (:map lisp-interaction-mode-map
-        ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
-        ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp)
-        :map emacs-lisp-mode-map
-        ("C-c C-c" . eval-sexp-fu-eval-sexp-inner-list)
-        ("C-c C-e" . eval-sexp-fu-eval-sexp-inner-sexp))
-  :init
-  (setq eval-sexp-fu-flash-duration 0.4)
-  :config
-  (turn-on-eval-sexp-fu-flash-mode))
+;; flymake
+(require 'flymake)
+(diminish 'flymake-mode)
+(add-hook 'php-mode-hook 'flymake-mode-on)
+(add-hook 'sh-mode-hook 'flymake-mode-on)
+(add-hook 'json-mode-hook 'flymake-mode-on)
+(add-hook 'nxml-mode-hook 'flymake-mode-on)
+(add-hook 'python-mode-hook 'flymake-mode-on)
+(add-hook 'emacs-lisp-mode-hook 'flymake-mode-on)
+(add-hook 'lisp-interaction-mode-hook 'flymake-mode-on)
+(flymake-mode-on)
 
-;;;; eww
-;; Emacs Web Wowser (web browser) settings
-(use-package eww
-  :config
-  (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query="))
+;; flyspell
+(require 'flyspell)
+(setq flyspell-auto-correct-binding [nil])
 
-;;;; flymake
-(use-package flymake
-  :diminish
-  :hook ((php-mode sh-mode json-mode nxml-mode python-mode emacs-lisp-mode lisp-interaction-mode) . flymake-mode-on)
-  :config (flymake-mode-on))
+;; frame
+(require 'frame)
+(modify-all-frames-parameters '((fullscreen . maximized)))
 
-;;;; flyspell
-;;On-the-fly spell checker
-(use-package flyspell
-  :init (setq flyspell-auto-correct-binding [nil]))
+(defun my-after-make-frame (&optional frame)
+  (with-selected-frame (or frame (selected-frame))
+    (when (find-font (font-spec :name "Symbola") frame)
+      (dolist (range '((#x2600 . #x26ff)
+                       (#x1f300 . #x1f5ff)
+                       (#x1f600 . #x1f640)
+                       (#x1f680 . #x1f6ff)))
+        (set-fontset-font "fontset-default" range "Symbola")))))
+(add-to-list 'after-make-frame-functions 'my-after-make-frame)
 
-;;;; frame
-;; multi-frame management independent of window systems
-(use-package frame
-  :ensure nil
-  :config
-  ;; maximize emacs
-  (modify-all-frames-parameters '((fullscreen . maximized)))
+(setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
 
-  (defun my-after-make-frame (&optional frame)
-    (with-selected-frame (or frame (selected-frame))
-      ;; use symbola font for emoticons
-      (when (find-font (font-spec :name "Symbola") frame)
-        (dolist (range '((#x2600 . #x26ff)
-                         (#x1f300 . #x1f5ff)
-                         (#x1f600 . #x1f640)
-                         (#x1f680 . #x1f6ff)))
-          (set-fontset-font "fontset-default" range "Symbola")))))
-  (add-to-list 'after-make-frame-functions 'my-after-make-frame)
+;; git-modes
+(quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
+(eval-after-load 'magit '(require 'git-modes))
 
-  ;; better frame title
-  (setq frame-title-format
-        '((:eval (if (buffer-file-name)
-                     (abbreviate-file-name (buffer-file-name))
-                   "%b")))))
+;; google-translate
+(quelpa '(google-translate :fetcher github :repo "atykhunov/google-translate"))
+(require 'google-translate)
+(setq google-translate-default-source-language "de")
+(setq google-translate-default-target-language "en")
 
-;;;; git-modes
-;; Emacs major modes for various Git configuration files
-(use-package git-modes
-  :after magit
-  :ensure nil
-  :defer t)
+;; grandshell-theme
+(quelpa '(grandshell-theme :fetcher github :repo "syohex/emacs-grandshell-theme"))
+(load-theme 'grandshell t)
 
-;;;; google-translate
-;; Emacs interface to Google's translation service
-(use-package google-translate
-  :init
-  (setq google-translate-default-source-language "de")
-  (setq google-translate-default-target-language "en"))
+;; helm
+(quelpa '(helm :fetcher github :repo "emacs-helm/helm"))
+(require 'helm)
+(setq async-bytecomp-allowed-packages nil)
+(diminish 'helm-mode)
+(setq helm-idle-delay 0.1
+      helm-input-idle-delay 0.1
+      helm-buffer-max-length 50
+      helm-M-x-always-save-history t
+      helm-buffer-details-flag nil
+      helm-mode-handle-completion-in-region nil
+      helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-;;;; grandshell-theme
-;; Grand Shell color theme for Emacs > 24
-(use-package grandshell-theme
-  :config (load-theme 'grandshell t))
+(quelpa '(helm-gtags :fetcher github :repo "syohex/emacs-helm-gtags"))
+(require 'helm-gtags)
+(diminish 'helm-gtags-mode)
+(helm-gtags-mode 1)
 
-;;;; helm
-;; fancy candidate selection framework
-(use-package helm
-  :unless (setq async-bytecomp-allowed-packages nil) ;disable async bytecomp
-  :diminish
-  :commands helm-mini
+(quelpa '(helm-projectile :fetcher github :repo "bbatsov/helm-projectile"))
+(require 'helm-projectile)
 
-  :init
-  (setq helm-idle-delay 0.1)
-  (setq helm-input-idle-delay 0.1)
-  (setq helm-buffer-max-length 50)
-  (setq helm-M-x-always-save-history t)
-  (setq helm-buffer-details-flag nil)
-  (setq helm-mode-handle-completion-in-region nil) ;don't use helm for `completion-at-point'
-  (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
+(quelpa '(helm-system-packages :fetcher github :repo "emacsmirror/helm-system-packages"))
+(require 'helm-system-packages)
 
-  ;; GNU GLOBAL helm interface
-  (use-package helm-gtags
-    :diminish
-    :config (helm-gtags-mode 1))
+(quelpa '(helm-rg :fetcher github :repo "nlamirault/emacs-helm-rg"))
+(require 'helm-rg)
 
-  ;; Helm integration for Projectile
-  (use-package helm-projectile)
+;; highlight-parentheses
+(quelpa '(highlight-parentheses :fetcher github :repo "Tsoding/highlight-parentheses.el"))
+(require 'highlight-parentheses)
+(add-hook 'prog-mode-hook 'highlight-parentheses-mode)
+(setq hl-paren-delay 0.2
+      hl-paren-colors '("Springgreen3"
+                        "IndianRed1"
+                        "IndianRed3"
+                        "IndianRed4"))
+(set-face-attribute 'hl-paren-face nil :weight 'ultra-bold)
 
-  ;; Helm UI wrapper for system package managers.
-  (use-package helm-system-packages)
+;; highlight-symbol
+(quelpa '(highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el"))
+(require 'highlight-symbol)
+(diminish 'highlight-symbol-mode)
+(add-hook 'prog-mode-hook 'highlight-symbol-mode)
+(setq highlight-symbol-on-navigation-p t)
 
-  (use-package helm-rg))
+;; ibuffer
+(require 'ibuffer)
+(setq ibuffer-default-display-maybe-show-predicates t)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;;;; highlight-parentheses
-;; highlight surrounding parentheses
-(use-package highlight-parentheses
-  :hook (prog-mode . highlight-parentheses-mode)
-  :init
-  (setq hl-paren-delay 0.2)
-  (setq hl-paren-colors '("Springgreen3"
-                          "IndianRed1"
-                          "IndianRed3"
-                          "IndianRed4"))
-  :config
-  (set-face-attribute 'hl-paren-face nil :weight 'ultra-bold))
+;; ido
+(require 'ido)
+(setq ido-enable-flex-matching t
+      ido-everywhere t
+      ido-auto-merge-work-directories-length -1
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point 'guess
+      ido-default-buffer-method 'selected-window)
+(ido-mode 1)
+(put 'ido-exit-minibuffer 'disabled nil)
 
-;;;; highlight-symbol
-;; automatic and manual symbol highlighting
-(use-package highlight-symbol
-  :diminish
-  :hook (prog-mode . highlight-symbol-mode)
-  :init
-  (setq highlight-symbol-on-navigation-p t))
+;; ido-completing-read+
+(quelpa '(ido-completing-read+ :fetcher github :repo "emacsmirror/ido-completing-read-plus"))
+(require 'ido-completing-read+)
+(ido-ubiquitous-mode 1)
 
-;;;; ibuffer
-(use-package ibuffer
-  :init (setq ibuffer-default-display-maybe-show-predicates t)
-  :bind  ("C-x C-b" . ibuffer))
+(quelpa '(amx :fetcher github :repo "DarwinAwardWinner/amx"))
+(require 'amx)
+(amx-mode 1)
 
-;;;; ido
-(use-package ido
-  :init
-  (setq ido-enable-flex-matching t
-        ido-everywhere t
-        ido-auto-merge-work-directories-length -1
-        ido-create-new-buffer 'always
-        ido-use-filename-at-point 'guess
-        ido-default-buffer-method 'selected-window)
-  :config
-  (ido-mode 1)
-  (put 'ido-exit-minibuffer 'disabled nil))
+;; iedit
+(quelpa '(iedit :fetcher github :repo "victorhge/iedit"))
+(require 'iedit)
+(setq iedit-unmatched-lines-invisible t
+      iedit-toggle-key-default nil)
 
-;;;; ido-completing-read+
-(use-package ido-completing-read+
-  :config
-  (ido-ubiquitous-mode 1)
-  (use-package amx
-    :config (amx-mode 1)))
+;; ielm
+(add-hook 'inferior-emacs-lisp-mode-hook (lambda () (turn-on-eldoc-mode)))
 
-;;;; iedit
-;; change multiple occurences of word-at-point (compress display to show all of them)
-(use-package iedit
-  :init
-  (setq iedit-unmatched-lines-invisible t)
-  (setq iedit-toggle-key-default nil))
+;; iflipb
+(quelpa '(iflipb :fetcher github :repo "rosenfeld/iflipb"))
+(require 'iflipb)
+(setq iflipb-wrap-around t
+      iflipb-ignore-buffers '("*helm.**"
+                              "*magit-diff: .*"
+                              "*Quail Completions*"
+                              "*Completions*"
+                              "*anaconda-mode*"
+                              "*Deft*"
+                              ":.*"))
 
-;;;; ielm
-;; interactively evaluate Emacs Lisp expressions
-(use-package ielm
-  :config
-  (add-hook 'inferior-emacs-lisp-mode-hook
-            (lambda ()
-              (turn-on-eldoc-mode))))
+;; ipretty
+(quelpa '(ipretty :fetcher github :repo "emacsmirror/ipretty"))
+(require 'ipretty)
+(ipretty-mode t)
 
-;;;; iflipb
-;; interactively flip between recently visited buffers
-(use-package iflipb
+;; json-mode
+(quelpa '(json-mode :fetcher github :repo "joshplett/json-mode"))
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 
-  :init
-  ;; wrap around list
-  (setq iflipb-wrap-around t)
-  ;; don't ignore buffers starting with * (like magit etc.)
-  (setq iflipb-ignore-buffers '("*helm.**"
-                                "*magit-diff: .*"
-                                "*Quail Completions*"
-                                "*Completions*"
-                                "*anaconda-mode*"
-                                "*Deft*"
-                                ":.*")))
-
-;;;; ipretty
-;; pretty-print the result elisp expressions
-(use-package ipretty
-  :config (ipretty-mode t))
-
-;;;; json-mode
-;; syntax highlighting for `json'
-(use-package json-mode
-  :mode "\\.json\\'")
-
-;;;; kde-connect-mode
+;; kde-connect-mode
 (quelpa '(kde-connect-mode :fetcher github :repo "steckerhalter/kde-connect-mode"))
-;;;; logview
-;; Major mode for viewing log files
-(use-package logview
-  :mode ("\\.log" . logview-mode)
-  :config (setq logview-auto-revert-mode t))
+(require 'kde-connect-mode)
 
-;;;; magit
-;; Emacs interface to git
-(use-package magit
-  :demand
-  :diminish magit-wip-after-apply-mode
-  :init
-  (setq magit-no-confirm '(stage-all-changes))
-  (setq magit-push-always-verify nil)
-  (setq git-commit-finish-query-functions nil)
-  (setq magit-save-some-buffers nil) ;don't ask to save buffers
-  (setq magit-set-upstream-on-push t) ;ask to set upstream
-  (setq magit-diff-refine-hunk 'all) ;show word-based diff for all hunks
-  (setq magit-default-tracking-name-function
-        'magit-default-tracking-name-branch-only) ;don't track with origin-*
+;; logview
+(quelpa '(logview :fetcher github :repo "politza/logview"))
+(require 'logview)
+(add-to-list 'auto-mode-alist '("\\.log\\'" . logview-mode))
+(setq logview-auto-revert-mode t)
 
-  :config
-  (setq magit-wip-after-save-mode 1)
-  (setq magit-wip-after-apply-mode 1)
+;; magit
+(quelpa '(magit :fetcher github :repo "magit/magit"))
+(require 'magit)
+(diminish 'magit-wip-after-apply-mode)
+(setq magit-no-confirm '(stage-all-changes)
+      magit-push-always-verify nil
+      git-commit-finish-query-functions nil
+      magit-save-some-buffers nil
+      magit-set-upstream-on-push t
+      magit-diff-refine-hunk 'all
+      magit-default-tracking-name-function 'magit-default-tracking-name-branch-only)
+(setq magit-wip-after-save-mode 1
+      magit-wip-after-apply-mode 1)
 
-  ;; prevent take over of my global bindings
-  (define-key magit-mode-map (kbd "M-1") nil)
-  (define-key magit-mode-map (kbd "M-2") nil)
-  (define-key magit-mode-map (kbd "M-3") nil)
-  (define-key magit-mode-map (kbd "M-4") nil)
+(define-key magit-mode-map (kbd "M-1") nil)
+(define-key magit-mode-map (kbd "M-2") nil)
+(define-key magit-mode-map (kbd "M-3") nil)
+(define-key magit-mode-map (kbd "M-4") nil)
 
-  (defun magit-push-after-commit ()
-    "Automatically push to upstream after a commit is finished."
-    (magit-push-current-to-upstream nil))
-  (add-hook 'git-commit-post-finish-hook #'magit-push-after-commit)
-  ;; Emacs Minor mode to automatically commit and push
-  (use-package git-auto-commit-mode
-    :commands (gac-commit gac)
-    :config
-    (defun gac ()
-      (interactive)
-      (gac-commit))))
+(defun magit-push-after-commit ()
+  (magit-push-current-to-upstream nil))
+(add-hook 'git-commit-post-finish-hook #'magit-push-after-commit)
 
-;;;; man
-;; browse UNIX manual pages
-(use-package man
-  :init (setq Man-notify-method 'aggressive))
+(quelpa '(git-auto-commit-mode :fetcher github :repo "kiwanami/emacs-git-auto-commit"))
+(autoload 'gac-commit "git-auto-commit-mode")
+(defun gac () (interactive) (gac-commit))
 
-;;;; markdown-mode
-;; Emacs Major mode for Markdown-formatted text files
-(use-package markdown-mode
-  :bind (:map markdown-mode-map
-              ("C-M-i" . markdown-shifttab)
-              ("<backtab>" . markdown-promote)
-              ("<S-iso-lefttab>" . markdown-promote)
-              ("<S-tab>" . markdown-promote)
-              ("<C-tab>" . markdown-shifttab)
-              ("<M-S-return>" . my-markdown-checkbox)
-              ("<C-up>" . markdown-move-up)
-              ("<C-down>" . markdown-move-down))
-  :mode
-  ("\\.markdown\\'" . gfm-mode)
-  ("\\.md\\'" . gfm-mode)
-  ("\\.lr\\'" . gfm-mode)
+;; man
+(require 'man)
+(setq Man-notify-method 'aggressive)
 
-  :init
-  (defun my-markdown-checkbox ()
-    "Shortcut for list item with checkbox."
-    (interactive)
-    (call-interactively 'markdown-insert-list-item)
-    (insert "[ ] "))
+;; markdown-mode
+(quelpa '(markdown-mode :fetcher github :repo "jrblevin/markdown-mode"))
+(require 'markdown-mode)
+(define-key markdown-mode-map (kbd "C-M-i") 'markdown-shifttab)
+(define-key markdown-mode-map (kbd "<backtab>") 'markdown-promote)
+(define-key markdown-mode-map (kbd "<S-iso-lefttab>") 'markdown-promote)
+(define-key markdown-mode-map (kbd "<S-tab>") 'markdown-promote)
+(define-key markdown-mode-map (kbd "<C-tab>") 'markdown-shifttab)
+(define-key markdown-mode-map (kbd "<M-S-return>") 'my-markdown-checkbox)
+(define-key markdown-mode-map (kbd "<C-up>") 'markdown-move-up)
+(define-key markdown-mode-map (kbd "<C-down>") 'markdown-move-down)
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode))
+(add-to-list 'auto-mode-alist '("\\.lr\\'" . gfm-mode))
 
-  (defun my-markdown-convert-wiki-link (func name)
-    "Fix naming of files for wiki links."
-    (let ((markdown-link-space-sub-char " ")
-          (major-mode 'markdown-mode))
-      (funcall func name)))
+(defun my-markdown-checkbox ()
+  (interactive)
+  (call-interactively 'markdown-insert-list-item)
+  (insert "[ ] "))
 
-  (setq markdown-asymmetric-header t)
-  (setq markdown-header-scaling t)
-  (setq markdown-enable-wiki-links t)
-  (setq markdown-list-indent-width 2)
-  (setq markdown-enable-wiki-links t)
-  (setq markdown-footnote-location 'immediately)
-  (setq markdown-wiki-link-fontify-missing t)
-  (setq markdown-wiki-link-alias-first nil)
-  (setq markdown-indent-on-enter 'indent-and-new-item)
-  (setq markdown-command "pandoc -c http://benjam.info/panam/styling.css --from gfm -t html5 --mathjax --highlight-style pygments --metadata title=' ' --standalone")
+(defun my-markdown-convert-wiki-link (func name)
+  (let ((markdown-link-space-sub-char " ")
+        (major-mode 'markdown-mode))
+    (funcall func name)))
 
-  :hook (markdown-mode . visual-line-mode)
-  :config
-  (advice-add 'markdown-convert-wiki-link-to-filename
-              :around 'my-markdown-convert-wiki-link))
+(setq markdown-asymmetric-header t
+      markdown-header-scaling t
+      markdown-enable-wiki-links t
+      markdown-list-indent-width 2
+      markdown-footnote-location 'immediately
+      markdown-wiki-link-fontify-missing t
+      markdown-wiki-link-alias-first nil
+      markdown-indent-on-enter 'indent-and-new-item
+      markdown-command "pandoc -c http://benjam.info/panam/styling.css --from gfm -t html5 --mathjax --highlight-style pygments --metadata title=' ' --standalone")
 
-;;;; monky
-(use-package monky
-  :init (setq monky-process-type 'cmdserver))
+(add-hook 'markdown-mode-hook 'visual-line-mode)
+(advice-add 'markdown-convert-wiki-link-to-filename :around 'my-markdown-convert-wiki-link)
 
-;;;; multiple-cursors
-;; allow editing with multiple cursors
-(use-package multiple-cursors
-  :init
-  (setq mc/always-repeat-command t)
-  (setq mc/always-run-for-all t)
-  :bind (("C-<" . mc/mark-previous-like-this)
-         ("C->" . mc/mark-next-like-this)
-         ("C-?" . mc/mark-all-like-this)))
+;; monky
+(quelpa '(monky :fetcher github :repo "ananthakumaran/monky"))
+(require 'monky)
+(setq monky-process-type 'cmdserver)
 
-;;;; open-junk-file
-;; Open a junk (memo) file to try-and-error
-(use-package open-junk-file
-  :init (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."))
+;; multiple-cursors
+(quelpa '(multiple-cursors :fetcher github :repo "magnars/multiple-cursors.el"))
+(require 'multiple-cursors)
+(setq mc/always-repeat-command t
+      mc/always-run-for-all t)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-?") 'mc/mark-all-like-this)
 
-;;;; org
-;;  "Outline-based notes management and organizer"
-(use-package org
-  :hook (org-mode . (lambda ()
-                      (setq-local company-idle-delay 0.3)
-                      (setq-local electric-pair-mode nil)
-                      (visual-line-mode)
-                      ))
-  :bind (:map org-mode-map
-              ("C-c M-RET" . org-insert-heading-after-current)
-              ("C-c !" . my-org-insert-time-stamp)
-              ("C-c 1" . my-org-insert-time-stamp)
-              ("M-4" . (lambda () (interactive) (org-todo 'done))))
-  :init
-  (defvar org-capture-default '("s" "w") "default capture template to be used.
-  Override it in `.user.el': (setq org-capture-default '(\"w\" \"s\"))")
-  (defvar my-work-folder "~/work")
+;; open-junk-file
+(quelpa '(open-junk-file :fetcher github :repo "emacsmirror/open-junk-file"))
+(require 'open-junk-file)
+(setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S.")
 
-  (setq org-publish-project-alist
-        '(("web" :components ("web-org" "web-files"))
-          ("web-org"
-           :publishing-function org-html-publish-to-html
-           :base-directory "~/Sync/web"
-           :publishing-directory "~/retonom"
-           :recursive t
-           :exclude "setup.org"
-           :with-title nil
-           :with-toc t
-           :section-numbers nil)
-          ("web-files"
-           :publishing-function org-publish-attachment
-           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|aac\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
-           :include (".htaccess")
-           :base-directory "~/Sync/web"
-           :publishing-directory "~/retonom"
-           :recursive t)
-          ("notes" :components ("notes-org" "notes-files"))
-          ("notes-org"
-           :publishing-function org-html-publish-to-html
-           :base-directory "~/Sync/notes"
-           :publishing-directory "~/web/notes"
-           :with-title nil
-           :with-toc t
-           :html-head-extra "<style>#content { max-width: 100% !important; margin: 5% !important; img { width: 100%; height: auto; }}</style>"
-           :section-numbers nil)
-          ("notes-files"
-           :publishing-function org-publish-attachment
-           :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|aac\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
-           :include (".htaccess")
-           :base-directory "~/Sync/notes"
-           :publishing-directory "~/web/notes"
-           :recursive t)
-          ))
+;; org
+(require 'org)
+(add-hook 'org-mode-hook (lambda ()
+                           (setq-local company-idle-delay 0.3)
+                           (setq-local electric-pair-mode nil)
+                           (visual-line-mode)))
+(define-key org-mode-map (kbd "C-c M-RET") 'org-insert-heading-after-current)
+(define-key org-mode-map (kbd "C-c !") 'my-org-insert-time-stamp)
+(define-key org-mode-map (kbd "C-c 1") 'my-org-insert-time-stamp)
+(define-key org-mode-map (kbd "M-4") (lambda () (interactive) (org-todo 'done)))
 
-  (setq org-capture-templates
-        `(("P" "Playlist" entry (file "todo.org")"* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :immediate-finish t :prepend t)
-          ("s" "home" entry (file "todo.org") "* TODO %?\n" :prepend t)
-          ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
-          ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "DONE(d)")))
+(defvar org-capture-default '("s" "w"))
+(defvar my-work-folder "~/work")
 
-  (setq org-tag-alist '(("einkauf" . ?e)
-                        ("brocki" . ?b)
-                        ("alarm" . ?a)
-                        ("amazon" . ?z)
-                        ("backlog" . ?l)
-                        ("song" . ?s)
-                        ("god". ?g)
-                        ))
+(setq org-publish-project-alist
+      '(("web" :components ("web-org" "web-files"))
+        ("web-org"
+         :publishing-function org-html-publish-to-html
+         :base-directory "~/Sync/web"
+         :publishing-directory "~/retonom"
+         :recursive t
+         :exclude "setup.org"
+         :with-title nil
+         :with-toc t
+         :section-numbers nil)
+        ("web-files"
+         :publishing-function org-publish-attachment
+         :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|aac\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
+         :include (".htaccess")
+         :base-directory "~/Sync/web"
+         :publishing-directory "~/retonom"
+         :recursive t)
+        ("notes" :components ("notes-org" "notes-files"))
+        ("notes-org"
+         :publishing-function org-html-publish-to-html
+         :base-directory "~/Sync/notes"
+         :publishing-directory "~/web/notes"
+         :with-title nil
+         :with-toc t
+         :html-head-extra "<style>#content { max-width: 100% !important; margin: 5% !important; img { width: 100%; height: auto; }}</style>"
+         :section-numbers nil)
+        ("notes-files"
+         :publishing-function org-publish-attachment
+         :base-extension "ogg\\|mp3\\|m4a\\|mp4\\|aac\\|png\\|jpg\\|jpeg\\|css\\|html\\|js"
+         :include (".htaccess")
+         :base-directory "~/Sync/notes"
+         :publishing-directory "~/web/notes"
+         :recursive t)))
 
-  (setq org-use-fast-todo-selection 'auto)
-  (setq org-startup-indented t)
-  (setq org-archive-mark-done t)
-  (setq org-startup-with-inline-images t)
-  (setq org-startup-truncated t)
-  (setq org-startup-folded nil)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (setq org-edit-src-content-indentation 0)
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-use-speed-commands t)
-  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-  (setq org-refile-use-outline-path 'file)
-  (setq org-html-postamble nil)
-  (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-directory "~/Sync/notes")
-  (setq org-default-notes-file my-todo)
-  (setq org-image-actual-width nil)
-  (setq org-log-repeat nil)
-  (setq org-clock-idle-time 10)
-  (setq org-clock-x11idle-program-name "xprintidle")
-  (setq org-tags-exclude-from-inheritance '("song"))
-  (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
-  (setq org-plain-list-ordered-item-terminator ?\))
-  (setq org-cycle-hide-drawers t)
-  (setq org-reverse-note-order t)
-  (setq org-refile-targets '((nil :maxlevel . 3)))
-  (setq org-refile-use-outline-path t)
+(setq org-capture-templates
+      `(("P" "Playlist" entry (file "todo.org")"* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :immediate-finish t :prepend t)
+        ("s" "home" entry (file "todo.org") "* TODO %?\n" :prepend t)
+        ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
+        ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
+(setq org-todo-keywords '((sequence "TODO(t)" "DONE(d)")))
+(setq org-tag-alist '(("einkauf" . ?e)
+                      ("brocki" . ?b)
+                      ("alarm" . ?a)
+                      ("amazon" . ?z)
+                      ("backlog" . ?l)
+                      ("song" . ?s)
+                      ("god" . ?g)))
+(setq org-use-fast-todo-selection 'auto
+      org-startup-indented t
+      org-archive-mark-done t
+      org-startup-with-inline-images t
+      org-startup-truncated t
+      org-startup-folded nil
+      org-src-fontify-natively t
+      org-src-tab-acts-natively t
+      org-edit-src-content-indentation 0
+      org-confirm-babel-evaluate nil
+      org-use-speed-commands t
+      org-refile-targets '((org-agenda-files :maxlevel . 3))
+      org-refile-use-outline-path 'file
+      org-html-postamble nil
+      org-enforce-todo-checkbox-dependencies t
+      org-directory "~/Sync/notes"
+      org-default-notes-file my-todo
+      org-image-actual-width nil
+      org-log-repeat nil
+      org-clock-idle-time 10
+      org-clock-x11idle-program-name "xprintidle"
+      org-tags-exclude-from-inheritance '("song")
+      org-blank-before-new-entry '((heading . nil) (plain-list-item . nil))
+      org-plain-list-ordered-item-terminator ?\)
+      org-cycle-hide-drawers t
+      org-reverse-note-order t
+      org-refile-use-outline-path t)
 
-  (defun my-org-insert-time-stamp (&optional heading)
-    (interactive)
-    (when heading
-      (org-insert-heading))
-    (let ((time (current-time))
-          (with-hm (not current-prefix-arg)))
-      (if (equal current-prefix-arg '(16))
-          (insert (format-time-string "%I:%M " time))
-        (org-insert-time-stamp time with-hm t nil " "))))
+(defun my-org-insert-time-stamp (&optional heading)
+  (interactive)
+  (when heading (org-insert-heading))
+  (let ((time (current-time))
+        (with-hm (not current-prefix-arg)))
+    (if (equal current-prefix-arg '(16))
+        (insert (format-time-string "%I:%M " time))
+      (org-insert-time-stamp time with-hm t nil " "))))
 
-  (defun org-archive-done-tasks ()
-    (interactive)
-    (org-map-entries
-     (lambda ()
-       (org-archive-subtree)
-       (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
-     "/DONE" 'file))
+(defun org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
+   "/DONE" 'file))
 
-  (defun my/org-process-time-input (input &optional brackets)
-    "Handles 14 (14:00), 1430 (14:30), or [Enter] (Today). No relative dates."
-    (let* ((trimmed (org-trim (or input "")))
-           (hour-str (cond
-                      ;; 1. Empty -> no time
-                      ((string-empty-p trimmed) "")
-                      ;; 2. 1 or 2 digits (e.g., 14) -> 14:00
-                      ((string-match "^\\([0-9]\\{1,2\\}\\)$" trimmed)
-                       (format "%02d:00" (string-to-number trimmed)))
-                      ;; 3. 4 digits (e.g., 1430) -> 14:30
-                      ((string-match "^\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)$" trimmed)
-                       (concat (substring trimmed 0 2) ":" (substring trimmed 2 4)))
-                      ;; 4. Fallback: use input as-is (e.g., 14:45)
-                      (t trimmed)))
-           (time-str (format-time-string (concat "%Y-%m-%d %a " hour-str))))
-      (if brackets (concat "<" time-str ">") time-str)))
+(defun my/org-process-time-input (input &optional brackets)
+  (let* ((trimmed (org-trim (or input "")))
+         (hour-str (cond
+                    ((string-empty-p trimmed) "")
+                    ((string-match "^\\([0-9]\\{1,2\\}\\)$" trimmed)
+                     (format "%02d:00" (string-to-number trimmed)))
+                    ((string-match "^\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)$" trimmed)
+                     (concat (substring trimmed 0 2) ":" (substring trimmed 2 4)))
+                    (t trimmed)))
+         (time-str (format-time-string (concat "%Y-%m-%d %a " hour-str))))
+    (if brackets (concat "<" time-str ">") time-str)))
 
-  (defun my/org-playlist-toggle (arg)
-    "T: If scheduled, clear it. If NOT scheduled, prompt for time today.
-C-u T: Always prompt for time today."
-    (interactive "P")
-    (let* ((marker (or (get-text-property (point) 'org-marker)
-                       (get-text-property (point) 'org-hd-marker)))
-           (buffer (if marker (marker-buffer marker) (current-buffer)))
-           (pos (if marker (marker-position marker) (point))))
-      (with-current-buffer buffer
-        (save-excursion
-          (goto-char pos)
-          (let ((is-scheduled (org-get-scheduled-time (point))))
-            (cond
-             ;; 1. C-u T (Egal was ist: Zeit setzen)
-             (arg
-              (let ((hour (read-string "Today at (14, 1430, 14:45): ")))
-                (org-schedule nil (my/org-process-time-input hour))
-                (message "Scheduled for today.")))
-             ;; 2. Task hat bereits ein Datum -> Löschen (Backlog)
-             (is-scheduled
-              (org-schedule '(4))
-              (message "Cleared -> Backlog."))
-             ;; 3. Task hat KEIN Datum -> Heute einplanen (Playlist)
-             (t
-              (let ((hour (read-string "Today at (14, 1430, 14:45) [Enter=Today]: ")))
-                (org-schedule nil (my/org-process-time-input hour))
-                (message "Added to Playlist for today.")))))))
-      (when (derived-mode-p 'org-agenda-mode)
-        (org-agenda-redo))))
+(defun my/org-playlist-toggle (arg)
+  (interactive "P")
+  (let* ((marker (or (get-text-property (point) 'org-marker)
+                     (get-text-property (point) 'org-hd-marker)))
+         (buffer (if marker (marker-buffer marker) (current-buffer)))
+         (pos (if marker (marker-position marker) (point))))
+    (with-current-buffer buffer
+      (save-excursion
+        (goto-char pos)
+        (let ((is-scheduled (org-get-scheduled-time (point))))
+          (cond
+           (arg
+            (let ((hour (read-string "Today at (14, 1430, 14:45): ")))
+              (org-schedule nil (my/org-process-time-input hour))
+              (message "Scheduled for today.")))
+           (is-scheduled
+            (org-schedule '(4))
+            (message "Cleared -> Backlog."))
+           (t
+            (let ((hour (read-string "Today at (14, 1430, 14:45) [Enter=Today]: ")))
+              (org-schedule nil (my/org-process-time-input hour))
+              (message "Added to Playlist for today.")))))))
+    (when (derived-mode-p 'org-agenda-mode)
+      (org-agenda-redo))))
 
-  (defun my/org-capture-get-hour-timestamp ()
-    "Prompt for hour and return bracketed Org timestamp."
-    (let ((input (read-string "Hour (14, 1430, 14:45) [Enter=Now]: ")))
-      (my/org-process-time-input input t)))
+(defun my/org-capture-get-hour-timestamp ()
+  (let ((input (read-string "Hour (14, 1430, 14:45) [Enter=Now]: ")))
+    (my/org-process-time-input input t)))
 
-  :config
-  (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
-  (let ((list '(("T" . my/org-playlist-toggle)
-                ("S" . org-schedule))))
-    (if (boundp 'org-speed-commands)
-        (setq org-speed-commands (append list org-speed-commands))
-      (setq org-speed-commands-user list))))
+(add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
+(let ((list '(("T" . my/org-playlist-toggle)
+              ("S" . org-schedule))))
+  (if (boundp 'org-speed-commands)
+      (setq org-speed-commands (append list org-speed-commands))
+    (setq org-speed-commands-user list)))
 
+;; org-tempo
+(require 'org-tempo)
 
-;;;;; org-tempo
+;; org-protocol
+(require 'org-protocol)
+(add-to-list 'org-capture-templates
+             '("p" "Protocol" entry (file "")
+               "* TODO %?[[%:link][%:description]]\n%i\n" :prepend t :immediate-finish t))
+(add-to-list 'org-capture-templates
+             '("L" "Protocol Link" entry (file "")
+               "* TODO %?[[%:link][%:description]]\n" :prepend t :immediate-finish t))
 
-(use-package org-tempo
-  :ensure nil)
+;; org-agenda
+(require 'org-agenda)
+(define-key org-agenda-mode-map (kbd "M-4") (lambda () (interactive)
+                                              (org-agenda-todo 'done)
+                                              (org-agenda-redo-all)))
+(define-key org-agenda-mode-map (kbd "T") 'my/org-playlist-toggle)
+(defun my-org-agenda (key) (interactive) (org-agenda nil key))
+(setq org-agenda-start-with-log-mode t
+      org-agenda-todo-ignore-scheduled 'all
+      org-agenda-todo-ignore-deadlines 'far
+      org-agenda-dim-blocked-tasks t
+      org-agenda-show-all-dates nil
+      org-agenda-prefix-format "%?-12t% s"
+      org-agenda-confirm-kill nil
+      org-tags-match-list-sublevels nil
+      org-agenda-span 2
+      org-deadline-warning-days 1)
 
-;;;;; org-protocol
-(use-package org-protocol
-  :ensure nil
-  :demand
-  :config
-  (add-to-list 'org-capture-templates
-               '("p" "Protocol" entry (file "")
-                 "* TODO %?[[%:link][%:description]]\n%i\n" :prepend t :immediate-finish t))
-  (add-to-list 'org-capture-templates
-               '("L" "Protocol Link" entry (file "")
-                 "* TODO %?[[%:link][%:description]]\n" :prepend t :immediate-finish t)))
+(setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
 
-;;;;; org-agenda
-(use-package org-agenda
-  :ensure nil
-  :bind (:map org-agenda-mode-map
-              ("M-4" . (lambda () (interactive)
-                         (org-agenda-todo 'done)
-                         (org-agenda-redo-all)))
-              ("T" . my/org-playlist-toggle))
-  :init
-  (defun my-org-agenda (key) (interactive) (org-agenda nil key))
-  (setq org-agenda-start-with-log-mode t)
-  (setq org-agenda-todo-ignore-scheduled 'future) ;don't show future scheduled
-  (setq org-agenda-todo-ignore-deadlines 'far)    ;show only near deadlines
-  (setq org-agenda-dim-blocked-tasks t)
-  (setq org-agenda-todo-ignore-scheduled 'all) ;hide scheduled TODOs
-  (setq org-agenda-dim-blocked-tasks t)
-  (setq org-agenda-show-all-dates nil)
-  (setq org-agenda-prefix-format "%?-12t% s")
-  (setq org-agenda-confirm-kill nil)
-  (setq org-tags-match-list-sublevels nil)
-  (setq org-agenda-span 2)
-  (setq org-deadline-warning-days 1)
+(let ((agendas "~/.agenda_files"))
+  (unless (file-readable-p agendas)
+    (with-temp-file agendas nil))
+  (setq org-agenda-files agendas))
 
-  :config
-  ;; add state to the sorting strategy of todo
-  (setcdr (assq 'todo org-agenda-sorting-strategy) '(todo-state-up priority-down category-keep))
+(setq org-agenda-custom-commands
+      '(("n" "@home"
+         ((tags-todo "-@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+          (tags-todo "-@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+          (tags "-@work+reminder+DEADLINE>\"<now>\|-@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+          (tags-todo "-@work+TODO={PICK}+DEADLINE>\"<now>\"|-@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+          (tags-todo "-@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+        ("w" "@work"
+         ((tags-todo "@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
+          (tags-todo "@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
+          (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
+          (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
+          (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
+        ("p" "Daily Planner"
+         ((agenda ""
+                  ((org-agenda-span 'day)
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))
+          (tags-todo "SCHEDULED=\"\"&DEADLINE=\"\"-backlog/!TODO"
+                     ((org-agenda-overriding-header "")))
+          (tags "SCHEDULED=\"\"&DEADLINE=\"\"+backlog/!TODO"
+                ((org-agenda-overriding-header "")))))))
 
-  ;; create the file for the agendas if it doesn't exist
-  (let ((agendas "~/.agenda_files"))
-    (unless (file-readable-p agendas)
-      (with-temp-file agendas nil))
-    (setq org-agenda-files agendas))
+(defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
+(defun my-org-mode-hook ()
+  (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
+(add-hook 'org-mode-hook 'my-org-mode-hook)
 
-  ;; display the agenda first
-  (setq org-agenda-custom-commands
-        '(("n" "@home"
-           ((tags-todo "-@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
-            (tags-todo "-@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
-            (tags "-@work+reminder+DEADLINE>\"<now>\|-@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
-            (tags-todo "-@work+TODO={PICK}+DEADLINE>\"<now>\"|-@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-            (tags-todo "-@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
-          ("w" "@work"
-           ((tags-todo "@work+DEADLINE<=\"<now>\"" ((org-agenda-overriding-header "now")))
-            (tags-todo "@work-DEADLINE={.}+TODO={TODO}" ((org-agenda-overriding-header "todo")))
-            (tags "@work+reminder+DEADLINE>\"<now>\|@work+reminder-DEADLINE<=\"<now>\""  ((org-agenda-overriding-header "reminders")))
-            (tags-todo "@work+TODO={PICK}+DEADLINE>\"<now>\"|@work+TODO={PICK}-DEADLINE={.}" ((org-agenda-overriding-header "pick")))
-            (tags-todo "@work+DEADLINE>=\"<now>\"" ((org-agenda-overriding-header "scheduled")))))
-          ("p" "Daily Planner"
-           ((agenda ""
-                    ((org-agenda-span 'day)
-                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))
-            ;; Abschnitt 2: Ungeplante Tasks OHNE das "backlog"-Tag (Inbox)
-            (tags-todo "SCHEDULED=\"\"&DEADLINE=\"\"-backlog/!TODO"
-                       ((org-agenda-overriding-header "")))
-            ;; Abschnitt 3: Nur Tasks mit dem Tag "backlog"
-            (tags "SCHEDULED=\"\"&DEADLINE=\"\"+backlog/!TODO"
-                  ((org-agenda-overriding-header "")))
-            ))
-          ))
+;; notifications
+(require 'notifications)
+(defun my-appt-disp-window-function (min-to-app new-time msg)
+  (notifications-notify :title (format "In %s min" min-to-app) :body msg))
+(setq appt-disp-window-function 'my-appt-disp-window-function)
+(setq appt-delete-window-function (lambda (&rest args)))
 
-  ;; add new appointments when saving the org buffer, use 'refresh argument to do it properly
-  (defun my-org-agenda-to-appt-refresh () (org-agenda-to-appt 'refresh))
-  (defun my-org-mode-hook ()
-    (add-hook 'after-save-hook 'my-org-agenda-to-appt-refresh nil 'make-it-local))
-  (add-hook 'org-mode-hook 'my-org-mode-hook))
+;; org-bullets
+(quelpa '(org-bullets :fetcher github :repo "sabof/org-bullets"))
+(require 'org-bullets)
+(add-hook 'org-mode-hook 'org-bullets-mode)
 
-(use-package notifications
-  :config
-  (defun my-appt-disp-window-function (min-to-app new-time msg)
-    (notifications-notify :title (format "In %s min" min-to-app) :body msg))
-  ;; (if (string-equal system-type "windows-nt")
-  ;;     (shell-command (format "msg /server:localhost rhu \"In %s min: %s\"" min-to-app msg))
-  (setq appt-disp-window-function 'my-appt-disp-window-function)
-  (setq appt-delete-window-function (lambda (&rest args))))
+;; ox-epub
+(quelpa '(ox-epub :fetcher github :repo "kaushalmodi/ox-epub"))
+(require 'ox-epub)
+(defun org-epub-to-azw3-export-to-file (&optional async scope command void)
+  (interactive)
+  (let* ((epub-file (org-epub-export-to-epub))
+         (output-file-base (file-name-sans-extension (buffer-file-name)))
+         (azw3-file (concat output-file-base ".azw3"))
+         (kindle-path "/run/user/1000/gvfs/mtp:host=Amazon_Kindle_Paperwhite_GN433X11525600D1/Internal Storage/documents/")
+         (convert-command (format "ebook-convert %s %s --linearize-tables"
+                                  (shell-quote-argument epub-file)
+                                  (shell-quote-argument azw3-file))))
+    (if (file-exists-p epub-file)
+        (progn
+          (message "Converting EPUB to AZW3...")
+          (shell-command convert-command)
+          (message "Exported to AZW3 file: %s" azw3-file)
+          (shell-command (format "gio copy %s %s"
+                                 (shell-quote-argument azw3-file)
+                                 (shell-quote-argument kindle-path)))
+          (message "Copied file to kindle at: %s" kindle-path))
+      (error "EPUB export failed, cannot convert to AZW3"))))
 
-;;;;; org-bullets
-;; Show bullets in org-mode as UTF-8 characters
-(use-package org-bullets
-  :config (add-hook 'org-mode-hook 'org-bullets-mode))
-;;;;; ox-epub
-(use-package ox-epub
-  :config
-  (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
-    "Export current Org buffer to EPUB using ox-epub, then convert to AZW3 using ebook-convert."
-    (interactive)
-    ;; 1. Export to EPUB (to a temporary file first)
-    (let* ((epub-file (org-epub-export-to-epub))
-           (output-file-base (file-name-sans-extension (buffer-file-name)))
-           (azw3-file (concat output-file-base ".azw3"))
-           (kindle-path "/run/user/1000/gvfs/mtp:host=Amazon_Kindle_Paperwhite_GN433X11525600D1/Internal Storage/documents/")
-           (convert-command (format "ebook-convert %s %s --linearize-tables"
-                                    (shell-quote-argument epub-file)
-                                    (shell-quote-argument azw3-file))))
-      (if (file-exists-p epub-file)
-          ;; 2. Convert EPUB to AZW3 using ebook-convert
-          (progn
-            (message "Converting EPUB to AZW3...")
-            (shell-command convert-command)
-            (message "Exported to AZW3 file: %s" azw3-file)
-            (shell-command (format "gio copy %s %s"
-                                   (shell-quote-argument azw3-file)
-                                   (shell-quote-argument kindle-path)))
-            (message "Copied file to kindle at: %s" kindle-path))
-        (error "EPUB export failed, cannot convert to AZW3"))))
-  ;; Define a new backend derived from 'epub specifically for the AZW3 action
-  ;; This function handles loading dependencies properly
-  (org-export-define-derived-backend 'azw3 'epub
-    :menu-entry
-    ;; Format: (KEY DESCRIPTION EXPORT-FUNCTION &optional MENU-PATH FEATURE)
-    '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
-  )
+(org-export-define-derived-backend 'azw3 'epub
+                                   :menu-entry '(?a "Export to AZW3" org-epub-to-azw3-export-to-file))
 
-;;;; org-babel
+;; org-babel
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((shell . t)))
-;;;; outshine
-;; outline with outshine outshines outline
-(use-package outshine
-  :diminish outline-minor-mode
-  :commands outshine-hook-function
-  :hook ((outline-minor-mode . outshine-mode)
-         (emacs-lisp-mode . outline-minor-mode))
-  :init
-  (setq outshine-imenu-show-headlines-p nil))
 
-;;;; page-break-lines
-;; Display ^L page breaks as tidy horizontal lines
-(use-package page-break-lines
-  :diminish
-  :config (global-page-break-lines-mode))
+;; outshine
+(quelpa '(outshine :fetcher github :repo "alphapapa/outshine"))
+(require 'outshine)
+(diminish 'outline-minor-mode)
+(add-hook 'outline-minor-mode-hook #'outshine-mode)
+(add-hook 'emacs-lisp-mode-hook #'outline-minor-mode)
+(setq outshine-imenu-show-headlines-p nil)
 
-;;;; paren
-;; highlight matching paren
-(use-package paren
-  :config
-  ;;visualize ( and )
-  (show-paren-mode t))
-;;;; pdf-tools
-(use-package pdf-tools
-  :hook (doc-view-mode . (pdf-tools-install pdf-tools-enable-minor-modes))
-  :magic ("%PDF" . pdf-view-mode))
+;; page-break-lines
+(quelpa '(page-break-lines :fetcher github :repo "purcell/page-break-lines"))
+(require 'page-break-lines)
+(diminish 'page-break-lines-mode)
+(global-page-break-lines-mode)
 
-;;;; php
-;; Major mode for editing PHP code
-(use-package php-mode
-  :mode "\\.module\\'"
-  :init
-  (setq php-mode-coding-style 'symfony2)
-  (setq php-template-compatibility nil)
+;; paren
+(require 'paren)
+(show-paren-mode t)
 
-  (defun my-var_dump-die (start end)
-    "Die me some var_dump quickly."
-    (interactive "r")
-    (if mark-active
-        (progn
-          (goto-char end)
-          (insert "));")
-           (goto-char start)
-           (insert "die(var_dump("))
-          (insert "die(var_dump());")))
+;; pdf-tools
+(quelpa '(pdf-tools :fetcher github :repo "vedang/pdf-tools"))
+(require 'pdf-tools)
+(add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
+(add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
 
-  :config
-  (use-package company-php
-    :config (add-to-list 'company-backends 'company-ac-php-backend)
-    :bind (:map php-mode-map
-                ("M-." . ac-php-find-symbol-at-point)
-                ("M-," . ac-php-location-stack-back)
-                ("M-S-," . ac-php-location-stack-forward)
-                ("H-i d" . my-var_dump-die)))
+;; php-mode
+(quelpa '(php-mode :fetcher github :repo "emacs-php/php-mode"))
+(require 'php-mode)
+(add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
+(setq php-mode-coding-style 'symfony2
+      php-template-compatibility nil)
 
-  (use-package php-eldoc)
+(defun my-var_dump-die (start end)
+  (interactive "r")
+  (if mark-active
+      (progn
+        (goto-char end)
+        (insert "));")
+        (goto-char start)
+        (insert "die(var_dump("))
+    (insert "die(var_dump());")))
 
-  (defun setup-php-mode ()
-    (php-eldoc-enable))
+(quelpa '(ac-php :fetcher github :repo "xcwen/ac-php"))
+(require 'company-php)
+(add-to-list 'company-backends 'company-ac-php-backend)
+(define-key php-mode-map (kbd "M-.") 'ac-php-find-symbol-at-point)
+(define-key php-mode-map (kbd "M-,") 'ac-php-location-stack-back)
+(define-key php-mode-map (kbd "M-S-,") 'ac-php-location-stack-forward)
+(define-key php-mode-map (kbd "H-i d") 'my-var_dump-die)
 
-  :hook (php-mode . setup-php-mode))
+;; pos-tip
+(quelpa '(pos-tip :fetcher github :repo "emacsmirror/pos-tip"))
+(require 'pos-tip)
+(defun my-show-help ()
+  (interactive)
+  (let* ((symbol (save-excursion
+                   (or (symbol-at-point)
+                       (progn (backward-up-list)
+                              (forward-char)
+                              (symbol-at-point)))))
+         (doc-string (if (fboundp symbol)
+                         (documentation symbol t)
+                       (documentation-property
+                        symbol 'variable-documentation t))))
+    (if doc-string
+        (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
+      (message "No documentation for %s" symbol))))
 
-;;;; pos-tip
-;; Show tooltip at point
-(use-package pos-tip
-  :config
-  (defun my-show-help ()
-    "Show docs for symbol at point or at beginning of list if not on a symbol.
-Pass symbol-name to the function DOC-FUNCTION."
-    (interactive)
-    (let* ((symbol (save-excursion
-                     (or (symbol-at-point)
-                         (progn (backward-up-list)
-                                (forward-char)
-                                (symbol-at-point)))))
-           (doc-string (if (fboundp symbol)
-                           (documentation symbol t)
-                         (documentation-property
-                          symbol 'variable-documentation t))))
-      (if doc-string
-          (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
-        (message "No documentation for %s" symbol))))
-  ;; define key to show help in lisp-modes
-  (define-key lisp-mode-shared-map (kbd "C-c C-d")
-              (lambda ()
-                (interactive)
-                (my-show-help))))
+(define-key lisp-mode-shared-map (kbd "C-c C-d")
+            (lambda ()
+              (interactive)
+              (my-show-help)))
 
-;;;; prog-mode
-;; Generic major mode for programming
-(use-package prog-mode
-  :ensure nil
-  :config
-  (defun my-prog-mode-hook ()
-    (setq show-trailing-whitespace 1)
-    (prettify-symbols-mode 1))
-  :hook (prog-mode . my-prog-mode-hook))
-;;;; projectile
-;; Manage and navigate projects in Emacs easily
-(use-package projectile
+;; prog-mode
+(require 'prog-mode)
+(defun my-prog-mode-hook ()
+  (setq show-trailing-whitespace 1)
+  (prettify-symbols-mode 1))
+(add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
-  :init
-  (setq projectile-switch-project-action 'projectile-dired)
-  (setq projectile-completion-system 'ido)
-  (setq projectile-enable-caching t)
-  (setq projectile-mode-line '(:eval (format " <%s>" (projectile-project-name)))))
+;; projectile
+(quelpa '(projectile :fetcher github :repo "bbatsov/projectile"))
+(require 'projectile)
+(setq projectile-switch-project-action 'projectile-dired
+      projectile-completion-system 'ido
+      projectile-enable-caching t
+      projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
-;;;; rainbow-mode
-;; Colorize color names in buffers
-(use-package rainbow-mode
-  :diminish
-  :hook (css-mode html-mode js-mode emacs-lisp-mode text-mode))
+;; rainbow-mode
+(quelpa '(rainbow-mode :fetcher github :repo "emacsmirror/rainbow-mode"))
+(require 'rainbow-mode)
+(diminish 'rainbow-mode)
+(add-hook 'css-mode-hook 'rainbow-mode)
+(add-hook 'html-mode-hook 'rainbow-mode)
+(add-hook 'js-mode-hook 'rainbow-mode)
+(add-hook 'emacs-lisp-mode-hook 'rainbow-mode)
+(add-hook 'text-mode-hook 'rainbow-mode)
 
-;;;; recentf
-;; setup a menu of recently opened files
-(use-package recentf
-  :config
-  (setq recentf-save-file (expand-file-name "~/.recentf"))
-  (recentf-mode 1))
-;;;; restclient
-(use-package ob-restclient)
-;;;; robe
-;; Code navigation, documentation lookup and completion for Ruby
-(use-package robe
-  :config
-  (push 'company-robe company-backends)
-  :hook (ruby-mode . robe-mode))
+;; recentf
+(require 'recentf)
+(setq recentf-save-file (expand-file-name "~/.recentf"))
+(recentf-mode 1)
 
-;;;; savehist
-;; Save minibuffer history
-(use-package savehist
-  :config
-  (setq savehist-additional-variables
-        '(kill-ring
-          mark-ring
-          global-mark-ring
-          search-ring
-          regexp-search-ring
-          extended-command-history))
-  (savehist-mode 1))
+;; restclient / ob-restclient
+(quelpa '(restclient :fetcher github :repo "pashky/restclient.el"))
+(quelpa '(ob-restclient :fetcher github :repo "alfaromartino/ob-restclient.el"))
+(require 'ob-restclient)
 
-;;;; saveplace
-;; automatically save place in files
-(use-package saveplace
-  :config (setq-default save-place t))
+;; robe
+(quelpa '(robe :fetcher github :repo "magit/robe"))
+(require 'robe)
+(push 'company-robe company-backends)
+(add-hook 'ruby-mode-hook 'robe-mode)
 
-;;;; sgml
-;; SGML- and HTML-editing modes
-(use-package sgml-mode
-  :config
-  (setq sgml-basic-offset 4)
-  (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode))
+;; savehist
+(require 'savehist)
+(setq savehist-additional-variables
+      '(kill-ring
+        mark-ring
+        global-mark-ring
+        search-ring
+        regexp-search-ring
+        extended-command-history))
+(savehist-mode 1)
 
-;;;; shr
-;; Simple HTML Renderer
-(use-package shr
-  ;; don't use proportional fonts
-  :config
-  (setq shr-use-fonts nil)
-  (setq shr-color-visible-luminance-min 60))
-;;;; skeleton
-;; Lisp language extension for writing statement skeletons
-(use-package skeleton
-  :config
-  (define-skeleton liquid-tag
-    "Inserts a liquid tag"
-    "tag: "
-    "{% " str " " _ " %}" \n
-    "{% end" str " %}")
-  (define-skeleton liquid-quote
-    "Inserts a liquid quote tag"
-    "tag: "
-    "{% quote " _ " %}" \n
-    "{% endquote %}")
-  (define-skeleton audio
-    "Insert html audio"
-    "file: "
-    "#+BEGIN_EXPORT html" \n
-    "<audio controls=\"controls\" preload=\"none\" src=\"" str "\">" \n
-    "<a href=\"" str "\">" str "</a>" \n
-    "</audio>" \n
-    "#+END_EXPORT" \n))
-;;;; shell-switcher
-(use-package shell-switcher
-  :demand
-  :config (shell-switcher-mode 1))
+;; saveplace
+(require 'saveplace)
+(setq-default save-place t)
 
-;;;; smart-mode-line
-;; A color coded smart mode-line.
-(use-package smart-mode-line
+;; sgml
+(require 'sgml-mode)
+(setq sgml-basic-offset 4)
+(add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode)
 
-  :init
-  (setq sml/vc-mode-show-backend t)
-  (setq sml/no-confirm-load-theme t)
+;; shr
+(require 'shr)
+(setq shr-use-fonts nil
+      shr-color-visible-luminance-min 60)
 
-  :config
-  (sml/setup)
-  (sml/apply-theme 'automatic))
+;; skeleton
+(require 'skeleton)
+(define-skeleton liquid-tag
+  "Inserts a liquid tag"
+  "tag: "
+  "{% " str " " _ " %}" \n
+  "{% end" str " %}")
+(define-skeleton liquid-quote
+  "Inserts a liquid quote tag"
+  "tag: "
+  "{% quote " _ " %}" \n
+  "{% endquote %}")
+(define-skeleton audio
+  "Insert html audio"
+  "file: "
+  "#+BEGIN_EXPORT html" \n
+  "<audio controls=\"controls\" preload=\"none\" src=\"" str "\">" \n
+  "<a href=\"" str "\">" str "</a>" \n
+  "</audio>" \n
+  "#+END_EXPORT" \n)
 
-;;;; systemd
-;; Major mode for editing systemd units
-(use-package systemd)
+;; shell-switcher
+(quelpa '(shell-switcher :fetcher github :repo "bbatsov/shell-switcher"))
+(require 'shell-switcher)
+(shell-switcher-mode 1)
 
-;;;; term
-(use-package term
-  :config
-  (defun my-term-setup ()
-    (interactive)
-    (define-key term-raw-map (kbd "C-y") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-p") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-n") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-s") 'term-send-raw)
-    (define-key term-raw-map (kbd "C-r") 'term-send-raw)
-    (define-key term-raw-map (kbd "M-d") (lambda () (interactive) (term-send-raw-string "\ed")))
-    (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
-    (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
-    (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
-    (define-key term-raw-map (kbd "C-S-y") 'term-paste)
-    (define-key term-raw-map (kbd "M-x") nil) ;unbind M-x
-    (define-key term-raw-map (kbd "C-]") nil))
-  (add-hook 'term-mode-hook 'my-term-setup t))
-;;;; toml-mode
-;; Major mode for editing toml files
-(use-package toml-mode)
+;; smart-mode-line
+(quelpa '(smart-mode-line :fetcher github :repo "malabarba/smart-mode-line"))
+(require 'smart-mode-line)
+(setq sml/vc-mode-show-backend t
+      sml/no-confirm-load-theme t)
+(sml/setup)
+(sml/apply-theme 'automatic)
 
-;;;; tldr
-(use-package tldr)
+;; systemd
+(quelpa '(systemd :fetcher github :repo "mskrd/systemd-mode"))
+(require 'systemd)
 
-;;;; yaml-mode
-;; Major mode for editing YAML files
-(use-package yaml-mode)
+;; term
+(require 'term)
+(defun my-term-setup ()
+  (interactive)
+  (define-key term-raw-map (kbd "C-y") 'term-send-raw)
+  (define-key term-raw-map (kbd "C-p") 'term-send-raw)
+  (define-key term-raw-map (kbd "C-n") 'term-send-raw)
+  (define-key term-raw-map (kbd "C-s") 'term-send-raw)
+  (define-key term-raw-map (kbd "C-r") 'term-send-raw)
+  (define-key term-raw-map (kbd "M-d") (lambda () (interactive) (term-send-raw-string "\ed")))
+  (define-key term-raw-map (kbd "<C-backspace>") (lambda () (interactive) (term-send-raw-string "\e\C-?")))
+  (define-key term-raw-map (kbd "M-p") (lambda () (interactive) (term-send-raw-string "\ep")))
+  (define-key term-raw-map (kbd "M-n") (lambda () (interactive) (term-send-raw-string "\en")))
+  (define-key term-raw-map (kbd "C-S-y") 'term-paste)
+  (define-key term-raw-map (kbd "M-x") nil)
+  (define-key term-raw-map (kbd "C-]") nil))
+(add-hook 'term-mode-hook 'my-term-setup t)
 
-;;;; visual-regexp
-;; A regexp/replace command for Emacs with interactive visual feedback
-(use-package visual-regexp)
+;; toml-mode
+(quelpa '(toml-mode :fetcher github :repo "auto-complete/toml-mode"))
+(require 'toml-mode)
 
-;;;; vlf
-;; View Large Files
-(use-package vlf
-  :init
-  (setq vlf-application 'dont-ask)   ;just do it
-  (setq vlf-batch-size 8192))        ;a bit more text per batch please
+;; tldr
+(quelpa '(tldr :fetcher github :repo "kuanyui/tldr.el"))
+(require 'tldr)
 
-;;;; web-mode
-;; major mode for editing web templates
-(use-package web-mode
-  :mode ("\\.html?\\'"
-         "\\.ejs?\\'")
-  :config
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-enable-engine-detection t)
-  (defun setup-web-mode ()
-    (set (make-local-variable 'electric-pair-mode) nil)) ;disable electric-pairing in web-mode
-  :hook (web-mode . setup-web-mode))
+;; yaml-mode
+(quelpa '(yaml-mode :fetcher github :repo "yoshiki/yaml-mode"))
+(require 'yaml-mode)
 
-;;;; web-search
-(use-package web-search
-  :config
-  (setq web-search-default-provider "Google"))
+;; visual-regexp
+(quelpa '(visual-regexp :fetcher github :repo "benma/visual-regexp.el"))
+(require 'visual-regexp)
 
-;;;; writeroom-mode
-(use-package writeroom-mode)
+;; vlf
+(quelpa '(vlf :fetcher github :repo "matuschk/vlf"))
+(require 'vlf)
+(setq vlf-application 'dont-ask
+      vlf-batch-size 8192)
 
-;;;; which-key
-(use-package which-key
-  :diminish
-  :config
-  (which-key-setup-minibuffer)
-  (which-key-mode))
+;; web-mode
+(quelpa '(web-mode :fetcher github :repo "fxbois/web-mode"))
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
+(setq web-mode-markup-indent-offset 2
+      web-mode-enable-engine-detection t)
+(add-hook 'web-mode-hook (lambda () (set (make-local-variable 'electric-pair-mode) nil)))
 
-;;;; xwidget
-;; api functions for xwidgets
-(use-package x-widget
-  :ensure nil
-  :bind (:map xwidget-webkit-mode-map
-              ("<mouse-4>" . xwidget-webkit-scroll-down)
-              ("<mouse-5>" . xwidget-webkit-scroll-up)
-              ("<up>" . xwidget-webkit-scroll-down)
-              ("<down>" . xwidget-webkit-scroll-up)
-              ("M-w" . xwidget-webkit-copy-selection-as-kill))
-  :hook (window-configuration-change . (lambda ()
-                                         (when (equal major-mode 'xwidget-webkit-mode)
-                                           (xwidget-webkit-adjust-size-dispatch)))))
-;;;; zenity-color-picker
-(use-package zenity-color-picker)
+;; web-search
+(quelpa '(web-search :fetcher github :repo "steckerhalter/web-search"))
+(require 'web-search)
+(setq web-search-default-provider "Google")
 
-;; Zoom window like tmux
-(use-package zoom-window)
+;; writeroom-mode
+(quelpa '(writeroom-mode :fetcher github :repo "joostkremers/writeroom-mode"))
+(require 'writeroom-mode)
 
+;; which-key
+(quelpa '(which-key :fetcher github :repo "justbur/emacs-which-key"))
+(require 'which-key)
+(diminish 'which-key-mode)
+(which-key-setup-minibuffer)
+(which-key-mode)
+
+;; xwidget
+(require 'xwidget)
+(define-key xwidget-webkit-mode-map (kbd "<mouse-4>") 'xwidget-webkit-scroll-down)
+(define-key xwidget-webkit-mode-map (kbd "<mouse-5>") 'xwidget-webkit-scroll-up)
+(define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
+(define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
+(define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
+(add-hook 'window-configuration-change-hook (lambda ()
+                                              (when (equal major-mode 'xwidget-webkit-mode)
+                                                (xwidget-webkit-adjust-size-dispatch))))
+
+;; zenity-color-picker
+(quelpa '(zenity-color-picker :fetcher github :repo "steckerhalter/zenity-color-picker"))
+(require 'zenity-color-picker)
+
+;; zoom-window
+(quelpa '(zoom-window :fetcher github :repo "syohex/emacs-zoom-window"))
+(require 'zoom-window)
+
+(provide 'steckemacs)
 ;;; steckemacs.el ends here
-
