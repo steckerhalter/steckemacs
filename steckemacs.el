@@ -38,6 +38,7 @@
     (eval-buffer)
     (quelpa-self-upgrade)))
 (require 'quelpa)
+(setq quelpa-checkout-melpa-p nil)
 
 ;;; settings
 (defvar my-todo "~/Sync/notes/todo.org")
