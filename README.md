@@ -1,12 +1,11 @@
 # steckemacs
 
-**steckEmacs** is an init file for Emacs.
+Emacs configuration that fetches and compiles packages directly from source repos via `quelpa`.
 
 ![screenshot](https://raw.github.com/steckerhalter/steckemacs/master/screenshot.png "screen shot")
 
 it uses:
 
-- [use-package](https://github.com/jwiegley/use-package)  to structure the code into logical units
 - [quelpa](https://github.com/quelpa/quelpa) to install and compile all packages from source code
 - [outshine](https://github.com/tj64/outshine) for `org-mode`-like document folding: use `C-M-i' to cycle
 
