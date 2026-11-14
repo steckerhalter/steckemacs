@@ -385,29 +385,6 @@
 (require 'aggressive-indent)
 (global-aggressive-indent-mode 1)
 
-;; anaconda-mode
-(quelpa '(anaconda-mode :fetcher github :repo "proofit404/anaconda-mode"))
-(quelpa '(pip-requirements :fetcher github :repo "pydanny/pip-requirements.el"))
-(quelpa '(pyenv-mode :fetcher github :repo "pyenv-mode/pyenv-mode"))
-
-(require 'anaconda-mode)
-(add-hook 'python-mode-hook 'anaconda-mode)
-(add-hook 'python-mode-hook 'eldoc-mode)
-
-(require 'pip-requirements)
-(require 'pyenv-mode)
-(defun projectile-pyenv-mode-set ()
-  (let ((name (projectile-project-name)))
-    (if (member name (pyenv-mode-versions))
-        (pyenv-mode-set name)
-      (pyenv-mode-set "system"))))
-(add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
-
-;; ansible-doc
-(quelpa '(ansible-doc :fetcher github :repo "towolf/ansible-doc"))
-(require 'ansible-doc)
-(add-hook 'yaml-mode-hook #'ansible-doc-mode)
-
 ;; apache-mode
 (quelpa '(apache-mode :fetcher github :repo "emacsmirror/apache-mode"))
 (require 'apache-mode)
@@ -420,7 +397,7 @@
 (appt-activate 1)
 
 ;; auctex
-(quelpa '(auctex :fetcher github :repo "auctex/auctex"))
+(package-install 'auctex)
 (require 'tex)
 (setq TeX-PDF-mode t
       TeX-parse-self t
@@ -432,22 +409,14 @@
             (define-key TeX-mode-map (kbd "<C-f8>")
                         (lambda () (interactive) (TeX-command-menu "LaTeX")))))
 
-;; auto-dictionary
-(quelpa '(auto-dictionary :fetcher github :repo "Goziu/auto-dictionary"))
-(require 'auto-dictionary)
-(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1)))
-
 ;; autorevert
 (require 'autorevert)
-(quelpa '(diminish :fetcher github :repo "myrjola/diminish"))
-(diminish 'auto-revert-mode)
 (setq auto-revert-interval 1)
 (global-auto-revert-mode 1)
 
 ;; back-button
 (quelpa '(back-button :fetcher github :repo "rolandwalker/back-button"))
 (require 'back-button)
-(diminish 'back-button-mode)
 (setq back-button-local-keystrokes nil)
 (back-button-mode 1)
 
@@ -468,7 +437,6 @@
 ;; company
 (quelpa '(company :fetcher github :repo "company-mode/company-mode"))
 (require 'company)
-(diminish 'company-mode)
 (setq company-idle-delay 0.3
       company-tooltip-limit 20
       company-minimum-prefix-length 2)
@@ -505,40 +473,15 @@
 ;; company backends & quickhelp
 (eval-after-load 'company
   '(progn
-     (quelpa '(company-anaconda :fetcher github :repo "proofit404/company-anaconda"))
-     (require 'company-anaconda)
-     (add-to-list 'company-backends 'company-anaconda)
-     (quelpa '(company-dict :fetcher github :repo "ahyatt/company-dict"))
-     (require 'company-dict)
-     (add-to-list 'company-backends 'company-dict)))
-
-(quelpa '(company-quickhelp :fetcher github :repo "syohex/emacs-company-quickhelp"))
+     (quelpa '(company-quickhelp :fetcher github :repo "company-mode/company-quickhelp"))
 (require 'company-quickhelp)
 (setq company-quickhelp-use-propertized-text t
       company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 
-(quelpa '(company-web :fetcher github :repo "proofit404/company-web"))
-(require 'company-web)
-(defun my-company-web ()
-  (set (make-local-variable 'company-backends) '(company-web-html))
-  (company-mode t))
-(add-hook 'web-mode-hook #'my-company-web)
-
 ;; custom
 (setq custom-unlispify-menu-entries nil
       custom-unlispify-tag-names nil)
-
-;; darkroom
-(quelpa '(darkroom :fetcher github :repo "joostkremers/darkroom"))
-(require 'darkroom)
-(global-set-key (kbd "S-<f11>") 'darkroom-tentative-mode)
-(setq darkroom-text-scale-increase 3
-      darkroom-margins-if-failed-guess 0.1)
-
-;; default-text-scale
-(quelpa '(default-text-scale :fetcher github :repo "bking/default-text-scale"))
-(require 'default-text-scale)
 
 ;; deft
 (quelpa '(deft :fetcher github :repo "jrblevin/deft"))
@@ -603,7 +546,7 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;; discover-my-major
-(quelpa '(discover-my-major :fetcher github :repo "steckerhalter/discover-my-major"))
+(quelpa '(discover-my-major :fetcher git :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 (require 'discover-my-major)
 
 ;; easylist-mode
@@ -618,7 +561,6 @@
 
 ;; eldoc
 (require 'eldoc)
-(diminish 'eldoc-mode)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
 
@@ -628,7 +570,6 @@
 ;; elisp-slime-nav
 (quelpa '(elisp-slime-nav :fetcher github :repo "purcell/elisp-slime-nav"))
 (require 'elisp-slime-nav)
-(diminish 'elisp-slime-nav-mode)
 (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'lisp-interaction-mode-hook 'elisp-slime-nav-mode)
@@ -697,10 +638,6 @@
   (setenv "PAGER" "cat")
   (setenv "EDITOR" "emacsclient"))
 
-(quelpa '(esh-help :fetcher github :repo "emacsorphanage/esh-help"))
-(require 'esh-help)
-(setup-esh-help-eldoc)
-
 (quelpa '(bash-completion :fetcher github :repo "szermatt/emacs-bash-completion"))
 (require 'bash-completion)
 (defun eshell-bash-completion ()
@@ -710,26 +647,14 @@
                   (save-excursion (eshell-bol) (point)) (point))))))
 (setq eshell-default-completion-function 'eshell-bash-completion)
 
-;; eval-sexp-fu
-(quelpa '(eval-sexp-fu :fetcher github :repo "Fuco1/eval-sexp-fu"))
-(require 'eval-sexp-fu)
-(define-key lisp-interaction-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
-(define-key lisp-interaction-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
-(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-sexp-fu-eval-sexp-inner-list)
-(define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-sexp-fu-eval-sexp-inner-sexp)
-(setq eval-sexp-fu-flash-duration 0.4)
-(turn-on-eval-sexp-fu-flash-mode)
-
 ;; eww
 (require 'eww)
 (setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
 ;; flymake
 (require 'flymake)
-(diminish 'flymake-mode)
 (add-hook 'php-mode-hook 'flymake-mode-on)
 (add-hook 'sh-mode-hook 'flymake-mode-on)
-(add-hook 'json-mode-hook 'flymake-mode-on)
 (add-hook 'nxml-mode-hook 'flymake-mode-on)
 (add-hook 'python-mode-hook 'flymake-mode-on)
 (add-hook 'emacs-lisp-mode-hook 'flymake-mode-on)
@@ -763,21 +688,14 @@
 (quelpa '(git-modes :fetcher github :repo "magit/git-modes"))
 (eval-after-load 'magit '(require 'git-modes))
 
-;; google-translate
-(quelpa '(google-translate :fetcher github :repo "atykhunov/google-translate"))
-(require 'google-translate)
-(setq google-translate-default-source-language "de")
-(setq google-translate-default-target-language "en")
-
 ;; grandshell-theme
-(quelpa '(grandshell-theme :fetcher github :repo "syohex/emacs-grandshell-theme"))
+(quelpa '(grandshell-theme :fetcher git :url "https://framagit.org/steckerhalter/grandshell-theme"))
 (load-theme 'grandshell t)
 
 ;; helm
 (quelpa '(helm :fetcher github :repo "emacs-helm/helm"))
 (require 'helm)
 (setq async-bytecomp-allowed-packages nil)
-(diminish 'helm-mode)
 (setq helm-idle-delay 0.1
       helm-input-idle-delay 0.1
       helm-buffer-max-length 50
@@ -786,35 +704,15 @@
       helm-mode-handle-completion-in-region nil
       helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-(quelpa '(helm-gtags :fetcher github :repo "syohex/emacs-helm-gtags"))
-(require 'helm-gtags)
-(diminish 'helm-gtags-mode)
-(helm-gtags-mode 1)
-
 (quelpa '(helm-projectile :fetcher github :repo "bbatsov/helm-projectile"))
 (require 'helm-projectile)
 
 (quelpa '(helm-system-packages :fetcher github :repo "emacsmirror/helm-system-packages"))
 (require 'helm-system-packages)
 
-(quelpa '(helm-rg :fetcher github :repo "nlamirault/emacs-helm-rg"))
-(require 'helm-rg)
-
-;; highlight-parentheses
-(quelpa '(highlight-parentheses :fetcher github :repo "Tsoding/highlight-parentheses.el"))
-(require 'highlight-parentheses)
-(add-hook 'prog-mode-hook 'highlight-parentheses-mode)
-(setq hl-paren-delay 0.2
-      hl-paren-colors '("Springgreen3"
-                        "IndianRed1"
-                        "IndianRed3"
-                        "IndianRed4"))
-(set-face-attribute 'hl-paren-face nil :weight 'ultra-bold)
-
 ;; highlight-symbol
 (quelpa '(highlight-symbol :fetcher github :repo "nschum/highlight-symbol.el"))
 (require 'highlight-symbol)
-(diminish 'highlight-symbol-mode)
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 (setq highlight-symbol-on-navigation-p t)
 
@@ -853,7 +751,7 @@
 (add-hook 'inferior-emacs-lisp-mode-hook (lambda () (turn-on-eldoc-mode)))
 
 ;; iflipb
-(quelpa '(iflipb :fetcher github :repo "rosenfeld/iflipb"))
+(quelpa '(iflipb :fetcher github :repo "jrosdahl/iflipb"))
 (require 'iflipb)
 (setq iflipb-wrap-around t
       iflipb-ignore-buffers '("*helm.**"
@@ -869,24 +767,13 @@
 (require 'ipretty)
 (ipretty-mode t)
 
-;; json-mode
-(quelpa '(json-mode :fetcher github :repo "joshplett/json-mode"))
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
-
 ;; kde-connect-mode
 (quelpa '(kde-connect-mode :fetcher github :repo "steckerhalter/kde-connect-mode"))
 (require 'kde-connect-mode)
 
-;; logview
-(quelpa '(logview :fetcher github :repo "politza/logview"))
-(require 'logview)
-(add-to-list 'auto-mode-alist '("\\.log\\'" . logview-mode))
-(setq logview-auto-revert-mode t)
-
 ;; magit
 (quelpa '(magit :fetcher github :repo "magit/magit"))
 (require 'magit)
-(diminish 'magit-wip-after-apply-mode)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
       git-commit-finish-query-functions nil
@@ -905,10 +792,6 @@
 (defun magit-push-after-commit ()
   (magit-push-current-to-upstream nil))
 (add-hook 'git-commit-post-finish-hook #'magit-push-after-commit)
-
-(quelpa '(git-auto-commit-mode :fetcher github :repo "kiwanami/emacs-git-auto-commit"))
-(autoload 'gac-commit "git-auto-commit-mode")
-(defun gac () (interactive) (gac-commit))
 
 ;; man
 (require 'man)
@@ -1206,7 +1089,7 @@
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
 ;; ox-epub
-(quelpa '(ox-epub :fetcher github :repo "kaushalmodi/ox-epub"))
+(quelpa '(ox-epub :fetcher github :repo "ofosos/ox-epub"))
 (require 'ox-epub)
 (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
   (interactive)
@@ -1239,7 +1122,6 @@
 ;; outshine
 (quelpa '(outshine :fetcher github :repo "alphapapa/outshine"))
 (require 'outshine)
-(diminish 'outline-minor-mode)
 (add-hook 'outline-minor-mode-hook #'outshine-mode)
 (add-hook 'emacs-lisp-mode-hook #'outline-minor-mode)
 (setq outshine-imenu-show-headlines-p nil)
@@ -1247,7 +1129,6 @@
 ;; page-break-lines
 (quelpa '(page-break-lines :fetcher github :repo "purcell/page-break-lines"))
 (require 'page-break-lines)
-(diminish 'page-break-lines-mode)
 (global-page-break-lines-mode)
 
 ;; paren
@@ -1323,10 +1204,24 @@
       projectile-enable-caching t
       projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
+;; python
+(quelpa '(pip-requirements :fetcher github :repo "Wilfred/pip-requirements.el"))
+(quelpa '(pyenv-mode :fetcher github :repo "pythonic-emacs/pyenv-mode"))
+
+(add-hook 'python-mode-hook 'eldoc-mode)
+
+(require 'pip-requirements)
+(require 'pyenv-mode)
+(defun projectile-pyenv-mode-set ()
+  (let ((name (projectile-project-name)))
+    (if (member name (pyenv-mode-versions))
+        (pyenv-mode-set name)
+      (pyenv-mode-set "system"))))
+(add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
+
 ;; rainbow-mode
 (quelpa '(rainbow-mode :fetcher github :repo "emacsmirror/rainbow-mode"))
 (require 'rainbow-mode)
-(diminish 'rainbow-mode)
 (add-hook 'css-mode-hook 'rainbow-mode)
 (add-hook 'html-mode-hook 'rainbow-mode)
 (add-hook 'js-mode-hook 'rainbow-mode)
@@ -1338,16 +1233,8 @@
 (setq recentf-save-file (expand-file-name "~/.recentf"))
 (recentf-mode 1)
 
-;; restclient / ob-restclient
+;; restclient
 (quelpa '(restclient :fetcher github :repo "pashky/restclient.el"))
-(quelpa '(ob-restclient :fetcher github :repo "alfaromartino/ob-restclient.el"))
-(require 'ob-restclient)
-
-;; robe
-(quelpa '(robe :fetcher github :repo "magit/robe"))
-(require 'robe)
-(push 'company-robe company-backends)
-(add-hook 'ruby-mode-hook 'robe-mode)
 
 ;; savehist
 (require 'savehist)
@@ -1396,7 +1283,7 @@
   "#+END_EXPORT" \n)
 
 ;; shell-switcher
-(quelpa '(shell-switcher :fetcher github :repo "bbatsov/shell-switcher"))
+(quelpa '(shell-switcher :fetcher github :repo "DamienCassou/shell-switcher"))
 (require 'shell-switcher)
 (shell-switcher-mode 1)
 
@@ -1409,7 +1296,7 @@
 (sml/apply-theme 'automatic)
 
 ;; systemd
-(quelpa '(systemd :fetcher github :repo "mskrd/systemd-mode"))
+(quelpa '(systemd :fetcher github :repo "holomorph/systemd-mode"))
 (require 'systemd)
 
 ;; term
@@ -1430,10 +1317,6 @@
   (define-key term-raw-map (kbd "C-]") nil))
 (add-hook 'term-mode-hook 'my-term-setup t)
 
-;; toml-mode
-(quelpa '(toml-mode :fetcher github :repo "auto-complete/toml-mode"))
-(require 'toml-mode)
-
 ;; tldr
 (quelpa '(tldr :fetcher github :repo "kuanyui/tldr.el"))
 (require 'tldr)
@@ -1446,12 +1329,6 @@
 (quelpa '(visual-regexp :fetcher github :repo "benma/visual-regexp.el"))
 (require 'visual-regexp)
 
-;; vlf
-(quelpa '(vlf :fetcher github :repo "matuschk/vlf"))
-(require 'vlf)
-(setq vlf-application 'dont-ask
-      vlf-batch-size 8192)
-
 ;; web-mode
 (quelpa '(web-mode :fetcher github :repo "fxbois/web-mode"))
 (require 'web-mode)
@@ -1461,11 +1338,6 @@
       web-mode-enable-engine-detection t)
 (add-hook 'web-mode-hook (lambda () (set (make-local-variable 'electric-pair-mode) nil)))
 
-;; web-search
-(quelpa '(web-search :fetcher github :repo "steckerhalter/web-search"))
-(require 'web-search)
-(setq web-search-default-provider "Google")
-
 ;; writeroom-mode
 (quelpa '(writeroom-mode :fetcher github :repo "joostkremers/writeroom-mode"))
 (require 'writeroom-mode)
@@ -1473,7 +1345,6 @@
 ;; which-key
 (quelpa '(which-key :fetcher github :repo "justbur/emacs-which-key"))
 (require 'which-key)
-(diminish 'which-key-mode)
 (which-key-setup-minibuffer)
 (which-key-mode)
 
@@ -1488,14 +1359,5 @@
                                               (when (equal major-mode 'xwidget-webkit-mode)
                                                 (xwidget-webkit-adjust-size-dispatch))))
 
-;; zenity-color-picker
-(quelpa '(zenity-color-picker :fetcher github :repo "steckerhalter/zenity-color-picker"))
-(require 'zenity-color-picker)
-
-;; zoom-window
-(quelpa '(zoom-window :fetcher github :repo "syohex/emacs-zoom-window"))
-(require 'zoom-window)
-
 (provide 'steckemacs)
 ;;; steckemacs.el ends here
-(put 'erase-buffer 'disabled nil)
