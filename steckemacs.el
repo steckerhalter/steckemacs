@@ -33,7 +33,7 @@
 (package-initialize)
 
 ;; Helper function for clean package-vc-install usage
-(defun my-package-install (name url)
+(defun pinstall (name url)
   (unless (package-installed-p name)
     (package-vc-install `(,name :url ,url))))
 
@@ -385,12 +385,12 @@
 
 ;;; package configurations
 ;;;; aggressive-indent
-(my-package-install 'aggressive-indent "https://github.com/Malabarba/aggressive-indent-mode")
+(pinstall 'aggressive-indent "https://github.com/Malabarba/aggressive-indent-mode")
 (require 'aggressive-indent)
 (global-aggressive-indent-mode 1)
 
 ;;;; apache-mode
-(my-package-install 'apache-mode "https://github.com/emacsmirror/apache-mode")
+(pinstall 'apache-mode "https://github.com/emacsmirror/apache-mode")
 (require 'apache-mode)
 
 ;;;; appt
@@ -419,8 +419,8 @@
 (global-auto-revert-mode 1)
 
 ;;;; back-button
-(my-package-install 'nav-flash "https://github.com/rolandwalker/nav-flash")
-(my-package-install 'back-button "https://github.com/rolandwalker/back-button")
+(pinstall 'nav-flash "https://github.com/rolandwalker/nav-flash")
+(pinstall 'back-button "https://github.com/rolandwalker/back-button")
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
 (back-button-mode 1)
@@ -433,14 +433,14 @@
     (browse-url-of-file file)))
 
 ;;;; cider
-(my-package-install 'cider "https://github.com/clojure-emacs/cider")
+(pinstall 'cider "https://github.com/clojure-emacs/cider")
 (setq cider-popup-stacktraces nil
       cider-repl-popup-stacktraces nil
       cider-repl-pop-to-buffer-on-connect t
       cider-repl-use-clojure-font-lock t)
 
 ;;;; company
-(my-package-install 'company "https://github.com/company-mode/company-mode")
+(pinstall 'company "https://github.com/company-mode/company-mode")
 (require 'company)
 (setq company-idle-delay 0.3
       company-tooltip-limit 20
@@ -469,7 +469,7 @@
   (set (make-local-variable 'company-backends)
        '((company-capf :with company-dabbrev-code))))
 
-(my-package-install 'company-statistics "https://github.com/company-mode/company-statistics")
+(pinstall 'company-statistics "https://github.com/company-mode/company-statistics")
 (require 'company-statistics)
 (add-hook 'emacs-lisp-mode-hook 'my-company-elisp-setup)
 (add-hook 'lisp-interaction-mode-hook 'my-company-elisp-setup)
@@ -478,7 +478,7 @@
 ;;;; company backends & quickhelp
 (eval-after-load 'company
   '(progn
-     (my-package-install 'company-quickhelp "https://github.com/company-mode/company-quickhelp")
+     (pinstall 'company-quickhelp "https://github.com/company-mode/company-quickhelp")
      (require 'company-quickhelp)
      (setq company-quickhelp-use-propertized-text t
 	       company-quickhelp-delay 1)
@@ -489,7 +489,7 @@
       custom-unlispify-tag-names nil)
 
 ;;;; deft
-(my-package-install 'deft "https://github.com/jrblevin/deft")
+(pinstall 'deft "https://github.com/jrblevin/deft")
 (require 'deft)
 (define-key deft-mode-map (kbd "<f6>") 'quit-window)
 (define-key deft-mode-map (kbd "C-g") 'deft-filter-clear)
@@ -517,7 +517,7 @@
       deft-auto-save-interval 0)
 
 ;;;; diff-hl
-(my-package-install 'diff-hl "https://github.com/dgutov/diff-hl")
+(pinstall 'diff-hl "https://github.com/dgutov/diff-hl")
 (require 'diff-hl)
 (global-diff-hl-mode 1)
 (eval-after-load 'magit
@@ -551,15 +551,15 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
-(my-package-install 'discover-my-major "https://framagit.org/steckerhalter/discover-my-major.git")
+(pinstall 'discover-my-major "https://framagit.org/steckerhalter/discover-my-major.git")
 (require 'discover-my-major)
 
 ;;;; easylist-mode
-(my-package-install 'easylist-mode "https://github.com/steckerhalter/easylist-mode")
+(pinstall 'easylist-mode "https://github.com/steckerhalter/easylist-mode")
 (require 'easylist-mode)
 
 ;;;; easy-kill
-(my-package-install 'easy-kill "https://github.com/leoliu/easy-kill")
+(pinstall 'easy-kill "https://github.com/leoliu/easy-kill")
 (require 'easy-kill)
 (global-set-key [remap kill-ring-save] 'easy-kill)
 (global-set-key [remap mark-sexp] 'easy-mark)
@@ -573,14 +573,14 @@
 (electric-pair-mode 1)
 
 ;;;; elisp-slime-nav
-(my-package-install 'elisp-slime-nav "https://github.com/purcell/elisp-slime-nav")
+(pinstall 'elisp-slime-nav "https://github.com/purcell/elisp-slime-nav")
 (require 'elisp-slime-nav)
 (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'lisp-interaction-mode-hook 'elisp-slime-nav-mode)
 
 ;;;; emms
-(my-package-install 'emms "https://github.com/emacs-straight/emms")
+(pinstall 'emms "https://github.com/emacs-straight/emms")
 (require 'emms)
 (global-set-key (kbd "<XF86AudioPlay>") 'emms-pause)
 (global-set-key (kbd "<XF86AudioPrev>") 'emms-previous)
@@ -643,7 +643,7 @@
   (setenv "PAGER" "cat")
   (setenv "EDITOR" "emacsclient"))
 
-(my-package-install 'bash-completion "https://github.com/szermatt/emacs-bash-completion")
+(pinstall 'bash-completion "https://github.com/szermatt/emacs-bash-completion")
 (require 'bash-completion)
 (defun eshell-bash-completion ()
   (setq-local bash-completion-nospace t)
@@ -690,15 +690,15 @@
                  "%b"))))
 
 ;;;; git-modes
-(my-package-install 'git-modes "https://github.com/magit/git-modes")
+(pinstall 'git-modes "https://github.com/magit/git-modes")
 (eval-after-load 'magit '(require 'git-modes))
 
 ;;;; grandshell-theme
-(my-package-install 'grandshell-theme "https://framagit.org/steckerhalter/grandshell-theme")
+(pinstall 'grandshell-theme "https://framagit.org/steckerhalter/grandshell-theme")
 (load-theme 'grandshell t)
 
 ;;;; helm
-(my-package-install 'helm "https://github.com/emacs-helm/helm")
+(pinstall 'helm "https://github.com/emacs-helm/helm")
 (require 'helm)
 (setq async-bytecomp-allowed-packages nil)
 (setq helm-idle-delay 0.1
@@ -709,14 +709,14 @@
       helm-mode-handle-completion-in-region nil
       helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-(my-package-install 'helm-projectile "https://github.com/bbatsov/helm-projectile")
+(pinstall 'helm-projectile "https://github.com/bbatsov/helm-projectile")
 (require 'helm-projectile)
 
-(my-package-install 'helm-system-packages "https://github.com/emacsmirror/helm-system-packages")
+(pinstall 'helm-system-packages "https://github.com/emacsmirror/helm-system-packages")
 (require 'helm-system-packages)
 
 ;;;; highlight-symbol
-(my-package-install 'highlight-symbol "https://github.com/nschum/highlight-symbol.el")
+(pinstall 'highlight-symbol "https://github.com/nschum/highlight-symbol.el")
 (require 'highlight-symbol)
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 (setq highlight-symbol-on-navigation-p t)
@@ -738,16 +738,16 @@
 (put 'ido-exit-minibuffer 'disabled nil)
 
 ;;;; ido-completing-read+
-(my-package-install 'ido-completing-read+ "https://github.com/emacsmirror/ido-completing-read-plus")
+(pinstall 'ido-completing-read+ "https://github.com/emacsmirror/ido-completing-read-plus")
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
 
-(my-package-install 'amx "https://github.com/DarwinAwardWinner/amx")
+(pinstall 'amx "https://github.com/DarwinAwardWinner/amx")
 (require 'amx)
 (amx-mode 1)
 
 ;;;; iedit
-(my-package-install 'iedit "https://github.com/victorhge/iedit")
+(pinstall 'iedit "https://github.com/victorhge/iedit")
 (require 'iedit)
 (setq iedit-unmatched-lines-invisible t
       iedit-toggle-key-default nil)
@@ -756,7 +756,7 @@
 (add-hook 'inferior-emacs-lisp-mode-hook (lambda () (turn-on-eldoc-mode)))
 
 ;;;; iflipb
-(my-package-install 'iflipb "https://github.com/jrosdahl/iflipb")
+(pinstall 'iflipb "https://github.com/jrosdahl/iflipb")
 (require 'iflipb)
 (setq iflipb-wrap-around t
       iflipb-ignore-buffers '("*helm.**"
@@ -768,16 +768,16 @@
                               ":.*"))
 
 ;;;; ipretty
-(my-package-install 'ipretty "https://github.com/emacsmirror/ipretty")
+(pinstall 'ipretty "https://github.com/emacsmirror/ipretty")
 (require 'ipretty)
 (ipretty-mode t)
 
 ;;;; kde-connect-mode
-(my-package-install 'kde-connect-mode "https://github.com/steckerhalter/kde-connect-mode")
+(pinstall 'kde-connect-mode "https://github.com/steckerhalter/kde-connect-mode")
 (require 'kde-connect-mode)
 
 ;;;; magit
-(my-package-install 'magit "https://github.com/magit/magit")
+(pinstall 'magit "https://github.com/magit/magit")
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
@@ -803,7 +803,7 @@
 (setq Man-notify-method 'aggressive)
 
 ;;;; markdown-mode
-(my-package-install 'markdown-mode "https://github.com/jrblevin/markdown-mode")
+(pinstall 'markdown-mode "https://github.com/jrblevin/markdown-mode")
 (require 'markdown-mode)
 (define-key markdown-mode-map (kbd "C-M-i") 'markdown-shifttab)
 (define-key markdown-mode-map (kbd "<backtab>") 'markdown-promote)
@@ -841,12 +841,12 @@
 (advice-add 'markdown-convert-wiki-link-to-filename :around 'my-markdown-convert-wiki-link)
 
 ;;;; monky
-(my-package-install 'monky "https://github.com/ananthakumaran/monky")
+(pinstall 'monky "https://github.com/ananthakumaran/monky")
 (require 'monky)
 (setq monky-process-type 'cmdserver)
 
 ;;;; multiple-cursors
-(my-package-install 'multiple-cursors "https://github.com/magnars/multiple-cursors.el")
+(pinstall 'multiple-cursors "https://github.com/magnars/multiple-cursors.el")
 (require 'multiple-cursors)
 (setq mc/always-repeat-command t
       mc/always-run-for-all t)
@@ -855,7 +855,7 @@
 (global-set-key (kbd "C-?") 'mc/mark-all-like-this)
 
 ;;;; open-junk-file
-(my-package-install 'open-junk-file "https://github.com/emacsmirror/open-junk-file")
+(pinstall 'open-junk-file "https://github.com/emacsmirror/open-junk-file")
 (require 'open-junk-file)
 (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S.")
 
@@ -1089,12 +1089,12 @@
 (setq appt-delete-window-function (lambda (&rest args)))
 
 ;;;; org-bullets
-(my-package-install 'org-bullets "https://github.com/sabof/org-bullets")
+(pinstall 'org-bullets "https://github.com/sabof/org-bullets")
 (require 'org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
 ;;;; ox-epub
-(my-package-install 'ox-epub "https://github.com/ofosos/ox-epub")
+(pinstall 'ox-epub "https://github.com/ofosos/ox-epub")
 (require 'ox-epub)
 (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
   (interactive)
@@ -1125,14 +1125,14 @@
  '((shell . t)))
 
 ;;;; outshine
-(my-package-install 'outshine "https://github.com/alphapapa/outshine")
+(pinstall 'outshine "https://github.com/alphapapa/outshine")
 (require 'outshine)
 (add-hook 'outline-minor-mode-hook #'outshine-mode)
 (add-hook 'emacs-lisp-mode-hook #'outline-minor-mode)
 (setq outshine-imenu-show-headlines-p nil)
 
 ;;;; page-break-lines
-(my-package-install 'page-break-lines "https://github.com/purcell/page-break-lines")
+(pinstall 'page-break-lines "https://github.com/purcell/page-break-lines")
 (require 'page-break-lines)
 (global-page-break-lines-mode)
 
@@ -1141,13 +1141,13 @@
 (show-paren-mode t)
 
 ;;;; pdf-tools
-(my-package-install 'pdf-tools "https://github.com/vedang/pdf-tools")
+(pinstall 'pdf-tools "https://github.com/vedang/pdf-tools")
 (require 'pdf-tools)
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
 
 ;;;; php-mode
-(my-package-install 'php-mode "https://github.com/emacs-php/php-mode")
+(pinstall 'php-mode "https://github.com/emacs-php/php-mode")
 (require 'php-mode)
 (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
 (setq php-mode-coding-style 'symfony2
@@ -1163,7 +1163,7 @@
         (insert "die(var_dump("))
     (insert "die(var_dump());")))
 
-(my-package-install 'ac-php "https://github.com/xcwen/ac-php")
+(pinstall 'ac-php "https://github.com/xcwen/ac-php")
 (require 'company-php)
 (add-to-list 'company-backends 'company-ac-php-backend)
 (define-key php-mode-map (kbd "M-.") 'ac-php-find-symbol-at-point)
@@ -1172,7 +1172,7 @@
 (define-key php-mode-map (kbd "H-i d") 'my-var_dump-die)
 
 ;;;; pos-tip
-(my-package-install 'pos-tip "https://github.com/emacsmirror/pos-tip")
+(pinstall 'pos-tip "https://github.com/emacsmirror/pos-tip")
 (require 'pos-tip)
 (defun my-show-help ()
   (interactive)
@@ -1202,7 +1202,7 @@
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
 ;;;; projectile
-(my-package-install 'projectile "https://github.com/bbatsov/projectile")
+(pinstall 'projectile "https://github.com/bbatsov/projectile")
 (require 'projectile)
 (setq projectile-switch-project-action 'projectile-dired
       projectile-completion-system 'ido
@@ -1210,8 +1210,8 @@
       projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
 ;;;; python
-(my-package-install 'pip-requirements "https://github.com/Wilfred/pip-requirements.el")
-(my-package-install 'pyenv-mode "https://github.com/pythonic-emacs/pyenv-mode")
+(pinstall 'pip-requirements "https://github.com/Wilfred/pip-requirements.el")
+(pinstall 'pyenv-mode "https://github.com/pythonic-emacs/pyenv-mode")
 
 (add-hook 'python-mode-hook 'eldoc-mode)
 
@@ -1225,7 +1225,7 @@
 (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
 
 ;;;; rainbow-mode
-(my-package-install 'rainbow-mode "https://github.com/emacsmirror/rainbow-mode")
+(pinstall 'rainbow-mode "https://github.com/emacsmirror/rainbow-mode")
 (require 'rainbow-mode)
 (add-hook 'css-mode-hook 'rainbow-mode)
 (add-hook 'html-mode-hook 'rainbow-mode)
@@ -1239,7 +1239,7 @@
 (recentf-mode 1)
 
 ;;;; restclient
-(my-package-install 'restclient "https://github.com/pashky/restclient.el")
+(pinstall 'restclient "https://github.com/pashky/restclient.el")
 
 ;;;; savehist
 (require 'savehist)
@@ -1288,12 +1288,12 @@
   "#+END_EXPORT" \n)
 
 ;;;; shell-switcher
-(my-package-install 'shell-switcher "https://github.com/DamienCassou/shell-switcher")
+(pinstall 'shell-switcher "https://github.com/DamienCassou/shell-switcher")
 (require 'shell-switcher)
 (shell-switcher-mode 1)
 
 ;;;; smart-mode-line
-(my-package-install 'smart-mode-line "https://github.com/malabarba/smart-mode-line")
+(pinstall 'smart-mode-line "https://github.com/malabarba/smart-mode-line")
 (require 'smart-mode-line)
 (setq sml/vc-mode-show-backend t
       sml/no-confirm-load-theme t)
@@ -1301,7 +1301,7 @@
 (sml/apply-theme 'automatic)
 
 ;;;; systemd
-(my-package-install 'systemd "https://github.com/holomorph/systemd-mode")
+(pinstall 'systemd "https://github.com/holomorph/systemd-mode")
 (require 'systemd)
 
 ;;;; term
@@ -1323,19 +1323,19 @@
 (add-hook 'term-mode-hook 'my-term-setup t)
 
 ;;;; tldr
-(my-package-install 'tldr "https://github.com/kuanyui/tldr.el")
+(pinstall 'tldr "https://github.com/kuanyui/tldr.el")
 (require 'tldr)
 
 ;;;; yaml-mode
-(my-package-install 'yaml-mode "https://github.com/yoshiki/yaml-mode")
+(pinstall 'yaml-mode "https://github.com/yoshiki/yaml-mode")
 (require 'yaml-mode)
 
 ;;;; visual-regexp
-(my-package-install 'visual-regexp "https://github.com/benma/visual-regexp.el")
+(pinstall 'visual-regexp "https://github.com/benma/visual-regexp.el")
 (require 'visual-regexp)
 
 ;;;; web-mode
-(my-package-install 'web-mode "https://github.com/fxbois/web-mode")
+(pinstall 'web-mode "https://github.com/fxbois/web-mode")
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
@@ -1344,7 +1344,7 @@
 (add-hook 'web-mode-hook (lambda () (set (make-local-variable 'electric-pair-mode) nil)))
 
 ;;;; writeroom-mode
-(my-package-install 'writeroom-mode "https://github.com/joostkremers/writeroom-mode")
+(pinstall 'writeroom-mode "https://github.com/joostkremers/writeroom-mode")
 (require 'writeroom-mode)
 
 ;;;; which-key
