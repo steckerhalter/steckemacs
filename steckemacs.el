@@ -419,6 +419,7 @@
 (global-auto-revert-mode 1)
 
 ;;;; back-button
+(my-package-install 'nav-flash "https://github.com/rolandwalker/nav-flash")
 (my-package-install 'back-button "https://github.com/rolandwalker/back-button")
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
