@@ -420,6 +420,7 @@
 
 ;;;; back-button
 (pinstall 'nav-flash "https://github.com/rolandwalker/nav-flash")
+(pinstall 'smartrep "https://github.com/myuhe/smartrep.el")
 (pinstall 'back-button "https://github.com/rolandwalker/back-button")
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
