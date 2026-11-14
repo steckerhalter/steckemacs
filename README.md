@@ -1,5 +1,7 @@
 # steckemacs
 
+[![Emacs CI](https://github.com/steckerhalter/steckemacs/actions/workflows/ci.yml/badge.svg)](https://github.com/steckerhalter/steckemacs/actions/workflows/ci.yml)
+
 Emacs configuration that fetches and compiles packages directly from source repos via `quelpa`.
 
 ![screenshot](https://raw.github.com/steckerhalter/steckemacs/master/screenshot.png "screen shot")
