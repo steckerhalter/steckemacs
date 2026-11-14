@@ -1295,10 +1295,6 @@
 (sml/setup)
 (sml/apply-theme 'automatic)
 
-;; systemd
-(quelpa '(systemd :fetcher github :repo "holomorph/systemd-mode"))
-(require 'systemd)
-
 ;; term
 (require 'term)
 (defun my-term-setup ()
