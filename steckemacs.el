@@ -130,7 +130,6 @@
 
 ;;; key bindings
 ;;;; free keys for usage
-(global-unset-key (kbd "<f1>"))
 (dolist (n (number-sequence 0 9))
   (global-unset-key (kbd (format "M-%d" n)))
   (global-unset-key (kbd (format "C-%d" n))))
@@ -170,10 +169,10 @@
 (global-set-key (kbd "C-c K") 'kill-emacs)
 
 ;;;; helm & search
-(global-set-key (kbd "<f1>") 'helm-occur)
-(global-set-key (kbd "S-<f1>") 'helm-projectile-ag)
-(global-set-key (kbd "C-<f1>") 'helm-show-kill-ring)
-(global-set-key (kbd "M-<f1>") 'helm-all-mark-rings)
+(global-set-key (kbd "M-1") 'helm-projectile-ag)
+(global-set-key (kbd "M-2") 'helm-show-kill-ring)
+(global-set-key (kbd "M-S-2>") 'helm-all-mark-rings)
+(global-set-key (kbd "M-3") 'helm-occur)
 (global-set-key (kbd "C-4") 'helm-mini)
 (global-set-key (kbd "C-0") 'highlight-symbol-prev)
 (global-set-key (kbd "C-9") 'highlight-symbol-next)
