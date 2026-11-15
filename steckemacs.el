@@ -554,7 +554,6 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
-(quelpa2 '(makey :url "https://github.com/mickeynp/makey"))
 (quelpa2 '(discover-my-major :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 (require 'discover-my-major)
 
@@ -783,7 +782,7 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
-(quelpa2 '(magit :url "https://github.com/magit/magit"))
+(quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
