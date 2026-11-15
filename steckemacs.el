@@ -124,7 +124,6 @@
 (setq treesit-language-source-alist
       '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
-(setq package-vc-allow-build-commands t)
 
 ;;; key bindings
 ;;;; free keys for usage
@@ -488,6 +487,9 @@
 	  company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 
+;;;; compat
+(quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
+(require 'compat)
 ;;;; custom
 (setq custom-unlispify-menu-entries nil
       custom-unlispify-tag-names nil)
@@ -783,7 +785,7 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
-(quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp" :make "all"))
+(quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
