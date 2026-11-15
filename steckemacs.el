@@ -124,6 +124,7 @@
 (setq treesit-language-source-alist
       '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
+(setq package-vc-allow-build-commands t)
 
 ;;; key bindings
 ;;;; free keys for usage
@@ -782,7 +783,7 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
-(quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
+(quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp" :make "all"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
