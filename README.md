@@ -2,11 +2,14 @@
 
 [![Build Status](https://github.com/steckerhalter/steckemacs/actions/workflows/ci.yml/badge.svg)](https://github.com/steckerhalter/steckemacs/actions/workflows/ci.yml)
 
-Emacs configuration that fetches and compiles packages directly from source repos via `package-vc`.
+Emacs configuration that fetches and compiles packages directly from source repos via `quelpa2`.
 
 ![screenshot](https://raw.github.com/steckerhalter/steckemacs/master/screenshot.png "screen shot")
 
-it uses [outshine](https://github.com/tj64/outshine) for `org-mode`-like document folding: use `C-M-i' to cycle!
+it uses:
+
+- [outshine](https://github.com/tj64/outshine) for `org-mode`-like document folding: use `C-M-i' to cycle!
+- [quelpa2](https://github.com/quelpa/quelpa2), the new package layer for decentralized packaging!
 
 ## Setup
 

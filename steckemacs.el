@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 
-;; Emacs configuration that fetches and compiles packages directly from source repos via `package-vc'.
+;; Emacs configuration that fetches and compiles packages directly from source repos via `quelpa2'.
 ;; To make it easier to navigate the init file, `outshine' is used for org-mode-like folding: use `C-M-i' to cycle
 
 ;;; Requirements:
@@ -32,10 +32,10 @@
 (require 'package)
 (package-initialize)
 
-;; Helper function for clean package-vc-install usage
-(defun pinstall (name url)
-  (unless (package-installed-p name)
-    (package-vc-install `(,name :url ,url))))
+;; Bootstrap and load quelpa2 directly
+(unless (package-installed-p 'quelpa2)
+  (package-vc-install '(quelpa2 :url "https://github.com/quelpa/quelpa2")))
+(require 'quelpa2)
 
 ;;; settings
 ;; load custom user code
@@ -385,12 +385,12 @@
 
 ;;; package configurations
 ;;;; aggressive-indent
-(pinstall 'aggressive-indent "https://github.com/Malabarba/aggressive-indent-mode")
+(quelpa2 '(aggressive-indent :url "https://github.com/Malabarba/aggressive-indent-mode"))
 (require 'aggressive-indent)
 (global-aggressive-indent-mode 1)
 
 ;;;; apache-mode
-(pinstall 'apache-mode "https://github.com/emacsmirror/apache-mode")
+(quelpa2 '(apache-mode :url "https://github.com/emacsmirror/apache-mode"))
 (require 'apache-mode)
 
 ;;;; appt
@@ -419,9 +419,9 @@
 (global-auto-revert-mode 1)
 
 ;;;; back-button
-(pinstall 'nav-flash "https://github.com/rolandwalker/nav-flash")
-(pinstall 'smartrep "https://github.com/myuhe/smartrep.el")
-(pinstall 'back-button "https://github.com/rolandwalker/back-button")
+(quelpa2 '(nav-flash :url "https://github.com/rolandwalker/nav-flash"))
+(quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el"))
+(quelpa2 '(back-button :url "https://github.com/rolandwalker/back-button"))
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
 (back-button-mode 1)
@@ -434,14 +434,14 @@
     (browse-url-of-file file)))
 
 ;;;; cider
-(pinstall 'cider "https://github.com/clojure-emacs/cider")
+(quelpa2 '(cider :url "https://github.com/clojure-emacs/cider"))
 (setq cider-popup-stacktraces nil
       cider-repl-popup-stacktraces nil
       cider-repl-pop-to-buffer-on-connect t
       cider-repl-use-clojure-font-lock t)
 
 ;;;; company
-(pinstall 'company "https://github.com/company-mode/company-mode")
+(quelpa2 '(company :url "https://github.com/company-mode/company-mode"))
 (require 'company)
 (setq company-idle-delay 0.3
       company-tooltip-limit 20
@@ -470,7 +470,7 @@
   (set (make-local-variable 'company-backends)
        '((company-capf :with company-dabbrev-code))))
 
-(pinstall 'company-statistics "https://github.com/company-mode/company-statistics")
+(quelpa2 '(company-statistics :url "https://github.com/company-mode/company-statistics"))
 (require 'company-statistics)
 (add-hook 'emacs-lisp-mode-hook 'my-company-elisp-setup)
 (add-hook 'lisp-interaction-mode-hook 'my-company-elisp-setup)
@@ -479,7 +479,7 @@
 ;;;; company backends & quickhelp
 (eval-after-load 'company
   '(progn
-     (pinstall 'company-quickhelp "https://github.com/company-mode/company-quickhelp")
+     (quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
      (require 'company-quickhelp)
      (setq company-quickhelp-use-propertized-text t
 	       company-quickhelp-delay 1)
@@ -490,7 +490,7 @@
       custom-unlispify-tag-names nil)
 
 ;;;; deft
-(pinstall 'deft "https://github.com/jrblevin/deft")
+(quelpa2 '(deft :url "https://github.com/jrblevin/deft"))
 (require 'deft)
 (define-key deft-mode-map (kbd "<f6>") 'quit-window)
 (define-key deft-mode-map (kbd "C-g") 'deft-filter-clear)
@@ -518,7 +518,7 @@
       deft-auto-save-interval 0)
 
 ;;;; diff-hl
-(pinstall 'diff-hl "https://github.com/dgutov/diff-hl")
+(quelpa2 '(diff-hl :url "https://github.com/dgutov/diff-hl"))
 (require 'diff-hl)
 (global-diff-hl-mode 1)
 (eval-after-load 'magit
@@ -552,15 +552,15 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
-(pinstall 'discover-my-major "https://framagit.org/steckerhalter/discover-my-major.git")
+(quelpa2 '(discover-my-major :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 (require 'discover-my-major)
 
 ;;;; easylist-mode
-(pinstall 'easylist-mode "https://github.com/steckerhalter/easylist-mode")
+(quelpa2 '(easylist-mode :url "https://github.com/steckerhalter/easylist-mode"))
 (require 'easylist-mode)
 
 ;;;; easy-kill
-(pinstall 'easy-kill "https://github.com/leoliu/easy-kill")
+(quelpa2 '(easy-kill :url "https://github.com/leoliu/easy-kill"))
 (require 'easy-kill)
 (global-set-key [remap kill-ring-save] 'easy-kill)
 (global-set-key [remap mark-sexp] 'easy-mark)
@@ -574,14 +574,14 @@
 (electric-pair-mode 1)
 
 ;;;; elisp-slime-nav
-(pinstall 'elisp-slime-nav "https://github.com/purcell/elisp-slime-nav")
+(quelpa2 '(elisp-slime-nav :url "https://github.com/purcell/elisp-slime-nav"))
 (require 'elisp-slime-nav)
 (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'lisp-interaction-mode-hook 'elisp-slime-nav-mode)
 
 ;;;; emms
-(pinstall 'emms "https://github.com/emacs-straight/emms")
+(quelpa2 '(emms :url "https://github.com/emacs-straight/emms"))
 (require 'emms)
 (global-set-key (kbd "<XF86AudioPlay>") 'emms-pause)
 (global-set-key (kbd "<XF86AudioPrev>") 'emms-previous)
@@ -644,7 +644,7 @@
   (setenv "PAGER" "cat")
   (setenv "EDITOR" "emacsclient"))
 
-(pinstall 'bash-completion "https://github.com/szermatt/emacs-bash-completion")
+(quelpa2 '(bash-completion :url "https://github.com/szermatt/emacs-bash-completion"))
 (require 'bash-completion)
 (defun eshell-bash-completion ()
   (setq-local bash-completion-nospace t)
@@ -691,15 +691,15 @@
                  "%b"))))
 
 ;;;; git-modes
-(pinstall 'git-modes "https://github.com/magit/git-modes")
+(quelpa2 '(git-modes :url "https://github.com/magit/git-modes"))
 (eval-after-load 'magit '(require 'git-modes))
 
 ;;;; grandshell-theme
-(pinstall 'grandshell-theme "https://framagit.org/steckerhalter/grandshell-theme")
+(quelpa2 '(grandshell-theme :url "https://framagit.org/steckerhalter/grandshell-theme"))
 (load-theme 'grandshell t)
 
 ;;;; helm
-(pinstall 'helm "https://github.com/emacs-helm/helm")
+(quelpa2 '(helm :url "https://github.com/emacs-helm/helm"))
 (require 'helm)
 (setq async-bytecomp-allowed-packages nil)
 (setq helm-idle-delay 0.1
@@ -710,14 +710,14 @@
       helm-mode-handle-completion-in-region nil
       helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-(pinstall 'helm-projectile "https://github.com/bbatsov/helm-projectile")
+(quelpa2 '(helm-projectile :url "https://github.com/bbatsov/helm-projectile"))
 (require 'helm-projectile)
 
-(pinstall 'helm-system-packages "https://github.com/emacsmirror/helm-system-packages")
+(quelpa2 '(helm-system-packages :url "https://github.com/emacsmirror/helm-system-packages"))
 (require 'helm-system-packages)
 
 ;;;; highlight-symbol
-(pinstall 'highlight-symbol "https://github.com/nschum/highlight-symbol.el")
+(quelpa2 '(highlight-symbol :url "https://github.com/nschum/highlight-symbol.el"))
 (require 'highlight-symbol)
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 (setq highlight-symbol-on-navigation-p t)
@@ -739,16 +739,16 @@
 (put 'ido-exit-minibuffer 'disabled nil)
 
 ;;;; ido-completing-read+
-(pinstall 'ido-completing-read+ "https://github.com/emacsmirror/ido-completing-read-plus")
+(quelpa2 '(ido-completing-read+ :url "https://github.com/emacsmirror/ido-completing-read-plus"))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
 
-(pinstall 'amx "https://github.com/DarwinAwardWinner/amx")
+(quelpa2 '(amx :url "https://github.com/DarwinAwardWinner/amx"))
 (require 'amx)
 (amx-mode 1)
 
 ;;;; iedit
-(pinstall 'iedit "https://github.com/victorhge/iedit")
+(quelpa2 '(iedit :url "https://github.com/victorhge/iedit"))
 (require 'iedit)
 (setq iedit-unmatched-lines-invisible t
       iedit-toggle-key-default nil)
@@ -757,7 +757,7 @@
 (add-hook 'inferior-emacs-lisp-mode-hook (lambda () (turn-on-eldoc-mode)))
 
 ;;;; iflipb
-(pinstall 'iflipb "https://github.com/jrosdahl/iflipb")
+(quelpa2 '(iflipb :url "https://github.com/jrosdahl/iflipb"))
 (require 'iflipb)
 (setq iflipb-wrap-around t
       iflipb-ignore-buffers '("*helm.**"
@@ -769,16 +769,16 @@
                               ":.*"))
 
 ;;;; ipretty
-(pinstall 'ipretty "https://github.com/emacsmirror/ipretty")
+(quelpa2 '(ipretty :url "https://github.com/emacsmirror/ipretty"))
 (require 'ipretty)
 (ipretty-mode t)
 
 ;;;; kde-connect-mode
-(pinstall 'kde-connect-mode "https://github.com/steckerhalter/kde-connect-mode")
+(quelpa2 '(kde-connect-mode :url "https://github.com/steckerhalter/kde-connect-mode"))
 (require 'kde-connect-mode)
 
 ;;;; magit
-(pinstall 'magit "https://github.com/magit/magit")
+(quelpa2 '(magit :url "https://github.com/magit/magit"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
@@ -804,7 +804,7 @@
 (setq Man-notify-method 'aggressive)
 
 ;;;; markdown-mode
-(pinstall 'markdown-mode "https://github.com/jrblevin/markdown-mode")
+(quelpa2 '(markdown-mode :url "https://github.com/jrblevin/markdown-mode"))
 (require 'markdown-mode)
 (define-key markdown-mode-map (kbd "C-M-i") 'markdown-shifttab)
 (define-key markdown-mode-map (kbd "<backtab>") 'markdown-promote)
@@ -842,12 +842,12 @@
 (advice-add 'markdown-convert-wiki-link-to-filename :around 'my-markdown-convert-wiki-link)
 
 ;;;; monky
-(pinstall 'monky "https://github.com/ananthakumaran/monky")
+(quelpa2 '(monky :url "https://github.com/ananthakumaran/monky"))
 (require 'monky)
 (setq monky-process-type 'cmdserver)
 
 ;;;; multiple-cursors
-(pinstall 'multiple-cursors "https://github.com/magnars/multiple-cursors.el")
+(quelpa2 '(multiple-cursors :url "https://github.com/magnars/multiple-cursors.el"))
 (require 'multiple-cursors)
 (setq mc/always-repeat-command t
       mc/always-run-for-all t)
@@ -856,7 +856,7 @@
 (global-set-key (kbd "C-?") 'mc/mark-all-like-this)
 
 ;;;; open-junk-file
-(pinstall 'open-junk-file "https://github.com/emacsmirror/open-junk-file")
+(quelpa2 '(open-junk-file :url "https://github.com/emacsmirror/open-junk-file"))
 (require 'open-junk-file)
 (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S.")
 
@@ -1090,12 +1090,12 @@
 (setq appt-delete-window-function (lambda (&rest args)))
 
 ;;;; org-bullets
-(pinstall 'org-bullets "https://github.com/sabof/org-bullets")
+(quelpa2 '(org-bullets :url "https://github.com/sabof/org-bullets"))
 (require 'org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
 ;;;; ox-epub
-(pinstall 'ox-epub "https://github.com/ofosos/ox-epub")
+(quelpa2 '(ox-epub :url "https://github.com/ofosos/ox-epub"))
 (require 'ox-epub)
 (defun org-epub-to-azw3-export-to-file (&optional async scope command void)
   (interactive)
@@ -1126,14 +1126,14 @@
  '((shell . t)))
 
 ;;;; outshine
-(pinstall 'outshine "https://github.com/alphapapa/outshine")
+(quelpa2 '(outshine :url "https://github.com/alphapapa/outshine"))
 (require 'outshine)
 (add-hook 'outline-minor-mode-hook #'outshine-mode)
 (add-hook 'emacs-lisp-mode-hook #'outline-minor-mode)
 (setq outshine-imenu-show-headlines-p nil)
 
 ;;;; page-break-lines
-(pinstall 'page-break-lines "https://github.com/purcell/page-break-lines")
+(quelpa2 '(page-break-lines :url "https://github.com/purcell/page-break-lines"))
 (require 'page-break-lines)
 (global-page-break-lines-mode)
 
@@ -1142,13 +1142,13 @@
 (show-paren-mode t)
 
 ;;;; pdf-tools
-(pinstall 'pdf-tools "https://github.com/vedang/pdf-tools")
+(quelpa2 '(pdf-tools :url "https://github.com/vedang/pdf-tools"))
 (require 'pdf-tools)
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
 
 ;;;; php-mode
-(pinstall 'php-mode "https://github.com/emacs-php/php-mode")
+(quelpa2 '(php-mode :url "https://github.com/emacs-php/php-mode"))
 (require 'php-mode)
 (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
 (setq php-mode-coding-style 'symfony2
@@ -1164,7 +1164,7 @@
         (insert "die(var_dump("))
     (insert "die(var_dump());")))
 
-(pinstall 'ac-php "https://github.com/xcwen/ac-php")
+(quelpa2 '(ac-php :url "https://github.com/xcwen/ac-php"))
 (require 'company-php)
 (add-to-list 'company-backends 'company-ac-php-backend)
 (define-key php-mode-map (kbd "M-.") 'ac-php-find-symbol-at-point)
@@ -1173,7 +1173,7 @@
 (define-key php-mode-map (kbd "H-i d") 'my-var_dump-die)
 
 ;;;; pos-tip
-(pinstall 'pos-tip "https://github.com/emacsmirror/pos-tip")
+(quelpa2 '(pos-tip :url "https://github.com/emacsmirror/pos-tip"))
 (require 'pos-tip)
 (defun my-show-help ()
   (interactive)
@@ -1203,7 +1203,7 @@
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
 ;;;; projectile
-(pinstall 'projectile "https://github.com/bbatsov/projectile")
+(quelpa2 '(projectile :url "https://github.com/bbatsov/projectile"))
 (require 'projectile)
 (setq projectile-switch-project-action 'projectile-dired
       projectile-completion-system 'ido
@@ -1211,8 +1211,8 @@
       projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 
 ;;;; python
-(pinstall 'pip-requirements "https://github.com/Wilfred/pip-requirements.el")
-(pinstall 'pyenv-mode "https://github.com/pythonic-emacs/pyenv-mode")
+(quelpa2 '(pip-requirements :url "https://github.com/Wilfred/pip-requirements.el"))
+(quelpa2 '(pyenv-mode :url "https://github.com/pythonic-emacs/pyenv-mode"))
 
 (add-hook 'python-mode-hook 'eldoc-mode)
 
@@ -1226,7 +1226,7 @@
 (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
 
 ;;;; rainbow-mode
-(pinstall 'rainbow-mode "https://github.com/emacsmirror/rainbow-mode")
+(quelpa2 '(rainbow-mode :url "https://github.com/emacsmirror/rainbow-mode"))
 (require 'rainbow-mode)
 (add-hook 'css-mode-hook 'rainbow-mode)
 (add-hook 'html-mode-hook 'rainbow-mode)
@@ -1240,7 +1240,7 @@
 (recentf-mode 1)
 
 ;;;; restclient
-(pinstall 'restclient "https://github.com/pashky/restclient.el")
+(quelpa2 '(restclient :url "https://github.com/pashky/restclient.el"))
 
 ;;;; savehist
 (require 'savehist)
@@ -1289,12 +1289,12 @@
   "#+END_EXPORT" \n)
 
 ;;;; shell-switcher
-(pinstall 'shell-switcher "https://github.com/DamienCassou/shell-switcher")
+(quelpa2 '(shell-switcher :url "https://github.com/DamienCassou/shell-switcher"))
 (require 'shell-switcher)
 (shell-switcher-mode 1)
 
 ;;;; smart-mode-line
-(pinstall 'smart-mode-line "https://github.com/malabarba/smart-mode-line")
+(quelpa2 '(smart-mode-line :url "https://github.com/malabarba/smart-mode-line"))
 (require 'smart-mode-line)
 (setq sml/vc-mode-show-backend t
       sml/no-confirm-load-theme t)
@@ -1302,7 +1302,7 @@
 (sml/apply-theme 'automatic)
 
 ;;;; systemd
-(pinstall 'systemd "https://github.com/holomorph/systemd-mode")
+(quelpa2 '(systemd :url "https://github.com/holomorph/systemd-mode"))
 (require 'systemd)
 
 ;;;; term
@@ -1324,19 +1324,19 @@
 (add-hook 'term-mode-hook 'my-term-setup t)
 
 ;;;; tldr
-(pinstall 'tldr "https://github.com/kuanyui/tldr.el")
+(quelpa2 '(tldr :url "https://github.com/kuanyui/tldr.el"))
 (require 'tldr)
 
 ;;;; yaml-mode
-(pinstall 'yaml-mode "https://github.com/yoshiki/yaml-mode")
+(quelpa2 '(yaml-mode :url "https://github.com/yoshiki/yaml-mode"))
 (require 'yaml-mode)
 
 ;;;; visual-regexp
-(pinstall 'visual-regexp "https://github.com/benma/visual-regexp.el")
+(quelpa2 '(visual-regexp :url "https://github.com/benma/visual-regexp.el"))
 (require 'visual-regexp)
 
 ;;;; web-mode
-(pinstall 'web-mode "https://github.com/fxbois/web-mode")
+(quelpa2 '(web-mode :url "https://github.com/fxbois/web-mode"))
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs?\\'" . web-mode))
@@ -1345,7 +1345,7 @@
 (add-hook 'web-mode-hook (lambda () (set (make-local-variable 'electric-pair-mode) nil)))
 
 ;;;; writeroom-mode
-(pinstall 'writeroom-mode "https://github.com/joostkremers/writeroom-mode")
+(quelpa2 '(writeroom-mode :url "https://github.com/joostkremers/writeroom-mode"))
 (require 'writeroom-mode)
 
 ;;;; which-key
