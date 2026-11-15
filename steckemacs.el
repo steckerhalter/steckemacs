@@ -556,6 +556,7 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
+(quelpa2 '(makey :url "https://github.com/mickeynp/makey"))
 (quelpa2 '(discover-my-major :url "https://framagit.org/steckerhalter/discover-my-major.git"))
 (require 'discover-my-major)
 
