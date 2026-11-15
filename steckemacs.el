@@ -482,6 +482,7 @@
 ;;;; company backends & quickhelp
 (eval-after-load 'company
   '(progn
+     (quelpa2 '(pos-tip :url "https://github.com/pitkali/pos-tip"))
      (quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
      (require 'company-quickhelp)
      (setq company-quickhelp-use-propertized-text t
