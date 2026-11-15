@@ -747,6 +747,7 @@
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
 
+(quelpa2 '(s :url "https://github.com/magnars/s.el"))
 (quelpa2 '(amx :url "https://github.com/DarwinAwardWinner/amx"))
 (require 'amx)
 (amx-mode 1)
