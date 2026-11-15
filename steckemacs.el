@@ -742,6 +742,7 @@
 (put 'ido-exit-minibuffer 'disabled nil)
 
 ;;;; ido-completing-read+
+(quelpa2 '(memoize :url "https://github.com/skeeto/emacs-memoize"))
 (quelpa2 '(ido-completing-read+ :url "https://github.com/emacsmirror/ido-completing-read-plus"))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
