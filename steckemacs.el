@@ -480,14 +480,12 @@
 (company-statistics-mode 1)
 
 ;;;; company backends & quickhelp
-(eval-after-load 'company
-  '(progn
-     (quelpa2 '(pos-tip :url "https://github.com/pitkali/pos-tip"))
-     (quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
-     (require 'company-quickhelp)
-     (setq company-quickhelp-use-propertized-text t
-	       company-quickhelp-delay 1)
-     (company-quickhelp-mode 1)))
+(quelpa2 '(pos-tip :url "https://github.com/pitkali/pos-tip"))
+(quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
+(require 'company-quickhelp)
+(setq company-quickhelp-use-propertized-text t
+	  company-quickhelp-delay 1)
+(company-quickhelp-mode 1)
 
 ;;;; custom
 (setq custom-unlispify-menu-entries nil
