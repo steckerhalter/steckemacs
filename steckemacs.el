@@ -423,6 +423,7 @@
 (quelpa2 '(nav-flash :url "https://github.com/rolandwalker/nav-flash"))
 (quelpa2 '(persistent-soft :url "https://github.com/rolandwalker/persistent-soft"))
 (quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el"))
+(quelpa2 '(pcache :url "https://github.com/sigma/pcache"))
 (quelpa2 '(back-button :url "https://github.com/rolandwalker/back-button"))
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
