@@ -786,6 +786,7 @@
 
 ;;;; magit
 (quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
+(quelpa2 '(llama :url "https://github.com/tarsius/llama"))
 (quelpa2 '(transient :url "https://github.com/magit/transient"))
 (progn (unload-feature 'transient t) (require 'transient))
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
