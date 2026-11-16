@@ -789,7 +789,7 @@
 (quelpa2 '(llama :url "https://github.com/tarsius/llama"))
 (unload-feature 'transient t)
 (quelpa2 '(transient :url "https://github.com/magit/transient"))
-(require 'transient))
+(require 'transient)
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
