@@ -43,11 +43,6 @@
   (load "~/.user.el"))
 
 ;;;; startup & core Behavior
-;; we need to replace transient early on otherwise magit fails
-(quelpa2 '(transient :url "https://github.com/magit/transient"))
-(when (featurep 'transient)
-  (unload-feature 'transient t)
-  (require 'transient))
 (defvar my-todo "~/Sync/notes/todo.org")
 (setq inhibit-startup-message t)
 (setq initial-buffer-choice my-todo)
@@ -793,6 +788,7 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
+(quelpa2 'transient)
 (quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(llama :url "https://github.com/tarsius/llama"))
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
@@ -1381,18 +1377,3 @@
                                                 (xwidget-webkit-adjust-size-dispatch))))
 
 (provide 'steckemacs)
-;;; steckemacs.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-vc-selected-packages
-   '((transient :url "https://github.com/magit/transient")
-     (quelpa2 :url "https://github.com/quelpa/quelpa2"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
