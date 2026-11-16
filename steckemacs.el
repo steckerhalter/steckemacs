@@ -785,6 +785,7 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
+(quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(transient :url "https://github.com/magit/transient"))
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
 (require 'magit)
