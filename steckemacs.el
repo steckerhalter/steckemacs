@@ -167,13 +167,13 @@
 
 ;;;; helm & search
 (global-set-key (kbd "M-1") 'helm-projectile-ag)
-(global-set-key (kbd "M-2") 'helm-show-kill-ring)
-(global-set-key (kbd "M-S-2") 'helm-all-mark-rings)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "M-2") 'helm-all-mark-rings)
 (global-set-key (kbd "M-3") 'helm-occur)
 (global-set-key (kbd "C-4") 'helm-mini)
 (global-set-key (kbd "C-0") 'highlight-symbol-prev)
 (global-set-key (kbd "C-9") 'highlight-symbol-next)
-(global-set-key (kbd "C-c w") 'web-search)
+(global-set-key (kbd "C-c w") 'whitespace-cleanup)
 
 ;;;; org-mode, notes & agenda
 (global-set-key (kbd "C-1") 'my-capture)
