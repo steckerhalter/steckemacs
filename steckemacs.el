@@ -125,6 +125,9 @@
       '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")))
 
+;;;; package system
+(setq package-install-upgrade-built-in t)
+
 ;;; key bindings
 ;;;; free keys for usage
 (dolist (n (number-sequence 0 9))
@@ -787,9 +790,8 @@
 ;;;; magit
 (quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(llama :url "https://github.com/tarsius/llama"))
-(unload-feature 'transient t)
 (quelpa2 '(transient :url "https://github.com/magit/transient"))
-(require 'transient)
+(progn (unload-feature 'transient t) (require 'transient))
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
