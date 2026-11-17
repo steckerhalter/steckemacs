@@ -730,6 +730,14 @@
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 (setq highlight-symbol-on-navigation-p t)
 
+;;;; hl-todo
+(quelpa2 '(hl-todo :url "https://github.com/tarsius/hl-todo"))
+(global-hl-todo-mode 1)
+(with-eval-after-load 'magit
+  (add-hook 'magit-log-wash-summary-hook
+            #'hl-todo-search-and-highlight t)
+  (add-hook 'magit-revision-wash-message-hook
+            #'hl-todo-search-and-highlight t))
 ;;;; ibuffer
 (require 'ibuffer)
 (setq ibuffer-default-display-maybe-show-predicates t)
@@ -788,7 +796,8 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
-(quelpa2 'transient)
+;; TODO: after fix in quelpa2 change this
+(package-install 'transient)
 (quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(llama :url "https://github.com/tarsius/llama"))
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
@@ -1139,6 +1148,7 @@
  '((shell . t)))
 
 ;;;; outshine
+(quelpa2 '(ourorg :url "https://github.com/alphapapa/outorg"))
 (quelpa2 '(outshine :url "https://github.com/alphapapa/outshine"))
 (require 'outshine)
 (add-hook 'outline-minor-mode-hook #'outshine-mode)
@@ -1377,3 +1387,4 @@
                                                 (xwidget-webkit-adjust-size-dispatch))))
 
 (provide 'steckemacs)
+;;; steckemacs.el ends here
