@@ -703,7 +703,7 @@
 (eval-after-load 'magit '(require 'git-modes))
 
 ;;;; grandshell-theme
-(quelpa2 '(grandshell-theme :url "https://framagit.org/steckerhalter/grandshell-theme"))
+(quelpa2 '(grandshell-theme :url "https://github.com/steckerhalter/grandshell-theme"))
 (load-theme 'grandshell t)
 
 ;;;; helm
@@ -1148,7 +1148,7 @@
  '((shell . t)))
 
 ;;;; outshine
-(quelpa2 '(ourorg :url "https://github.com/alphapapa/outorg"))
+(quelpa2 '(outorg :url "https://github.com/alphapapa/outorg"))
 (quelpa2 '(outshine :url "https://github.com/alphapapa/outshine"))
 (require 'outshine)
 (add-hook 'outline-minor-mode-hook #'outshine-mode)
@@ -1388,3 +1388,15 @@
 
 (provide 'steckemacs)
 ;;; steckemacs.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-vc-selected-packages '((quelpa2 :url "https://github.com/quelpa/quelpa2"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
