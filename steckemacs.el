@@ -29,6 +29,8 @@
 ;;; Code:
 
 ;;; initialization
+;; make sure no customs end up in the init
+(setq custom-file (expand-file-name "custom-file.el" user-emacs-directory))
 (require 'package)
 (package-initialize)
 
@@ -46,7 +48,6 @@
 (defvar my-todo "~/Sync/notes/todo.org")
 (setq inhibit-startup-message t)
 (setq initial-buffer-choice my-todo)
-(setq custom-file (expand-file-name "custom-file.el" user-emacs-directory))
 ;; Automatically handle file-local variables without prompting
 (setq enable-local-variables :safe)
 (put 'narrow-to-region 'disabled nil)
@@ -560,7 +561,7 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
-(quelpa2 '(discover-my-major :url "https://framagit.org/steckerhalter/discover-my-major.git"))
+(quelpa2 '(discover-my-major :url "https://github.com/steckerhalter/discover-my-major"))
 (require 'discover-my-major)
 
 ;;;; easylist-mode
@@ -703,6 +704,7 @@
 (eval-after-load 'magit '(require 'git-modes))
 
 ;;;; grandshell-theme
+;; TODO: update canonical in repos
 (quelpa2 '(grandshell-theme :url "https://github.com/steckerhalter/grandshell-theme"))
 (load-theme 'grandshell t)
 
@@ -718,9 +720,6 @@
       helm-mode-handle-completion-in-region nil
       helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-(quelpa2 '(helm-projectile :url "https://github.com/bbatsov/helm-projectile"))
-(require 'helm-projectile)
-
 (quelpa2 '(helm-system-packages :url "https://github.com/emacsmirror/helm-system-packages"))
 (require 'helm-system-packages)
 
@@ -731,6 +730,7 @@
 (setq highlight-symbol-on-navigation-p t)
 
 ;;;; hl-todo
+(quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(hl-todo :url "https://github.com/tarsius/hl-todo"))
 (global-hl-todo-mode 1)
 (with-eval-after-load 'magit
@@ -798,7 +798,6 @@
 ;;;; magit
 ;; TODO: after fix in quelpa2 change this
 (package-install 'transient)
-(quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(llama :url "https://github.com/tarsius/llama"))
 (quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
 (require 'magit)
@@ -1165,13 +1164,13 @@
 (show-paren-mode t)
 
 ;;;; pdf-tools
-(quelpa2 '(pdf-tools :url "https://github.com/vedang/pdf-tools"))
+(quelpa2 '(pdf-tools :url "https://github.com/vedang/pdf-tools" :lisp-dir "lisp"))
 (require 'pdf-tools)
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
 
 ;;;; php-mode
-(quelpa2 '(php-mode :url "https://github.com/emacs-php/php-mode"))
+(quelpa2 '(php-mode :url "https://github.com/emacs-php/php-mode" :lisp-dir "lisp"))
 (require 'php-mode)
 (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
 (setq php-mode-coding-style 'symfony2
@@ -1187,12 +1186,6 @@
         (insert "die(var_dump("))
     (insert "die(var_dump());")))
 
-(quelpa2 '(ac-php :url "https://github.com/xcwen/ac-php"))
-(require 'company-php)
-(add-to-list 'company-backends 'company-ac-php-backend)
-(define-key php-mode-map (kbd "M-.") 'ac-php-find-symbol-at-point)
-(define-key php-mode-map (kbd "M-,") 'ac-php-location-stack-back)
-(define-key php-mode-map (kbd "M-S-,") 'ac-php-location-stack-forward)
 (define-key php-mode-map (kbd "H-i d") 'my-var_dump-die)
 
 ;;;; pos-tip
@@ -1232,9 +1225,13 @@
       projectile-completion-system 'ido
       projectile-enable-caching t
       projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
+(quelpa2 '(helm-projectile :url "https://github.com/bbatsov/helm-projectile"))
+(require 'helm-projectile)
 
 ;;;; python
 (quelpa2 '(pip-requirements :url "https://github.com/Wilfred/pip-requirements.el"))
+(quelpa2 '(f :url "https://github.com/rejeep/f.el"))
+(quelpa2 '(pythonic :url "https://github.com/pythonic-emacs/pythonic"))
 (quelpa2 '(pyenv-mode :url "https://github.com/pythonic-emacs/pyenv-mode"))
 
 (add-hook 'python-mode-hook 'eldoc-mode)
@@ -1261,9 +1258,6 @@
 (require 'recentf)
 (setq recentf-save-file (expand-file-name "~/.recentf"))
 (recentf-mode 1)
-
-;;;; restclient
-(quelpa2 '(restclient :url "https://github.com/pashky/restclient.el"))
 
 ;;;; savehist
 (require 'savehist)
@@ -1388,15 +1382,3 @@
 
 (provide 'steckemacs)
 ;;; steckemacs.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-vc-selected-packages '((quelpa2 :url "https://github.com/quelpa/quelpa2"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
