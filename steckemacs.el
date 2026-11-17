@@ -1340,10 +1340,6 @@
   (define-key term-raw-map (kbd "C-]") nil))
 (add-hook 'term-mode-hook 'my-term-setup t)
 
-;;;; tldr
-(quelpa2 '(tldr :url "https://github.com/kuanyui/tldr.el"))
-(require 'tldr)
-
 ;;;; yaml-mode
 (quelpa2 '(yaml-mode :url "https://github.com/yoshiki/yaml-mode"))
 (require 'yaml-mode)
