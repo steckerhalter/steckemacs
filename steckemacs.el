@@ -374,19 +374,18 @@
   (org-end-of-meta-data t)
   (when (equal arg 4) (org-insert-heading nil nil 2)))
 
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single line instead."
+(advice-add 'kill-region :before #'slick-cut)
+(defun slick-cut (beg end &optional region)
   (interactive
    (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
+     (list (line-beginning-position) (line-beginning-position 2)))))
 
-(defadvice kill-buffer (around kill-buffer-around-advice activate)
-  "Don't really kill *scratch* but only bury it."
-  (let ((buffer-to-kill (ad-get-arg 0)))
+(advice-add 'kill-buffer :around #'kill-buffer-around-advice)
+(defun kill-buffer-around-advice (orig-fun &rest args)
+  (let ((buffer-to-kill (car args)))
     (if (equal buffer-to-kill "*scratch*")
         (bury-buffer)
-      ad-do-it)))
+      (apply orig-fun args))))
 
 ;;; package configurations
 ;;;; aggressive-indent
@@ -406,7 +405,8 @@
 (appt-activate 1)
 
 ;;;; auctex
-(package-install 'auctex)
+(unless (package-installed-p 'auctex)
+  (package-install 'auctex))
 (require 'tex)
 (setq TeX-PDF-mode t
       TeX-parse-self t
@@ -442,7 +442,7 @@
     (browse-url-of-file file)))
 
 ;;;; cider
-(quelpa2 '(cider :url "https://github.com/clojure-emacs/cider"))
+(quelpa2 '(cider :url "https://github.com/clojure-emacs/cider" :lisp-dir "lisp"))
 (setq cider-popup-stacktraces nil
       cider-repl-popup-stacktraces nil
       cider-repl-pop-to-buffer-on-connect t
@@ -669,13 +669,13 @@
 
 ;;;; flymake
 (require 'flymake)
-(add-hook 'php-mode-hook 'flymake-mode-on)
-(add-hook 'sh-mode-hook 'flymake-mode-on)
-(add-hook 'nxml-mode-hook 'flymake-mode-on)
-(add-hook 'python-mode-hook 'flymake-mode-on)
-(add-hook 'emacs-lisp-mode-hook 'flymake-mode-on)
-(add-hook 'lisp-interaction-mode-hook 'flymake-mode-on)
-(flymake-mode-on)
+(add-hook 'php-mode-hook 'flymake-mode)
+(add-hook 'sh-mode-hook 'flymake-mode)
+(add-hook 'nxml-mode-hook 'flymake-mode)
+(add-hook 'python-mode-hook 'flymake-mode)
+(add-hook 'emacs-lisp-mode-hook 'flymake-mode)
+(add-hook 'lisp-interaction-mode-hook 'flymake-mode)
+(flymake-mode 1)
 
 ;;;; flyspell
 (require 'flyspell)
@@ -798,7 +798,8 @@
 
 ;;;; magit
 ;; TODO: after fix in quelpa2 change this
-(package-install 'magit)
+(unless (package-installed-p 'magit)
+  (package-install 'magit))
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
