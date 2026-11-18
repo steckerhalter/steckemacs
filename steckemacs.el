@@ -31,6 +31,7 @@
 ;;; initialization
 ;; make sure no customs end up in the init
 (setq custom-file (expand-file-name "custom-file.el" user-emacs-directory))
+(load custom-file 'noerror)
 (require 'package)
 (package-initialize)
 
@@ -797,9 +798,7 @@
 
 ;;;; magit
 ;; TODO: after fix in quelpa2 change this
-(package-install 'transient)
-(quelpa2 '(llama :url "https://github.com/tarsius/llama"))
-(quelpa2 '(magit :url "https://github.com/magit/magit" :lisp-dir "lisp"))
+(package-install 'magit)
 (require 'magit)
 (setq magit-no-confirm '(stage-all-changes)
       magit-push-always-verify nil
