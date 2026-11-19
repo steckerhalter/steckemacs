@@ -4,7 +4,7 @@
 
 ;; Author: Reto Hubmann (@steckerhalter)
 ;; Keywords: emacs configuration init
-;; URL: https://framagit.org/steckerhalter/steckemacs.el
+;; URL: https://github.com/steckerhalter/steckemacs.el
 
 ;; This file is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
