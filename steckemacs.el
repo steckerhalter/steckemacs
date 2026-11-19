@@ -388,6 +388,11 @@
       (apply orig-fun args))))
 
 ;;; package configurations
+;;;; general dependencies
+(quelpa2 '(s :url "https://github.com/magnars/s.el"))
+(quelpa2 '(f :url "https://github.com/rejeep/f.el"))
+(quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"
+
 ;;;; aggressive-indent
 (quelpa2 '(aggressive-indent :url "https://github.com/Malabarba/aggressive-indent-mode"))
 (require 'aggressive-indent)
@@ -424,7 +429,7 @@
 (global-auto-revert-mode 1)
 
 ;;;; back-button
-(quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el"))
+(quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el" :ignored-files ("\\`test/")))
 (quelpa2 '(pcache :url "https://github.com/sigma/pcache"))
 (quelpa2 '(list-utils :url "https://github.com/rolandwalker/list-utils"))
 (quelpa2 '(nav-flash :url "https://github.com/rolandwalker/nav-flash"))
@@ -710,7 +715,7 @@
 (load-theme 'grandshell t)
 
 ;;;; helm
-(quelpa2 '(helm :url "https://github.com/emacs-helm/helm"))
+(quelpa2 '(helm :url "https://github.com/emacs-helm/helm" :ignored-files ("\\`test/")))
 (require 'helm)
 (setq async-bytecomp-allowed-packages nil)
 (setq helm-idle-delay 0.1
@@ -757,11 +762,9 @@
 
 ;;;; ido-completing-read+
 (quelpa2 '(memoize :url "https://github.com/skeeto/emacs-memoize"))
-(quelpa2 '(ido-completing-read+ :url "https://github.com/emacsmirror/ido-completing-read-plus"))
+(quelpa2 '(ido-completing-read+ :url "https://github.com/emacsmirror/ido-completing-read-plus" :ignored-files ("\\`tests/" "\\`tests-with-flx-ido/")))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
-
-(quelpa2 '(s :url "https://github.com/magnars/s.el"))
 (quelpa2 '(amx :url "https://github.com/DarwinAwardWinner/amx"))
 (require 'amx)
 (amx-mode 1)
@@ -1230,7 +1233,6 @@
 
 ;;;; python
 (quelpa2 '(pip-requirements :url "https://github.com/Wilfred/pip-requirements.el"))
-(quelpa2 '(f :url "https://github.com/rejeep/f.el"))
 (quelpa2 '(pythonic :url "https://github.com/pythonic-emacs/pythonic"))
 (quelpa2 '(pyenv-mode :url "https://github.com/pythonic-emacs/pyenv-mode"))
 
