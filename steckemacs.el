@@ -489,7 +489,7 @@
 (quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
 (require 'company-quickhelp)
 (setq company-quickhelp-use-propertized-text t
-      company-quickhelp-color-background "#34004A"
+      company-quickhelp-color-background "#331133"
 	  company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 
