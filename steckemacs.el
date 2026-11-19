@@ -201,6 +201,7 @@
 (global-set-key (kbd "C-c v") 'visual-line-mode)
 (global-set-key (kbd "C-c D") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c m") 'menu-bar-mode)
+(global-set-key (kbd "C-c b") 'my-browse-url-dwim)
 (global-set-key (kbd "C-h C-m") 'discover-my-major)
 
 ;;; functions
