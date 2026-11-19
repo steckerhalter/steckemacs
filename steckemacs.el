@@ -391,7 +391,8 @@
 ;;;; general dependencies
 (quelpa2 '(s :url "https://github.com/magnars/s.el"))
 (quelpa2 '(f :url "https://github.com/rejeep/f.el"))
-(quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"
+(quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"))
+(quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
 
 ;;;; aggressive-indent
 (quelpa2 '(aggressive-indent :url "https://github.com/Malabarba/aggressive-indent-mode"))
@@ -446,13 +447,6 @@
   (cl-letf (((symbol-function 'browse-url) 'browse-url-firefox))
     (browse-url-of-file file)))
 
-;;;; cider
-(quelpa2 '(cider :url "https://github.com/clojure-emacs/cider" :lisp-dir "lisp"))
-(setq cider-popup-stacktraces nil
-      cider-repl-popup-stacktraces nil
-      cider-repl-pop-to-buffer-on-connect t
-      cider-repl-use-clojure-font-lock t)
-
 ;;;; company
 (quelpa2 '(company :url "https://github.com/company-mode/company-mode"))
 (require 'company)
@@ -497,41 +491,9 @@
 	  company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 
-;;;; compat
-(quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
-(require 'compat)
 ;;;; custom
 (setq custom-unlispify-menu-entries nil
       custom-unlispify-tag-names nil)
-
-;;;; deft
-(quelpa2 '(deft :url "https://github.com/jrblevin/deft"))
-(require 'deft)
-(define-key deft-mode-map (kbd "<f6>") 'quit-window)
-(define-key deft-mode-map (kbd "C-g") 'deft-filter-clear)
-(define-key deft-mode-map (kbd "C-c C-c") 'deft-refresh)
-(define-key deft-mode-map (kbd "<M-return>") 'deft-new-file)
-
-(defun deft-print-header () (deft-set-mode-name))
-(defun deft-set-mode-name ()
-  (let* ((name (if deft-incremental-search "Deft" "Deft/R"))
-         (filter (deft-whole-filter-regexp))
-         (sep (unless (string= "" filter) "/")))
-    (setq mode-name (concat name sep filter))))
-(setq deft-strip-summary-regexp
-      (concat "\\("
-              "[\n\t]"
-              "\\|^#\\+[[:upper:]_]+:.*$"
-              "\\|^# .*$"
-              "\\)"))
-(setq deft-separator " "
-      deft-directory "~/Sync"
-      deft-file-naming-rules nil
-      deft-recursive t
-      deft-default-extension "org"
-      deft-extensions '("org")
-      deft-auto-save-interval 0)
-
 ;;;; diff-hl
 (quelpa2 '(diff-hl :url "https://github.com/dgutov/diff-hl"))
 (require 'diff-hl)
@@ -567,6 +529,7 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
+(quelpa2 '(makey :url "https://github.com/mickeynp/makey"))
 (quelpa2 '(discover-my-major :url "https://github.com/steckerhalter/discover-my-major"))
 (require 'discover-my-major)
 
@@ -594,19 +557,6 @@
 (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
 (add-hook 'lisp-interaction-mode-hook 'elisp-slime-nav-mode)
-
-;;;; emms
-(quelpa2 '(emms :url "https://github.com/emacs-straight/emms"))
-(require 'emms)
-(global-set-key (kbd "<XF86AudioPlay>") 'emms-pause)
-(global-set-key (kbd "<XF86AudioPrev>") 'emms-previous)
-(global-set-key (kbd "<XF86AudioNext>") 'emms-next)
-(global-set-key (kbd "S-<XF86AudioPause>") 'emms-toggle-repeat-track)
-(global-set-key (kbd "S-<XF86AudioPrev>") 'emms-seek-backward)
-(global-set-key (kbd "S-<XF86AudioNext>") 'emms-seek-forward)
-(require 'emms-setup)
-(setq emms-player-list '(emms-player-mpv))
-(emms-standard)
 
 ;;;; erc
 (require 'erc)
@@ -667,10 +617,6 @@
           (nth 2 (bash-completion-dynamic-complete-nocomint
                   (save-excursion (eshell-bol) (point)) (point))))))
 (setq eshell-default-completion-function 'eshell-bash-completion)
-
-;;;; eww
-(require 'eww)
-(setq eww-search-prefix "https://startpage.com/do/m/mobilesearch?query=")
 
 ;;;; flymake
 (require 'flymake)
@@ -791,7 +737,7 @@
                               ":.*"))
 
 ;;;; ipretty
-(quelpa2 '(ipretty :url "https://github.com/emacsmirror/ipretty"))
+(quelpa2 '(ipretty :url "https://github.com/steckerhalter/ipretty"))
 (require 'ipretty)
 (ipretty-mode t)
 
@@ -864,11 +810,6 @@
 
 (add-hook 'markdown-mode-hook 'visual-line-mode)
 (advice-add 'markdown-convert-wiki-link-to-filename :around 'my-markdown-convert-wiki-link)
-
-;;;; monky
-(quelpa2 '(monky :url "https://github.com/ananthakumaran/monky"))
-(require 'monky)
-(setq monky-process-type 'cmdserver)
 
 ;;;; multiple-cursors
 (quelpa2 '(multiple-cursors :url "https://github.com/magnars/multiple-cursors.el"))
@@ -1171,26 +1112,6 @@
 (require 'pdf-tools)
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
-
-;;;; php-mode
-(quelpa2 '(php-mode :url "https://github.com/emacs-php/php-mode" :lisp-dir "lisp"))
-(require 'php-mode)
-(add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
-(setq php-mode-coding-style 'symfony2
-      php-template-compatibility nil)
-
-(defun my-var_dump-die (start end)
-  (interactive "r")
-  (if mark-active
-      (progn
-        (goto-char end)
-        (insert "));")
-        (goto-char start)
-        (insert "die(var_dump("))
-    (insert "die(var_dump());")))
-
-(define-key php-mode-map (kbd "H-i d") 'my-var_dump-die)
-
 ;;;; pos-tip
 (quelpa2 '(pos-tip :url "https://github.com/emacsmirror/pos-tip"))
 (require 'pos-tip)
