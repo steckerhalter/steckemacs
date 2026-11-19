@@ -145,8 +145,6 @@
 (global-set-key (kbd "s-{") (lambda () (interactive) (insert "Ü")))
 
 ;;;; movement & navigation
-(global-set-key (kbd "M-n") (lambda () (interactive) (next-line 1 t)))
-(global-set-key (kbd "M-p") (lambda () (interactive) (previous-line 1 t)))
 (global-set-key (kbd "M-o") 'back-button-local-backward)
 (global-set-key (kbd "M-i") 'back-button-local-forward)
 
