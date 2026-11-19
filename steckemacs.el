@@ -203,6 +203,7 @@
 (global-set-key (kbd "C-c v") 'visual-line-mode)
 (global-set-key (kbd "C-c D") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c m") 'menu-bar-mode)
+(global-set-key (kbd "C-h C-m") 'discover-my-major)
 
 ;;; functions
 (defun export-song () (interactive)
@@ -490,6 +491,7 @@
 (quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
 (require 'company-quickhelp)
 (setq company-quickhelp-use-propertized-text t
+      company-quickhelp-color-foreground "black"
 	  company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 
