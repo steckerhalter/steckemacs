@@ -393,6 +393,9 @@
 (quelpa2 '(f :url "https://github.com/rejeep/f.el"))
 (quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"))
 (quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
+(quelpa2 '(pcache :url "https://github.com/sigma/pcache"))
+(quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
+(quelpa2 '(memoize :url "https://github.com/skeeto/emacs-memoize"))
 
 ;;;; aggressive-indent
 (quelpa2 '(aggressive-indent :url "https://github.com/Malabarba/aggressive-indent-mode"))
@@ -431,7 +434,6 @@
 
 ;;;; back-button
 (quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el" :ignored-files ("\\`test/")))
-(quelpa2 '(pcache :url "https://github.com/sigma/pcache"))
 (quelpa2 '(list-utils :url "https://github.com/rolandwalker/list-utils"))
 (quelpa2 '(nav-flash :url "https://github.com/rolandwalker/nav-flash"))
 (quelpa2 '(persistent-soft :url "https://github.com/rolandwalker/persistent-soft"))
@@ -682,7 +684,6 @@
 (setq highlight-symbol-on-navigation-p t)
 
 ;;;; hl-todo
-(quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(hl-todo :url "https://github.com/tarsius/hl-todo"))
 (global-hl-todo-mode 1)
 (with-eval-after-load 'magit
@@ -707,7 +708,6 @@
 (put 'ido-exit-minibuffer 'disabled nil)
 
 ;;;; ido-completing-read+
-(quelpa2 '(memoize :url "https://github.com/skeeto/emacs-memoize"))
 (quelpa2 '(ido-completing-read+ :url "https://github.com/emacsmirror/ido-completing-read-plus" :ignored-files ("\\`tests/" "\\`tests-with-flx-ido/")))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
