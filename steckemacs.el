@@ -403,7 +403,7 @@
 (global-aggressive-indent-mode 1)
 
 ;;;; apache-mode
-(quelpa2 '(apache-mode :url "https://github.com/emacsmirror/apache-mode"))
+(quelpa2 '(apache-mode :url "https://github.com/emacs-php/apache-mode"))
 (require 'apache-mode)
 
 ;;;; appt
@@ -709,7 +709,7 @@
 (put 'ido-exit-minibuffer 'disabled nil)
 
 ;;;; ido-completing-read+
-(quelpa2 '(ido-completing-read+ :url "https://github.com/emacsmirror/ido-completing-read-plus" :ignored-files ("\\`tests/" "\\`tests-with-flx-ido/")))
+(quelpa2 '(ido-completing-read+ :url "https://github.com/DarwinAwardWinner/ido-completing-read-plus" :ignored-files ("\\`tests/" "\\`tests-with-flx-ido/")))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
 (quelpa2 '(amx :url "https://github.com/DarwinAwardWinner/amx"))
@@ -822,7 +822,7 @@
 (global-set-key (kbd "C-?") 'mc/mark-all-like-this)
 
 ;;;; open-junk-file
-(quelpa2 '(open-junk-file :url "https://github.com/emacsmirror/open-junk-file"))
+(quelpa2 '(open-junk-file :url "https://github.com/rubikitch/open-junk-file"))
 (require 'open-junk-file)
 (setq open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S.")
 
