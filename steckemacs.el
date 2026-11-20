@@ -39,6 +39,9 @@
 (unless (package-installed-p 'quelpa2)
   (package-vc-install '(quelpa2 :url "https://github.com/quelpa/quelpa2")))
 (require 'quelpa2)
+;; Don't upgrade already-installed packages at startup: keeps the init fast.
+;; To update a package selectively, pass `:update t' in its `quelpa2' spec.
+(setq quelpa2-update-p nil)
 
 ;;; settings
 ;; load custom user code
