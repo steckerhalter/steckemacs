@@ -194,7 +194,10 @@
 ;;;; custom shortcuts, utilities & modes (`C-c` Prefixes)
 (global-set-key (kbd "C-c s") 'my-switch-to-scratch)
 (global-set-key (kbd "C-c t") 'my-todo-buffer)
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/code/steckemacs.el/steckemacs.el")))
+(global-set-key (kbd "C-c e") (lambda () (interactive)
+                               (find-file (or (and user-init-file (file-truename user-init-file))
+                                              (locate-user-emacs-file "steckemacs.el")
+                                              "~/code/steckemacs.el/steckemacs.el"))))
 (global-set-key (kbd "C-c f") 'flyspell-mode)
 (global-set-key (kbd "C-c c") 'kde-connect-scratchpad)
 (global-set-key (kbd "C-c S") 'shell-switcher-switch-buffer)
@@ -205,12 +208,19 @@
 (global-set-key (kbd "C-h C-m") 'discover-my-major)
 
 ;;; functions
-(defun export-song () (interactive)
-       (rename-file (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))
-                    (concat "~/Nextcloud/chords/"
-                            (car (split-string (org-entry-get nil "ITEM") "-" t split-string-default-separators))
-                            ".pdf")
-                    t))
+(defun export-song ()
+  (interactive)
+  (require 'ox-latex)
+  (let* ((item (or (org-entry-get nil "ITEM") ""))
+         (base (car (split-string item "-" t split-string-default-separators)))
+         (dest-dir (expand-file-name "~/Nextcloud/chords/")))
+    (when (and base (not (string-empty-p (string-trim base))))
+      (let ((pdf (org-latex-export-to-pdf nil t nil nil '(:with-toc nil :with-tags nil))))
+        (when (and pdf (file-exists-p pdf))
+          (unless (file-directory-p dest-dir)
+            (make-directory dest-dir t))
+          (rename-file pdf (concat (file-name-as-directory dest-dir) (string-trim base) ".pdf") t))))))
+
 (defun my-todo-buffer () (interactive)
        (find-file my-todo))
 (defun my-switch-to-scratch () (interactive)
@@ -251,8 +261,11 @@
 (defun my-show-file-name ()
   "Show full path in minibuffer."
   (interactive)
-  (message (buffer-file-name))
-  (kill-new (file-truename buffer-file-name)))
+  (if-let* ((name (buffer-file-name)))
+      (let ((truename (file-truename name)))
+        (message "%s" truename)
+        (kill-new truename))
+    (user-error "Buffer is not visiting a file")))
 
 (defun my-toggle-window-split ()
   (interactive)
@@ -281,6 +294,7 @@
 
 (defun my-sudo-edit (&optional arg)
   (interactive "P")
+  (require 'ido)
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "Find file(as root): ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
@@ -298,18 +312,24 @@
   (interactive)
   (switch-to-buffer (get-buffer-create "output.json"))
   (yank)
-  (json-reformat-region (point-min) (point-max))
-  (json-mode))
+  (if (fboundp 'json-reformat-region)
+      (json-reformat-region (point-min) (point-max))
+    (require 'json)
+    (json-pretty-print-buffer))
+  (if (fboundp 'json-mode)
+      (json-mode)
+    (js-json-mode)))
 
 (defun my-browse-url-dwim ()
   (interactive)
   (require 'ffap)
-  (let* ((input (or (shr-url-at-point nil)
-                    (url-get-url-at-point)
+  (let* ((input (or (and (fboundp 'shr-url-at-point) (shr-url-at-point nil))
+                    (thing-at-point 'url)
                     (when (eq major-mode 'org-mode)
-                      (org-element-property :raw-link (org-element-lineage (org-element-context) '(link) t)))
-                    (current-kill 0 t)))
-         (url (if (string-match-p ffap-url-regexp input) input (read-string "URL: ")))
+                      (and (fboundp 'org-element-context)
+                           (org-element-property :raw-link (org-element-lineage (org-element-context) '(link) t))))
+                    (and kill-ring (current-kill 0 t))))
+         (url (if (and input (string-match-p ffap-url-regexp input)) input (read-string "URL: ")))
          (prefix (prefix-numeric-value current-prefix-arg)))
     (cond ((= prefix 0) (xwidget-webkit-browse-url url))
           ((= prefix 4) (eww url))
@@ -323,17 +343,23 @@
 (defun my-songs ()
   (interactive)
   (let ((songs (org-map-entries
-                (lambda () (substring (org-element-property :title (org-element-at-point)) 0 -13))
+                (lambda ()
+                  (let ((title (org-element-property :title (org-element-at-point))))
+                    (if (and (stringp title) (> (length title) 13))
+                        (substring title 0 -13)
+                      title)))
                 nil 'region-start-level)))
     (switch-to-buffer (get-buffer-create "Reto's Songs"))
     (erase-buffer)
     (insert "# Reto's Songs\n\n")
     (dolist (line songs)
-      (insert line)
-      (insert "  ")
-      (newline))
+      (when line
+        (insert line)
+        (insert "  ")
+        (newline)))
     (markdown-mode)
-    (markdown-preview)))
+    (when (fboundp 'markdown-preview)
+      (markdown-preview))))
 
 (defun notes-publish ()
   (interactive)
@@ -349,20 +375,21 @@
 
 (defun sync-retonom (&optional dir)
   (interactive)
-  (let ((auth (let ((netrc-file "~/.netrc")) (netrc-credentials "ftp.legtux.org"))))
+  (let ((auth (nth 0 (auth-source-search :host "ftp.legtux.org"))))
     (shell-command
-     (concat "lftp -e \"open ftp.legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/retonom/" dir " /retonom/" dir "; bye\""))))
+     (concat "lftp -e \"open ftp.legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --delete --verbose ~/retonom/" dir " /retonom/" dir "; bye\""))))
 
 (defun kkadw-sync (&optional dir)
   (interactive)
-  (let ((auth (let ((netrc-file "~/.netrc")) (netrc-credentials "legtux.org"))))
+  (let ((auth (nth 0 (auth-source-search :host "legtux.org"))))
     (shell-command
-     (concat "lftp -e \"open legtux.org; user " (car auth) " '" (cadr auth) "';mirror --no-symlinks --reverse --continue --delete --exclude-glob=.git/* --verbose ~/projects/linktree" dir " /kkadw" dir "; bye\""))))
+     (concat "lftp -e \"open legtux.org; user " (plist-get auth :user) " '" (auth-info-password auth) "';mirror --no-symlinks --reverse --continue --delete --exclude-glob=.git/* --verbose ~/projects/linktree" dir " /kkadw" dir "; bye\""))))
 
 (defun my-after-save-hook ()
   (let ((matches '("songs.org" "demos.org" "raw.org" "setup.org" "index.org")))
     (when (and buffer-file-name current-prefix-arg (member (file-name-nondirectory buffer-file-name) matches))
-      (publish-music))))
+      (when (fboundp 'publish-music)
+        (publish-music)))))
 (add-hook 'after-save-hook 'my-after-save-hook)
 
 (defun jump-to-id (id)
@@ -374,22 +401,26 @@
   (org-end-of-meta-data t)
   (when (equal arg 4) (org-insert-heading nil nil 2)))
 
-(advice-add 'kill-region :before #'slick-cut)
-(defun slick-cut (beg end &optional region)
+(advice-add 'kill-region :around #'slick-cut)
+(defun slick-cut (orig-fun &rest args)
   (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position) (line-beginning-position 2)))))
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (line-beginning-position) (line-beginning-position 2))))
+  (apply orig-fun (if (use-region-p)
+                      args
+                    (list (line-beginning-position) (line-beginning-position 2)))))
 
 (advice-add 'kill-buffer :around #'kill-buffer-around-advice)
 (defun kill-buffer-around-advice (orig-fun &rest args)
-  (let ((buffer-to-kill (car args)))
-    (if (equal buffer-to-kill "*scratch*")
-        (bury-buffer)
+  (let ((buf (get-buffer (or (car args) (current-buffer)))))
+    (if (and buf (string= (buffer-name buf) "*scratch*"))
+        (bury-buffer buf)
       (apply orig-fun args))))
 
 ;;; package configurations
 ;;;; general dependencies
-(quelpa2 '(s :url "https://github.com/magnars/s.el"))
+(quelpa2 '(s :url "https://github.com/magnars/s.el" :ignored-files ("dev*")))
 (quelpa2 '(f :url "https://github.com/rejeep/f.el"))
 (quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"))
 (quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
@@ -433,7 +464,7 @@
 (global-auto-revert-mode 1)
 
 ;;;; back-button
-(quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el" :ignored-files ("\\`test/")))
+(quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el" :ignored-files ("test*")))
 (quelpa2 '(list-utils :url "https://github.com/rolandwalker/list-utils"))
 (quelpa2 '(nav-flash :url "https://github.com/rolandwalker/nav-flash"))
 (quelpa2 '(persistent-soft :url "https://github.com/rolandwalker/persistent-soft"))
@@ -460,7 +491,7 @@
 
 (defun company-indent-for-tab-command (&optional arg)
   (interactive "P")
-  (let ((completion-at-point-functions completion-at-point-functions)
+  (let ((completion-at-point-functions-saved completion-at-point-functions)
         (completion-at-point-functions '(company-complete-common-wrapper)))
     (indent-for-tab-command arg)))
 
@@ -476,8 +507,8 @@
 (setq company-backends (remove 'company-ropemacs company-backends))
 
 (defun my-company-elisp-setup ()
-  (set (make-local-variable 'company-backends)
-       '((company-capf :with company-dabbrev-code))))
+  (setq-local company-backends
+              '((company-capf :with company-dabbrev-code))))
 
 (quelpa2 '(company-statistics :url "https://github.com/company-mode/company-statistics"))
 (require 'company-statistics)
@@ -491,7 +522,7 @@
 (require 'company-quickhelp)
 (setq company-quickhelp-use-propertized-text t
       company-quickhelp-color-background "#331133"
-	  company-quickhelp-delay 1)
+      company-quickhelp-delay 1)
 (company-quickhelp-mode 1)
 
 ;;;; custom
@@ -501,13 +532,14 @@
 (quelpa2 '(diff-hl :url "https://github.com/dgutov/diff-hl"))
 (require 'diff-hl)
 (global-diff-hl-mode 1)
-(eval-after-load 'magit
-  '(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+(with-eval-after-load 'magit
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 ;;;; dired & wdired
 (require 'dired)
 (defun my-find-name-dired (pattern)
   (interactive "sFind-name (filename wildcard): ")
+  (require 'find-dired)
   (if (and (not current-prefix-arg) (executable-find "rg"))
       (let ((find-program (concat "rg -g " (shell-quote-argument pattern) " --files"))
             (find-ls-option (cons "" "-dilsb")))
@@ -656,7 +688,8 @@
 
 ;;;; git-modes
 (quelpa2 '(git-modes :url "https://github.com/magit/git-modes"))
-(eval-after-load 'magit '(require 'git-modes))
+(with-eval-after-load 'magit
+  (require 'git-modes))
 
 ;;;; grandshell-theme
 ;; TODO: update canonical in repos
@@ -664,7 +697,7 @@
 (load-theme 'grandshell t)
 
 ;;;; helm
-(quelpa2 '(helm :url "https://github.com/emacs-helm/helm" :ignored-files ("\\`test/")))
+(quelpa2 '(helm :url "https://github.com/emacs-helm/helm" :ignored-files ("test*")))
 (require 'helm)
 (setq async-bytecomp-allowed-packages nil)
 (setq helm-idle-delay 0.1
@@ -709,7 +742,7 @@
 (put 'ido-exit-minibuffer 'disabled nil)
 
 ;;;; ido-completing-read+
-(quelpa2 '(ido-completing-read+ :url "https://github.com/DarwinAwardWinner/ido-completing-read-plus" :ignored-files ("\\`tests/" "\\`tests-with-flx-ido/")))
+(quelpa2 '(ido-completing-read+ :url "https://github.com/DarwinAwardWinner/ido-completing-read-plus" :ignored-files ("tests*")))
 (require 'ido-completing-read+)
 (ido-ubiquitous-mode 1)
 (quelpa2 '(amx :url "https://github.com/DarwinAwardWinner/amx"))
@@ -723,7 +756,7 @@
       iedit-toggle-key-default nil)
 
 ;;;; ielm
-(add-hook 'inferior-emacs-lisp-mode-hook (lambda () (turn-on-eldoc-mode)))
+(add-hook 'inferior-emacs-lisp-mode-hook #'eldoc-mode)
 
 ;;;; iflipb
 (quelpa2 '(iflipb :url "https://github.com/jrosdahl/iflipb"))
@@ -758,8 +791,8 @@
       magit-set-upstream-on-push t
       magit-diff-refine-hunk 'all
       magit-default-tracking-name-function 'magit-default-tracking-name-branch-only)
-(setq magit-wip-after-save-mode 1
-      magit-wip-after-apply-mode 1)
+(when (fboundp 'magit-wip-mode)
+  (magit-wip-mode 1))
 
 (define-key magit-mode-map (kbd "M-1") nil)
 (define-key magit-mode-map (kbd "M-2") nil)
@@ -879,7 +912,7 @@
          :recursive t)))
 
 (setq org-capture-templates
-      `(("P" "Playlist" entry (file "todo.org")"* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :immediate-finish t :prepend t)
+      `(("P" "Playlist" entry (file "todo.org") "* TODO %^{Task Name}\nSCHEDULED: %(my/org-capture-get-hour-timestamp)\n" :immediate-finish t :prepend t)
         ("s" "home" entry (file "todo.org") "* TODO %?\n" :prepend t)
         ("w" "work" entry (file ,(expand-file-name "./notes/work.org" my-work-folder)) "* TODO %?\n")
         ("l" "Link" entry (file "") "* TODO %a %T\n" :prepend t)))
@@ -933,7 +966,7 @@
   (org-map-entries
    (lambda ()
      (org-archive-subtree)
-     (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
+     (setq org-map-continue-from (or (org-element-property :begin (org-element-at-point)) (point))))
    "/DONE" 'file))
 
 (defun my/org-process-time-input (input &optional brackets)
@@ -945,7 +978,10 @@
                     ((string-match "^\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)$" trimmed)
                      (concat (substring trimmed 0 2) ":" (substring trimmed 2 4)))
                     (t trimmed)))
-         (time-str (format-time-string (concat "%Y-%m-%d %a " hour-str))))
+         (fmt (if (string-empty-p hour-str)
+                  "%Y-%m-%d %a"
+                (concat "%Y-%m-%d %a " hour-str)))
+         (time-str (format-time-string fmt)))
     (if brackets (concat "<" time-str ">") time-str)))
 
 (defun my/org-playlist-toggle (arg)
@@ -975,7 +1011,9 @@
 
 (defun my/org-capture-get-hour-timestamp ()
   (let ((input (read-string "Hour (14, 1430, 14:45) [Enter=Now]: ")))
-    (my/org-process-time-input input t)))
+    (if (string-empty-p (org-trim (or input "")))
+        (format-time-string "<%Y-%m-%d %a %H:%M>")
+      (my/org-process-time-input input t))))
 
 (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
 (let ((list '(("T" . my/org-playlist-toggle)
@@ -1114,7 +1152,7 @@
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
 ;;;; pos-tip
-(quelpa2 '(pos-tip :url "https://github.com/emacsmirror/pos-tip"))
+(quelpa2 '(pos-tip :url "https://github.com/pitkali/pos-tip"))
 (require 'pos-tip)
 (defun my-show-help ()
   (interactive)
@@ -1123,10 +1161,11 @@
                        (progn (backward-up-list)
                               (forward-char)
                               (symbol-at-point)))))
-         (doc-string (if (fboundp symbol)
-                         (documentation symbol t)
-                       (documentation-property
-                        symbol 'variable-documentation t))))
+         (doc-string (and symbol
+                          (if (fboundp symbol)
+                              (documentation symbol t)
+                            (documentation-property
+                             symbol 'variable-documentation t)))))
     (if doc-string
         (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
       (message "No documentation for %s" symbol))))
@@ -1196,7 +1235,7 @@
 
 ;;;; saveplace
 (require 'saveplace)
-(setq-default save-place t)
+(save-place-mode 1)
 
 ;;;; sgml
 (require 'sgml-mode)
@@ -1230,12 +1269,12 @@
   "#+END_EXPORT" \n)
 
 ;;;; shell-switcher
-(quelpa2 '(shell-switcher :url "https://github.com/DamienCassou/shell-switcher"))
+(quelpa2 '(shell-switcher :url "https://github.com/DamienCassou/shell-switcher" :ignored-files ("features*" "test*")))
 (require 'shell-switcher)
 (shell-switcher-mode 1)
 
 ;;;; smart-mode-line
-(quelpa2 '(smart-mode-line :url "https://github.com/malabarba/smart-mode-line"))
+(quelpa2 '(smart-mode-line :url "https://github.com/malabarba/smart-mode-line" :ignored-files ("*powerline*")))
 (require 'smart-mode-line)
 (setq sml/vc-mode-show-backend t
       sml/no-confirm-load-theme t)
@@ -1265,7 +1304,7 @@
 (add-hook 'term-mode-hook 'my-term-setup t)
 
 ;;;; yaml-mode
-(quelpa2 '(yaml-mode :url "https://github.com/yoshiki/yaml-mode"))
+(quelpa2 '(yaml-mode :url "https://github.com/yoshiki/yaml-mode" :ignored-files ("test*")))
 (require 'yaml-mode)
 
 ;;;; visual-regexp
@@ -1282,7 +1321,7 @@
 (add-hook 'web-mode-hook (lambda () (set (make-local-variable 'electric-pair-mode) nil)))
 
 ;;;; writeroom-mode
-(quelpa2 '(writeroom-mode :url "https://github.com/joostkremers/writeroom-mode"))
+(quelpa2 '(writeroom-mode :url "https://github.com/joostkremers/writeroom-mode" :ignored-files ("test*")))
 (require 'writeroom-mode)
 
 ;;;; which-key
