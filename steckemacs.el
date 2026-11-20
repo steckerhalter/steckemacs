@@ -312,10 +312,8 @@
   (interactive)
   (switch-to-buffer (get-buffer-create "output.json"))
   (yank)
-  (if (fboundp 'json-reformat-region)
-      (json-reformat-region (point-min) (point-max))
-    (require 'json)
-    (json-pretty-print-buffer))
+  (require 'json)
+  (json-pretty-print-buffer)
   (if (fboundp 'json-mode)
       (json-mode)
     (js-json-mode)))
@@ -486,7 +484,6 @@
 (setq company-idle-delay 0.3
       company-tooltip-limit 20
       company-minimum-prefix-length 2)
-(setq tab-always-indent 'complete)
 (defvar completion-at-point-functions-saved nil)
 
 (defun company-indent-for-tab-command (&optional arg)
@@ -773,6 +770,9 @@
 ;;;; ipretty
 (quelpa2 '(ipretty :url "https://github.com/steckerhalter/ipretty"))
 (require 'ipretty)
+;; `ipretty-mode' toggles the old advice API (`ad-activate-regexp'), which is
+;; not defined in Emacs 30 until `advice' is loaded: load it first.
+(require 'advice)
 (ipretty-mode t)
 
 ;;;; kde-connect-mode
@@ -780,7 +780,9 @@
 (require 'kde-connect-mode)
 
 ;;;; magit
-;; TODO: after fix in quelpa2 change this
+;; Installed via `package' on purpose: with `package-vc' the package desc gets
+;; version 0, so the old built-in magit is used instead (transient problem).
+;; TODO: switch to `quelpa2' when that problem is fixed.
 (unless (package-installed-p 'magit)
   (package-install 'magit))
 (require 'magit)
@@ -936,7 +938,6 @@
       org-confirm-babel-evaluate nil
       org-use-speed-commands t
       org-refile-targets '((org-agenda-files :maxlevel . 3))
-      org-refile-use-outline-path 'file
       org-html-postamble nil
       org-enforce-todo-checkbox-dependencies t
       org-directory "~/Sync/notes"
@@ -1186,7 +1187,9 @@
 (quelpa2 '(projectile :url "https://github.com/bbatsov/projectile"))
 (require 'projectile)
 (setq projectile-switch-project-action 'projectile-dired
-      projectile-completion-system 'ido
+      ;; `ido' as a dedicated completion system was removed in projectile 3:
+      ;; `default' uses `completing-read', which also works with ido.
+      projectile-completion-system 'default
       projectile-enable-caching t
       projectile-mode-line '(:eval (format " <%s>" (projectile-project-name))))
 (quelpa2 '(helm-projectile :url "https://github.com/bbatsov/helm-projectile"))
