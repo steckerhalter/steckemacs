@@ -194,7 +194,7 @@
 ;;;; custom shortcuts, utilities & modes (`C-c` Prefixes)
 (global-set-key (kbd "C-c s") 'my-switch-to-scratch)
 (global-set-key (kbd "C-c t") 'my-todo-buffer)
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/steckemacs.el/steckemacs.el")))
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/code/steckemacs.el/steckemacs.el")))
 (global-set-key (kbd "C-c f") 'flyspell-mode)
 (global-set-key (kbd "C-c c") 'kde-connect-scratchpad)
 (global-set-key (kbd "C-c S") 'shell-switcher-switch-buffer)
