@@ -402,18 +402,6 @@
   (org-end-of-meta-data t)
   (when (equal arg 4) (org-insert-heading nil nil 2)))
 
-(defun slick-cut (orig-fun &rest args)
-  "Cut the whole line when `kill-region' is called interactively without a region."
-  (interactive
-   (if (use-region-p)
-       (list (region-beginning) (region-end))
-     (list (line-beginning-position) (line-beginning-position 2))))
-  (if (and (not (use-region-p))
-           (called-interactively-p 'any))
-      (funcall orig-fun (line-beginning-position) (line-beginning-position 2))
-    (apply orig-fun args)))
-(advice-add 'kill-region :around #'slick-cut)
-
 (defun kill-buffer-around-advice (orig-fun &rest args)
   (let ((buf (get-buffer (or (car args) (current-buffer)))))
     (if (and buf (string= (buffer-name buf) "*scratch*"))
@@ -1253,11 +1241,6 @@
 (setq sgml-basic-offset 4)
 (add-hook 'sgml-mode-hook 'sgml-electric-tag-pair-mode)
 
-;;;; shr
-(require 'shr)
-(setq shr-use-fonts nil
-      shr-color-visible-luminance-min 60)
-
 ;;;; skeleton
 (require 'skeleton)
 (define-skeleton liquid-tag
@@ -1283,6 +1266,15 @@
 (quelpa2 '(shell-switcher :url "https://github.com/DamienCassou/shell-switcher" :ignored-files ("features*" "test*")))
 (require 'shell-switcher)
 (shell-switcher-mode 1)
+
+;;;; shr
+(require 'shr)
+(setq shr-use-fonts nil
+      shr-color-visible-luminance-min 60)
+
+;;;; slick-cut-mode
+(quelpa2 '(slick-cut-mode :url "https://github.com/steckerhalter/slick-cut-mode"))
+(slick-cut-mode 1)
 
 ;;;; smart-mode-line
 (quelpa2 '(smart-mode-line :url "https://github.com/malabarba/smart-mode-line" :ignored-files ("*powerline*")))
