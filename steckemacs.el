@@ -402,22 +402,27 @@
   (org-end-of-meta-data t)
   (when (equal arg 4) (org-insert-heading nil nil 2)))
 
-(advice-add 'kill-region :around #'slick-cut)
 (defun slick-cut (orig-fun &rest args)
+  "Cut the whole line when `kill-region' is called interactively without a region."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
      (list (line-beginning-position) (line-beginning-position 2))))
-  (apply orig-fun (if (use-region-p)
-                      args
-                    (list (line-beginning-position) (line-beginning-position 2)))))
+  (if (and (not (use-region-p))
+           (called-interactively-p 'any))
+      (funcall orig-fun (line-beginning-position) (line-beginning-position 2))
+    (apply orig-fun args)))
+(advice-add 'kill-region :around #'slick-cut)
 
-(advice-add 'kill-buffer :around #'kill-buffer-around-advice)
 (defun kill-buffer-around-advice (orig-fun &rest args)
   (let ((buf (get-buffer (or (car args) (current-buffer)))))
     (if (and buf (string= (buffer-name buf) "*scratch*"))
-        (bury-buffer buf)
+        (progn
+          (replace-buffer-in-windows buf)
+          (bury-buffer buf)
+          nil)
       (apply orig-fun args))))
+(advice-add 'kill-buffer :around #'kill-buffer-around-advice)
 
 ;;; package configurations
 ;;;; general dependencies
