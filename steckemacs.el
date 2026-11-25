@@ -38,7 +38,8 @@
 ;; Bootstrap and load quelpa2 directly
 (unless (package-installed-p 'quelpa2)
   (package-vc-install '(quelpa2 :url "https://github.com/quelpa/quelpa2")))
-(quelpa2 '(pvrecipe :url "https://github.com/quelpa/pvrecipe"))
+;; install melpa fallback and always upgrade the lib
+(quelpa2 '(pvrecipe :url "https://github.com/quelpa/pvrecipe" :update t))
 ;; Don't upgrade already-installed packages at startup: keeps the init fast.
 ;; To update a package selectively, pass `:update t' in its `quelpa2' spec.
 (setq quelpa2-update-p nil)
@@ -413,14 +414,6 @@
 (advice-add 'kill-buffer :around #'kill-buffer-around-advice)
 
 ;;; package configurations
-;;;; general dependencies
-(quelpa2 '(s :url "https://github.com/magnars/s.el" :ignored-files ("dev*")))
-(quelpa2 '(f :url "https://github.com/rejeep/f.el"))
-(quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"))
-(quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
-(quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
-(quelpa2 '(memoize :url "https://github.com/skeeto/emacs-memoize"))
-
 ;;;; aggressive-indent
 (quelpa2 '(aggressive-indent :url "https://github.com/Malabarba/aggressive-indent-mode"))
 (require 'aggressive-indent)
@@ -505,7 +498,6 @@
 (company-statistics-mode 1)
 
 ;;;; company backends & quickhelp
-(quelpa2 '(pos-tip :url "https://github.com/pitkali/pos-tip"))
 (quelpa2 '(company-quickhelp :url "https://github.com/company-mode/company-quickhelp"))
 (require 'company-quickhelp)
 (setq company-quickhelp-use-propertized-text t
@@ -552,7 +544,6 @@
 (setq wdired-allow-to-change-permissions t)
 
 ;;;; discover-my-major
-(quelpa2 '(makey :url "https://github.com/mickeynp/makey"))
 (quelpa2 '(discover-my-major :url "https://github.com/steckerhalter/discover-my-major"))
 (require 'discover-my-major)
 
@@ -1143,30 +1134,6 @@
 (require 'pdf-tools)
 (add-hook 'doc-view-mode-hook (lambda () (pdf-tools-install) (pdf-tools-enable-minor-modes)))
 (add-to-list 'magic-fallback-mode-alist '("%PDF" . pdf-view-mode))
-;;;; pos-tip
-(quelpa2 '(pos-tip :url "https://github.com/pitkali/pos-tip"))
-(require 'pos-tip)
-(defun my-show-help ()
-  (interactive)
-  (let* ((symbol (save-excursion
-                   (or (symbol-at-point)
-                       (progn (backward-up-list)
-                              (forward-char)
-                              (symbol-at-point)))))
-         (doc-string (and symbol
-                          (if (fboundp symbol)
-                              (documentation symbol t)
-                            (documentation-property
-                             symbol 'variable-documentation t)))))
-    (if doc-string
-        (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
-      (message "No documentation for %s" symbol))))
-
-(define-key lisp-mode-shared-map (kbd "C-c C-d")
-            (lambda ()
-              (interactive)
-              (my-show-help)))
-
 ;;;; prog-mode
 (require 'prog-mode)
 (defun my-prog-mode-hook ()
