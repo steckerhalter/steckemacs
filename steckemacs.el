@@ -38,7 +38,7 @@
 ;; Bootstrap and load quelpa2 directly
 (unless (package-installed-p 'quelpa2)
   (package-vc-install '(quelpa2 :url "https://github.com/quelpa/quelpa2")))
-(require 'quelpa2)
+(quelpa2 '(pvrecipe :url "https://github.com/quelpa/pvrecipe"))
 ;; Don't upgrade already-installed packages at startup: keeps the init fast.
 ;; To update a package selectively, pass `:update t' in its `quelpa2' spec.
 (setq quelpa2-update-p nil)
@@ -418,7 +418,6 @@
 (quelpa2 '(f :url "https://github.com/rejeep/f.el"))
 (quelpa2 '(async :url "https://github.com/jwiegley/emacs-async"))
 (quelpa2 '(compat :url "https://github.com/emacs-compat/compat"))
-(quelpa2 '(pcache :url "https://github.com/sigma/pcache"))
 (quelpa2 '(cond-let :url "https://github.com/tarsius/cond-let"))
 (quelpa2 '(memoize :url "https://github.com/skeeto/emacs-memoize"))
 
@@ -458,10 +457,6 @@
 (global-auto-revert-mode 1)
 
 ;;;; back-button
-(quelpa2 '(smartrep :url "https://github.com/myuhe/smartrep.el" :ignored-files ("test*")))
-(quelpa2 '(list-utils :url "https://github.com/rolandwalker/list-utils"))
-(quelpa2 '(nav-flash :url "https://github.com/rolandwalker/nav-flash"))
-(quelpa2 '(persistent-soft :url "https://github.com/rolandwalker/persistent-soft"))
 (quelpa2 '(back-button :url "https://github.com/rolandwalker/back-button"))
 (require 'back-button)
 (setq back-button-local-keystrokes nil)
