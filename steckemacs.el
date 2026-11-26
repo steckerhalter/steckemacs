@@ -30,6 +30,7 @@
 
 ;;; initialization
 ;; make sure no customs end up in the init
+(setq load-prefer-newer t)
 (setq custom-file (expand-file-name "custom-file.el" user-emacs-directory))
 (load custom-file 'noerror)
 (require 'package)
@@ -73,7 +74,7 @@
 
 ;;;; editing, indentation & completion
 (setq require-final-newline t)
-(setq default-major-mode 'text-mode)
+(setq-default major-mode 'text-mode)
 (setq tab-always-indent 'complete)
 (setq safe-local-variable-values '((engine . django)))
 (setq-default
@@ -429,7 +430,8 @@
       appt-display-interval 15
       appt-display-mode-line t
       appt-display-format 'window)
-(appt-activate 1)
+(when (and (boundp 'diary-file) diary-file (file-exists-p diary-file))
+  (appt-activate 1))
 
 ;;;; auctex
 (unless (package-installed-p 'auctex)
@@ -1294,15 +1296,16 @@
 (which-key-mode 1)
 
 ;;;; xwidget
-(require 'xwidget)
-(define-key xwidget-webkit-mode-map (kbd "<mouse-4>") 'xwidget-webkit-scroll-down)
-(define-key xwidget-webkit-mode-map (kbd "<mouse-5>") 'xwidget-webkit-scroll-up)
-(define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
-(define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
-(define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
-(add-hook 'window-configuration-change-hook (lambda ()
-                                              (when (equal major-mode 'xwidget-webkit-mode)
-                                                (xwidget-webkit-adjust-size-dispatch))))
+(when (fboundp 'xwidget-webkit-browse-url)
+  (require 'xwidget)
+  (define-key xwidget-webkit-mode-map (kbd "<mouse-4>") 'xwidget-webkit-scroll-down)
+  (define-key xwidget-webkit-mode-map (kbd "<mouse-5>") 'xwidget-webkit-scroll-up)
+  (define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
+  (define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
+  (define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
+  (add-hook 'window-configuration-change-hook (lambda ()
+                                                (when (equal major-mode 'xwidget-webkit-mode)
+                                                  (xwidget-webkit-adjust-size-dispatch)))))
 
 (provide 'steckemacs)
 ;;; steckemacs.el ends here
