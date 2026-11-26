@@ -40,6 +40,7 @@
   (package-vc-install '(quelpa2 :url "https://github.com/quelpa/quelpa2")))
 ;; install melpa fallback and always upgrade the lib
 (quelpa2 '(pvrecipe :url "https://github.com/quelpa/pvrecipe" :update t))
+(setq quelpa2-use-pvrecipe t)
 ;; Don't upgrade already-installed packages at startup: keeps the init fast.
 ;; To update a package selectively, pass `:update t' in its `quelpa2' spec.
 (setq quelpa2-update-p nil)
@@ -823,8 +824,7 @@
       markdown-footnote-location 'immediately
       markdown-wiki-link-fontify-missing t
       markdown-wiki-link-alias-first nil
-      markdown-indent-on-enter 'indent-and-new-item
-      markdown-command "pandoc -c http://benjam.info/panam/styling.css --from gfm -t html5 --mathjax --highlight-style pygments --metadata title=' ' --standalone")
+      markdown-indent-on-enter 'indent-and-new-item)
 
 (add-hook 'markdown-mode-hook 'visual-line-mode)
 (advice-add 'markdown-convert-wiki-link-to-filename :around 'my-markdown-convert-wiki-link)
