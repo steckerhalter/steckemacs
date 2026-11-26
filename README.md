@@ -42,4 +42,20 @@ This also makes sure to start the Emacs daemon if it's not running already, beca
                         mode and try connecting again
 ```
 
+## Local testing
+
+A `Makefile` is included to try the init file without touching your current
+setup:
+
+    make          # list the targets
+    make run      # start Emacs with steckemacs.el (uses your installed packages)
+    make sandbox  # start with a throwaway init dir (.sandbox); installs everything on first run
+    make batch    # load the init in batch mode, log to build/startup.log, print elapsed time
+    make check    # like batch, but exits non-zero on failure
+    make clean    # remove .sandbox and build
+
+Add `EMACS_ARGS=--debug-init` to `run` or `sandbox` to get a backtrace:
+
+    make run EMACS_ARGS=--debug-init
+
 Enjoy!
