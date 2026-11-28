@@ -178,7 +178,7 @@
 (global-set-key (kbd "M-1") 'helm-projectile-ag)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "M-2") 'helm-all-mark-rings)
-(global-set-key (kbd "M-3") 'helm-occur)
+(global-set-key (kbd "<f8>") 'helm-occur)
 (global-set-key (kbd "C-4") 'helm-mini)
 (global-set-key (kbd "C-0") 'highlight-symbol-prev)
 (global-set-key (kbd "C-9") 'highlight-symbol-next)
@@ -189,8 +189,6 @@
 (global-set-key (kbd "C-2") (lambda () (interactive) (my-capture t)))
 (global-set-key (kbd "C-3") (lambda () (interactive) (org-agenda nil "p")))
 (global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "<f8>") 'journal)
-(global-set-key (kbd "S-<f8>") (lambda () (interactive) (jump-to-id "kinder")))
 
 ;;;; git & version control
 (global-set-key (kbd "C-5") 'magit-status)
@@ -200,10 +198,11 @@
 ;;;; custom shortcuts, utilities & modes (`C-c` Prefixes)
 (global-set-key (kbd "C-c s") 'my-switch-to-scratch)
 (global-set-key (kbd "C-c t") 'my-todo-buffer)
+(global-set-key (kbd "C-c j") (lambda () (interactive) (find-file "~/Sync/notes/journal.org")))
 (global-set-key (kbd "C-c e") (lambda () (interactive)
-                               (find-file (or (and user-init-file (file-truename user-init-file))
-                                              (locate-user-emacs-file "steckemacs.el")
-                                              "~/code/steckemacs.el/steckemacs.el"))))
+                                (find-file (or (and user-init-file (file-truename user-init-file))
+                                               (locate-user-emacs-file "steckemacs.el")
+                                               "~/code/steckemacs.el/steckemacs.el"))))
 (global-set-key (kbd "C-c f") 'flyspell-mode)
 (global-set-key (kbd "C-c c") 'kde-connect-scratchpad)
 (global-set-key (kbd "C-c S") 'shell-switcher-switch-buffer)
@@ -398,12 +397,6 @@
 
 (defun jump-to-id (id)
   (org-link-open-from-string (format "[[#%s]]" id)))
-
-(defun journal (&optional arg)
-  (interactive "p")
-  (jump-to-id "tagebuch")
-  (org-end-of-meta-data t)
-  (when (equal arg 4) (org-insert-heading nil nil 2)))
 
 (defun kill-buffer-around-advice (orig-fun &rest args)
   (let ((buf (get-buffer (or (car args) (current-buffer)))))
