@@ -1001,8 +1001,17 @@
       (my/org-process-time-input input t))))
 
 (add-to-list 'org-file-apps '("\\(?:ogg\\|mp3\\|m4a\\)" . "mpv --player-operation-mode=pseudo-gui -- %s"))
+
+(defun my/org-refile-any-file ()
+  "Allow refiling to all files in the agenda list and show filenames."
+  (interactive)
+  (let ((org-refile-targets '((org-agenda-files :maxlevel . 3)))
+        (org-refile-use-outline-path 'file))
+    (call-interactively #'org-refile)))
+
 (let ((list '(("T" . my/org-playlist-toggle)
-              ("S" . org-schedule))))
+              ("S" . org-schedule)
+              ("W" . my/org-refile-any-file))))
   (if (boundp 'org-speed-commands)
       (setq org-speed-commands (append list org-speed-commands))
     (setq org-speed-commands-user list)))
